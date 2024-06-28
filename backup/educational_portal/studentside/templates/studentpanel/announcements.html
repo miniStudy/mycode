@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcement</title>
+</head>
+<body>
+    <h2>ANNOUNCEMENT</h2>
+    <br>
+    {% for announe in announcements_data %}
+    <div style="background-color: aqua;">
+    {{announe.announce_title}}
+    <br>
+    {{announe.announce_msg}}
+    <br>
+    {{announe.announce_date}}
+    </div>
+    <br>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,94 @@
+{% extends 'master.html' %}
+
+{% block contentsection %}
+  <div class="mb-4"><h4>Timetable</h4></div> 
+
+  <div class="errors">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+  </div>
+  <!-- Modal to add new record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %} Update Record {% else %} New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_timetable' %}{% if update_data %}?pk={{update_data.tt_id}}{% endif %}">
+        {% csrf_token %}
+        
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Day</label>
+          <div class="input-group input-group-merge">
+            <select class="form-select" name="tt_day">
+                {% for day in DaysChoice %}
+                  <option value="{{ day.value }}" 
+                    {% if update_data and update_data.tt_day == day.value %} selected {% endif %}
+                    {% if filled_data and filled_data.tt_day == day.value %} selected {% endif %}
+                  >{{ day.label }}</option>
+                {% endfor %}
+              </select>
+              
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Batch Name</label>
+          <div class="input-group input-group-merge">
+            <select class="form-select" name="tt_batch">
+              <option value="">--</option>
+              {% for x in batch_data %}
+              <option value="{{x.batch_id}}" {% if update_data and update_data.tt_batch.batch_id == x.batch_id %} selected {% endif %}{% if filled_data and filled_data.tt_batch.batch_id == x.batch_id %} selected {% endif %}>{{ x.batch_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Subject</label>
+          <div class="input-group input-group-merge">
+            <select class="form-select" name="tt_subject1">
+              <option value="">--</option>
+              {% for x in subject_data %}
+              <option value="{{x.sub_id}}" {% if update_data and update_data.tt_subject1.sub_id == x.sub_id %} selected {% endif %}{% if filled_data and filled_data.tt_subject1.sub_id == x.sub_id %} selected {% endif %}>{{ x.sub_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Time</label>
+          <div class="input-group input-group-merge">
+            <input type="time" class="form-control" name="tt_time1" {% if update_data %} value="{{ update_data.tt_time1 }}" {% endif %}{% if filled_data %} value="{{ filled_data.tt_time1 }}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Tutor</label>
+          <div class="input-group input-group-merge">
+            <select class="form-select" name="tt_tutor1">
+              <option value="">--</option>
+              {% for x in faculty_data %}
+              <option value="{{x.fac_id}}" {% if update_data and update_data.tt_tutor1.fac_id == x.fac_id %} selected {% endif %}{% if filled_data and filled_data.tt_tutor1.fac_id == x.fac_id %} selected {% endif %}>{{ x.fac_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}
