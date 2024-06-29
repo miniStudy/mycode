@@ -14,6 +14,7 @@
             <div class="col-md-9">
                 {% for tq in test_question %}
                 {{tq.tq_question|safe}}
+                Answers:{{tq.tq_answer|safe}}
                 {% endfor %}
 
                 {% if prev_id != None %}
