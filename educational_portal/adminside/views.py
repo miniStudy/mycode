@@ -771,3 +771,7 @@ def insert_events(request):
     else:
         form = event_form()
     return render(request, 'event.html', {'form':form})
+
+
+def hello_world():
+    print("hello wolrd")
