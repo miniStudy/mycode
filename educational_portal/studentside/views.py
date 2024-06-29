@@ -252,3 +252,6 @@ def show_test_questions(request, id):
     
     test_questions_all = Test_questions_answer.objects.filter(tq_name__test_id = id)
     return render(request, 'studentpanel/testque.html', {'test_questions_all':test_questions_all, 'test_question':test_question, 'test_id':id})
+
+def hello_world():
+    print('Hello World')
