@@ -15,10 +15,19 @@
                 {% for tq in test_question %}
                 {{tq.tq_question|safe}}
                 {% endfor %}
+
+                {% if prev_id != None %}
+                <a class="btn btn-primary" href="{% url 'Student_Test_Q' id=test_id %}?que_id={{prev_id}}">Prev</a>
+                {% endif %}
+
+                {% if next_id != None %}
+                <a class="btn btn-primary" href="{% url 'Student_Test_Q' id=test_id %}?que_id={{next_id}}">Next</a>
+                {% endif %}
+
             </div>          
                 <div class="col-md-3">
                     {% for test_que in test_questions_all %}
-                    <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}">{{ forloop.counter }}</a>
+                    <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}" class="btn btn-warning text-white {% for tq in test_question %} {% if tq.tq_id == test_que.tq_id%}bg-primary{% endif %} {% endfor %} ">{{ forloop.counter }}</a>
                     {% endfor %}
                 </div> 
         </div>
