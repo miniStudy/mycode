@@ -31,8 +31,8 @@
             <tbody>
                 {% for x in data %}
                 <tr>
-                    <td><input type="checkbox" class="form-check-input" value="{{x.std_id}}" name="selection" /></td>
-                    <td>{{x.std_name}}</td>
+                    <td><input type="checkbox" class="form-check-input" value="{{x.test_id}}" name="selection" /></td>
+                    <td>{{x.test_name}}</td>
                     <td>{{x.test_std}}</td>
                     <td><a href="{% url 'insert_update_tests' %}?update_id={{x.test_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>

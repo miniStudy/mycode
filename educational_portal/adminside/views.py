@@ -775,3 +775,31 @@ def insert_events(request):
 
 def hello_world():
     print("hello wolrd")
+
+
+
+
+@admin_login_required
+def show_tests(request):
+    data = Chepterwise_test.objects.all()
+
+    context ={
+        'data' : data,
+        'title' : 'Tests',
+    }
+
+    return render(request, 'show_tests.html',context)
+
+
+def delete_tests(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Chepterwise_test.objects.filter(test_id__in=selected_ids).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('admin_tests')

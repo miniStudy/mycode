@@ -73,6 +73,11 @@ urlpatterns = [
 
     path('insert_event/', adminview.insert_events, name="insert_event"),
 
+    # ==========================Tests ====================================================
+
+    path('admin_tests/', adminview.show_tests, name='admin_tests'),
+    path('insert_update_tests/', adminview.show_tests, name='insert_update_tests'),
+    path('delete_tests/', adminview.delete_tests, name='delete_tests'),
 
 
 ]
