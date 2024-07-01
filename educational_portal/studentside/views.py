@@ -266,8 +266,4 @@ def show_test_questions(request, id):
         prev_id = all_q_list[index_posi-1]
     else:
         prev_id = None
-    print(prev_id)
     return render(request, 'studentpanel/testque.html', {'test_questions_all':test_questions_all, 'test_question':test_question, 'test_id':id,'next_id':next_id, 'prev_id':prev_id})
-
-def hello_world():
-    print('Hello World')
