@@ -79,6 +79,8 @@ urlpatterns = [
     path('insert_update_tests/', adminview.show_tests, name='insert_update_tests'),
     path('delete_tests/', adminview.delete_tests, name='delete_tests'),
 
+    path('show_test_questions_admin/', adminview.show_test_questions_admin, name='show_test_questions_admin'),
+
 
 ]
 

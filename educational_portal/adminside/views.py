@@ -816,3 +816,26 @@ def delete_tests(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('admin_tests')
+
+
+
+def show_test_questions_admin(request):
+    if request.GET.get('test_id'):
+        Test_Questions_data = Test_questions_answer.objects.filter(tq_name = request.GET['test_id'])
+        test_info = Chepterwise_test.objects.get(test_id = request.GET['test_id'])
+
+        if request.GET.get('que_id'):
+            que_id = request.GET.get('que_id')
+            test_question = Test_questions_answer.objects.filter(tq_id = que_id) 
+        else:
+            test_question = Test_questions_answer.objects.filter(tq_name__test_id = request.GET['test_id'])[:1]
+
+
+        context = {
+            'Test_Questions_data':Test_Questions_data,
+            'test_info':test_info,
+            'test_question':test_question
+        }
+        return render(request, 'show_test_questions_admin.html',context)
+    else:
+        return redirect('admin_tests')   
