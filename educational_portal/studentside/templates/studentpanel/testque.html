@@ -10,7 +10,8 @@
 </head>
 <body>
     <div class="conatiner mt-3">
-        <div class="row">   
+        <div class="row"> 
+            <div class="fw-bold text-center">{{no_que}}</div>  
             <div class="col-md-9">
                 {% for tq in test_question %}
                 {{tq.tq_question|safe}}

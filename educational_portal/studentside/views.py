@@ -247,23 +247,30 @@ def show_test_questions(request, id):
         que_id = request.GET.get('que_id')
         test_question = Test_questions_answer.objects.filter(tq_id = que_id) 
     else:
-        test_question = Test_questions_answer.objects.filter(tq_name__test_id = id)[:1]    
+        test_question = Test_questions_answer.objects.filter(tq_name__test_id = id)[:1]   
     
     
     test_questions_all = Test_questions_answer.objects.filter(tq_name__test_id = id)
     all_q_list = []
-    current_q_id = test_question[0].tq_id
-    for x in test_questions_all:
-        all_q_list.append(x.tq_id)
-    
-    index_posi = all_q_list.index(current_q_id)
-    if all_q_list[index_posi] != all_q_list[-1]:
-        next_id = all_q_list[index_posi+1]
-    else:
-        next_id = None
+    if test_questions_all.exists():
+        current_q_id = test_question[0].tq_id
+        for x in test_questions_all:
+            all_q_list.append(x.tq_id)
 
-    if all_q_list[index_posi] != all_q_list[0]:
-        prev_id = all_q_list[index_posi-1]
+
+        index_posi = all_q_list.index(current_q_id)
+        if all_q_list[index_posi] != all_q_list[-1]:
+            next_id = all_q_list[index_posi+1]
+        else:
+            next_id = None
+
+        if all_q_list[index_posi] != all_q_list[0]:
+            prev_id = all_q_list[index_posi-1]
+        else:
+            prev_id = None
+    
+        return render(request, 'studentpanel/testque.html', {'test_questions_all':test_questions_all, 'test_question':test_question, 'test_id':id,'next_id':next_id, 'prev_id':prev_id})
     else:
-        prev_id = None
-    return render(request, 'studentpanel/testque.html', {'test_questions_all':test_questions_all, 'test_question':test_question, 'test_id':id,'next_id':next_id, 'prev_id':prev_id})
+        no_que = "There are no anymore questions!"
+    
+    return render(request, 'studentpanel/testque.html', {'test_questions_all':test_questions_all, 'test_question':test_question, 'no_que':no_que})
