@@ -37,6 +37,8 @@
                     <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
                     <th>Test Name</th>
                     <th>Test Std</th>
+                    <th>Questions</th>
+                    <th>Total Marks</th>
                     <th>Edit</th>
                 </tr>
             </thead>
@@ -46,6 +48,8 @@
                     <td><input type="checkbox" class="form-check-input" value="{{x.test_id}}" name="selection" /></td>
                     <td>{{x.test_name}}</td>
                     <td>{{x.test_std}}</td>
+                    <td>{{x.num_questions}}</td>
+                    <td>{{x.total_marks}}</td>
                     <td><a href="{% url 'insert_update_tests' %}?update_id={{x.test_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>
                 {% endfor %}
