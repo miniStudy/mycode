@@ -256,3 +256,35 @@ class Test_questions_answer(models.Model):
     
     class Meta:
         db_table = 'test_questions_answer'
+
+
+class Test_attempted_users(models.Model):
+    tau_id = models.BigAutoField(primary_key=True)        
+    tau_test_id = models.ForeignKey(Chepterwise_test,on_delete=models.CASCADE)
+    tau_stud_id = models.ForeignKey(Students,on_delete=models.CASCADE)
+    tau_completion_time = models.TimeField()
+    tau_attempted_questions = models.IntegerField()
+    tau_correct_ans = models.IntegerField()
+    tau_total_marks = models.FloatField()
+    tau_obtained_marks = models.FloatField()
+
+    def _str_(self):
+        return f"{self.tau_test_id} - {self.tau_completion_time}"
+    
+    class Meta:
+        db_table = 'test_attempted_users'
+
+
+class Test_submission(models.Model):
+    ts_id = models.BigAutoField(primary_key=True)
+    ts_stud_id = models.ForeignKey(Students,on_delete=models.CASCADE)
+    ts_que_id = models.ForeignKey(Test_questions_answer,on_delete=models.CASCADE)
+    ts_ans = models.TextField()
+    ts_attempted = models.BooleanField(default=0)
+
+    def _str_(self):
+        return f"{self.ts_que_id} - {self.ts_ans} {self.ts_stud_id}"
+    
+    class Meta:
+        db_table = 'test_submission'
+
