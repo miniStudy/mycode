@@ -224,8 +224,10 @@ class Chepterwise_test(models.Model):
     test_std =  models.ForeignKey(Std, on_delete=models.CASCADE)
     test_sub = models.ForeignKey(Subject, on_delete=models.CASCADE,null=True,blank=True)
     test_sem = models.CharField(choices=sem_choices, max_length=50)
+    test_time = models.TimeField(null=True,blank=True)
+
     def _str_(self):
-        return f"{self.test_name}"
+        return f"Name : {self.test_name}  Time : {self.test_time}"
     
     class Meta:
         db_table = 'chepterwise_test'
