@@ -7,6 +7,7 @@ from django.conf import settings
 import math
 import random
 from django.http import Http404,JsonResponse
+from django.db.models import Count,Sum
 # Create your views here.
 # mail integration 
 from django.core.mail import send_mail
@@ -781,7 +782,7 @@ def hello_world():
 
 @admin_login_required
 def show_tests(request):
-    data = Chepterwise_test.objects.all()
+    data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
     std_data = Std.objects.all()
 
     context ={
