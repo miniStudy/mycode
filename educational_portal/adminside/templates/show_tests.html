@@ -14,7 +14,19 @@
         <div class="d-flex flex-row justify-content-between">
             <h5>{{title}} Data</h5>
             <div><div id="toolbar" class="d-inline-block me-2"></div><a href="{% url 'insert_update_tests' %}"><button class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i> ADD</button></a></div>
-        </div>    
+        </div>
+        <br>
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'admin_tests' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'admin_tests' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+          <br><br>
+
 
     <form action="{% url 'delete_tests' %}" method="POST"> 
     {% csrf_token %}        

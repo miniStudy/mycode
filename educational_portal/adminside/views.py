@@ -782,11 +782,23 @@ def hello_world():
 @admin_login_required
 def show_tests(request):
     data = Chepterwise_test.objects.all()
+    std_data = Std.objects.all()
 
     context ={
         'data' : data,
         'title' : 'Tests',
+        'std_data' : std_data,
     }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(test_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'get_std':get_std})
+            
 
     return render(request, 'show_tests.html',context)
 
