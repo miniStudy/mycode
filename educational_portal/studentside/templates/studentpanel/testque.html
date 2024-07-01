@@ -10,29 +10,48 @@
 </head>
 <body>
     <div class="conatiner mt-3">
-        <div class="row"> 
-            <div class="fw-bold text-center">{{no_que}}</div>  
-            <div class="col-md-9">
-                {% for tq in test_question %}
-                {{tq.tq_question|safe}}
-                Answers:{{tq.tq_answer|safe}}
-                {% endfor %}
-
-                {% if prev_id != None %}
-                <a class="btn btn-primary" href="{% url 'Student_Test_Q' id=test_id %}?que_id={{prev_id}}">Prev</a>
-                {% endif %}
-
-                {% if next_id != None %}
-                <a class="btn btn-primary" href="{% url 'Student_Test_Q' id=test_id %}?que_id={{next_id}}">Next</a>
-                {% endif %}
-
-            </div>          
-                <div class="col-md-3">
-                    {% for test_que in test_questions_all %}
-                    <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}" class="btn btn-warning text-white {% for tq in test_question %} {% if tq.tq_id == test_que.tq_id%}bg-primary{% endif %} {% endfor %} ">{{ forloop.counter }}</a>
+        <form action="{% url 'Student_Test_Q' id=test_id %}" method="get">
+            {% csrf_token %}
+            
+            <div class="row"> 
+                <div class="fw-bold text-center">{{no_que}}</div>  
+                <div class="col-md-9 p-4">
+                    {% for tq in test_question %}
+                    {{tq.tq_question|safe}}
+                    {% if tq.tq_q_type == 'MCQ' %}
+                    <input type="radio" name="ans" id="tq_optiona" value="A">
+                    <label for="tq_optiona">{{tq.tq_optiona}} </label><br>
+                    <input type="radio" name="ans" id="tq_optionb" value="B">
+                    <label for="tq_optionb">{{tq.tq_optionb}} </label><br>
+                    <input type="radio" name="ans" id="tq_optionc" value="C">
+                    <label for="tq_optionc">{{tq.tq_optionc}} </label><br>
+                    <input type="radio" name="ans" id="tq_optiond" value="D">
+                    <label for="tq_optiond">{{tq.tq_optiond}} </label><br>
+                    {% elif  tq.tq_q_type == 'True_False' %}
+                    <input type="radio" name="ans" id="true">
+                    <label for="true">True</label><br>
+                    <input type="radio" name="ans" id="false">
+                    <label for="false">False</label><br>
+                    {% endif %}
                     {% endfor %}
-                </div> 
-        </div>
+    
+                    {% if prev_id != None %}
+                    <a class="btn btn-primary" href="{% url 'Student_Test_Q' id=test_id %}?que_id={{prev_id}}">Prev</a>
+                    {% endif %}
+    
+                    {% if next_id != None %}
+                            <input type="hidden" name="que_id" value="{{next_id}}" />
+                        <input class="btn btn-primary" type="submit" value="Next" />
+                    {% endif %}
+    
+                </div>          
+                    <div class="col-md-3">
+                        {% for test_que in test_questions_all %}
+                        <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}" class="btn btn-warning text-white {% for tq in test_question %} {% if tq.tq_id == test_que.tq_id%}bg-primary{% endif %} {% endfor %} ">{{ forloop.counter }}</a>
+                        {% endfor %}
+                    </div> 
+            </div>
+        </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

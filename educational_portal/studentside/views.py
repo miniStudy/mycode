@@ -242,13 +242,21 @@ def show_test(request):
 @student_login_required
 def show_test_questions(request, id):
     
-    
+    student_id = Students.objects.get(stud_id = request.session['stud_id'])
     if request.GET.get('que_id'):
         que_id = request.GET.get('que_id')
-        test_question = Test_questions_answer.objects.filter(tq_id = que_id) 
+        test_question = Test_questions_answer.objects.filter(tq_id = que_id)
+        if request.GET.get('ans'):
+            quen_id = que_id
+            quen_id = Test_questions_answer.objects.get(tq_id=quen_id)
+            answer = request.GET.get('ans')
+            test_attempted = 1
+           
+            Test_submission.objects.create(ts_stud_id=student_id, ts_que_id=quen_id, ts_ans=answer, ts_attempted=test_attempted)
+        else:
+            not_attemp = 0
     else:
         test_question = Test_questions_answer.objects.filter(tq_name__test_id = id)[:1]   
-    
     
     test_questions_all = Test_questions_answer.objects.filter(tq_name__test_id = id)
     all_q_list = []
@@ -268,6 +276,9 @@ def show_test_questions(request, id):
             prev_id = all_q_list[index_posi-1]
         else:
             prev_id = None
+
+    #    ===============================Check-Answers================================================
+        a = Test_submission.objects.filter(ts_stud_id=student_id, )
     
         return render(request, 'studentpanel/testque.html', {'test_questions_all':test_questions_all, 'test_question':test_question, 'test_id':id,'next_id':next_id, 'prev_id':prev_id})
     else:
