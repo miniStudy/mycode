@@ -35,8 +35,29 @@
                 <div style="font-size: 18px;">
                     {% for x in test_question %}
                         <span>Que</span><hr> {{x.tq_question|safe}}
-                        
+                        {% if x.tq_q_type == 'MCQ' %}
+                    <input type="radio" name="ans" id="tq_optiona" value="A">
+                    <label for="tq_optiona">{{x.tq_optiona}} </label><br>
+                    <input type="radio" name="ans" id="tq_optionb" value="B">
+                    <label for="tq_optionb">{{x.tq_optionb}} </label><br>
+                    <input type="radio" name="ans" id="tq_optionc" value="C">
+                    <label for="tq_optionc">{{x.tq_optionc}} </label><br>
+                    <input type="radio" name="ans" id="tq_optiond" value="D">
+                    <label for="tq_optiond">{{x.tq_optiond}} </label><br>
+                    {% elif  x.tq_q_type == 'True_False' %}
+                    <input type="radio" name="ans" id="true">
+                    <label for="true">True</label><br>
+                    <input type="radio" name="ans" id="false">
+                    <label for="false">False</label><br>
+                    {% endif %}
+
+                    <hr>
+                    <span>Answer</span> {{x.tq_answer|safe}}
+                    <hr/>
+                    <button class="btn btn-primary"><i class="fa-solid fa-pen-to-square me-2"></i> Edit</button>
+                    <button class="btn btn-danger ms-2"><i class="fa-solid fa-trash me-2"></i> Delete</button>
                     {% endfor %}
+                    
                 </div>
             </div>
         </div>
@@ -46,7 +67,7 @@
             <div class="card-body">
         {% for x in Test_Questions_data %}
         
-            <span class="btn btn-primary m-2">{{forloop.counter}}</span>
+            <a href="{% url 'show_test_questions_admin' %}?test_id={{x.tq_name.test_id}}&que_id={{x.tq_id}}"><span class="btn btn-primary m-2 {% for y in test_question %} {% if y.tq_id == x.tq_id %}bg-warning{% endif %}{% endfor %}">{{forloop.counter}}</span></a>
             
         {% endfor %}
             </div>
