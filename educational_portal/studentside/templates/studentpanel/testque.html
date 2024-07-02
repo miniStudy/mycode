@@ -19,19 +19,27 @@
                     {% for tq in test_question %}
                     {{tq.tq_question|safe}}
                     {% if tq.tq_q_type == 'MCQ' %}
-                    <input type="radio" name="ans" id="tq_optiona" value="A">
+                    <input type="radio" name="ans" id="tq_optiona" value="A" {% if get_answer == 'A' %}checked{% endif %}>
                     <label for="tq_optiona">{{tq.tq_optiona}} </label><br>
-                    <input type="radio" name="ans" id="tq_optionb" value="B">
+                    <input type="radio" name="ans" id="tq_optionb" value="B" {% if get_answer == 'B' %}checked{% endif %}>
                     <label for="tq_optionb">{{tq.tq_optionb}} </label><br>
-                    <input type="radio" name="ans" id="tq_optionc" value="C">
+                    <input type="radio" name="ans" id="tq_optionc" value="C" {% if get_answer == 'C' %}checked{% endif %}>
                     <label for="tq_optionc">{{tq.tq_optionc}} </label><br>
-                    <input type="radio" name="ans" id="tq_optiond" value="D">
+                    <input type="radio" name="ans" id="tq_optiond" value="D" {% if get_answer == 'D' %}checked{% endif %}>
                     <label for="tq_optiond">{{tq.tq_optiond}} </label><br>
                     {% elif  tq.tq_q_type == 'True_False' %}
-                    <input type="radio" name="ans" id="true">
+                    <input type="radio" name="ans" id="true" value="1" {% if get_answer == '1' %}checked{% endif %}>
                     <label for="true">True</label><br>
-                    <input type="radio" name="ans" id="false">
+                    <input type="radio" name="ans" id="false" value="0" {% if get_answer == '0' %}checked{% endif %}>
                     <label for="false">False</label><br>
+                    {% elif tq.tq_q_type == 'Filling_Blanks' %}
+                      <input type="text" name="ans" {% if get_answer != None %} value="{{get_answer}}" {% endif %} placeholder="Write Your Ans"/><br><br>
+                    {% endif %}
+                    
+                    <input type="hidden" name="current_q_id" value="{{tq.tq_id}}" />
+
+                    {% if get_answer != None %}
+                    <a href="{% url 'Student_Test_Q' id=test_id %}?clear_id={{tq.tq_id}}" class="btn btn-primary">Clear Selection</a>
                     {% endif %}
                     {% endfor %}
     
@@ -41,13 +49,14 @@
     
                     {% if next_id != None %}
                             <input type="hidden" name="que_id" value="{{next_id}}" />
+                            
                         <input class="btn btn-primary" type="submit" value="Next" />
                     {% endif %}
     
                 </div>          
                     <div class="col-md-3">
                         {% for test_que in test_questions_all %}
-                        <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}" class="btn btn-warning text-white {% for tq in test_question %} {% if tq.tq_id == test_que.tq_id%}bg-primary{% endif %} {% endfor %} ">{{ forloop.counter }}</a>
+                        <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}" class="btn btn-warning text-white {% if test_que.ts_attempted == True %}bg-success{% else %}btn-danger{% endif %} {% for tq in test_question %}{% if tq.tq_id == test_que.tq_id %}bg-dark{% endif %} {% endfor %}">{{ forloop.counter }}</a>
                         {% endfor %}
                     </div> 
             </div>
