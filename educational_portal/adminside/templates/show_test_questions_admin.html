@@ -13,7 +13,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
                 <div class="myheadfont">Test Name: {{test_info.test_name}}</div>
-                <a href="">
+                <a href="{% url 'insert_update_test_question_admin' %}?test_id={{test_info.test_id}}">
                     <button class="btn btn-primary">
                         <i class="fa-solid fa-plus me-2"></i> ADD Question
                     </button>
@@ -22,8 +22,8 @@
         <div>Test Time: {{test_info.test_time}}</div>
         <div>Test Subject : {{test_info.test_sub}}</div>
         <div>Sem : {{test_info.test_sem}}</div>
-        <div>Total Questions : 5</div>
-        <div>Total marks : 5</div>
+        <div>Total Questions : {{no_of_q}}</div>
+        <div>Total marks : {{total_marks}}</div>
     </div>
 </div>
 <hr>

@@ -80,6 +80,7 @@ urlpatterns = [
     path('delete_tests/', adminview.delete_tests, name='delete_tests'),
 
     path('show_test_questions_admin/', adminview.show_test_questions_admin, name='show_test_questions_admin'),
+    path('insert_update_test_question_admin/', adminview.insert_update_test_questions, name='insert_update_test_question_admin'),
 
 
 ]
