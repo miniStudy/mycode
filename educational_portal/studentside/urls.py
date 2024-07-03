@@ -41,4 +41,5 @@ urlpatterns = [
     path('Student_Event/', studentview.show_event, name = 'Student_Event'),
     path('Student_Test/', studentview.show_test, name = 'Student_Test'),
     path('Student_Test_Q/<int:id>/', studentview.show_test_questions, name='Student_Test_Q'),
+    path('Student_Syllabus/', studentview.show_syllabus, name='Student_Syllabus'),
 ]

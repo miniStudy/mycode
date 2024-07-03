@@ -308,13 +308,17 @@ def show_test_questions(request, id):
         }
         return render(request, 'studentpanel/testque.html', context)
     else:
-        no_que = "There are no anymore questions!"
+        no_que = "No questions available right now!"
     context = {
             'test_questions_all':test_questions_all,
             'test_question':test_question,
             'test_id':id,
-            'next_id':next_id,
-            'prev_id':prev_id,
             'no_que':no_que,
         }
     return render(request, 'studentpanel/testque.html', context)
+
+def show_syllabus(request):
+    student_std = request.session['stud_std']
+    subjects = Subject.objects.filter(sub_std__std_id = student_std)
+    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std)
+    return render(request, 'studentpanel/syllabus.html', {'subjects':subjects,'chepters':chepters})
