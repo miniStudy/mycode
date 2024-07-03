@@ -150,3 +150,17 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'mail@ministudy.in'  # Replace with your Hostinger email address
 EMAIL_HOST_PASSWORD = '71554913@TmP'  # Replace with your Hostinger email password
+
+
+
+CKEDITOR_RESTRICT_BY_USER = True
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'width': '100%',
+        'extraPlugins': 'uploadimage,image2',
+        'filebrowserBrowseUrl': '/ckeditor/browse/',
+        'filebrowserUploadUrl': '/ckeditor/upload/',
+        'imageUploadUrl': '/ckeditor/upload/',
+    },
+}

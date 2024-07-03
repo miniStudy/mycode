@@ -822,6 +822,10 @@ def delete_tests(request):
 def show_test_questions_admin(request):
     if request.GET.get('test_id'):
         Test_Questions_data = Test_questions_answer.objects.filter(tq_name = request.GET['test_id'])
+        No_of_q = Test_Questions_data.count()
+        total_marks = 0
+        for x in Test_Questions_data:
+            total_marks += x.tq_weightage
         test_info = Chepterwise_test.objects.get(test_id = request.GET['test_id'])
 
         if request.GET.get('que_id'):
@@ -835,7 +839,23 @@ def show_test_questions_admin(request):
             'Test_Questions_data':Test_Questions_data,
             'test_info':test_info,
             'test_question':test_question,
+            'total_marks':total_marks,
+            'no_of_q':No_of_q,
         }
         return render(request, 'show_test_questions_admin.html',context)
     else:
-        return redirect('admin_tests')   
+        return redirect('admin_tests') 
+
+
+
+def insert_update_test_questions(request):
+    chep_data = Chepter.objects.all()
+    context = {
+        'chep_data':chep_data,
+        'que_type': Test_questions_answer.que_type,
+
+    }
+    if request.GET.get('test_id'):
+        return render(request, 'insert_update/add_test_questions.html',context)
+    else:
+        return redirect('admin_tests') 

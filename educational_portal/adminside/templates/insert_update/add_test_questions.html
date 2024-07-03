@@ -1,0 +1,170 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+<script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
+<script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+<style>
+    .cke_notification {display: none;}
+</style>
+<div class="mb-4"><h4>Test Questions</h4></div> 
+   
+<div class="errors">
+    {% if errors %}
+    <ul>
+        {% for field, field_errors in errors.items %}
+        <ul>
+            {% for error in field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+<!-- Modal to add new record -->
+<div class="card">
+    {% include 'message_show.html' %}
+    <div class="card-header">
+        <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %}Update Record{% else %}New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_subjects' %}{% if update_data %}?pk={{update_data.sub_id}}{% endif %}">
+            {% csrf_token %}
+
+            <input type="hidden" name="tq_name" value="{{test_id}}" />
+
+            <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+                <label for="defaultSelect" class="form-label">Chapter Name</label>
+                <select id="defaultSelect" class="form-select" name="tq_chepter">
+                    <option value="">--</option>
+                    {% for x in chep_data %}
+                    <option value="{{x.chep_id}}">{{x.chep_name}} {{x.chep_sub}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+                <label for="defaultSelect" class="form-label">Question Type</label>
+                <select id="defaultSelect" class="form-select" name="tq_chepter">
+                    <option value="">--</option>
+                    {% for x in que_type %}
+                    <option value="{{x.value}}">{{x.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>  
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Question</label>
+                <div class="input-group input-group-merge">
+                    <textarea class="form-control ckeditor" id="tq_question" name="tq_question"></textarea>
+                </div>
+            </div>  
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Answer</label>
+                <div class="input-group input-group-merge">
+                    <textarea class="form-control ckeditor" id="tq_answer" name="tq_answer"></textarea>
+                </div>
+            </div>  
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">weightage</label>
+                <div class="input-group input-group-merge">
+                    <input type="number" class="form-control" name="tq_weightage" placeholder="2" required/>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Hint</label>
+                <div class="input-group input-group-merge">
+                    <textarea class="form-control" id="tq_hint" name="tq_hint"></textarea>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Option A</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="tq_optiona"/>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Option B</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="tq_optionb" />
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Option C</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="tq_optionc" />
+                </div>
+            </div>
+
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Option D</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="tq_optiond"/>
+                </div>
+            </div>
+
+            
+
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    CKEDITOR.replace('tq_question', {
+        skin: 'moono-lisa',  // match the admin panel
+        toolbar: [
+        { name: 'styles', items: ['Styles'] },
+        { name: 'format', items: ['Format'] },
+        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+        { name: 'undo', items: ['Undo', 'Redo'] },
+        { name: 'links', items: ['Link', 'Unlink'] },
+        { name: 'insert', items: ['Image', 'Table'] },
+        { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+        { name: 'colors', items: ['TextColor', 'BGColor'] },
+        { name: 'tools', items: ['Maximize'] },
+        { name: 'special', items: ['SpecialChar'] },
+        { name: 'source', items: ['Source'] }
+    ],
+        width: '100%',
+        height:'400px',
+        filebrowserBrowseUrl: '/ckeditor/browse/',
+        filebrowserUploadUrl: '/ckeditor/upload/',
+        imageUploadUrl: '/ckeditor/upload/',
+        extraPlugins: 'uploadimage,image2',
+    });
+
+    CKEDITOR.replace('tq_answer', {
+        skin: 'moono-lisa',  // match the admin panel
+        toolbar: [
+        { name: 'styles', items: ['Styles'] },
+        { name: 'format', items: ['Format'] },
+        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+        { name: 'undo', items: ['Undo', 'Redo'] },
+        { name: 'links', items: ['Link', 'Unlink'] },
+        { name: 'insert', items: ['Image', 'Table'] },
+        { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+        { name: 'colors', items: ['TextColor', 'BGColor'] },
+        { name: 'tools', items: ['Maximize'] },
+        { name: 'special', items: ['SpecialChar'] },
+        { name: 'source', items: ['Source'] }
+    ],
+        width: '100%',
+        height:'400px',
+        filebrowserBrowseUrl: '/ckeditor/browse/',
+        filebrowserUploadUrl: '/ckeditor/upload/',
+        imageUploadUrl: '/ckeditor/upload/',
+        extraPlugins: 'uploadimage,image2',
+    });
+</script>
+
+{% endblock %}
