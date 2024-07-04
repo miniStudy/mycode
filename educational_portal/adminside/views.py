@@ -8,6 +8,8 @@ import math
 import random
 from django.http import Http404,JsonResponse
 from django.db.models import Count,Sum
+from django.core.files.storage import FileSystemStorage
+
 # Create your views here.
 # mail integration 
 from django.core.mail import send_mail
@@ -766,12 +768,25 @@ def show_attendance(request):
 @admin_login_required
 def insert_events(request):
     if request.method == 'POST':
-        form = event_form(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-    else:
-        form = event_form()
-    return render(request, 'event.html', {'form':form})
+        event_name = request.POST.get('event_name')
+        event_date = request.POST.get('event_date')
+        event_desc = request.POST.get('event_desc')
+        event_images = request.FILES.getlist('event_img')
+        print(event_images)
+        event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
+
+        image_paths = []
+        for image in event_images:
+            fs = FileSystemStorage(location='media/uploads/events/')
+            filename = fs.save(image.name, image)
+            image_paths.append(filename)
+
+        event.event_img = ','.join(image_paths)
+        event.save()
+
+        
+        event.save()
+    return render(request, 'insert_update/events_insert_admin.html')
 
 
 def hello_world():

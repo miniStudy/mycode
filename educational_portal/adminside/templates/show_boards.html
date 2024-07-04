@@ -12,12 +12,18 @@
     
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center">
-        <div class="myheadfont">{{title}} Data</div>   
+        <div class="myheadfont">{{title}} Data</div>
+        <div>
+          <div class="d-inline-block" id="exportbtns"></div>
+
         <a href="{% url 'insert_update_boards' %}">
             <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
             </button>
         </a>
+        
+      </div>
+        
 </div>
     <form action="{% url 'delete_boards' %}" method="POST"> 
     {% csrf_token %}        

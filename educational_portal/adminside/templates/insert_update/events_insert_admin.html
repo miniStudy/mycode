@@ -1,0 +1,59 @@
+{% extends 'master.html' %}
+
+{% block contentsection %}
+  <div class="mb-4"><h4>Events</h4></div> 
+
+  <div class="errors">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
+
+    <div class="row">
+    
+      <form action="{% url 'insert_event' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="col-sm-12 mt-3">
+        <label class="form-label mb-2">Event Images</label>
+        <div class="input-group input-group-merge">
+          <input type="file" class="form-control" name="event_img" multiple/>
+        </div>
+      </div>
+
+      <div class="col-sm-12 mt-3">
+        <label class="form-label mb-2">Event Name</label>
+        <div class="input-group input-group-merge">
+          <input type="text" class="form-control" name="event_name" placeholder="Event Name"/>
+        </div>
+      </div>
+
+      <div class="col-sm-12 mt-3">
+        <label class="form-label mb-2">Event Date</label>
+        <div class="input-group input-group-merge">
+          <input type="date" class="form-control" name="event_date" placeholder="Event Date"/>
+        </div>
+      </div>
+
+
+      <div class="col-sm-12 mt-3">
+        <label class="form-label mb-2">Event Description</label>
+        <div class="input-group input-group-merge">
+          <textarea class="form-control" name="event_desc"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary d-inline-block mt-3">Submit</button>
+  
+  </form>
+
+    {% endblock %}
