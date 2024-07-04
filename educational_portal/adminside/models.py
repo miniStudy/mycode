@@ -203,7 +203,7 @@ class Event(models.Model):
     event_id = models.BigAutoField(primary_key=True)
     event_name = models.CharField(max_length=500)
     event_date = models.DateField()
-    event_img = models.ImageField(upload_to='uploads/events',null=True,blank=True)
+    event_img = models.TextField(null=True,blank=True)
     event_desc = models.CharField(max_length=1000, null=True, blank=True)
 
     def __str__(self):
