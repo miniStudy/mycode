@@ -766,6 +766,16 @@ def show_attendance(request):
 
 
 @admin_login_required
+def show_events(request):
+    events = Event.objects.all()
+    events_imgs = Event_Image.objects.all()
+    context = {
+        'events':events,
+        'events_imgs':events_imgs,
+    }
+    return render(request, 'show_events.html',context)
+
+@admin_login_required
 def insert_events(request):
     if request.method == 'POST':
         event_name = request.POST.get('event_name')
