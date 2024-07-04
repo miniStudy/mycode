@@ -7,7 +7,7 @@ import math
 import random
 from django.http import Http404,JsonResponse
 from .forms import *
-from django.db.models import OuterRef, Subquery, BooleanField
+from django.db.models import OuterRef, Subquery, BooleanField,Q
 # Create your views here.
 # mail integration 
 from django.core.mail import send_mail
@@ -149,16 +149,12 @@ def student_info_update(request):
 
 @student_login_required
 def student_announcement(request):
-    # datas = Announcements.objects.get(announce_std__std_id=request.session.get('stud_id'))
-    announcement = Announcements.objects.all()
-    
-    announce_1 = announcement.filter(announce_std=None, announce_batch=None)
+    announcements_data = Announcements.objects.filter(
+    Q(announce_std=None, announce_batch=None) |
+    Q(announce_std__std_id=request.session.get('stud_std'), announce_batch=None) |
+    Q(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))
+).order_by('-pk')[:50]
 
-    announce_2 = announcement.filter(announce_std__std_id=request.session.get('stud_std'), announce_batch=None)
-
-    announce_3 = announcement.filter(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))
-
-    announcements_data = announce_1.union(announce_2, announce_3)
    
     return render(request, 'studentpanel/announcements.html', {"announcements_data":announcements_data})
 
@@ -224,7 +220,7 @@ def show_attendence(request):
         })
         
     absent_days = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
-    
+    attendence_data = attendence_data.order_by('-pk')
     return render(request, 'studentpanel/attendence.html', {'student_name':student_name, 'attendence_data':attendence_data, 'attendence_prec':attendence_prec, 'subject_attendance':subject_attendance,'total_days':total_days, 'absent_days':absent_days})
 
 @student_login_required

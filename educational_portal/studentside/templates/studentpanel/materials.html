@@ -23,7 +23,7 @@
 {% for subject in subjects %}
     {% for mat in materials %}
     {% if subject.sub_name == mat.cm_chepter.chep_sub.sub_name %}
-    <a href="/media/{{mat.cm_file}}">{{mat.cm_filename}} - {{mat.cm_chepter.chep_sub.sub_name}}</a>
+    <a href="/media/{{mat.cm_file}}" class="btn btn-primary">{{mat.cm_filename}} - {{mat.cm_chepter.chep_sub.sub_name}}</a>
     {% endif %}
     {% endfor %}
     <br>
