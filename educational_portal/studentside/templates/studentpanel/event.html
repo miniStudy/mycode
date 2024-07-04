@@ -10,18 +10,17 @@
     <div class="container mt-5">
         <div class="row">
           {% for data in event_data %}
-                <div class="col-sm-5">
-                    <div class="card h-100 d-flex flex-row justify-content-center">
-                        <img src="{{ data.event_img }}" class="card-img-top w-50" alt="{{ data.event_img }}" style="object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ data.event_name }}</h5>
-                            <p class="card-text">{{ data.event_desc }}</p>
-                        </div>
-                    </div>
+          <h5 class="card-title">{{ data.event_name }}</h5>
+          <p class="card-text">{{ data.event_desc }}</p>
+            {% for img in event_imgs %}
+              {% if img.event.event_id == data.event_id %}
+                <div class="col-sm-5 col-md-2">
+                        <img src="/media/uploads/events/{{img.event_img}}" class="card-img-top w-50" alt="{{ img.event_img }}" style="object-fit: cover;">
                 </div>
+              {% endif %}
+            {% endfor %}
           {% endfor %}
         </div>     
-    </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>

@@ -226,7 +226,8 @@ def show_attendence(request):
 @student_login_required
 def show_event(request):
     event_data = Event.objects.all()
-    return render(request, 'studentpanel/event.html', {'event_data':event_data})
+    event_imgs = Event_Image.objects.all()
+    return render(request, 'studentpanel/event.html', {'event_data':event_data,'event_imgs':event_imgs})
 
 @student_login_required
 def show_test(request):
