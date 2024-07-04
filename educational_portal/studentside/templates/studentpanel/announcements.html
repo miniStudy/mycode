@@ -20,3 +20,121 @@
     {% endfor %}
 </body>
 </html>
+
+
+
+<!-- ================================================================================================= -->
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Announcements</h4></div> 
+  
+
+{% for message in messages %}
+ {{message|safe}}
+{% endfor %}
+<!-- DataTable with Buttons -->
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+                <div class="myheadfont">{{title}} Data</div>   
+                <a href="{% url 'insert_update_announcements' %}?get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}">
+                    <button class="btn btn-primary">
+                        <i class="fa-solid fa-plus me-2"></i> ADD
+                    </button>
+                </a>
+        </div>
+    
+          <br>
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'admin_announcements' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'admin_announcements' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'admin_announcements' %}?get_std={{get_std.std_id}}">ALL</a></li>
+              {% for x in batch_data %}
+              <li><a class="dropdown-item" href="{% url 'admin_announcements' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x.batch_name}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+         
+
+    </div>
+</div>
+
+<form action="{% url 'delete_announcements' %}" method="POST"> 
+  {% csrf_token %}
+
+
+
+    <!-- <div class="card p-4 mt-3">
+      <h5 class="d-flex align-items-center">
+        <input type="checkbox" class="form-check-input me-3" value="{{x.brd_id}}" name="selection" id="item1"/><label for="item1"><a href="{% url 'insert_update_boards' %}?update_id={{x.brd_id}}">Header Option 1</a></label>
+      </h5>
+      <label for="item1">
+          Dessert ice cream donut oat cake jelly-o pie sugar plum cheesecake. Bear claw dragée oat cake dragée ice
+          cream
+          halvah tootsie roll. Danish cake oat cake pie macaroon tart donut gummies. Jelly beans candy canes carrot
+          cake.
+          Fruitcake chocolate chupa chups.
+      </label>
+    </div> -->
+
+    {% for x in data %}
+    <div class="card p-4 mt-3">
+      
+      <h5 class="d-flex align-items-center">
+        <input type="checkbox" class="form-check-input me-3" value="{{x.announce_id}}" name="selection" id="item{{x.announce_id}}"/><label for="item{{x.announce_id}}"><a href="{% url 'insert_update_announcements' %}?pk={{x.announce_id}}">{{x.announce_title}}</a></label>
+      </h5>
+      <label for="item{{x.announce_id}}">
+          {{x.announce_msg}} <br> <small>{{x.announce_date}}</small>
+      </label>
+    </div>
+    {% endfor %}
+
+  
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmdeletemodelLabel"><i class="fa-solid fa-trash me-2"></i> Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this data ..?<br>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+</form>
+
+
+{% endblock %}
+
+
+
+
+
+ 
+
+
+          
