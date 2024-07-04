@@ -769,10 +769,17 @@ def show_attendance(request):
 def show_events(request):
     events = Event.objects.all()
     events_imgs = Event_Image.objects.all()
+    selected_events = Event.objects.all()[:1]
     context = {
         'events':events,
         'events_imgs':events_imgs,
+        'selected_events':selected_events,
     }
+    if request.GET.get('event_id'):
+        event_id = request.GET['event_id']
+        selected_events = Event.objects.filter(event_id = event_id)
+        events_imgs = Event_Image.objects.filter(event__event_id = event_id)
+        context.update({'selected_events':selected_events,'events_imgs':events_imgs})
     return render(request, 'show_events.html',context)
 
 @admin_login_required
