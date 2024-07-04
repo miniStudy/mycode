@@ -203,7 +203,6 @@ class Event(models.Model):
     event_id = models.BigAutoField(primary_key=True)
     event_name = models.CharField(max_length=500)
     event_date = models.DateField()
-    event_img = models.TextField(null=True,blank=True)
     event_desc = models.CharField(max_length=1000, null=True, blank=True)
 
     def __str__(self):
@@ -212,7 +211,16 @@ class Event(models.Model):
     class Meta:
         db_table = 'event'
 
+class Event_Image(models.Model):
+    event_img_id = models.BigAutoField(primary_key=True)
+    event = models.ForeignKey(Event,on_delete=models.CASCADE)
+    event_img = models.ImageField()
 
+    def __str__(self):
+        return f"{self.event_img}"
+    
+    class Meta:
+        db_table = 'event_imgs'
 
 class Chepterwise_test(models.Model):
     class sem_choices(models.TextChoices):

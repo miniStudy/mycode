@@ -774,18 +774,12 @@ def insert_events(request):
         event_images = request.FILES.getlist('event_img')
         print(event_images)
         event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
+        event.save()
 
-        image_paths = []
+        fs = FileSystemStorage(location='media/uploads/events/')
         for image in event_images:
-            fs = FileSystemStorage(location='media/uploads/events/')
             filename = fs.save(image.name, image)
-            image_paths.append(filename)
-
-        event.event_img = ','.join(image_paths)
-        event.save()
-
-        
-        event.save()
+            Event_Image.objects.create(event=event, event_img=filename)
     return render(request, 'insert_update/events_insert_admin.html')
 
 
