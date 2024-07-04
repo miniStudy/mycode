@@ -12,7 +12,7 @@
           {% for data in event_data %}
                 <div class="col-sm-5">
                     <div class="card h-100 d-flex flex-row justify-content-center">
-                        <img src="{{ data.event_img }}" class="card-img-top w-50" alt="{{ data.event_name }}" style="object-fit: cover;">
+                        <img src="{{ data.event_img }}" class="card-img-top w-50" alt="{{ data.event_img }}" style="object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{ data.event_name }}</h5>
                             <p class="card-text">{{ data.event_desc }}</p>
