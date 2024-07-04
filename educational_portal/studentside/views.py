@@ -198,6 +198,7 @@ def show_timetables(request):
 def show_attendence(request):
     student_id = request.session['stud_id']
     student_name = request.session['stud_name']
+    student_std = request.session['stud_std']
 
     attendence_data = Attendance.objects.filter(atten_student__stud_id = student_id)
 
@@ -210,21 +211,18 @@ def show_attendence(request):
         attendence_prec = 0
     
     subject_attendance = []
-    subjects = Subject.objects.all().values('sub_name').distinct()
+    subjects = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
     for subject in subjects:
         subject = subject['sub_name']
         total_days_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = subject).count()
         present_days_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = subject, atten_present=True).count()
         if total_days_subwise > 0:
             attendence_prec_subwise = round((present_days_subwise / total_days_subwise) * 100, 2)
-        else:
-            attendence_prec_subwise = 0
-
-        subject_attendance.append({
+            subject_attendance.append({
             'subject': subject,
             'attendence_prec_subwise': attendence_prec_subwise,
         })
-    
+        
     absent_days = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
     
     return render(request, 'studentpanel/attendence.html', {'student_name':student_name, 'attendence_data':attendence_data, 'attendence_prec':attendence_prec, 'subject_attendance':subject_attendance,'total_days':total_days, 'absent_days':absent_days})

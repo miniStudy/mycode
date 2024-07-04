@@ -41,9 +41,12 @@
     <h3>Subject-Wise Attendance</h3>
     <div class="container">
       {% for subject in subject_attendance %}
+      {% if subject %}
         <p>{{ subject.subject }}</p>
         <p>{{ subject.attendence_prec_subwise }}%</p>
+      {% endif %}
       {% endfor %}
+      
     </div>
     <br>
     <h3>Absent Result Over Total Days</h3>
