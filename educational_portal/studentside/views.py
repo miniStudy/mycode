@@ -227,7 +227,21 @@ def show_attendence(request):
 def show_event(request):
     event_data = Event.objects.all()
     event_imgs = Event_Image.objects.all()
-    return render(request, 'studentpanel/event.html', {'event_data':event_data,'event_imgs':event_imgs})
+    selected_events = Event.objects.all()[:1]
+    context={
+        'event_data':event_data,
+        'event_imgs':event_imgs,
+        'selected_events':selected_events
+    }
+
+    if request.GET.get('event_id'):
+        event_id = request.GET['event_id']
+        selected_events = Event.objects.filter(event_id = event_id)
+        event_imgs = Event_Image.objects.filter(event__event_id = event_id)
+        
+        context.update({'selected_events':selected_events, 'events_img':event_imgs})
+
+    return render(request, 'studentpanel/event.html', context)
 
 @student_login_required
 def show_test(request):
