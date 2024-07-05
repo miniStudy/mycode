@@ -331,3 +331,6 @@ def show_syllabus(request):
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
     chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std)
     return render(request, 'studentpanel/syllabus.html', {'subjects':subjects,'chepters':chepters})
+
+def student_inquiries_data(request):
+    return render(request, 'studentpanel/inquiries.html')

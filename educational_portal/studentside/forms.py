@@ -10,3 +10,8 @@ class update_test_answer(forms.ModelForm):
     class Meta:
         model = Test_submission
         fields = "__all__"
+
+class student_inquiries(forms.ModelForm):
+    class Meta:
+        model = Inquiries
+        fields = "__all__"
