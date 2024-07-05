@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-style layout-navbar-fixed layout-menu-fixed layout-compact " dir="ltr" data-theme="theme-default" data-assets-path="/static/assets/" data-template="vertical-menu-template-dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>{{title}} | miniStudy</title>
+
+    
+    <meta name="description" content="Educational Portal" />
+    <meta name="keywords" content="Educational Portal">
+    {% include 'links.html' %}
+    
+</head>
+
+<body>
+
+
+    <div class="container-xxl">
+        <div class="container-p-y">
+          <div class="authentication-inner py-4">
+      
+            <!-- Register -->
+            <div class="card">
+              <div class="card-body">
+                {% include 'message_show.html' %}
+                <!-- Logo -->
+                <div class="app-brand justify-content-center">
+                  <a href="index.html" class="app-brand-link gap-2">
+                    <img src="/static/imgs/My_dream_logo/4_nobg.png" alt="My Logo" style="width: 48px;" />    
+                    <img src="/static/imgs/My_dream_logo/2nobg.png" style="width: 150px;" />
+                  </a>
+                </div>
+                <!-- /Logo -->
+                
+                <!-- ============form=============== -->
+
+                <h4 class="mb-2 mt-3 text-center">Welcome to {% include 'miniStudy_text.html' %}! 👋</h4>
+                <p class="mb-4 mt-3 text-center">Please Fill this Inquiry Form, Make sure all data are correct. After Submit you will not be able to change it again.</p>
+      
+                <form id="formAuthentication" class="mb-3" action="" method="post">
+                  {% csrf_token %}
+                 <div class="row">
+                 <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="text" class="form-control" id="email" name="email" value="{{c_email}}" placeholder="Enter your email" autofocus>
+                      </div>
+                      
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Std</label>
+                        <select name="" class="form-select" id="">
+                            <option value="">-----</option>
+    
+                            <option value="">10Th Std</option>
+                            <option value="">11Th Std</option>
+                        </select>
+                      </div>
+                 </div> 
+                 <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="text" class="form-control" id="email" name="email" value="{{c_email}}" placeholder="Enter your email" autofocus>
+                      </div>
+                      
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Std</label>
+                        <select name="" class="form-select" id="">
+                            <option value="">-----</option>
+    
+                            <option value="">10Th Std</option>
+                            <option value="">11Th Std</option>
+                        </select>
+                      </div>
+                 </div>
+                </div>
+
+                  
+
+
+                  <div class="mb-3">
+                    <button class="btn btn-primary d-grid d-inline-block" type="submit" name="submitInquiry">Submit</button>
+                  </div>
+                </form> 
+
+                <!-- ==============formEnd ================= -->
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    {% include 'charts.html' %}
+    {% include 'scripts.html' %}
+    
+    
+    
+    </body>
+    </html>
+    
