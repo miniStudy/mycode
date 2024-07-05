@@ -43,4 +43,5 @@ urlpatterns = [
     path('Student_Test_Q/<int:id>/', studentview.show_test_questions, name='Student_Test_Q'),
     path('Student_Syllabus/', studentview.show_syllabus, name='Student_Syllabus'),
     path('Student_Inquiries/', studentview.student_inquiries_data, name='Student_Inquiries'),
+    path('Student_Profile/', studentview.student_profile, name='Student_Profile'),
 ]

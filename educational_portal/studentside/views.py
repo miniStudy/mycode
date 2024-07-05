@@ -334,3 +334,8 @@ def show_syllabus(request):
 
 def student_inquiries_data(request):
     return render(request, 'studentpanel/inquiries.html')
+
+
+
+def student_profile(request):
+    return render(request, 'studentpanel/myprofile.html')
