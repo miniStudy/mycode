@@ -298,8 +298,6 @@ class Test_submission(models.Model):
 
 
 
-
-
 class Inquiries(models.Model):
     class Gender(models.TextChoices):
         MALE = 'Male', 'Male'

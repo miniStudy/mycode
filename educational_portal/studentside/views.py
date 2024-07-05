@@ -333,4 +333,15 @@ def show_syllabus(request):
     return render(request, 'studentpanel/syllabus.html', {'subjects':subjects,'chepters':chepters})
 
 def student_inquiries_data(request):
-    return render(request, 'studentpanel/inquiries.html')
+    standard_data = Std.objects.all()
+    if request.method == 'POST':
+        print(request.POST['inq_name'])
+        form = student_inquiries(request.POST)
+        print(form)
+        if form.is_valid():
+            form.save()
+        else:
+            print("Form is not valid")
+    else:
+        form = student_inquiries()
+    return render(request, 'studentpanel/inquiries.html', {'form':form, 'standard_data':standard_data})
