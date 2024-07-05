@@ -333,6 +333,7 @@ def show_syllabus(request):
     return render(request, 'studentpanel/syllabus.html', {'subjects':subjects,'chepters':chepters})
 
 def student_inquiries_data(request):
+<<<<<<< HEAD
     standard_data = Std.objects.all()
     if request.method == 'POST':
         print(request.POST['inq_name'])
@@ -345,3 +346,11 @@ def student_inquiries_data(request):
     else:
         form = student_inquiries()
     return render(request, 'studentpanel/inquiries.html', {'form':form, 'standard_data':standard_data})
+=======
+    return render(request, 'studentpanel/inquiries.html')
+
+
+
+def student_profile(request):
+    return render(request, 'studentpanel/myprofile.html')
+>>>>>>> 8c0b60bcc5fbfd04f7400c676d7b82532bc0aa57
