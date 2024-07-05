@@ -296,3 +296,36 @@ class Test_submission(models.Model):
     class Meta:
         db_table = 'test_submission'
 
+
+
+
+
+class Inquiries(models.Model):
+    class Gender(models.TextChoices):
+        MALE = 'Male', 'Male'
+        FEMALE = 'Female', 'Female'
+        OTHER = 'Other', 'Other'
+    inq_id = models.BigAutoField(primary_key=True)
+    inq_name = models.CharField(max_length=200)
+    inq_lastname = models.CharField(max_length=200)
+    inq_contact = models.CharField(max_length=20)
+    inq_email = models.CharField(max_length=100)
+    inq_dob = models.DateField()
+    inq_gender = models.CharField(max_length=10,choices=Gender.choices,default=Gender.MALE)
+    inq_guardian_name = models.CharField(max_length=200)
+    inq_guardian_email = models.CharField(max_length=100)
+    inq_guardian_number = models.CharField(max_length=20)
+    inq_guardian_profession = models.CharField(max_length=50)
+    inq_address = models.TextField()
+    inq_std = models.ForeignKey(Std, on_delete = models.CASCADE)
+    inq_subjects = models.CharField(max_length=100)
+    inq_schoolname = models.CharField(max_length=100)
+    inq_last_std_and_marks = models.CharField(max_length=20)
+    inq_howuknow = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.inq_name}"
+    
+    class Meta:
+        db_table = 'inquiries'        
+
