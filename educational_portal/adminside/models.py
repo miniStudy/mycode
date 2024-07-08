@@ -272,9 +272,9 @@ class Test_attempted_users(models.Model):
     tau_stud_id = models.ForeignKey(Students,on_delete=models.CASCADE)
     tau_completion_time = models.TimeField()
     tau_attempted_questions = models.IntegerField()
-    tau_correct_ans = models.IntegerField()
+    tau_correct_ans = models.IntegerField(null=True,blank=True)
     tau_total_marks = models.FloatField()
-    tau_obtained_marks = models.FloatField()
+    tau_obtained_marks = models.FloatField(null=True,blank=True)
 
     def _str_(self):
         return f"{self.tau_test_id} - {self.tau_completion_time}"
