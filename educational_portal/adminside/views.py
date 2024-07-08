@@ -20,6 +20,8 @@ from adminside.decorators import admin_login_required
 
 # -----------------------------auth Start---------------------------
 
+
+
 def mail_send(request):
     # ------------mail sending ---------------
         sub = 'Offer Letter from miniStudy'

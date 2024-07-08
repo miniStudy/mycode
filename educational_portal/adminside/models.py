@@ -325,5 +325,10 @@ class Inquiries(models.Model):
         return f"{self.inq_name}"
     
     class Meta:
-        db_table = 'inquiries'        
+        db_table = 'inquiries'       
+
+
+
+
+
 
