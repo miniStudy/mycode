@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
 import math
+from django.db.models import Sum,Count
 import random
 from django.http import Http404,JsonResponse
 from .forms import *
@@ -317,6 +318,7 @@ def show_test_questions(request, id):
             'next_id':next_id,
             'prev_id':prev_id,
             'get_answer':get_answer,
+            'student_id':student_id
         }
         return render(request, 'studentpanel/testque.html', context)
     else:
@@ -326,8 +328,20 @@ def show_test_questions(request, id):
             'test_question':test_question,
             'test_id':id,
             'no_que':no_que,
+            'student_id':student_id
         }
     return render(request, 'studentpanel/testque.html', context)
+
+def Student_Test_Submission(request):
+    if request.POST.get("test_id"):
+        test_id = request.POST['test_id'] 
+        student_id = request.POST['student_id'] 
+        total_attemped_que = Test_submission.objects.filter(ts_que_id__tq_name__test_id = test_id, ts_stud_id__stud_id = student_id, ts_attempted=1).count()
+        print("----",total_attemped_que)
+        total_test_marks = Chepterwise_test.objects.filter(test_id = test_id).annotate(totaltest_marks = Sum('test_questions_answer__tq_weightage'))
+        print(total_test_marks[0].totaltest_marks)
+    return redirect('Student_Test')
+        
 
 def show_syllabus(request):
     student_std = request.session['stud_std']
