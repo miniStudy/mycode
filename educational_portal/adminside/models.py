@@ -232,7 +232,7 @@ class Chepterwise_test(models.Model):
     test_std =  models.ForeignKey(Std, on_delete=models.CASCADE)
     test_sub = models.ForeignKey(Subject, on_delete=models.CASCADE,null=True,blank=True)
     test_sem = models.CharField(choices=sem_choices, max_length=50)
-    test_time = models.TimeField(null=True,blank=True)
+    test_time = models.CharField(null=True,blank=True,max_length=200)
 
     def _str_(self):
         return f"Name : {self.test_name}  Time : {self.test_time}"
@@ -270,7 +270,7 @@ class Test_attempted_users(models.Model):
     tau_id = models.BigAutoField(primary_key=True)        
     tau_test_id = models.ForeignKey(Chepterwise_test,on_delete=models.CASCADE)
     tau_stud_id = models.ForeignKey(Students,on_delete=models.CASCADE)
-    tau_completion_time = models.TimeField()
+    tau_completion_time = models.CharField(max_length=200)
     tau_attempted_questions = models.IntegerField()
     tau_correct_ans = models.IntegerField(null=True,blank=True)
     tau_total_marks = models.FloatField()
