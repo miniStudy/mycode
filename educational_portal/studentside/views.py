@@ -142,10 +142,13 @@ def student_info_update(request):
         form = update_form(request.POST, instance=student_obj)
         if form.is_valid():
             form.save()
-            return redirect('Student_InfoUpdate')
+            messages.success(request, 'Your information updated successfully')
+            return redirect('Student_Profile')
         else:
             messages.error(request, 'error')
-    return render(request, 'studentpanel/updateinfo.html', {'student_obj':student_obj})
+    else:
+        form = update_form(instance=student_obj)
+    return render(request, 'studentpanel/updateinfo.html', {'form':form, 'student_obj':student_obj})
 
 @student_login_required
 def student_announcement(request):
@@ -286,8 +289,8 @@ def show_test_questions(request, id):
         if all_q_list[index_posi] != all_q_list[-1]:
             next_id = all_q_list[index_posi+1]
         else:
-            next_id = None
-
+            next_id = all_q_list[0]
+        
         if all_q_list[index_posi] != all_q_list[0]:
             prev_id = all_q_list[index_posi-1]
         else:
@@ -298,7 +301,7 @@ def show_test_questions(request, id):
         get_answer = Test_submission.objects.filter(ts_stud_id__stud_id = student_id.stud_id, ts_que_id__tq_id = tq_idd)
         if get_answer.exists():
             get_answer = get_answer[0].ts_ans
-            print(get_answer)
+            # print(get_answer)
         else:
             get_answer = None
         
@@ -335,7 +338,6 @@ def show_syllabus(request):
 def student_inquiries_data(request):
     standard_data = Std.objects.all()
     if request.method == 'POST':
-        print(request.POST['inq_name'])
         form = student_inquiries(request.POST)
         print(form)
         if form.is_valid():
@@ -349,4 +351,6 @@ def student_inquiries_data(request):
 
 
 def student_profile(request):
-    return render(request, 'studentpanel/myprofile.html')
+    student_id = request.session['stud_id']
+    student_profile = Students.objects.filter(stud_id = student_id)
+    return render(request, 'studentpanel/myprofile.html', {'student_profile':student_profile})

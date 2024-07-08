@@ -21,20 +21,23 @@
           <div class="flex-grow-1 mt-3 mt-sm-5">
             <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
               <div class="user-profile-info">
-                <h4>Shivam Sharma</h4>
+                {% for student in student_profile %}
+                <h4>{{student.stud_name}} {{student.stud_lastname}}</h4>
                 <ul class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-2">
                   <li class="list-inline-item fw-medium">
-                    <i class='bx bx-pen'></i> Std 10
+                    <i class='bx bx-pen'></i>Std : {{student.stud_std.std_name}} {{student.stud_std.std_board}}
                   </li>
                   <li class="list-inline-item fw-medium">
-                    <i class='bx bx-map'></i> Batch : Gold
+                    <i class='bx bx-map'></i> Batch : {{student.stud_batch.batch_name}}
                   </li>
                   <li class="list-inline-item fw-medium">
-                    <i class='bx bx-calendar-alt'></i> Package : ALL
+                    <i class='bx bx-calendar-alt'></i> Package : {{student.stud_pack.pack_name}}
                   </li>
                 </ul>
+                {% endfor %}
               </div>
-              <a href="javascript:void(0)" class="btn btn-primary text-nowrap">
+              
+              <a href="{% url 'Student_InfoUpdate' %}" class="btn btn-primary text-nowrap">
                 <i class='bx bx-user-check me-1'></i>Update Information
               </a>
             </div>
@@ -53,13 +56,17 @@
       <div class="card mb-4">
         <div class="card-body">
           <p class="card-text text-uppercase">About</p>
+          {% for student in student_profile %}
           <ul class="list-unstyled mb-4">
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Full Name:</span> <span>John Doe</span></li>
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Status:</span> <span>Active</span></li>
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Role:</span> <span>Developer</span></li>
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Country:</span> <span>USA</span></li>
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Languages:</span> <span>English</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Full Name:</span> <span>{{student.stud_name}} {{student.stud_lastname}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Username:</span> <span>{{student.stud_username}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Contact:</span> <span>{{student.stud_contact}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Email:</span> <span>{{student.stud_email}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">DOB:</span> <span>{{student.stud_dob}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Gender:</span> <span>{{student.stud_gender}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Address:</span> <span>{{student.stud_address}}</span></li>
           </ul>
+          {% endfor %}
         </div>
       </div>
       <!--/ About User -->

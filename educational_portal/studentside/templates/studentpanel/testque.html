@@ -15,7 +15,9 @@
             
             <div class="row"> 
                 <div class="fw-bold text-center">{{no_que}}</div>  
-                <div class="col-md-9 p-4">
+                <div class="col-md-9">
+                    <div class="card ms-4" style="height: 500px; border: 1px solid black;">
+                        <div class="card-body">
                     {% for tq in test_question %}
                     {{tq.tq_question|safe}}
                     {% if tq.tq_q_type == 'MCQ' %}
@@ -52,12 +54,18 @@
                             
                         <input class="btn btn-primary" type="submit" value="Next" />
                     {% endif %}
-    
-                </div>          
+                    </div>
+                </div>
+                </div> 
+                         
                     <div class="col-md-3">
-                        {% for test_que in test_questions_all %}
-                        <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}" class="btn btn-warning text-white {% if test_que.ts_attempted == True %}bg-success{% else %}btn-danger{% endif %} {% for tq in test_question %}{% if tq.tq_id == test_que.tq_id %}bg-dark{% endif %} {% endfor %}">{{ forloop.counter }}</a>
-                        {% endfor %}
+                        <div class="card me-4" style="height: 500px; border: 1px solid black;">
+                            <div class="card-body">
+                            {% for test_que in test_questions_all %}
+                            <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}" class="btn btn-warning text-white {% if test_que.ts_attempted == True %}bg-success{% else %}btn-danger{% endif %} {% for tq in test_question %}{% if tq.tq_id == test_que.tq_id %}bg-dark{% endif %} {% endfor %}">{{ forloop.counter }}</a>
+                            {% endfor %}
+                        </div>
+                        </div>
                     </div> 
             </div>
         </form>
