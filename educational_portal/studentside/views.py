@@ -180,12 +180,14 @@ def show_materials(request):
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
     materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std)
-
+    selected_sub=None
+    print(materials)
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = id)
+        materials = materials.filter(cm_chepter__chep_sub__sub_id = id)
+        selected_sub = Subject.objects.get(sub_id=id)
 
-    return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects})
+    return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects,'selected_sub':selected_sub})
 
 @student_login_required
 def show_timetables(request):
