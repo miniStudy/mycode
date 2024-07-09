@@ -887,3 +887,11 @@ def insert_update_test_questions(request):
         return render(request, 'insert_update/add_test_questions.html',context)
     else:
         return redirect('admin_tests') 
+    
+
+
+def show_packages(request):
+    data = Packs.objects.prefetch_related('pack_subjects').all()
+    context={'data':data}
+    return render(request, 'show_packages.html',context)
+

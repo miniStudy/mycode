@@ -84,5 +84,10 @@ urlpatterns = [
     path('show_events/', adminview.show_events, name='show_events'),
 
 
+    # =========================================packages ================================================
+
+    path('admin_packages', adminview.show_packages, name="admin_packages"),
+
+
 ]
 
