@@ -187,15 +187,10 @@ def show_materials(request):
     print(materials)
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']
-<<<<<<< HEAD
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = id)
-    return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects})
-=======
         materials = materials.filter(cm_chepter__chep_sub__sub_id = id)
         selected_sub = Subject.objects.get(sub_id=id)
 
     return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects,'selected_sub':selected_sub})
->>>>>>> e69c935faa0ec55fe493433f872dcfbd25e014aa
 
 
 @student_login_required
