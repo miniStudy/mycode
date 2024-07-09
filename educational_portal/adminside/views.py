@@ -888,7 +888,7 @@ def insert_update_test_questions(request):
     else:
         return redirect('admin_tests') 
     
-<<<<<<< HEAD
+
 
 
 def show_packages(request):
@@ -896,7 +896,7 @@ def show_packages(request):
     context={'data':data}
     return render(request, 'show_packages.html',context)
 
-=======
+
 def show_students(request):
     title = "Students"
     students_data = Students.objects.all()
@@ -916,4 +916,4 @@ def show_inquiries(request):
         "inquiries_data":inquiries_data
     }
     return render(request, 'show_inquiries.html', context)
->>>>>>> f0f5fb2ab7a7b81344f40ad98299431efab47e97
+
