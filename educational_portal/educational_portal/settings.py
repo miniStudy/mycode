@@ -164,3 +164,9 @@ CKEDITOR_CONFIGS = {
         'imageUploadUrl': '/ckeditor/upload/',
     },
 }
+
+
+TIME_ZONE = 'Asia/Kolkata'
+
+# Enable timezone support
+USE_TZ = True
