@@ -83,11 +83,17 @@ urlpatterns = [
     path('insert_update_test_question_admin/', adminview.insert_update_test_questions, name='insert_update_test_question_admin'),
     path('show_events/', adminview.show_events, name='show_events'),
 
+    # ========================== Students and Faculty Data show ====================================================
 
+<<<<<<< HEAD
     # =========================================packages ================================================
 
     path('admin_packages', adminview.show_packages, name="admin_packages"),
 
 
+=======
+    path('students_dataAdmin/', adminview.show_students, name='students_dataAdmin'),
+    path('inquiry_data/', adminview.show_inquiries, name='inquiry_data'),
+>>>>>>> f0f5fb2ab7a7b81344f40ad98299431efab47e97
 ]
 
