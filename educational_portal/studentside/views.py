@@ -135,6 +135,7 @@ def student_logout(request):
         pass
     return redirect("Student_Login")
 
+
 @student_login_required
 def student_info_update(request):
     student_id = request.session['stud_id']
@@ -159,8 +160,8 @@ def student_announcement(request):
     Q(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))
 ).order_by('-pk')[:50]
 
-   
     return render(request, 'studentpanel/announcements.html', {"announcements_data":announcements_data})
+
 
 @student_login_required
 def show_subjects(request):
@@ -168,12 +169,14 @@ def show_subjects(request):
     subjects = Subject.objects.filter(sub_std__std_id = stud_standard)
     return render(request, 'studentpanel/subjects.html', {'subjects':subjects})
 
+
 @student_login_required
 def show_chepters(request):
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']  
         chepters = Chepter.objects.filter(chep_sub__sub_id = id)
     return render(request, 'studentpanel/chepters.html', {'chepters':chepters})
+
 
 @student_login_required
 def show_materials(request):
@@ -184,8 +187,8 @@ def show_materials(request):
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']
         materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = id)
-
     return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects})
+
 
 @student_login_required
 def show_timetables(request):
@@ -297,7 +300,7 @@ def show_test_questions(request, id):
         else:
             prev_id = None
 
-    #   <===============================Check-Answers================================================>
+    #<===============================Check-Answers================================================>
         tq_idd = test_question[0].tq_id
         get_answer = Test_submission.objects.filter(ts_stud_id__stud_id = student_id.stud_id, ts_que_id__tq_id = tq_idd)
         if get_answer.exists():
@@ -306,7 +309,7 @@ def show_test_questions(request, id):
         else:
             get_answer = None
         
-        # <======================================================Clear Selection Logic=========================================>
+    # <=======================================Clear Selection Logic==============================>
         if request.GET.get('clear_id'):
             clear_id = request.GET['clear_id']
             Test_submission.objects.get(ts_stud_id__stud_id = student_id.stud_id, ts_que_id__tq_id = clear_id).delete()
