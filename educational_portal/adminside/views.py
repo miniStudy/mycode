@@ -883,11 +883,28 @@ def insert_update_test_questions(request):
         'que_type': Test_questions_answer.que_type,
 
     }
+    if request.method == 'POST':
+        form = TestQuestionsAnswerForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('success_url')  # Replace 'success_url' with your actual success URL
+    else:
+        form = TestQuestionsAnswerForm()
+        context.update({'form':form})
     if request.GET.get('test_id'):
         return render(request, 'insert_update/add_test_questions.html',context)
     else:
         return redirect('admin_tests') 
     
+
+
+
+def show_packages(request):
+    data = Packs.objects.prefetch_related('pack_subjects').all()
+    context={'data':data}
+    return render(request, 'show_packages.html',context)
+
+
 def show_students(request):
     title = "Students"
     students_data = Students.objects.all()
@@ -907,3 +924,4 @@ def show_inquiries(request):
         "inquiries_data":inquiries_data
     }
     return render(request, 'show_inquiries.html', context)
+

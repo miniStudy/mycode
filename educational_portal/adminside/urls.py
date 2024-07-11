@@ -84,8 +84,12 @@ urlpatterns = [
     path('show_events/', adminview.show_events, name='show_events'),
 
     # ========================== Students and Faculty Data show ====================================================
-
     path('students_dataAdmin/', adminview.show_students, name='students_dataAdmin'),
     path('inquiry_data/', adminview.show_inquiries, name='inquiry_data'),
+    # =========================================packages ================================================
+    path('admin_packages', adminview.show_packages, name="admin_packages"),
+
+    
+
 ]
 
