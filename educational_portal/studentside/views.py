@@ -192,7 +192,6 @@ def show_materials(request):
 
     return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects,'selected_sub':selected_sub})
 
-
 @student_login_required
 def show_timetables(request):
     student_batch = request.session['stud_batch']
@@ -367,7 +366,6 @@ def student_inquiries_data(request):
     else:
         form = student_inquiries()
     return render(request, 'studentpanel/inquiries.html', {'form':form, 'standard_data':standard_data})
-
 
 
 def student_profile(request):
