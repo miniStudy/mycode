@@ -1,6 +1,6 @@
 from django.db import models
-from ckeditor.fields import RichTextField
-from ckeditor_uploader.fields import RichTextUploadingField
+from django_summernote.fields import SummernoteTextField
+
 
 class AdminData(models.Model):
     admin_id = models.BigAutoField(primary_key=True)
@@ -250,8 +250,8 @@ class Test_questions_answer(models.Model):
     tq_name = models.ForeignKey(Chepterwise_test,on_delete=models.CASCADE)
     tq_chepter = models.ForeignKey(Chepter,on_delete=models.CASCADE)
     tq_q_type = models.CharField(choices=que_type.choices,max_length=50)
-    tq_question = RichTextUploadingField(blank=True,null=True)
-    tq_answer = RichTextUploadingField(blank=True,null=True)
+    tq_question = models.TextField(blank=True,null=True)
+    tq_answer = models.TextField(blank=True,null=True)
     tq_weightage = models.IntegerField()
     tq_hint = models.TextField(blank=True,null=True)
     tq_optiona = models.CharField(max_length=200,blank=True,null=True)
@@ -260,7 +260,7 @@ class Test_questions_answer(models.Model):
     tq_optiond = models.CharField(max_length=200,blank=True,null=True)
 
     def _str_(self):
-        return f"{self.tq_question} - {self.tq_q_type} - {self.tq_name}"
+        return f"{self.tq_q_type} - {self.tq_name}"
     
     class Meta:
         db_table = 'test_questions_answer'

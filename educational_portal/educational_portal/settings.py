@@ -38,8 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'adminside',
     'studentside',
-    'ckeditor',
-    'ckeditor_uploader',
+    'django_summernote',
 
 ]
 
@@ -128,7 +127,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / 'media'
-CKEDITOR_UPLOAD_PATH = 'uploads/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -153,20 +152,9 @@ EMAIL_HOST_PASSWORD = '71554913@TmP'  # Replace with your Hostinger email passwo
 
 
 
-CKEDITOR_RESTRICT_BY_USER = True
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'width': '100%',
-        'extraPlugins': 'uploadimage,image2',
-        'filebrowserBrowseUrl': '/ckeditor/browse/',
-        'filebrowserUploadUrl': '/ckeditor/upload/',
-        'imageUploadUrl': '/ckeditor/upload/',
-    },
-}
-
-
 TIME_ZONE = 'Asia/Kolkata'
 
 # Enable timezone support
 USE_TZ = True
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'

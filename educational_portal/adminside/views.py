@@ -883,6 +883,14 @@ def insert_update_test_questions(request):
         'que_type': Test_questions_answer.que_type,
 
     }
+    if request.method == 'POST':
+        form = TestQuestionsAnswerForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('success_url')  # Replace 'success_url' with your actual success URL
+    else:
+        form = TestQuestionsAnswerForm()
+        context.update({'form':form})
     if request.GET.get('test_id'):
         return render(request, 'insert_update/add_test_questions.html',context)
     else:

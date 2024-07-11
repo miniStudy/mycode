@@ -1,11 +1,9 @@
 {% extends 'master.html' %}
  
 {% block contentsection %}
-<script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
-<script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>
-<style>
-    .cke_notification {display: none;}
-</style>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4-dark.css" rel="stylesheet">
+
 <div class="mb-4"><h4>Test Questions</h4></div> 
    
 <div class="errors">
@@ -28,7 +26,7 @@
         <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %}Update Record{% else %}New Record{% endif %}</h5>
     </div>
     <div class="card-body">
-        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_subjects' %}{% if update_data %}?pk={{update_data.sub_id}}{% endif %}">
+        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_subjects' %}{% if update_data %}?pk={{update_data.sub_id}}{% endif %}" enctype="multipart/form-data">
             {% csrf_token %}
 
             <input type="hidden" name="tq_name" value="{{test_id}}" />
@@ -56,14 +54,14 @@
             <div class="col-sm-12">
                 <label class="form-label mb-2">Question</label>
                 <div class="input-group input-group-merge">
-                    <textarea class="form-control ckeditor" id="tq_question" name="tq_question"></textarea>
+                    {{ form.tq_question }}                
                 </div>
             </div>  
 
             <div class="col-sm-12">
                 <label class="form-label mb-2">Answer</label>
                 <div class="input-group input-group-merge">
-                    <textarea class="form-control ckeditor" id="tq_answer" name="tq_answer"></textarea>
+                    {{ form.tq_answer }} 
                 </div>
             </div>  
 
@@ -77,7 +75,7 @@
             <div class="col-sm-12">
                 <label class="form-label mb-2">Hint</label>
                 <div class="input-group input-group-merge">
-                    <textarea class="form-control" id="tq_hint" name="tq_hint"></textarea>
+                    <textarea class="form-control summernote" id="tq_hint" name="tq_hint"></textarea>
                 </div>
             </div>
 
@@ -102,15 +100,12 @@
                 </div>
             </div>
 
-
             <div class="col-sm-12">
                 <label class="form-label mb-2">Option D</label>
                 <div class="input-group input-group-merge">
                     <input type="text" class="form-control" name="tq_optiond"/>
                 </div>
             </div>
-
-            
 
             <div class="col-sm-12">
                 <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
@@ -119,52 +114,37 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    CKEDITOR.replace('tq_question', {
-        skin: 'moono-lisa',  // match the admin panel
-        toolbar: [
-        { name: 'styles', items: ['Styles'] },
-        { name: 'format', items: ['Format'] },
-        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
-        { name: 'undo', items: ['Undo', 'Redo'] },
-        { name: 'links', items: ['Link', 'Unlink'] },
-        { name: 'insert', items: ['Image', 'Table'] },
-        { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
-        { name: 'colors', items: ['TextColor', 'BGColor'] },
-        { name: 'tools', items: ['Maximize'] },
-        { name: 'special', items: ['SpecialChar'] },
-        { name: 'source', items: ['Source'] }
-    ],
-        width: '100%',
-        height:'400px',
-        filebrowserBrowseUrl: '/ckeditor/browse/',
-        filebrowserUploadUrl: '/ckeditor/upload/',
-        imageUploadUrl: '/ckeditor/upload/',
-        extraPlugins: 'uploadimage,image2',
-    });
 
-    CKEDITOR.replace('tq_answer', {
-        skin: 'moono-lisa',  // match the admin panel
-        toolbar: [
-        { name: 'styles', items: ['Styles'] },
-        { name: 'format', items: ['Format'] },
-        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
-        { name: 'undo', items: ['Undo', 'Redo'] },
-        { name: 'links', items: ['Link', 'Unlink'] },
-        { name: 'insert', items: ['Image', 'Table'] },
-        { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
-        { name: 'colors', items: ['TextColor', 'BGColor'] },
-        { name: 'tools', items: ['Maximize'] },
-        { name: 'special', items: ['SpecialChar'] },
-        { name: 'source', items: ['Source'] }
-    ],
-        width: '100%',
-        height:'400px',
-        filebrowserBrowseUrl: '/ckeditor/browse/',
-        filebrowserUploadUrl: '/ckeditor/upload/',
-        imageUploadUrl: '/ckeditor/upload/',
-        extraPlugins: 'uploadimage,image2',
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.summernote').summernote({
+            height: 300, // Set height of editor
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview']],
+            ],
+            callbacks: {
+                onImageUpload: function(files) {
+                    // Handle image upload here
+                    console.log('Files:', files);
+                }
+            },
+            codemirror: {
+                theme: 'bs4-dark'
+            }
+
+        });
     });
 </script>
+
+
 
 {% endblock %}
