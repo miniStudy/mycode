@@ -329,6 +329,37 @@ class Inquiries(models.Model):
 
 
 
+class Doubt_section(models.Model):
+    doubt_id = models.BigAutoField(primary_key=True)
+    doubt_stud_id = models.ForeignKey(Students, on_delete = models.CASCADE)
+    doubt_doubt = models.TextField()
+    doubt_subject = models.ForeignKey(Subject,on_delete=models.CASCADE)
+    doubt_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.doubt_stud_id.stud_name}"
+    
+    class Meta:
+        db_table = 'Doubt_section'
+
+
+class Doubt_solution(models.Model):
+    solution_id = models.BigAutoField(primary_key=True)
+    solution_stud_id = models.ForeignKey(Students, on_delete = models.CASCADE)
+    solution_doubt_id = models.ForeignKey(Doubt_section,on_delete=models.CASCADE)
+    solution = models.TextField()
+    solution_verified = models.BooleanField(default=0)
+    solution_verified_by_teacher = models.ForeignKey(Faculties,on_delete=models.CASCADE,null=True,blank=True)
+    solution_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.solution_stud_id.stud_name}"
+    
+    class Meta:
+        db_table = 'Doubt_solution'
+
+
+
 
 
 
