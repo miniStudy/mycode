@@ -1,6 +1,6 @@
 from django import forms  
 from adminside.models import *  
-from django_summernote.widgets import SummernoteWidget
+from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
 
 class brd_form(forms.ModelForm):  
@@ -50,10 +50,9 @@ class event_form(forms.ModelForm):
 
 
 class TestQuestionsAnswerForm(forms.ModelForm):
+    tq_question = forms.CharField(widget=SummernoteWidget())
+    tq_answer = forms.CharField(widget=SummernoteWidget())
     class Meta:
         model = Test_questions_answer
         fields = "__all__"
-        widgets = {
-            'tq_question': SummernoteWidget(),
-            'tq_answer': SummernoteWidget(),
-        }        
+        
