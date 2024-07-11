@@ -876,27 +876,32 @@ def show_test_questions_admin(request):
 
 
 
+
 def insert_update_test_questions(request):
     chep_data = Chepter.objects.all()
     context = {
-        'chep_data':chep_data,
+        'chep_data': chep_data,
         'que_type': Test_questions_answer.que_type,
-
     }
+
+    if request.GET.get('test_id'):
+        test_id = request.GET['test_id']
+        print(test_id)
+        context.update({'test_id': test_id})
+
     if request.method == 'POST':
         form = TestQuestionsAnswerForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('success_url')  # Replace 'success_url' with your actual success URL
+        else:
+            context.update({'form': form,'errors':form.errors})
+            return render(request, 'insert_update/add_test_questions.html', context)
     else:
         form = TestQuestionsAnswerForm()
-        context.update({'form':form})
-    if request.GET.get('test_id'):
-        return render(request, 'insert_update/add_test_questions.html',context)
-    else:
-        return redirect('admin_tests') 
+        context.update({'form': form})
+        return render(request, 'insert_update/add_test_questions.html', context)
     
-
 
 
 def show_packages(request):
