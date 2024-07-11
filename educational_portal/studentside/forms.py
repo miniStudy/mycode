@@ -15,3 +15,10 @@ class student_inquiries(forms.ModelForm):
     class Meta:
         model = Inquiries
         fields = "__all__"
+
+
+
+class solution_form(forms.ModelForm):
+    class Meta:
+        model = Doubt_solution
+        fields = "__all__"        

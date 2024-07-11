@@ -45,4 +45,6 @@ urlpatterns = [
     path('Student_Inquiries/', studentview.student_inquiries_data, name='Student_Inquiries'),
     path('Student_Profile/', studentview.student_profile, name='Student_Profile'),
     path('Student_Test_Submission/', studentview.Student_Test_Submission, name='Student_Test_Submission'),
+    path('Student_Doubt/', studentview.Student_doubt_section, name='Student_Doubt'),
+    path('Student_Doubt_Solution/', studentview.Student_doubt_solution_section, name='Student_Doubt_Solution'),
 ]

@@ -372,3 +372,28 @@ def student_profile(request):
     student_id = request.session['stud_id']
     student_profile = Students.objects.filter(stud_id = student_id)
     return render(request, 'studentpanel/myprofile.html', {'student_profile':student_profile})
+
+def Student_doubt_section(request):
+    student_id = request.session['stud_id']
+    doubt_data = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id)
+
+    context = {
+        'doubt_data':doubt_data,
+    }
+    return render(request, 'studentpanel/doubt.html', context)
+
+def Student_doubt_solution_section(request):
+    student_id = request.session['stud_id']
+    if request.GET.get('doubt_id'):
+        doubt_id = request.GET.get('doubt_id')
+        doubt_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
+
+    if request.method == 'POST':
+        solu = request.POST.get('solution')
+        Doubt_solution(solution=solu, solution_doubt_id=doubt_id, solution_stud_id=student_id).save()
+    
+    context = {
+        'doubt_solution':doubt_solution
+    }
+
+    return render(request, 'studentpanel/solution.html', context)

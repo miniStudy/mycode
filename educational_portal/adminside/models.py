@@ -351,7 +351,7 @@ class Doubt_solution(models.Model):
     solution_verified = models.BooleanField(default=0)
     solution_verified_by_teacher = models.ForeignKey(Faculties,on_delete=models.CASCADE,null=True,blank=True)
     solution_date = models.DateTimeField(auto_now_add=True)
-
+    
     def __str__(self):
         return f"{self.solution_stud_id.stud_name}"
     

@@ -34,9 +34,6 @@ class faculty_form(forms.ModelForm):
 
 
 
-
-
-
 class timetable_form(forms.ModelForm):  
     class Meta:  
         model = Timetable  
@@ -56,4 +53,4 @@ class TestQuestionsAnswerForm(forms.ModelForm):
         widgets = {
             'tq_question': SummernoteWidget(),
             'tq_answer': SummernoteWidget(),
-        }        
+        }    

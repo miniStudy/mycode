@@ -5,6 +5,8 @@ from django_summernote.admin import SummernoteModelAdmin
 class Test_questions_answer_admin(SummernoteModelAdmin):
     summernote_fields = ('tq_question','tq_answer')
 
+class Doubt_section_admin(SummernoteModelAdmin):
+    summernote_fields = ('doubt_doubt')
 
 # Register your models here.
 admin.site.register(Boards)
@@ -27,3 +29,5 @@ admin.site.register(Test_attempted_users)
 admin.site.register(Test_submission)
 admin.site.register(Event_Image)
 admin.site.register(Inquiries)
+admin.site.register(Doubt_section, Doubt_section_admin)
+admin.site.register(Doubt_solution)
