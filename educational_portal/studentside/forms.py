@@ -23,7 +23,7 @@ class student_inquiries(forms.ModelForm):
 
 
 class doubts_form(forms.ModelForm):
-    doubt_doubt = forms.CharField(widget=SummernoteWidget(),initial='My Doubt is ...')
+    doubt_doubt = forms.CharField(widget=SummernoteWidget())
     class Meta:
         model = Doubt_section
         fields = "__all__"    
@@ -31,7 +31,7 @@ class doubts_form(forms.ModelForm):
 
 
 class solution_form(forms.ModelForm):
-    solution = forms.CharField(widget=SummernoteWidget(),initial='My Solution is ...')
+    solution = forms.CharField(widget=SummernoteWidget())
     class Meta:
         model = Doubt_solution
         fields = "__all__"        

@@ -1,10 +1,35 @@
-{% for doubt_que in doubts_solution|slice:":1" %}
-{{doubt_que.solution_doubt_id.doubt_doubt|safe}}
-{% endfor %}
+{% extends 'studentpanel/master.html' %}
 
-
-{% for doubt in doubts_solution %} 
-<div>
-    {{doubt.solution|safe}}
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Doubt Solution</h4>
 </div>
+
+{% for message in messages %}
+{{message|safe}}
 {% endfor %}
+<!-- DataTable with Buttons -->
+
+<div class="row">
+    {% for doubt_que in doubts_solution|slice:":1" %}
+    <div class="col-md-12">
+        Q. {{doubt_que.solution_doubt_id.doubt_doubt|safe}}     
+    </div>
+    {% endfor %}
+    <br><br>
+    <hr>
+    {% for doubt in doubts_solution %}
+    <div class="col-md-12">
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="mb-2">{% if doubt.solution_verified == 1 %}<img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 18px;">{% endif %}Ans {{ forloop.counter }} <br></div>
+                <div style="display:block; overflow: hidden;">{{doubt.solution|safe}}</div>
+                <hr>
+                <span>Solution By: {{doubt.solution_stud_id.stud_name}} {{doubt.solution_stud_id.stud_lastname}}</span>
+        </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
