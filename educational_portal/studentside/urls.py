@@ -49,4 +49,5 @@ urlpatterns = [
     path('Student_add_doubts/', studentview.Student_add_doubts, name='Student_add_doubts'),
     path('Student_Doubt_Solution/', studentview.Student_doubt_solution_section, name='Student_Doubt_Solution'),
     path('Student_Show_Solution/', studentview.Student_show_solution_section, name='Student_Show_Solution'),
+    path('Student_Edit_Solution/<int:id>/', studentview.Student_edit_solution, name='Student_Edit_Solution'),
 ]

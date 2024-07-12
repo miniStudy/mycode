@@ -422,7 +422,6 @@ def Student_doubt_solution_section(request):
         form = solution_form(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('Student_Doubt')
         else:
             print('hello wolrd')  
     form = solution_form()   
@@ -431,9 +430,21 @@ def Student_doubt_solution_section(request):
     return render(request, 'studentpanel/solution.html', context)
 
 def Student_show_solution_section(request):
-    student_id = request.session['stud_id']
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
         doubts_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
-        return render(request, 'studentpanel/show_solution.html', {'doubts_solution':doubts_solution,'student_id':student_id})
-    return redirect('Student_Doubt')
+        return render(request, 'studentpanel/show_solution.html', {'doubts_solution':doubts_solution}) 
+    else:
+        return render(request, 'studentpanel/show_solution.html') 
+
+def Student_edit_solution(request,id):
+    solution_id = Doubt_solution.objects.get(solution_id=id)
+    if request.POST.get('solution'):
+        form = solution_form(request.POST, instance=solution_id)
+        print(form)
+        if form.is_valid():
+            form.save()
+            return redirect('Student_Doubt')
+    else:
+        form = solution_form(instance=solution_id)
+    return render(request, 'studentpanel/edit_solution.html',{'form':form, 'solution_id':solution_id, 'sol_id':id})

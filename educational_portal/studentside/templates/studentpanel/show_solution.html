@@ -25,7 +25,9 @@
                 <div class="mb-2">{% if doubt.solution_verified == 1 %}<img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 18px;">{% endif %}Ans {{ forloop.counter }} <br></div>
                 <div style="display:block; overflow: hidden;">{{doubt.solution|safe}}</div>
                 <hr>
-                <span>Solution By: {{doubt.solution_stud_id.stud_name}} {{doubt.solution_stud_id.stud_lastname}}</span>
+                <span>Solution By: {{doubt.solution_stud_id.stud_name}} {{doubt.solution_stud_id.stud_lastname}}</span> <br>
+                <a href="{% url 'Student_Edit_Solution' id=doubt.solution_id %}" class="btn btn-warning my-2">
+                Edit</a>
         </div>
         </div>
     </div>
