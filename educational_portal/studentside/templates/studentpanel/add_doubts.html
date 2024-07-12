@@ -9,12 +9,20 @@
   <body>
     
     <div class="container d-flex justify-content-center">
-        <form action="{% url 'Student_Doubt_Solution' %}" method="post">
+        <form action="{% url 'Student_add_doubts' %}" method="post">
             {% csrf_token %}
-            <input type="hidden" name="solution_doubt_id" value={{doubt_id}}>
-            <input type="hidden" name="solution_stud_id" value={{student_id}}>
-              <label for="exampleInputEmail1" class="form-label fw-medium fst-italic my-3"><h5>WRITE YOUR SOLUTION HERE</h5></label>
-              {{ form.solution }}
+            <input type="hidden" name="doubt_stud_id" value={{student_id}} />
+              <label class="form-label fw-medium my-3"><h5>Subjects</h5></label>
+     
+              <select name="doubt_subject" required>
+                <option value="">--</option>
+                {% for x in subjects %}
+                <option value="{{x.sub_id}}">{{x.sub_name}}</option>
+                {% endfor %}
+              </select>  
+              <label for="exampleInputEmail1" class="form-label fw-medium fst-italic my-3"><h5>WRITE YOUR Doubts HERE</h5></label>
+              {{ form.doubt_doubt }}
+
             <button type="submit" class="btn btn-primary my-3">Submit Answer</button>
           </form>
     </div>

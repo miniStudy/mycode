@@ -46,5 +46,7 @@ urlpatterns = [
     path('Student_Profile/', studentview.student_profile, name='Student_Profile'),
     path('Student_Test_Submission/', studentview.Student_Test_Submission, name='Student_Test_Submission'),
     path('Student_Doubt/', studentview.Student_doubt_section, name='Student_Doubt'),
+    path('Student_add_doubts/', studentview.Student_add_doubts, name='Student_add_doubts'),
     path('Student_Doubt_Solution/', studentview.Student_doubt_solution_section, name='Student_Doubt_Solution'),
+    path('Student_Show_Solution/', studentview.Student_show_solution_section, name='Student_Show_Solution'),
 ]

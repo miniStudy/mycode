@@ -8,6 +8,9 @@ class Test_questions_answer_admin(SummernoteModelAdmin):
 class Doubt_section_admin(SummernoteModelAdmin):
     summernote_fields = ('doubt_doubt')
 
+class Doubt_solution_admin(SummernoteModelAdmin):
+    summernote_fields = ('solution')
+
 # Register your models here.
 admin.site.register(Boards)
 admin.site.register(AdminData)
@@ -30,4 +33,4 @@ admin.site.register(Test_submission)
 admin.site.register(Event_Image)
 admin.site.register(Inquiries)
 admin.site.register(Doubt_section, Doubt_section_admin)
-admin.site.register(Doubt_solution)
+admin.site.register(Doubt_solution,Doubt_solution_admin)

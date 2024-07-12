@@ -382,18 +382,51 @@ def Student_doubt_section(request):
     }
     return render(request, 'studentpanel/doubt.html', context)
 
+
+
+def Student_add_doubts(request):
+    student_id = request.session['stud_id']
+    std_id = request.session['stud_std']
+    subjects = Subject.objects.filter(sub_std__std_id = std_id)
+
+    context = {'student_id':student_id,'subjects':subjects}
+
+
+    if request.method == 'POST':
+        form = doubts_form(request.POST)
+        print(form)
+        if form.is_valid():
+            form.save()
+        else:
+            print('hello wolrd')  
+    form = doubts_form()   
+    context.update({'form':form}) 
+
+    return render(request, 'studentpanel/add_doubts.html', context)
+
+
 def Student_doubt_solution_section(request):
     student_id = request.session['stud_id']
+    context = {'student_id':student_id}
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
         doubt_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
-
+        context.update({'doubt_solution':doubt_solution,'doubt_id':doubt_id})
+  
     if request.method == 'POST':
-        solu = request.POST.get('solution')
-        Doubt_solution(solution=solu, solution_doubt_id=doubt_id, solution_stud_id=student_id).save()
-    
-    context = {
-        'doubt_solution':doubt_solution
-    }
+        form = solution_form(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            print('hello wolrd')  
+    form = solution_form()   
+    context.update({'form':form}) 
 
     return render(request, 'studentpanel/solution.html', context)
+
+def Student_show_solution_section(request):
+    if request.GET.get('doubt_id'):
+        doubt_id = request.GET.get('doubt_id')
+        doubts_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
+        return render(request, 'studentpanel/show_solution.html', {'doubts_solution':doubts_solution})
+    

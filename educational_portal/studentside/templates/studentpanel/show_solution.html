@@ -1,0 +1,10 @@
+{% for doubt_que in doubts_solution|slice:":1" %}
+{{doubt_que.solution_doubt_id.doubt_doubt|safe}}
+{% endfor %}
+
+
+{% for doubt in doubts_solution %} 
+<div>
+    {{doubt.solution|safe}}
+</div>
+{% endfor %}

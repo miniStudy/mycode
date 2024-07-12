@@ -52,11 +52,3 @@ class TestQuestionsAnswerForm(forms.ModelForm):
     class Meta:
         model = Test_questions_answer
         fields = "__all__"
-<<<<<<< HEAD
-        widgets = {
-            'tq_question': SummernoteWidget(),
-            'tq_answer': SummernoteWidget(),
-        }    
-=======
-        
->>>>>>> 0ae5a70b173f441bb61191069065525b53175359

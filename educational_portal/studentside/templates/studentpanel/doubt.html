@@ -10,17 +10,17 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <a href="" class="btn btn-primary my-5">Add Doubt</a>
+                <a href="{% url 'Student_add_doubts' %}" class="btn btn-primary my-5">Add Doubt</a>
             </div>
             <div class="col-md-4">
                 <h2 class="text-center">DOUBT SECTION</h2>
                 {% for data in doubt_data %}
                 <div class="card my-4">
                     <div class="card-body">
-                       <p class="fw-medium">{{data.doubt_doubt}}</p>
+                       <p class="fw-medium">{{data.doubt_doubt|safe}}</p>
                        <span class="fst-italic">Date: {{data.doubt_date}}</span> <br>
                        <a href="{% url 'Student_Doubt_Solution' %}?doubt_id={{data.doubt_id}}" class="btn btn-warning my-2">Add Solution</a>
-                       <a href="" class="btn btn-warning my-2">View Solution</a>
+                       <a href="{% url 'Student_Show_Solution' %}?doubt_id={{data.doubt_id}}" class="btn btn-warning my-2">View Solution</a>
                     </div>
                 </div>
                 {% endfor %}
