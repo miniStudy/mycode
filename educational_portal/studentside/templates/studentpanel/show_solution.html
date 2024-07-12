@@ -13,14 +13,14 @@
 <div class="row">
     {% for doubt_que in doubts_solution|slice:":1" %}
     <div class="col-md-12">
-        Q. {{doubt_que.solution_doubt_id.doubt_doubt|safe}}     
+        Que. {{doubt_que.solution_doubt_id.doubt_doubt|safe}}     
     </div>
     {% endfor %}
     <br><br>
     <hr>
     {% for doubt in doubts_solution %}
     <div class="col-md-12">
-        <div class="card mt-3">
+        <div class="card mt-3 {% if student_id == doubt.solution_stud_id.stud_id %}border border-primary{% endif %}">
             <div class="card-body">
                 <div class="mb-2">{% if doubt.solution_verified == 1 %}<img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 18px;">{% endif %}Ans {{ forloop.counter }} <br></div>
                 <div style="display:block; overflow: hidden;">{{doubt.solution|safe}}</div>
