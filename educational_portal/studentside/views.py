@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.conf import settings
 import math
 from django.db.models import Sum,Count
+from django.db.models import Count, Case, When, IntegerField
 import random
 from django.http import Http404,JsonResponse
 from .forms import *
@@ -375,8 +376,13 @@ def student_profile(request):
 
 def Student_doubt_section(request):
     student_id = request.session['stud_id']
-    doubt_data = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id)
-
+    doubt_data = Doubt_section.objects.filter(
+    doubt_stud_id__stud_id=student_id).annotate(count_solution=Count('doubt_solution'),verified_solution=Count(
+        Case(
+            When(doubt_solution__solution_verified=True, then=1),
+            output_field=IntegerField(),
+        ))).order_by('-pk')[:30]
+    
     context = {
         'doubt_data':doubt_data,
     }
@@ -397,8 +403,7 @@ def Student_add_doubts(request):
         print(form)
         if form.is_valid():
             form.save()
-        else:
-            print('hello wolrd')  
+            return redirect('Student_Doubt') 
     form = doubts_form()   
     context.update({'form':form}) 
 
