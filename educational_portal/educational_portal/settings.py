@@ -158,3 +158,10 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = True
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+SUMMERNOTE_CONFIG = {
+    'summernote': {
+        'width': '100%',  # Set the width of the Summernote editor
+        # 'height': '300px',  # Set the height of the Summernote editor
+    },
+}
