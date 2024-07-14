@@ -185,7 +185,6 @@ def show_materials(request):
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
     materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std)
     selected_sub=None
-    print(materials)
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']
         materials = materials.filter(cm_chepter__chep_sub__sub_id = id)
@@ -338,6 +337,7 @@ def show_test_questions(request, id):
         }
     return render(request, 'studentpanel/testque.html', context)
 
+@student_login_required
 def Student_Test_Submission(request):
     if request.POST.get("test_id"):
         test_id = request.POST['test_id'] 
@@ -348,7 +348,7 @@ def Student_Test_Submission(request):
         print(total_test_marks[0].totaltest_marks)
     return redirect('Student_Test')
         
-
+@student_login_required
 def show_syllabus(request):
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
@@ -368,12 +368,13 @@ def student_inquiries_data(request):
         form = student_inquiries()
     return render(request, 'studentpanel/inquiries.html', {'form':form, 'standard_data':standard_data})
 
-
+@student_login_required
 def student_profile(request):
     student_id = request.session['stud_id']
     student_profile = Students.objects.filter(stud_id = student_id)
     return render(request, 'studentpanel/myprofile.html', {'student_profile':student_profile})
 
+@student_login_required
 def Student_doubt_section(request):
     student_id = request.session['stud_id']
     doubt_data = Doubt_section.objects.filter(
@@ -389,7 +390,7 @@ def Student_doubt_section(request):
     return render(request, 'studentpanel/doubt.html', context)
 
 
-
+@student_login_required
 def Student_add_doubts(request):
     student_id = request.session['stud_id']
     std_id = request.session['stud_std']
@@ -409,7 +410,7 @@ def Student_add_doubts(request):
 
     return render(request, 'studentpanel/add_doubts.html', context)
 
-
+@student_login_required
 def Student_doubt_solution_section(request):
     student_id = request.session['stud_id']
     context = {'student_id':student_id}
@@ -429,6 +430,7 @@ def Student_doubt_solution_section(request):
 
     return render(request, 'studentpanel/solution.html', context)
 
+@student_login_required
 def Student_show_solution_section(request):
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
@@ -437,6 +439,7 @@ def Student_show_solution_section(request):
     else:
         return render(request, 'studentpanel/show_solution.html') 
 
+@student_login_required
 def Student_edit_solution(request,id):
     solution_id = Doubt_solution.objects.get(solution_id=id)
     if request.POST.get('solution'):
