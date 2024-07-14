@@ -52,3 +52,13 @@ class TestQuestionsAnswerForm(forms.ModelForm):
     class Meta:
         model = Test_questions_answer
         fields = "__all__"
+
+class pack_form(forms.ModelForm):
+    class Meta:
+        model = Packs
+        fields = "__all__"
+
+class batch_form(forms.ModelForm):
+    class Meta:
+        model = Batches
+        fields = "__all__"
