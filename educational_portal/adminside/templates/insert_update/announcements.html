@@ -7,6 +7,7 @@
     {% if errors %}
     <ul>
     {% for field, field_errors in errors.items %}
+    <li>{{field}}</li>
         <ul>
         {% for error in field_errors %}
             <li>{{ error }}</li>

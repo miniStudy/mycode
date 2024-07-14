@@ -9,7 +9,7 @@ import random
 from django.http import Http404,JsonResponse
 from django.db.models import Count,Sum
 from django.core.files.storage import FileSystemStorage
-
+from adminside.send_mail import *
 # Create your views here.
 # mail integration 
 from django.core.mail import send_mail
@@ -330,7 +330,9 @@ def show_announcements(request):
 def insert_update_announcements(request):
     std_data = Std.objects.all()
     batch_data = Batches.objects.all()
-    
+    # ------------getting students for mail------------------
+    students_for_mail = Students.objects.all()
+
     context = {
         'title' : 'Insert Announcements',
         'std_data':std_data,
@@ -341,12 +343,14 @@ def insert_update_announcements(request):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id = get_std)
         batch_data = batch_data.filter(batch_std__std_id = get_std)
+        students_for_mail = students_for_mail.filter(stud_std=get_std)
         context.update({'get_std ':get_std,'std_data':std_data,'batch_data':batch_data}) 
-
+        
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         batch_data = batch_data.filter(batch_id = get_batch)
+        students_for_mail = students_for_mail.filter(stud_batch=get_batch)
         context.update({'get_batch ':get_batch,'batch_data':batch_data})
 
     if request.method == 'POST':
@@ -354,9 +358,10 @@ def insert_update_announcements(request):
         # ================update Logic============================
         if request.GET.get('pk'):
             instance = get_object_or_404(Announcements, pk=request.GET['pk'])
-            form = announcement_form(request.POST, instance=instance)
+            form = announcement_form(request.POST, instance=instance)       
             if form.is_valid():
                 form.save()
+
                 return redirect('admin_announcements')
             else:
                 filled_data = form.data
@@ -366,6 +371,13 @@ def insert_update_announcements(request):
         form = announcement_form(request.POST)
         if form.is_valid():
             form.save()
+            # ---------------------sendmail Logic===================================
+            students_email_list = []
+            for x in students_for_mail:
+                students_email_list.append(x.stud_email)
+            print(students_email_list)    
+            announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
+         
             return redirect('admin_announcements')
         else:
             filled_data = form.data
@@ -1001,15 +1013,114 @@ def delete_admin_package(request):
     return redirect('admin_packages')
 
 
+
+@admin_login_required
 def show_students(request):
-    title = "Students"
-    students_data = Students.objects.all()
+    data = Students.objects.all()
+    std_data = Std.objects.all()
+    batch_data = Batches.objects.all()
+   
+    context ={
+        'data' : data,
+        'title' : 'Students',
+        'std_data' : std_data,
+        'batch_data':batch_data,
+    }
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(stud_std__std_id = get_std)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'batch_data':batch_data,'get_std':get_std})
+            
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(stud_batch__batch_id = get_batch)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            context.update({'data':data,'get_batch':get_batch})        
+            
+    return render(request, 'show_students.html',context)
+
+
+
+
+def insert_update_students(request):
+    std_data = Std.objects.all()
+    batch_data = Batches.objects.all()
+    pack_data = Packs.objects.all()
 
     context = {
-        "title":title,
-        "students_data":students_data
+        'title' : 'Students',
+        'std_data':std_data,
+        'batch_data':batch_data,
+        'pack_data':pack_data,
     }
-    return render(request, 'show_students.html', context)
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id = get_std)
+        batch_data = batch_data.filter(batch_std__std_id = get_std)
+        pack_data = pack_data.filter(pack_std__std_id = get_std)
+        context.update({'get_std ':get_std,'std_data':std_data,'batch_data':batch_data,'pack_data':pack_data}) 
+
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        batch_data = batch_data.filter(batch_id = get_batch)
+        context.update({'get_batch ':get_batch,'batch_data':batch_data})
+
+    if request.method == 'POST':
+
+        # ================update Logic============================
+        if request.GET.get('pk'):
+            instance = get_object_or_404(Students, pk=request.GET['pk'])
+            form = student_form(request.POST, instance=instance)
+            if form.is_valid():
+                form.save()
+                return redirect('students_dataAdmin')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+
+        # ===================insert_logic===========================
+        form = student_form(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('students_dataAdmin')
+        else:
+            filled_data = form.data
+            context.update({'filled_data ':filled_data,'errors':form.errors})
+            return render(request, 'insert_update/add_student.html', context)
+
+    if request.GET.get('pk'):
+        update_data = Students.objects.get(stud_id = request.GET['pk'])
+        context.update({'update_data':update_data})
+    return render(request, 'insert_update/add_student.html',context)
+
+
+def delete_students(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Students.objects.filter(stud_id__in=selected_ids).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('students_dataAdmin')
+
+
+
+
 
 
 def show_inquiries(request):

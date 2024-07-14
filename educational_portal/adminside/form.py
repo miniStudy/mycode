@@ -33,6 +33,11 @@ class chepter_form(forms.ModelForm):
         fields = "__all__"  
 
 
+class student_form(forms.ModelForm):  
+    class Meta:  
+        model = Students  
+        fields = "__all__"
+
 
 class faculty_form(forms.ModelForm):  
     class Meta:  

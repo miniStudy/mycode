@@ -16,7 +16,7 @@
         <div>
           <div class="d-inline-block" id="exportbtns"></div>
 
-        <a href="{% url 'insert_update_boards' %}">
+        <a href="{% url 'insert_update_students' %}">
             <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
             </button>
@@ -24,6 +24,33 @@
       </div>
         
 </div>
+
+
+<br>
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{get_std.std_id}}">ALL</a></li>
+              {% for x in batch_data %}
+              <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x.batch_name}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+
+<br><br>
+
+
+
     <form action="{% url 'delete_boards' %}" method="POST"> 
     {% csrf_token %}        
     <div class="card-datatable table-responsive pt-0">
@@ -49,7 +76,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for data in students_data %}
+                {% for data in data %}
                 <tr>
                     <td><input type="checkbox" class="form-check-input" value="{{data.stud_id}}" name="selection" /></td>
                     <td>{{data.stud_name}} {{data.stud_lastname}}</td>
@@ -66,7 +93,7 @@
                     <td>{{data.stud_guardian_email}}</td>
                     <td>{{data.stud_guardian_profession}}</td>
                     <td>{{data.stud_address}}</td>
-                    <td><a href="{% url 'insert_update_boards' %}?update_id={{data.stud_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+                    <td><a href="{% url 'insert_update_students' %}?pk={{data.stud_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                     
 
                 </tr>
