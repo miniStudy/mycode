@@ -1,7 +1,7 @@
 {% extends 'master.html' %}
  
 {% block contentsection %}
-  <div class="mb-4"><h4>Packages</h4></div> 
+  <div class="mb-4"><h4>Boards</h4></div> 
   
 
 {% for message in messages %}
@@ -16,7 +16,7 @@
         <div>
           <div class="d-inline-block" id="exportbtns"></div>
 
-        <a href="{% url 'insert_package' %}">
+        <a href="{% url 'insert_batches' %}">
             <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
             </button>
@@ -25,31 +25,25 @@
       </div>
         
 </div>
-    <form action="{% url 'delete_package' %}" method="POST">
+    <form action="{% url 'delete_batches' %}" method="POST"> 
     {% csrf_token %}        
     <div class="card-datatable table-responsive pt-0">
         <table id="example" class="display table table-bordered" style="width:100%">
             <thead>
                 <tr>
                     <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
-                    <th>Packages Name</th>
-                    <th>Packages Subjects</th>
-                    <th>Packages Std</th>
-                    <th>Packages Fees</th>
+                    <th>Batch Name</th>
+                    <th>Standard</th>
                     <th>Edit</th>
-                </tr>   
+                </tr>
             </thead>
             <tbody>
-                {% for x in data %}
+                {% for data in batches_data %}
                 <tr>
-                    <td><input type="checkbox" class="form-check-input" value="{{x.pack_id}}" name="selection" /></td>
-                    <td>{{x.pack_name}}</td>
-                    <td>{% for subject in x.pack_subjects.all %}
-                        {{ subject.sub_name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}</td>
-                    <td>{{x.pack_std}}</td>
-                    <td>{{x.pack_fees}}</td>
-                    <td><a href="{% url 'insert_update_boards' %}?update_id={{x.pack_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+                    <td><input type="checkbox" class="form-check-input" value="{{data.batch_id}}" name="selection" /></td>
+                    <td>{{data.batch_name}}</td>
+                    <td>{{data.batch_std}}</td>
+                    <td><a href="{% url 'insert_update_boards' %}?update_id={{x.brd_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -74,21 +68,9 @@
     </div>
   </div>
     
-   
   <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
 
     </form>
     </div>
     </div>
-
-  <!--/ DataTable with Buttons -->
 {% endblock %}
-
-
-
-
-
- 
-
-
-          

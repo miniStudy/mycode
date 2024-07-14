@@ -1,0 +1,53 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+<div class="mb-4"><h4>Test Questions</h4></div> 
+   
+<div class="errors">
+    {% if errors %}
+    <ul>
+        {% for field, field_errors in errors.items %}
+        <li>{{ field }}:</li>
+        <ul>
+            {% for error in field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+</div>
+<!-- Modal to add new record -->
+<div class="card">
+    {% include 'message_show.html' %}
+    <div class="card-header">
+        <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %}Update Record{% else %}New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_batches' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-sm-12">
+                <label class="form-label mb-2">batch Name</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="batch_name" required/>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label for="defaultSelect" class="form-label">Batch Standard</label>
+                <select id="defaultSelect" class="form-select" name="batch_std">
+                    <option value="">--</option>
+                    {% for data in standard_data %} 
+                    <option value="{{data.std_id}}">{{data.std_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

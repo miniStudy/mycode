@@ -468,10 +468,7 @@ def insert_update_subjects(request):
                 context.update({'filled_data ':filled_data,'errors':form.errors})
                 return render(request, 'insert_update/subjects.html', context) 
         
-    return render(request, 'insert_update/subjects.html',context)                
-
-        
-        
+    return render(request, 'insert_update/subjects.html',context)                     
 
 def delete_subjects(request):
     if request.method == 'POST':
@@ -485,12 +482,6 @@ def delete_subjects(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('admin_subjects')
-
-
-
-
-
-
 
 
 @admin_login_required
@@ -673,9 +664,6 @@ def delete_faculties(request):
 
     return redirect('admin_faculties')
 
-
-
-
 @admin_login_required
 def show_timetable(request):
     data = Timetable.objects.all()
@@ -704,8 +692,6 @@ def show_timetable(request):
             context.update({'data': data, 'get_batch': get_batch})        
             
     return render(request, 'show_timetable.html', context)
-
-
 
 def insert_update_timetable(request):
     std_data = Std.objects.all()
@@ -777,10 +763,6 @@ def delete_timetable(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('admin_timetable')
-
-
-
-
 
 @admin_login_required
 def show_attendance(request):
@@ -892,12 +874,6 @@ def insert_events(request):
     return render(request, 'insert_update/events_insert_admin.html')
 
 
-def hello_world():
-    print("hello wolrd")
-
-
-
-
 @admin_login_required
 def show_tests(request):
     data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
@@ -935,8 +911,6 @@ def delete_tests(request):
 
     return redirect('admin_tests')
 
-
-
 def show_test_questions_admin(request):
     if request.GET.get('test_id'):
         Test_Questions_data = Test_questions_answer.objects.filter(tq_name = request.GET['test_id'])
@@ -964,9 +938,6 @@ def show_test_questions_admin(request):
     else:
         return redirect('admin_tests') 
 
-
-
-
 def insert_update_test_questions(request):
     chep_data = Chepter.objects.all()
     context = {
@@ -991,13 +962,43 @@ def insert_update_test_questions(request):
         form = TestQuestionsAnswerForm()
         context.update({'form': form})
         return render(request, 'insert_update/add_test_questions.html', context)
-    
-
 
 def show_packages(request):
+    title = "Packs"
     data = Packs.objects.prefetch_related('pack_subjects').all()
     context={'data':data}
     return render(request, 'show_packages.html',context)
+
+def insert_admin_package(request):
+    standard_data = Std.objects.all()
+    subjects_data = Subject.objects.all()
+    if request.method == 'POST':
+        form = pack_form(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_packages')
+    else:
+        form = pack_form()
+    
+    context = {
+        'form':form, 
+        'standard_data':standard_data, 
+        'subjects_data':subjects_data   
+    }
+    return render(request, 'insert_update/package.html', context)
+
+def delete_admin_package(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Packs.objects.filter(batch_id__in=selected_ids).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('admin_packages')
 
 
 def show_students(request):
@@ -1010,6 +1011,7 @@ def show_students(request):
     }
     return render(request, 'show_students.html', context)
 
+
 def show_inquiries(request):
     title = "Inquiry"
     inquiries_data = Inquiries.objects.all()
@@ -1019,4 +1021,39 @@ def show_inquiries(request):
         "inquiries_data":inquiries_data
     }
     return render(request, 'show_inquiries.html', context)
+
+def show_batches(request):
+    title = "Batch"
+    batches_data = Batches.objects.all()
+
+    context = {
+        'batches_data':batches_data,
+        'title':title
+    }
+    return render(request, 'show_batches.html', context)
+
+def insert_admin_batches(request):
+    standard_data = Std.objects.all()
+    if request.method == 'POST':
+        form = batch_form(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_batches')
+    context = {
+        'standard_data':standard_data,   
+    }
+    return render(request, 'insert_update/batches.html', context)
+
+def delete_admin_batches(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Batches.objects.filter(batch_id__in=selected_ids).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('admin_batches')
 
