@@ -95,16 +95,17 @@ urlpatterns = [
     path('delete_students/', adminview.delete_students, name='delete_students'),
     path('inquiry_data/', adminview.show_inquiries, name='inquiry_data'),
     
-    # =========================================packages ================================================
+    # =========================================packages ===============================================
     path('admin_packages', adminview.show_packages, name="admin_packages"),
 
     # =========================================packages ===============================================
     path('admin_packages/', adminview.show_packages, name="admin_packages"),
     path('insert_package/', adminview.insert_admin_package, name="insert_package"),
     path('delete_package/', adminview.delete_admin_package, name="delete_package"),
-    # =========================================Batches ===============================================
+    # =========================================Batches ================================================
     path('admin_batches/', adminview.show_batches, name="admin_batches"),
     path('insert_batches/', adminview.insert_admin_batches, name="insert_batches"),
     path('delete_batches/', adminview.delete_admin_batches, name="delete_batches"),
+    # =========================================Materials ================================================
+    path('admin_materials/', adminview.show_admin_materials, name="admin_materials"),
 ]
-

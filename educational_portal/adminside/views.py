@@ -909,7 +909,7 @@ def show_tests(request):
 
     return render(request, 'show_tests.html',context)
 
-
+@admin_login_required
 def delete_tests(request):
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
@@ -923,6 +923,7 @@ def delete_tests(request):
 
     return redirect('admin_tests')
 
+@admin_login_required
 def show_test_questions_admin(request):
     if request.GET.get('test_id'):
         Test_Questions_data = Test_questions_answer.objects.filter(tq_name = request.GET['test_id'])
@@ -950,6 +951,7 @@ def show_test_questions_admin(request):
     else:
         return redirect('admin_tests') 
 
+@admin_login_required
 def insert_update_test_questions(request):
     chep_data = Chepter.objects.all()
     context = {
@@ -975,12 +977,17 @@ def insert_update_test_questions(request):
         context.update({'form': form})
         return render(request, 'insert_update/add_test_questions.html', context)
 
+@admin_login_required
 def show_packages(request):
     title = "Packs"
     data = Packs.objects.prefetch_related('pack_subjects').all()
-    context={'data':data}
+    context={
+        'data':data,
+        'title':title
+    }
     return render(request, 'show_packages.html',context)
 
+@admin_login_required
 def insert_admin_package(request):
     standard_data = Std.objects.all()
     subjects_data = Subject.objects.all()
@@ -999,6 +1006,7 @@ def insert_admin_package(request):
     }
     return render(request, 'insert_update/package.html', context)
 
+@admin_login_required
 def delete_admin_package(request):
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
@@ -1012,8 +1020,11 @@ def delete_admin_package(request):
 
     return redirect('admin_packages')
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 9d92c96bebde1928ba3c950e5acf6bb9e0ef8b6f
 @admin_login_required
 def show_students(request):
     data = Students.objects.all()
@@ -1122,7 +1133,7 @@ def delete_students(request):
 
 
 
-
+@admin_login_required
 def show_inquiries(request):
     title = "Inquiry"
     inquiries_data = Inquiries.objects.all()
@@ -1133,6 +1144,7 @@ def show_inquiries(request):
     }
     return render(request, 'show_inquiries.html', context)
 
+@admin_login_required
 def show_batches(request):
     title = "Batch"
     batches_data = Batches.objects.all()
@@ -1143,6 +1155,7 @@ def show_batches(request):
     }
     return render(request, 'show_batches.html', context)
 
+@admin_login_required
 def insert_admin_batches(request):
     standard_data = Std.objects.all()
     if request.method == 'POST':
@@ -1155,6 +1168,7 @@ def insert_admin_batches(request):
     }
     return render(request, 'insert_update/batches.html', context)
 
+@admin_login_required
 def delete_admin_batches(request):
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
@@ -1168,3 +1182,23 @@ def delete_admin_batches(request):
 
     return redirect('admin_batches')
 
+def show_admin_materials(request):
+    standard_data = Std.objects.all()
+    subjects_data = Subject.objects.all()
+    materials = Chepterwise_material.objects.all()
+    selected_sub=None
+
+    context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials}
+    if request.GET.get('std_id'):
+        std_id = int(request.GET.get('std_id'))
+        subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id)
+        context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_id})
+
+    if request.GET.get('sub_id'):
+        sub_id = request.GET.get('sub_id')
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id)
+        selected_sub = Subject.objects.get(sub_id=sub_id)
+        context.update({'materials': materials, 'selected_sub':selected_sub})
+
+    return render(request, 'show_materials.html', context)
