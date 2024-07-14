@@ -52,6 +52,12 @@ urlpatterns = [
     path('insert_update_subjects/',adminview.insert_update_subjects,name='insert_update_subjects'),
     path('delete_subjects/', adminview.delete_subjects, name='delete_subjects'),
 
+
+    # ============================= adminside Chepters=====================================
+    path('admin_chepters/', adminview.show_chepters, name='admin_chepters'),
+    path('insert_update_chepters/',adminview.insert_update_chepters,name='insert_update_chepters'),
+    path('delete_chepters/', adminview.delete_chepters, name='delete_chepters'),
+
     # ============================= adminside Faculties=====================================
 
     path('admin_faculties/', adminview.show_faculties, name='admin_faculties'),
@@ -86,6 +92,7 @@ urlpatterns = [
     # ========================== Students and Faculty Data show ====================================================
     path('students_dataAdmin/', adminview.show_students, name='students_dataAdmin'),
     path('inquiry_data/', adminview.show_inquiries, name='inquiry_data'),
+
     # =========================================packages ================================================
     path('admin_packages', adminview.show_packages, name="admin_packages"),
 

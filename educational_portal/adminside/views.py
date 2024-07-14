@@ -495,23 +495,113 @@ def delete_subjects(request):
 
 @admin_login_required
 def show_chepters(request):
-    data = Subject.objects.all()
+    data = Chepter.objects.all()
     std_data = Std.objects.all()
-   
+    subject_data = Subject.objects.all()
     context ={
         'data' : data,
-        'title' : 'Subjects',
+        'title' : 'Chepters',
         'std_data' : std_data,
+        'subject_data':subject_data,
     }
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std == 0:
             pass
         else:    
-            data = data.filter(sub_std__std_id = get_std)
-            context.update({'data':data,'get_std':get_std})     
-    return render(request, 'show_subjects.html',context)
+            data = data.filter(chep_sub__sub_std__std_id = get_std)
+            subject_data = subject_data.filter(sub_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'get_std':get_std,'std_data':std_data}) 
 
+
+    if request.GET.get('get_subject'):
+        get_subject = int(request.GET['get_subject'])
+        if get_subject == 0:
+            pass
+        else:    
+            data = data.filter(chep_sub__sub_id = get_subject)
+            get_subject = Subject.objects.get(sub_id = get_subject)
+            context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
+
+
+    return render(request, 'show_chepters.html',context)
+
+
+
+def insert_update_chepters(request):
+    std_data = Std.objects.all()
+    subject_data = Subject.objects.all()
+    context = {
+        'title' : 'Insert Subjects',
+        'std_data':std_data,
+        'subject_data':subject_data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id = get_std)
+        context.update({'get_std ':get_std,'std_data':std_data})
+
+    if request.GET.get('get_subject'):
+        get_subject = int(request.GET['get_std'])
+        subject_data = subject_data.filter(sub_id = get_subject)
+        context.update({'get_subject':get_subject,'subject_data':subject_data})     
+
+
+   
+
+ # ================update Logic============================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Chepter, pk=request.GET['pk'])
+            form = chepter_form(request.POST,request.FILES, instance=instance)
+            check = Chepter.objects.filter(chep_name = form.data['chep_name'], chep_std__std_id = form.data['chep_std']).count()
+            if check >= 1:
+                messages.error(request,'{} is already Exists'.format(form.data['chep_name']))
+            else:
+                if form.is_valid():
+                    form.save()
+                    return redirect('admin_chepters')
+                else:
+                    filled_data = form.data
+                    context.update({'filled_data ':filled_data,'errors':form.errors})
+        
+        update_data = Chepter.objects.get(chep_id = request.GET['pk'])
+        context.update({'update_data':update_data})  
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            form = chepter_form(request.POST, request.FILES)
+            if form.is_valid():
+                check = Chepter.objects.filter(chep_name = form.data['chep_name'], chep_std__std_id = form.data['chep_std']).count()
+                if check >= 1:
+                    messages.error(request,'{} is already Exists'.format(form.data['chep_name']))
+                else:    
+                    form.save()
+                    return redirect('admin_chepters')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+                return render(request, 'insert_update/add_chepters.html', context) 
+        
+    return render(request, 'insert_update/add_chepters.html',context)                
+
+        
+        
+
+def delete_chepters(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Chepter.objects.filter(chep_id__in=selected_ids).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('admin_chepters')
 
 
 

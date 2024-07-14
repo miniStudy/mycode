@@ -27,6 +27,13 @@ class subject_form(forms.ModelForm):
         fields = "__all__"             
 
 
+class chepter_form(forms.ModelForm):  
+    class Meta:  
+        model = Chepter  
+        fields = "__all__"  
+
+
+
 class faculty_form(forms.ModelForm):  
     class Meta:  
         model = Faculties  
