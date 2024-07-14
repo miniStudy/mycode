@@ -1020,11 +1020,6 @@ def delete_admin_package(request):
 
     return redirect('admin_packages')
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 9d92c96bebde1928ba3c950e5acf6bb9e0ef8b6f
 @admin_login_required
 def show_students(request):
     data = Students.objects.all()
