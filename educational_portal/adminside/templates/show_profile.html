@@ -1,0 +1,67 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Profile</h4></div> 
+  
+
+{% for message in messages %}
+ {{message|safe}}
+{% endfor %}
+
+  <!-- Header -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="user-profile-header-banner">
+          <img src="/static/assets/img/pages/Untitled designsefsdf.png" alt="Banner image" class="rounded-top" style="width: 100%;">
+        </div>
+        <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
+          <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
+            <img src="/static/assets/img/avatars/1.png" alt="user image" class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" style="width: 120px;border: 2px solid black;">
+          </div>
+          <div class="flex-grow-1 mt-3 mt-sm-5">
+            <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
+              <div class="user-profile-info">
+                {% for admin in admin_data %}
+                <h4>{{admin.admin_name}}</h4>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Header -->
+
+<div class="row">
+    <div class="col-xl-12 col-lg-5 col-md-5">
+      <!-- About User -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <p class="card-text text-uppercase">About</p>
+                {% for admin in admin_data %}
+                <ul class="list-unstyled mb-4">
+                    <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Name:</span> <span>{{admin.admin_name}}</span></li>
+                    <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Email:</span> <span>{{admin.admin_email}}</span></li>
+                </ul>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+ 
+
+
+          
+
+
+
+
+
