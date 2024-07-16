@@ -223,8 +223,6 @@ def delete_boards(request):
     return redirect('boards')
 
 
-
-
 # -------------------------Logic for Std-======================
 
 @admin_login_required
@@ -338,7 +336,7 @@ def insert_update_announcements(request):
         'std_data':std_data,
         'batch_data':batch_data,
     }
-
+    
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id = get_std)
@@ -346,7 +344,7 @@ def insert_update_announcements(request):
         students_for_mail = students_for_mail.filter(stud_std=get_std)
         context.update({'get_std ':get_std,'std_data':std_data,'batch_data':batch_data}) 
         
-
+    
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         batch_data = batch_data.filter(batch_id = get_batch)
@@ -710,6 +708,7 @@ def insert_update_timetable(request):
     batch_data = Batches.objects.all()
     faculty_data = Faculties.objects.all()
     subject_data = Subject.objects.all()
+    tt_students_for_mail = Students.objects.all()
 
     context = {
         'title': 'Insert Timetable',
@@ -727,11 +726,13 @@ def insert_update_timetable(request):
         std_data = std_data.filter(std_id=get_std)
         subject_data = Subject.objects.filter(sub_std__std_id = get_std)
         batch_data = batch_data.filter(batch_std__std_id=get_std)
+        tt_students_for_mail = tt_students_for_mail.filter(stud_std=get_std)
         context.update({'get_std': get_std, 'std_data': std_data, 'batch_data': batch_data, 'subject_data':subject_data}) 
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         batch_data = batch_data.filter(batch_id=get_batch)
+        tt_students_for_mail = tt_students_for_mail.filter(stud_batch=get_batch)
         context.update({'get_batch': get_batch, 'batch_data': batch_data})
 
     if request.method == 'POST':
@@ -750,7 +751,14 @@ def insert_update_timetable(request):
         form = timetable_form(request.POST)
         if form.is_valid():
             form.save()
+            # ---------------------sendmail Logic===================================
+            tt_students_email_list = []
+            for x in tt_students_for_mail:
+                tt_students_email_list.append(x.stud_email)
+            print(tt_students_email_list)    
+            timetable_mail(tt_students_email_list)
             return redirect('admin_timetable')
+    
         else:
             filled_data = form.data
             context.update({'filled_data': filled_data, 'errors': form.errors})
@@ -1380,3 +1388,12 @@ def show_admin_materials(request):
         context.update({'materials': materials, 'selected_sub':selected_sub})
 
     return render(request, 'show_materials.html', context)
+
+
+
+def show_admin_profile(request):
+    admin_data = AdminData.objects.all()
+    context = {
+        'admin_data':admin_data
+    }
+    return render(request, 'show_profile.html', context)
