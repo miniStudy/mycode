@@ -91,9 +91,9 @@ def teacher_handle_set_new_password(request):
         password = request.POST['password']
         conf_password = request.POST['confirm_password']
         if password == conf_password:
-             obj = Faculties.objects.filter(stud_otp = otp).count()
+             obj = Faculties.objects.filter(fac_otp = otp).count()
              if obj == 1:
-                  data = Faculties.objects.get(stud_otp = otp)
+                  data = Faculties.objects.get(fac_otp = otp)
                   data.fac_password = password
                   data.fac_otp = otp
                   data.save()
