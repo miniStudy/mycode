@@ -1,0 +1,9 @@
+{% for message in messages %}
+    {% if message.tags == 'success' %}
+    <div id="returnmessage"><div class="bg-success text-white p-2 rounded-2 returnmessage mb-2"><i class="fa-regular fa-circle-check me-2"></i>{{message|safe}}</div><hr/></div>
+    {% elif message.tags == 'error' %}
+    <div id="returnmessage"><div class='bg-danger text-white p-2 rounded-2 returnmessage mb-2' id='returnmessage'><i class='fa-solid fa-triangle-exclamation me-2'></i> {{message|safe}} </div><hr/></div>
+    {% else %}
+    <div id="returnmessage"><div class='bg-warning text-white p-2 rounded-2 returnmessage mb-2' id='returnmessage'><i class='fa-solid fa-triangle-exclamation me-2'></i> {{message|safe}} </div><hr/></div>
+    {% endif %}
+{% endfor %}
