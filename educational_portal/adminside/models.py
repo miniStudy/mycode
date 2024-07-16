@@ -152,10 +152,12 @@ class Faculties(models.Model):
     fac_id = models.BigAutoField(primary_key=True)
     fac_name = models.CharField(max_length=100)
     fac_number = models.CharField(max_length=20)
-    fac_email = models.CharField(max_length=100)
+    fac_email = models.EmailField(unique=True,default='abc@gmail.com')
     fac_address = models.TextField()
     Subjects = models.CharField(max_length=100)
-    
+    fac_password = models.CharField(max_length=100)
+    fac_otp = models.IntegerField(blank=True,null=True)
+
     def _str_(self):
         return f"{self.fac_name}"
     
