@@ -16,7 +16,7 @@
         <div>
           <div class="d-inline-block" id="exportbtns"></div>
 
-        <a href="{% url 'insert_package' %}">
+        <a href="{% url 'insert_update_packages' %}">
             <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
             </button>
@@ -25,6 +25,24 @@
       </div>
         
 </div>
+
+
+<!-- =========================filter option============================= -->
+<br>
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'admin_packages' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'admin_packages' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+<br><br>
+<!-- =========================filter option end=================================== -->
+
+
+
     <form action="{% url 'delete_package' %}" method="POST">
     {% csrf_token %}        
     <div class="card-datatable table-responsive pt-0">
@@ -49,7 +67,7 @@
                     {% endfor %}</td>
                     <td>{{x.pack_std}}</td>
                     <td>{{x.pack_fees}}</td>
-                    <td><a href="{% url 'insert_update_boards' %}?update_id={{x.pack_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+                    <td><a href="{% url 'insert_update_packages' %}?pk={{x.pack_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

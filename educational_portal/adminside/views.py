@@ -890,24 +890,95 @@ def insert_events(request):
 def show_tests(request):
     data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
     std_data = Std.objects.all()
-
+    subject_data = Subject.objects.all()
     context ={
         'data' : data,
-        'title' : 'Tests',
+        'title' : 'Chepters',
         'std_data' : std_data,
+        'subject_data':subject_data,
     }
-
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std == 0:
             pass
         else:    
-            data = data.filter(test_std__std_id = get_std)
+            data = data.filter(test_sub__sub_std__std_id = get_std)
+            subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
-            context.update({'data':data,'get_std':get_std})
-            
+            context.update({'data':data,'get_std':get_std,'std_data':std_data}) 
+
+
+    if request.GET.get('get_subject'):
+        get_subject = int(request.GET['get_subject'])
+        if get_subject == 0:
+            pass
+        else:    
+            data = data.filter(test_sub__sub_id = get_subject)
+            get_subject = Subject.objects.get(sub_id = get_subject)
+            context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
 
     return render(request, 'show_tests.html',context)
+
+
+
+def insert_update_tests(request):
+    std_data = Std.objects.all()
+    subject_data = Subject.objects.all()
+    context = {
+        'title' : 'Tests',
+        'std_data':std_data,
+        'subject_data':subject_data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id = get_std)
+        context.update({'get_std': get_std, 'std_data': std_data})
+
+    if request.GET.get('get_subject'):
+        get_subject = int(request.GET['get_subject'])
+        subject_data = subject_data.filter(sub_id = get_subject)
+        context.update({'get_subject': get_subject, 'subject_data': subject_data})     
+
+    # ================update Logic============================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Chepterwise_test, pk=request.GET['pk'])
+            form = tests_form(request.POST, instance=instance)
+            check = Chepterwise_test.objects.filter(test_name=form.data['test_name'], test_std__std_id=form.data['test_std']).count()
+            if check >= 1:
+                messages.error(request, '{} is already Exists'.format(form.data['test_name']))
+            else:
+                if form.is_valid():
+                    form.save()
+                    return redirect('admin_tests')
+                else:
+                    filled_data = form.data
+                    context.update({'filled_data': filled_data, 'errors': form.errors})
+        
+        update_data = Chepterwise_test.objects.get(test_id=request.GET['pk'])
+        context.update({'update_data': update_data})  
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            form = tests_form(request.POST, request.FILES)
+            if form.is_valid():
+                check = Chepterwise_test.objects.filter(test_name=form.data['test_name'], test_std__std_id=form.data['test_std']).count()
+                if check >= 1:
+                    messages.error(request, '{} is already Exists'.format(form.data['test_name']))
+                else:    
+                    form.save()
+                    return redirect('admin_tests')
+            else:
+                filled_data = form.data
+                context.update({'filled_data': filled_data, 'errors': form.errors})
+                return render(request, 'insert_update/add_tests.html', context) 
+        
+    return render(request, 'insert_update/add_tests.html', context)
+
+
+
+
 
 @admin_login_required
 def delete_tests(request):
@@ -977,34 +1048,88 @@ def insert_update_test_questions(request):
         context.update({'form': form})
         return render(request, 'insert_update/add_test_questions.html', context)
 
+
+# ============================================packages logic====================================
 @admin_login_required
 def show_packages(request):
-    title = "Packs"
     data = Packs.objects.prefetch_related('pack_subjects').all()
-    context={
-        'data':data,
-        'title':title
+    std_data = Std.objects.all()
+
+    context ={
+        'data' : data,
+        'title' : 'Packages',
+        'std_data' : std_data,
     }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(pack_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'get_std':get_std})     
     return render(request, 'show_packages.html',context)
 
-@admin_login_required
-def insert_admin_package(request):
-    standard_data = Std.objects.all()
+
+
+
+def insert_update_packages(request):
+    std_data = Std.objects.all()
     subjects_data = Subject.objects.all()
-    if request.method == 'POST':
-        form = pack_form(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_packages')
-    else:
-        form = pack_form()
-    
+
     context = {
-        'form':form, 
-        'standard_data':standard_data, 
-        'subjects_data':subjects_data   
+        'title' : 'Packages',
+        'std_data':std_data,
+        'subjects_data':subjects_data,
     }
-    return render(request, 'insert_update/package.html', context)
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id = get_std)
+        subjects_data.filter(sub_std__std_id = get_std)
+        context.update({'get_std ':get_std,'std_data':std_data}) 
+
+
+   
+
+ # ================update Logic============================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Packs, pk=request.GET['pk'])
+            form = pack_form(request.POST, instance=instance)
+            check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std']).count()
+            if check >= 1:
+                messages.error(request,'{} is already Exists'.format(form.data['pack_name']))
+            else:
+                if form.is_valid():
+                    form.save()
+                    return redirect('admin_packages')
+                else:
+                    filled_data = form.data
+                    context.update({'filled_data ':filled_data,'errors':form.errors})
+        
+        update_data = Packs.objects.get(pack_id = request.GET['pk'])
+        context.update({'update_data':update_data})  
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            form = pack_form(request.POST)
+            if form.is_valid():
+                check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std']).count()
+                if check >= 1:
+                    messages.error(request,'{} is already Exists'.format(form.data['pack_name']))
+                else:    
+                    form.save()
+                    return redirect('admin_packages')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+                return render(request, 'insert_update/packages.html', context) 
+        
+    return render(request, 'insert_update/package.html',context)
+
+
 
 @admin_login_required
 def delete_admin_package(request):
@@ -1139,29 +1264,84 @@ def show_inquiries(request):
     }
     return render(request, 'show_inquiries.html', context)
 
+
+# ------------------------------------------batches data-----------------------------------------
+
 @admin_login_required
 def show_batches(request):
-    title = "Batch"
-    batches_data = Batches.objects.all()
-
-    context = {
-        'batches_data':batches_data,
-        'title':title
+    data = Batches.objects.all()
+    std_data = Std.objects.all()
+   
+    context ={
+        'data' : data,
+        'title' : 'Batches',
+        'std_data' : std_data,
     }
-    return render(request, 'show_batches.html', context)
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(batch_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'get_std':get_std})     
+    return render(request, 'show_batches.html',context)
+
 
 @admin_login_required
-def insert_admin_batches(request):
-    standard_data = Std.objects.all()
-    if request.method == 'POST':
-        form = batch_form(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_batches')
+def insert_update_batches(request):
+    std_data = Std.objects.all()
+    
     context = {
-        'standard_data':standard_data,   
+        'title' : 'Batches',
+        'std_data':std_data,
     }
-    return render(request, 'insert_update/batches.html', context)
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id = get_std)
+        context.update({'get_std ':get_std,'std_data':std_data}) 
+
+
+   
+
+ # ================update Logic============================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Batches, pk=request.GET['pk'])
+            form = batch_form(request.POST, instance=instance)
+            check = Batches.objects.filter(batch_name = form.data['batch_name'], batch_std__std_id = form.data['batch_std']).count()
+            if check >= 1:
+                messages.error(request,'{} is already Exists'.format(form.data['batch_name']))
+            else:
+                if form.is_valid():
+                    form.save()
+                    return redirect('admin_batches')
+                else:
+                    filled_data = form.data
+                    context.update({'filled_data ':filled_data,'errors':form.errors})
+        
+        update_data = Batches.objects.get(batch_id = request.GET['pk'])
+        context.update({'update_data':update_data})  
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            form = batch_form(request.POST)
+            if form.is_valid():
+                check = Batches.objects.filter(batch_name = form.data['batch_name'], batch_std__std_id = form.data['batch_std']).count()
+                if check >= 1:
+                    messages.error(request,'{} is already Exists'.format(form.data['batch_name']))
+                else:    
+                    form.save()
+                    return redirect('admin_batches')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+                return render(request, 'insert_update/batches.html', context) 
+        
+    return render(request, 'insert_update/batches.html',context)                     
+
+
 
 @admin_login_required
 def delete_admin_batches(request):
@@ -1176,6 +1356,9 @@ def delete_admin_batches(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('admin_batches')
+
+
+
 
 def show_admin_materials(request):
     standard_data = Std.objects.all()

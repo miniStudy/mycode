@@ -82,7 +82,7 @@ urlpatterns = [
     # ==========================Tests ====================================================
 
     path('admin_tests/', adminview.show_tests, name='admin_tests'),
-    path('insert_update_tests/', adminview.show_tests, name='insert_update_tests'),
+    path('insert_update_tests/', adminview.insert_update_tests, name='insert_update_tests'),
     path('delete_tests/', adminview.delete_tests, name='delete_tests'),
 
     path('show_test_questions_admin/', adminview.show_test_questions_admin, name='show_test_questions_admin'),
@@ -100,11 +100,11 @@ urlpatterns = [
 
     # =========================================packages ===============================================
     path('admin_packages/', adminview.show_packages, name="admin_packages"),
-    path('insert_package/', adminview.insert_admin_package, name="insert_package"),
+    path('insert_update_packages/', adminview.insert_update_packages, name="insert_update_packages"),
     path('delete_package/', adminview.delete_admin_package, name="delete_package"),
     # =========================================Batches ================================================
     path('admin_batches/', adminview.show_batches, name="admin_batches"),
-    path('insert_batches/', adminview.insert_admin_batches, name="insert_batches"),
+    path('insert_update_batches/', adminview.insert_update_batches, name="insert_update_batches"),
     path('delete_batches/', adminview.delete_admin_batches, name="delete_batches"),
     # =========================================Materials ================================================
     path('admin_materials/', adminview.show_admin_materials, name="admin_materials"),

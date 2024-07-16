@@ -16,7 +16,7 @@
         <div>
           <div class="d-inline-block" id="exportbtns"></div>
 
-        <a href="{% url 'insert_batches' %}">
+        <a href="{% url 'insert_update_batches' %}">
             <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
             </button>
@@ -25,6 +25,21 @@
       </div>
         
 </div>
+
+<!-- =========================filter option============================= -->
+<br>
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'admin_batches' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'admin_batches' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+<br><br>
+<!-- =========================filter option end=================================== -->
+
     <form action="{% url 'delete_batches' %}" method="POST"> 
     {% csrf_token %}        
     <div class="card-datatable table-responsive pt-0">
@@ -38,12 +53,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for data in batches_data %}
+                {% for data in data %}
                 <tr>
                     <td><input type="checkbox" class="form-check-input" value="{{data.batch_id}}" name="selection" /></td>
                     <td>{{data.batch_name}}</td>
                     <td>{{data.batch_std}}</td>
-                    <td><a href="{% url 'insert_update_boards' %}?update_id={{x.brd_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+                    <td><a href="{% url 'insert_update_batches' %}?pk={{data.batch_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

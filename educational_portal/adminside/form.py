@@ -58,6 +58,13 @@ class event_form(forms.ModelForm):
         fields = "__all__"          
 
 
+class tests_form(forms.ModelForm):
+    class Meta:
+        model = Chepterwise_test
+        fields = "__all__"
+
+
+
 class TestQuestionsAnswerForm(forms.ModelForm):
     tq_question = forms.CharField(widget=SummernoteWidget())
     tq_answer = forms.CharField(widget=SummernoteWidget())
