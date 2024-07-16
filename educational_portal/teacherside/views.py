@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.shortcuts import render,get_object_or_404,redirect
 from adminside.models import *
 from django.contrib import messages
@@ -12,31 +11,17 @@ from django.http import Http404,JsonResponse
 from studentside.forms import *
 from adminside.form import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
-# Create your views here.
-=======
-from django.shortcuts import render, redirect
-from adminside.models import Faculties
-from django.contrib import messages
-import random
-from django.urls import reverse
-from django.conf import settings
->>>>>>> 16f77c56a53f53566ac4d75f5d7e84ccb3cfa7bb
+
 # mail integration 
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
-<<<<<<< HEAD
-from studentside.decorators import student_login_required
-=======
->>>>>>> 16f77c56a53f53566ac4d75f5d7e84ccb3cfa7bb
 
-# Create your views here.
+
 
 def teacher_home(request):
      return render(request, 'teacherpanel/index.html')
-
-<<<<<<< HEAD
 
 def teacher_test(request):
      return render(request, 'teacherpanel/index.html')
@@ -83,8 +68,9 @@ def teacher_events(request):
         
         context.update({'selected_events':selected_events, 'events_img':event_imgs})
 
-    return render(request, 'teacherpanel/events.html', context) 
-=======
+    return render(request, 'teacherpanel/events.html', context)
+
+
 def teacher_login_page(request):  
     login=1
     if request.COOKIES.get("fac_email"):
@@ -192,4 +178,4 @@ def teacher_logout_page(request):
     except:
         pass
     return redirect("teacher_login")
->>>>>>> 16f77c56a53f53566ac4d75f5d7e84ccb3cfa7bb
+
