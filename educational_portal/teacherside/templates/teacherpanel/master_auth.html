@@ -33,11 +33,11 @@
                 </div>
                 <!-- /Logo -->
                 {% if login_set == 1 %}
-                  {% include 'studentpanel/student_login.html' %}
+                  {% include 'teacherpanel/teacher_login.html' %}
                 {% elif login_set == 2 %}
-                  {% include 'studentpanel/student_Forgot_Password.html' %}
+                  {% include 'teacherpanel/teacher_forget_password.html' %}
                 {% elif login_set == 3 %}  
-                  {% include 'studentpanel/student_reset_password.html' %}
+                  {% include 'teacherpanel/teacher_reset_password.html' %}
                 {% endif %}
               </div>
             </div>

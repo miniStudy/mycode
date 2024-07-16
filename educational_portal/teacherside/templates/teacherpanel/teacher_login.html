@@ -1,7 +1,7 @@
 <h4 class="mb-2">Welcome to {% include 'miniStudy_text.html' %}! 👋</h4>
-                <p class="mb-4">Please sign-in to your account and start the Student Panel</p>
+                <p class="mb-4">Please sign-in to your account and start the Teacher Panel</p>
       
-                <form id="formAuthentication" class="mb-3" action="{% url 'Student_login_handle' %}" method="post">
+                <form id="formAuthentication" class="mb-3" action="{% url 'teacher_login_handle' %}" method="post">
                   {% csrf_token %}
                   <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
@@ -10,7 +10,7 @@
                   <div class="mb-3 form-password-toggle">
                     <div class="d-flex justify-content-between">
                       <label class="form-label" for="password">Password</label>
-                      <a href="{% url 'Student_Forgot_Password' %}">
+                      <a href="{% url 'teacher_forget_password' %}">
                         <small>Forgot Password?</small>
                       </a>
                     </div>

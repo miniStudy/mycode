@@ -21,4 +21,14 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', teacherview.teacher_home, name='teacher_home'),
+
+    # <==============Teacher Authencation==================>
+    path('teacher_login/', teacherview.teacher_login_page, name='teacher_login'),
+    path('teacher_login_handle/',teacherview.teacher_login_handle,name='teacher_login_handle'),
+    path('teacher_forget_password/', teacherview.teacher_forget_password, name='teacher_forget_password'),
+    path('teacher_handle_forget_password/',teacherview.teacher_handle_forget_password, name='teacher_handle_forget_password'),
+    path('teacher_set_new_password/',teacherview.teacher_set_new_password, name='teacher_set_new_password'),
+    path('teacher_handle_set_new_password/',teacherview.teacher_handle_set_new_password, name='teacher_handle_set_new_password'),
+    path('teacher_logout/',teacherview.teacher_logout_page, name = 'teacher_logout' ),
+    # path('Student_InfoUpdate/',studentview.student_info_update, name = 'Student_InfoUpdate' ),path
 ]
