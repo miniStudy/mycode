@@ -49,6 +49,7 @@
                 <tr>
                     <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
                     <th>Test Name</th>
+                    <th>Subject</th>
                     <th>Test Std</th>
                     <th>Questions</th>
                     <th>Total Marks</th>
@@ -60,6 +61,7 @@
                 <tr>
                     <td><input type="checkbox" class="form-check-input" value="{{x.test_id}}" name="selection" /></td>
                     <td><a href="{% url 'show_test_questions_admin' %}?test_id={{x.test_id}}">{{x.test_name}}</a></td>
+                    <td>{{x.test_sub.sub_name}}</td>
                     <td>{{x.test_std}}</td>
                     <td>{{x.num_questions}}</td>
                     <td>{{x.total_marks}}</td>
