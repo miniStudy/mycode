@@ -110,7 +110,7 @@ def teacher_forget_password(request):
     login=2
     if request.COOKIES.get("fac_email"):
           cookie_email = request.COOKIES['fac_email']
-          return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email})
     else:
           return render(request, 'teacherpanel/master_auth.html',{'login_set':login})
     
@@ -147,9 +147,9 @@ def teacher_handle_set_new_password(request):
         password = request.POST['password']
         conf_password = request.POST['confirm_password']
         if password == conf_password:
-             obj = Faculties.objects.filter(stud_otp = otp).count()
+             obj = Faculties.objects.filter(fac_otp = otp).count()
              if obj == 1:
-                  data = Faculties.objects.get(stud_otp = otp)
+                  data = Faculties.objects.get(fac_otp = otp)
                   data.fac_password = password
                   data.fac_otp = otp
                   data.save()
