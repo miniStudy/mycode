@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', teacherview.teacher_home, name='teacher_home'),
+<<<<<<< HEAD
     path('teacher_events', teacherview.teacher_events, name='teacher_events'),
     path('teacher_test', teacherview.teacher_test, name='teacher_test'),
     path('teacher_materials', teacherview.teacher_materials, name='teacher_materials'),
@@ -31,4 +32,16 @@ urlpatterns = [
     path('teacher_doubts', teacherview.teacher_doubts, name='teacher_doubts'),
     path('teacher_logout', teacherview.teacher_announcement, name='teacher_logout'),
 
+=======
+
+    # <==============Teacher Authencation==================>
+    path('teacher_login/', teacherview.teacher_login_page, name='teacher_login'),
+    path('teacher_login_handle/',teacherview.teacher_login_handle,name='teacher_login_handle'),
+    path('teacher_forget_password/', teacherview.teacher_forget_password, name='teacher_forget_password'),
+    path('teacher_handle_forget_password/',teacherview.teacher_handle_forget_password, name='teacher_handle_forget_password'),
+    path('teacher_set_new_password/',teacherview.teacher_set_new_password, name='teacher_set_new_password'),
+    path('teacher_handle_set_new_password/',teacherview.teacher_handle_set_new_password, name='teacher_handle_set_new_password'),
+    path('teacher_logout/',teacherview.teacher_logout_page, name = 'teacher_logout' ),
+    # path('Student_InfoUpdate/',studentview.student_info_update, name = 'Student_InfoUpdate' ),path
+>>>>>>> 16f77c56a53f53566ac4d75f5d7e84ccb3cfa7bb
 ]
