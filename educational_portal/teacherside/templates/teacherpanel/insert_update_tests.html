@@ -1,0 +1,81 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Tests</h4></div> 
+   
+  <div class="errors">
+    {% if errors %}
+    <ul>
+        {% for field, field_errors in errors.items %}
+        <li>{{ field }}:</li>
+        <ul>
+            {% for error in field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  
+  <!-- Modal to add new record -->
+  <div class="card">
+    {% include 'message_show.html' %}
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %}Update Record{% else %}New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+         
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'teacher_insert_update_tests' %}{% if update_data %}?pk={{update_data.test_id}}{% endif %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Test Name</label>
+            <div class="input-group input-group-merge">
+              <input type="text" class="form-control" name="test_name" placeholder="Test Name" {% if update_data %} value="{{ update_data.test_name }}" {% endif %}{% if filled_data %} value="{{ filled_data.test_name }}" {% endif %}/>
+            </div>
+          </div>
+
+          <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+            <label for="test_sub" class="form-label">Subject Name</label>
+            <select id="test_sub" class="form-select" name="test_sub">
+              <option value="">--</option>
+              {% for x in subject_data %}
+                <option value="{{ x.sub_id }}" {% if filled_data and filled_data.test_sub == x.sub_id %} selected {% endif %} {% if update_data and x.sub_id == update_data.test_sub_id %} selected {% endif %}>{{ x.sub_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+            <label for="test_std" class="form-label">Standard Name</label>
+            <select id="test_std" class="form-select" name="test_std">
+              <option value="">--</option>
+              {% for x in std_data %}
+                <option value="{{ x.std_id }}" {% if filled_data and filled_data.test_std == x.std_id %} selected {% endif %} {% if update_data and x.std_id == update_data.test_std_id %} selected {% endif %}>{{ x.std_name }} {{ x.std_board.brd_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-sm-12">
+            <label for="test_sem" class="form-label mb-2">Semester</label>
+            <select id="test_sem" class="form-select" name="test_sem">
+              <option value="sem1" {% if update_data and update_data.test_sem == 'sem1' %} selected {% endif %} {% if filled_data and filled_data.test_sem == 'sem1' %} selected {% endif %}>Semester 1</option>
+              <option value="sem2" {% if update_data and update_data.test_sem == 'sem2' %} selected {% endif %} {% if filled_data and filled_data.test_sem == 'sem2' %} selected {% endif %}>Semester 2</option>
+            </select>
+          </div>
+
+          <div class="col-sm-12">
+            <label class="form-label mb-2">Test Time</label>
+            <div class="input-group input-group-merge">
+              <input type="text" class="form-control" name="test_time" placeholder="Test Time" {% if update_data %} value="{{ update_data.test_time }}" {% endif %}{% if filled_data %} value="{{ filled_data.test_time }}" {% endif %}/>
+            </div>
+          </div>
+
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

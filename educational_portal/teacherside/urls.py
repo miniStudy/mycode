@@ -27,7 +27,6 @@ urlpatterns = [
     path('teacher_timetable', teacherview.teacher_timetable, name='teacher_timetable'),
     path('teacher_attendance/', teacherview.teacher_attendance, name='teacher_attendance'),
     path('teacher_syllabus', teacherview.teacher_syllabus, name='teacher_syllabus'),
-    path('teacher_announcement', teacherview.teacher_announcement, name='teacher_announcement'),
     path('teacher_doubts', teacherview.teacher_doubts, name='teacher_doubts'),
     path('teacher_solution_verify', teacherview.show_teacher_solution_verified, name='teacher_solution_verify'),
 
@@ -46,4 +45,19 @@ urlpatterns = [
     path('teacher_handle_set_new_password/',teacherview.teacher_handle_set_new_password, name='teacher_handle_set_new_password'),
     path('teacher_logout/',teacherview.teacher_logout_page, name = 'teacher_logout' ),
     # path('Student_InfoUpdate/',studentview.student_info_update, name = 'Student_InfoUpdate' ),path
+
+
+    # ==========================test===================================================
+    path('teacher_tests', teacherview.teacher_test, name='teacher_tests'),
+    path('teacher_insert_update_tests/', teacherview.insert_update_tests, name='teacher_insert_update_tests'),
+    path('teacher_delete_tests/', teacherview.delete_tests, name='teacher_delete_tests'),
+
+    path('show_test_questions_teacher/', teacherview.show_test_questions_teacher, name='show_test_questions_teacher'),
+    path('insert_update_test_question_teacher/', teacherview.insert_update_test_questions_teacher, name='insert_update_test_question_teacher'),
+    
+    # ===============================announcements============================================
+    path('teacher_announcement', teacherview.teacher_announcement, name='teacher_announcement'),
+    path('announcements_insert_update_teacher', teacherview.announcements_insert_update_teacher, name='announcements_insert_update_teacher'),
+    path('announcements_delete_teacher', teacherview.announcements_delete_teacher, name='announcements_delete_teacher'),
+
 ]
