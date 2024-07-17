@@ -40,11 +40,7 @@ def teacher_attendance(request):
 
 
 def teacher_syllabus(request):
-     return render(request, 'teacherpanel/index.html')   
-
-
-def teacher_announcement(request):
-     return render(request, 'teacherpanel/index.html')     
+     return render(request, 'teacherpanel/index.html')       
 
 
 def teacher_doubts(request):
@@ -179,3 +175,282 @@ def teacher_logout_page(request):
         pass
     return redirect("teacher_login")
 
+
+
+
+
+
+
+def teacher_test(request):
+    data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+    std_data = Std.objects.all()
+    subject_data = Subject.objects.all()
+    context ={
+        'data' : data,
+        'title' : 'Chepters',
+        'std_data' : std_data,
+        'subject_data':subject_data,
+    }
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(test_sub__sub_std__std_id = get_std)
+            subject_data = subject_data.filter(sub_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'get_std':get_std,'std_data':std_data}) 
+
+
+    if request.GET.get('get_subject'):
+        get_subject = int(request.GET['get_subject'])
+        if get_subject == 0:
+            pass
+        else:    
+            data = data.filter(test_sub__sub_id = get_subject)
+            get_subject = Subject.objects.get(sub_id = get_subject)
+            context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
+
+    return render(request, 'teacherpanel/show_tests.html',context)
+
+
+
+def insert_update_tests(request):
+    std_data = Std.objects.all()
+    subject_data = Subject.objects.all()
+    context = {
+        'title' : 'Tests',
+        'std_data':std_data,
+        'subject_data':subject_data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id = get_std)
+        context.update({'get_std': get_std, 'std_data': std_data})
+
+    if request.GET.get('get_subject'):
+        get_subject = int(request.GET['get_subject'])
+        subject_data = subject_data.filter(sub_id = get_subject)
+        context.update({'get_subject': get_subject, 'subject_data': subject_data})     
+
+    # ================update Logic============================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Chepterwise_test, pk=request.GET['pk'])
+            form = tests_form(request.POST, instance=instance)
+            check = Chepterwise_test.objects.filter(test_name=form.data['test_name'], test_std__std_id=form.data['test_std']).count()
+            if check >= 1:
+                messages.error(request, '{} is already Exists'.format(form.data['test_name']))
+            else:
+                if form.is_valid():
+                    form.save()
+                    return redirect('teacher_test')
+                else:
+                    filled_data = form.data
+                    context.update({'filled_data': filled_data, 'errors': form.errors})
+        
+        update_data = Chepterwise_test.objects.get(test_id=request.GET['pk'])
+        context.update({'update_data': update_data})  
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            form = tests_form(request.POST, request.FILES)
+            if form.is_valid():
+                check = Chepterwise_test.objects.filter(test_name=form.data['test_name'], test_std__std_id=form.data['test_std']).count()
+                if check >= 1:
+                    messages.error(request, '{} is already Exists'.format(form.data['test_name']))
+                else:    
+                    form.save()
+                    return redirect('teacher_test')
+            else:
+                filled_data = form.data
+                context.update({'filled_data': filled_data, 'errors': form.errors})
+                return render(request, 'teacherpanel/insert_update_tests.html', context) 
+        
+    return render(request, 'teacherpanel/insert_update_tests.html', context)
+
+
+
+
+def delete_tests(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Chepterwise_test.objects.filter(test_id__in=selected_ids).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('teacher_test')
+
+def show_test_questions_teacher(request):
+    if request.GET.get('test_id'):
+        Test_Questions_data = Test_questions_answer.objects.filter(tq_name = request.GET['test_id'])
+        No_of_q = Test_Questions_data.count()
+        total_marks = 0
+        for x in Test_Questions_data:
+            total_marks += x.tq_weightage
+        test_info = Chepterwise_test.objects.get(test_id = request.GET['test_id'])
+
+        if request.GET.get('que_id'):
+            que_id = request.GET.get('que_id')
+            test_question = Test_questions_answer.objects.filter(tq_id = que_id) 
+        else:
+            test_question = Test_questions_answer.objects.filter(tq_name__test_id = request.GET['test_id'])[:1]
+
+
+        context = {
+            'Test_Questions_data':Test_Questions_data,
+            'test_info':test_info,
+            'test_question':test_question,
+            'total_marks':total_marks,
+            'no_of_q':No_of_q,
+        }
+        return render(request, 'teacherpanel/show_test_questions_teacher.html',context)
+    else:
+        return redirect('teacher_test') 
+
+def insert_update_test_questions_teacher(request):
+    chep_data = Chepter.objects.all()
+    context = {
+        'chep_data': chep_data,
+        'que_type': Test_questions_answer.que_type,
+    }
+
+    if request.GET.get('test_id'):
+        test_id = request.GET['test_id']
+        print(test_id)
+        context.update({'test_id': test_id})
+
+    if request.method == 'POST':
+        form = TestQuestionsAnswerForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('teacher_test')  # Replace 'success_url' with your actual success URL
+        else:
+            context.update({'form': form,'errors':form.errors})
+            return render(request, 'teacherpanel/insert_update_add_test_questions.html', context)
+    else:
+        form = TestQuestionsAnswerForm()
+        context.update({'form': form})
+        return render(request, 'teacherpanel/insert_update_add_test_questions.html', context)
+
+
+
+
+
+
+
+def teacher_announcement(request):
+    data = Announcements.objects.all()
+    std_data = Std.objects.all()
+    batch_data = Batches.objects.all()
+   
+    context ={
+        'data' : data,
+        'title' : 'Announcements',
+        'std_data' : std_data,
+        'batch_data':batch_data,
+    }
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(announce_std__std_id = get_std)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'batch_data':batch_data,'get_std':get_std})
+            
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(announce_batch__batch_id = get_batch)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            context.update({'data':data,'get_batch':get_batch})        
+            
+    return render(request, 'teacherpanel/show_announcements.html',context)
+
+
+
+def announcements_insert_update_teacher(request):
+    std_data = Std.objects.all()
+    batch_data = Batches.objects.all()
+    # ------------getting students for mail------------------
+    students_for_mail = Students.objects.all()
+
+    context = {
+        'title' : 'Insert Announcements',
+        'std_data':std_data,
+        'batch_data':batch_data,
+    }
+    
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id = get_std)
+        batch_data = batch_data.filter(batch_std__std_id = get_std)
+        students_for_mail = students_for_mail.filter(stud_std=get_std)
+        context.update({'get_std ':get_std,'std_data':std_data,'batch_data':batch_data}) 
+        
+    
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        batch_data = batch_data.filter(batch_id = get_batch)
+        students_for_mail = students_for_mail.filter(stud_batch=get_batch)
+        context.update({'get_batch ':get_batch,'batch_data':batch_data})
+
+    if request.method == 'POST':
+
+        # ================update Logic============================
+        if request.GET.get('pk'):
+            instance = get_object_or_404(Announcements, pk=request.GET['pk'])
+            form = announcement_form(request.POST, instance=instance)       
+            if form.is_valid():
+                form.save()
+
+                return redirect('teacher_announcement')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+
+        # ===================insert_logic===========================
+        form = announcement_form(request.POST)
+        if form.is_valid():
+            form.save()
+            # ---------------------sendmail Logic===================================
+            students_email_list = []
+            for x in students_for_mail:
+                students_email_list.append(x.stud_email)
+            print(students_email_list)    
+            # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
+         
+            return redirect('teacher_announcement')
+        else:
+            filled_data = form.data
+            context.update({'filled_data ':filled_data,'errors':form.errors})
+            return render(request, 'teacherpanel/announcements_insert_update_teacher.html', context)
+
+    if request.GET.get('pk'):
+        update_data = Announcements.objects.get(announce_id = request.GET['pk'])
+        context.update({'update_data':update_data})
+    return render(request, 'teacherpanel/announcements_insert_update_teacher.html',context)
+
+
+def announcements_delete_teacher(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Announcements.objects.filter(announce_id__in=selected_ids).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('teacher_announcement')
