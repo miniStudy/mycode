@@ -1,0 +1,95 @@
+{% extends 'teacherpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+    <h4>Attendance</h4>
+</div>
+
+
+{% for message in messages %}
+{{message|safe}}
+{% endfor %}
+<!-- DataTable with Buttons -->
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="myheadfont">{{batch_data}}</div>
+        </div>
+
+        <br>
+
+        <form action="{% url 'handle_attendance' %}" method="POST">
+            {% csrf_token %}
+            <label for="atten_timetable">Days</label>
+            <select class="form-select" name="atten_timetable" id="atten_timetable" required>
+                <option value="">----</option>
+                {% for x in timetable_data %}
+                <option value="{{x.tt_id}}">{{x.tt_day}} - {{x.tt_time1}} - {{x.tt_subject1}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <div class="table-responsive pt-0">
+                <table class="display table table-bordered" style="width:100%">
+                    <thead>
+                        <tr>                         
+                            <th>SN</th>
+                            <th>Student's Name</th>
+                            <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in students_data %}
+                        <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{x.stud_name}} {{x.stud_lastname}}</td> 
+                        <td><input type="checkbox" class="form-check-input" value="{{x.stud_id}}" name="selection" /> </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="confirmdeletemodelLabel"><i class="fa-solid fa-trash me-2"></i> Confirm submit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    Are you sure you want to delete this data ..?<br>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-trash me-2"></i> Submit</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;"
+                id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i
+                    class="fa-solid fa-trash me-2"></i> Submit</button>
+            
+        </form>
+
+        
+
+
+    </div>
+</div>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

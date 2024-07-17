@@ -10,6 +10,7 @@ import random
 from django.http import Http404,JsonResponse
 from studentside.forms import *
 from adminside.form import *
+from teacherside.forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 
 # mail integration 
@@ -32,23 +33,152 @@ def teacher_materials(request):
 
 
 def teacher_timetable(request):
-     return render(request, 'teacherpanel/index.html')
+     timetable_data = Timetable.objects.all()
+
+     context = {
+          'timetable_data':timetable_data
+     }
+     return render(request, 'teacherpanel/timetable.html', context)
 
 
 def teacher_attendance(request):
-     return render(request, 'teacherpanel/index.html')
+     data = Attendance.objects.all()
+     std_data = Std.objects.all()
+     batch_data = Batches.objects.all()
+     stud_data = Students.objects.all()
+     subj_data = Subject.objects.all()
+     
+
+     context ={
+          'data' : data,
+          'title' : 'Attendance',
+          'std_data' : std_data,
+          'batch_data':batch_data,
+          'stud_data':stud_data,
+          'sub_data':subj_data,
+    }
+    
+     if request.GET.get('get_std'):
+          get_std = int(request.GET['get_std'])
+          if get_std == 0:
+               pass
+          else:    
+               data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+               batch_data = batch_data.filter(batch_std__std_id = get_std)
+               stud_data = stud_data.filter(stud_std__std_id = get_std)
+               subj_data = subj_data.filter(sub_std__std_id = get_std)
+               get_std = Std.objects.get(std_id = get_std)
+               context.update({'attendance_data':data,'batch_data':batch_data,'get_std':get_std, 'stud_data':stud_data,'sub_data':subj_data})
+     
+     if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            context.update({'data':data,'get_batch':get_batch,'stud_data':stud_data}) 
+
+     if request.GET.get('get_student'):
+        get_student = int(request.GET['get_student'])
+        if get_student == 0:
+            pass
+        else:
+            data = data.filter(atten_student__stud_id = get_student)
+            get_student = Students.objects.get(stud_id = get_student)
+            context.update({'data':data,'get_student':get_student})                     
+
+
+     attendance_present = data.filter(atten_present = True).count()
+     attendance_all = data.all().count()
+     if attendance_all>0:
+        overall_attendance = round((attendance_present/attendance_all) * 100,2)
+        context.update({'overall_attendance':overall_attendance})
+
+     sub_list = subj_data.all().values('sub_name').distinct()
+     subject_wise_attendance = []
+     subjects = []
+     for x in sub_list:
+        sub_name = x['sub_name']
+        sub_one = data.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
+        sub_all = data.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
+        if sub_all>0:
+            sub_attendance = round((sub_one/sub_all) * 100,2)
+            subject_wise_attendance.append(sub_attendance)
+            subjects.append(sub_name)
+            
+     combined_data = zip(subject_wise_attendance, subjects)
+
+     context.update({'combined_data': combined_data})
+     return render(request, 'teacherpanel/attendance.html',context)
+
+def insert_update_attendance(request):
+     if request.GET.get('get_std') and request.GET.get('get_batch'):
+        get_std = request.GET['get_std']     
+        get_batch = request.GET['get_batch']
+        std_data = Std.objects.get(std_id=get_std)
+        batch_data = Batches.objects.get(batch_id=get_batch) 
+        timetable_data = Timetable.objects.filter(tt_batch__batch_id = get_batch)
+        students_data = Students.objects.filter(stud_std__std_id = get_std, stud_batch__batch_id = get_batch)
+
+        context = {
+          'std_data':std_data,
+          'batch_data':batch_data,
+          'students_data':students_data,
+          'timetable_data':timetable_data,
+     
+          }
+     else:
+        messages.error(request, "Please! Select Standard And Batch")
+        return redirect('teacher_attendance')  
+     return render(request, 'teacherpanel/insert_attendence.html', context)
+
+def handle_attendance(request):
+     if request.method == 'POST':
+        atten_timetable = request.POST.get('atten_timetable')
+        atten_tt = Timetable.objects.get(tt_id = atten_timetable)
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+          selected_ids = [int(id) for id in selected_items]
+        for i in selected_ids:
+            stud = Students.objects.get(stud_id = i)
+            Attendance.objects.create(atten_timetable=atten_tt, atten_student=stud, atten_present=1)
+            messages.success(request, "Attendance has been submitted!")
+     return redirect('teacher_attendance')
 
 
 def teacher_syllabus(request):
-     return render(request, 'teacherpanel/index.html')   
+     subjects = Subject.objects.filter()
+     chepters = Chepter.objects.filter()
+     return render(request, 'teacherpanel/syllabus.html', {'subjects':subjects,'chepters':chepters}) 
 
 
 def teacher_announcement(request):
      return render(request, 'teacherpanel/index.html')     
 
-
 def teacher_doubts(request):
-     return render(request, 'teacherpanel/index.html')     
+     doubts_data = Doubt_section.objects.all()
+     context = {
+         'doubts_data':doubts_data
+     }
+     return render(request, 'teacherpanel/doubts.html', context)     
+
+def show_teacher_solution_verified(request):
+     if request.GET.get('doubt_id'):
+          doubt_id = request.GET.get('doubt_id')
+          doubts_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
+
+          teacher_id = request.session['fac_id']
+          fac_id = Faculties.objects.get(fac_id = teacher_id)
+          if request.method == 'POST':
+              verification = request.POST.get('verification')
+              solution_id = request.POST.get('solution_id')
+              sol_id = Doubt_solution.objects.get(solution_id = solution_id)
+              sol_id.solution_verified = verification
+              sol_id.solution_verified_by_teacher = fac_id
+              sol_id.save()
+          return render(request, 'teacherpanel/show_solution.html', {'doubts_solution':doubts_solution, 'doubt_id': doubt_id})
 
 
 def teacher_events(request):
@@ -178,4 +308,3 @@ def teacher_logout_page(request):
     except:
         pass
     return redirect("teacher_login")
-

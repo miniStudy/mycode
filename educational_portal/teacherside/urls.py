@@ -25,12 +25,17 @@ urlpatterns = [
     path('teacher_test', teacherview.teacher_test, name='teacher_test'),
     path('teacher_materials', teacherview.teacher_materials, name='teacher_materials'),
     path('teacher_timetable', teacherview.teacher_timetable, name='teacher_timetable'),
-    path('teacher_attendance', teacherview.teacher_attendance, name='teacher_attendance'),
+    path('teacher_attendance/', teacherview.teacher_attendance, name='teacher_attendance'),
     path('teacher_syllabus', teacherview.teacher_syllabus, name='teacher_syllabus'),
     path('teacher_announcement', teacherview.teacher_announcement, name='teacher_announcement'),
     path('teacher_doubts', teacherview.teacher_doubts, name='teacher_doubts'),
+    path('teacher_solution_verify', teacherview.show_teacher_solution_verified, name='teacher_solution_verify'),
+
     path('teacher_logout', teacherview.teacher_announcement, name='teacher_logout'),
 
+    # <==============Insert Update==================>
+    path('insert_update_attendance/', teacherview.insert_update_attendance, name='insert_update_attendance'),
+    path('handle_attendance/', teacherview.handle_attendance, name='handle_attendance'),
 
     # <==============Teacher Authencation==================>
     path('teacher_login/', teacherview.teacher_login_page, name='teacher_login'),

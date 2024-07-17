@@ -1,0 +1,61 @@
+{% extends 'teacherpanel/master.html' %}
+
+<!-- ================================================================================= -->
+
+
+
+
+
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Syllabus</h4>
+</div>
+
+
+{% for message in messages %}
+{{message|safe}}
+{% endfor %}
+
+    <div class="accordion" id="accordionExample">
+        {% for subject in subjects %}
+        <div class="accordion-item" style="border-bottom:1px solid grey;">
+            <h2 class="accordion-header">
+                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#abcd{{subject.sub_id}}"
+                    aria-expanded="false" aria-controls="abcd{{subject.sub_id}}">
+                    {{subject.sub_name}}
+                </button>
+            </h2>
+            
+            <div id="abcd{{subject.sub_id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Chepter's Name</th>
+                                    <th>Weitage</th>
+                                    <th>Complete Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for chepter in chepters %}
+                                    {% if chepter.chep_sub.sub_id == subject.sub_id %}
+                                <tr>
+                                    <td>{{chepter.chep_name}}</td>
+                                    <td>10%</td>
+                                    <td>Completed</td>
+                                </tr>
+                                {% endif %}
+                                    {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                </div>
+            </div>
+            
+        </div>
+        {% endfor %}
+    </div>
+
+    {% endblock %}

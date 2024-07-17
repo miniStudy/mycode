@@ -22,7 +22,7 @@ from studentside.decorators import student_login_required
 
 @student_login_required
 def student_home(request):
-     return render(request, 'studentpanel/index.html')
+    return render(request, 'studentpanel/index.html')
 
 def student_login_page(request):  
     login=1

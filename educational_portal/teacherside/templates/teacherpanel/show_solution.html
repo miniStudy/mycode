@@ -1,0 +1,49 @@
+{% extends 'teacherpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Doubt Solution</h4>
+</div>
+
+{% for message in messages %}
+{{message|safe}}
+{% endfor %}
+<!-- DataTable with Buttons -->
+
+<div class="row">
+    {% for doubt_que in doubts_solution|slice:":1" %}
+    <div class="col-md-12">
+        Que. {{doubt_que.solution_doubt_id.doubt_doubt|safe}}     
+    </div>
+    {% endfor %}
+    <br><br>
+    <hr>
+    {% for doubt in doubts_solution %}
+    <div class="col-md-12">
+        <div class="card mt-3 {% if student_id == doubt.solution_stud_id.stud_id %}border border-primary{% endif %}">
+            <div class="card-body">
+                <div class="mb-2">{% if doubt.solution_verified == 1 %}<img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 18px;">{% endif %}Ans {{ forloop.counter }} <br></div>
+                <div style="display:block; overflow: hidden;">{{doubt.solution|safe}}</div>
+                <hr>
+                <span>Solution By: {{doubt.solution_stud_id.stud_name}} {{doubt.solution_stud_id.stud_lastname}}</span> <br>
+                {% if doubt.solution_verified %}
+                <form action="{% url 'teacher_solution_verify' %}?doubt_id={{doubt_id}}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="solution_id" value="{{doubt.solution_id}}">
+                    <input type="hidden" name="verification" value="0">
+                    <button type="submit" class="btn border border-primary mt-2"><i class="fa-regular fa-circle-xmark me-1" style="color: #1e8fdc;"></i>unverify</button>
+                </form>
+                {% else %}
+                <form action="{% url 'teacher_solution_verify' %}?doubt_id={{doubt_id}}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="verification" value="1">
+                    <input type="hidden" name="solution_id" value="{{doubt.solution_id}}">
+                    <button type="submit" class="btn border border-primary mt-2"><img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 18px;">verify</button:type>
+                </form>
+                {% endif %}
+        </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
