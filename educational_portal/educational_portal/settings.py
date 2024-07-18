@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'adminside',
     'studentside',
     'teacherside',
+    'parentsside',
     'django_summernote',
 
 ]
