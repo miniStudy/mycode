@@ -44,7 +44,6 @@ urlpatterns = [
     path('teacher_set_new_password/',teacherview.teacher_set_new_password, name='teacher_set_new_password'),
     path('teacher_handle_set_new_password/',teacherview.teacher_handle_set_new_password, name='teacher_handle_set_new_password'),
     path('teacher_logout/',teacherview.teacher_logout_page, name = 'teacher_logout' ),
-    # path('Student_InfoUpdate/',studentview.student_info_update, name = 'Student_InfoUpdate' ),path
 
 
     # ==========================test===================================================
