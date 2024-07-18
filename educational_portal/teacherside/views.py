@@ -149,7 +149,6 @@ def handle_attendance(request):
 
 
 def teacher_syllabus(request):
-<<<<<<< HEAD
      subjects = Subject.objects.filter()
      chepters = Chepter.objects.filter()
      return render(request, 'teacherpanel/syllabus.html', {'subjects':subjects,'chepters':chepters}) 
@@ -157,9 +156,8 @@ def teacher_syllabus(request):
 
 def teacher_announcement(request):
      return render(request, 'teacherpanel/index.html')     
-=======
      return render(request, 'teacherpanel/index.html')       
->>>>>>> 726c87d7e93f5de01e16ea76a0c011c447019619
+
 
 def teacher_doubts(request):
      doubts_data = Doubt_section.objects.all()
@@ -311,9 +309,6 @@ def teacher_logout_page(request):
         return redirect("teacher_login")
     except:
         pass
-<<<<<<< HEAD
-    return redirect("teacher_login")
-=======
     return redirect("teacher_login")
 
 
@@ -595,4 +590,3 @@ def announcements_delete_teacher(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('teacher_announcement')
->>>>>>> 726c87d7e93f5de01e16ea76a0c011c447019619
