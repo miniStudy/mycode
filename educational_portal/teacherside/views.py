@@ -644,3 +644,101 @@ def announcements_delete_teacher(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('teacher_announcement')
+
+
+
+
+
+
+def teacher_materials(request):
+    standard_data = Std.objects.all()
+    subjects_data = Subject.objects.all()
+    materials = Chepterwise_material.objects.all()
+    selected_sub=None
+
+    context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials}
+    if request.GET.get('std_id'):
+        std_id = int(request.GET.get('std_id'))
+        subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id)
+        std_data = Std.objects.get(std_id = std_id)
+        context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_data})
+
+    if request.GET.get('sub_id'):
+        sub_id = request.GET.get('sub_id')
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id)
+        selected_sub = Subject.objects.get(sub_id=sub_id)
+        context.update({'materials': materials, 'selected_sub':selected_sub})
+
+    return render(request, 'teacherpanel/show_materials.html', context)
+
+
+
+def teacher_insert_update_materials(request):
+    chepter_data = Chepter.objects.all()
+    context = {
+        'title' : 'Insert Materials',
+        'chepter_data':chepter_data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        chepter_data = chepter_data.filter(chep_std__std_id = get_std)
+        context.update({'get_std ':get_std,'chepter_data':chepter_data})
+
+    if request.GET.get('get_subject'):
+        get_subject = int(request.GET['get_subject'])
+        chepter_data = chepter_data.filter(chep_sub__sub_id = get_subject)
+        context.update({'get_subject':get_subject,'chepter_data':chepter_data})     
+
+
+   
+    print(chepter_data)
+ # ================update Logic============================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Chepterwise_material, pk=request.GET['pk'])
+            form = teacher_materials_form(request.POST,request.FILES, instance=instance)
+            check = Chepterwise_material.objects.filter(cm_filename = form.data['cm_filename'], cm_chepter__chep_name = form.data['cm_chepter']).count()
+            if check >= 1:
+                messages.error(request,'{} is already Exists'.format(form.data['cm_filename']))
+            else:
+                if form.is_valid():
+                    form.save()
+                    return redirect('teacher_materials')
+                else:
+                    filled_data = form.data
+                    context.update({'filled_data ':filled_data,'errors':form.errors})
+        
+        update_data = Chepterwise_material.objects.get(cm_id = request.GET['pk'])
+        context.update({'update_data':update_data})  
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            form = teacher_materials_form(request.POST, request.FILES)
+            if form.is_valid():
+                check = Chepterwise_material.objects.filter(cm_filename = form.data['cm_filename'], cm_chepter__chep_name = form.data['cm_chepter']).count()
+                if check >= 1:
+                    messages.error(request,'{} is already Exists'.format(form.data['cm_filename']))
+                else:    
+                    form.save()
+                    return redirect('teacher_materials')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+                return render(request, 'teacherpanel/insert_update_materials_teacher.html', context) 
+        
+    return render(request, 'teacherpanel/insert_update_materials_teacher.html',context)                
+
+
+def materials_delete_teacher(request):
+    if request.method == 'GET':
+        selected_items = request.GET.get('delete_material_id')
+        if selected_items:
+            try:
+                Chepterwise_material.objects.get(cm_id=selected_items).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('teacher_materials')
