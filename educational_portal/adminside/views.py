@@ -1397,3 +1397,6 @@ def show_admin_profile(request):
         'admin_data':admin_data
     }
     return render(request, 'show_profile.html', context)
+
+
+

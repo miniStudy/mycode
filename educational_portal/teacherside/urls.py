@@ -23,7 +23,6 @@ urlpatterns = [
     path('', teacherview.teacher_home, name='teacher_home'),
     path('teacher_events', teacherview.teacher_events, name='teacher_events'),
     path('teacher_test', teacherview.teacher_test, name='teacher_test'),
-    path('teacher_materials', teacherview.teacher_materials, name='teacher_materials'),
     path('teacher_timetable', teacherview.teacher_timetable, name='teacher_timetable'),
     path('teacher_attendance/', teacherview.teacher_attendance, name='teacher_attendance'),
     path('teacher_syllabus', teacherview.teacher_syllabus, name='teacher_syllabus'),
@@ -59,5 +58,12 @@ urlpatterns = [
     path('teacher_announcement', teacherview.teacher_announcement, name='teacher_announcement'),
     path('announcements_insert_update_teacher', teacherview.announcements_insert_update_teacher, name='announcements_insert_update_teacher'),
     path('announcements_delete_teacher', teacherview.announcements_delete_teacher, name='announcements_delete_teacher'),
+
+
+    # =================================materials==================================================
+
+    path('teacher_materials', teacherview.teacher_materials, name='teacher_materials'),
+    path('teacher_insert_update_materials', teacherview.teacher_insert_update_materials, name='teacher_insert_update_materials'),
+    path('materials_delete_teacher', teacherview.materials_delete_teacher, name='materials_delete_teacher'),
 
 ]
