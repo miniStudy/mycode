@@ -22,10 +22,10 @@ from django.core.mail import EmailMultiAlternatives
 
 
 def teacher_home(request):
-     return render(request, 'teacherpanel/index.html')
+    return render(request, 'teacherpanel/index.html')
 
 def teacher_test(request):
-     return render(request, 'teacherpanel/index.html')
+    return render(request, 'teacherpanel/index.html')
 
 
 def teacher_materials(request):

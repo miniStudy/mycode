@@ -135,6 +135,8 @@ class Students(models.Model):
     stud_guardian_email = models.EmailField(max_length=200)
     stud_guardian_number = models.CharField(max_length=20)
     stud_guardian_profession = models.CharField(max_length=50)
+    stud_guardian_password = models.CharField(max_length=100, null=True, blank=True, default='123456')
+    stud_guardian_otp = models.CharField(blank=True,null=True,max_length=10)
     stud_address = models.TextField()
     stud_std = models.ForeignKey(Std, on_delete = models.CASCADE)
     stud_batch = models.ForeignKey(Batches, on_delete = models.CASCADE)
@@ -359,9 +361,3 @@ class Doubt_solution(models.Model):
     
     class Meta:
         db_table = 'Doubt_solution'
-
-
-
-
-
-
