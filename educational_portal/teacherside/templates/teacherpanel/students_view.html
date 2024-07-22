@@ -1,0 +1,29 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Tests</h4></div> 
+  
+
+{% for message in messages %}
+ {{message|safe}}
+{% endfor %}
+    <div class="card-datatable table-responsive pt-0">
+        <table class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Attemped Student's Name</th>
+                    <th>Obtained Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in students_attemp_data %}
+                <tr>  
+                    <td>{{i.tau_stud_id.stud_name}} {{i.tau_stud_id.stud_lastname}}</td>
+                    <td>{{i.tau_obtained_marks}}</td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

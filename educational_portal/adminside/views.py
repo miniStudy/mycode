@@ -849,7 +849,7 @@ def show_attendance(request):
         sub_one = data.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
         sub_all = data.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
         if sub_all>0:
-            sub_attendance = (sub_one/sub_all) * 100
+            sub_attendance = round((sub_one/sub_all) * 100, 2)
             subject_wise_attendance.append(sub_attendance)
             subjects.append(sub_name)
             

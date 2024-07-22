@@ -323,7 +323,7 @@ def teacher_test(request):
     subject_data = Subject.objects.all()
     context ={
         'data' : data,
-        'title' : 'Chepters',
+        'title' : 'Tests',
         'std_data' : std_data,
         'subject_data':subject_data,
     }
@@ -350,6 +350,60 @@ def teacher_test(request):
     return render(request, 'teacherpanel/show_tests.html',context)
 
 
+def teacher_insert_offline_marks(request):
+    context = {}
+
+    if request.GET.get('test_id'):
+        test_id = request.GET.get('test_id')
+        context.update({'test_id':test_id})
+
+    if request.GET.get('std_id'):
+        std_id = request.GET.get('std_id')
+        batch_data = Batches.objects.filter(batch_std__std_id = std_id)
+        students_data = Students.objects.filter(stud_std__std_id = std_id)
+        context.update({'std_id':std_id, 'batch_data':batch_data, 'students_data':students_data})
+
+    if request.GET.get('batch_id'):
+        batch_id = request.GET.get('batch_id')
+        students_data = Students.objects.filter(stud_batch__batch_id = batch_id)
+        batch_id = Batches.objects.get(batch_id=batch_id)
+        context.update({'students_data':students_data, 'batch_id':batch_id})
+    
+    return render(request, 'teacherpanel/offline_marks.html',context)
+
+def teacher_save_offline_marks(request):
+    if request.method == 'POST':
+        student_ids = request.POST.getlist('student_id')
+        test_id = request.POST.get('test_id')
+        marks = request.POST.getlist('marks')
+        test_data = Test_questions_answer.objects.filter(tq_name__test_id = test_id)
+        test_id = Chepterwise_test.objects.get(test_id=test_id)
+        sum = 0
+        count = 0
+        for x in test_data:
+            sum = sum + x.tq_weightage
+            count += 1
+
+        for student_id, mark in zip(student_ids, marks):
+            student = Students.objects.get(pk=student_id)
+            test_attempt = Test_attempted_users(
+                tau_test_id=test_id,
+                tau_stud_id=student,
+                tau_completion_time=test_id.test_time,  # Update with actual completion time
+                tau_attempted_questions=count,  # Update with actual number of attempted questions
+                tau_correct_ans=0,  # Update with actual number of correct answers
+                tau_total_marks=sum,  # Update with actual total marks
+                tau_obtained_marks=mark
+            )
+            test_attempt.save()
+    messages.success(request, 'Marks have been successfully saved.')
+    return redirect('teacher_test')
+
+def view_attemp_students(request):
+    if request.GET.get('test_id'):
+        test_id = request.GET.get('test_id')
+        students_attemp_data = Test_attempted_users.objects.filter(tau_test_id__test_id = test_id)
+    return render(request, 'teacherpanel/students_view.html', {'students_attemp_data':students_attemp_data})
 
 def insert_update_tests(request):
     std_data = Std.objects.all()

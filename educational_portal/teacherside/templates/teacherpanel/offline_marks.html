@@ -1,0 +1,45 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Tests</h4></div> 
+  
+
+{% for message in messages %}
+ {{message|safe}}
+{% endfor %}
+
+<div class="btn-group mb-3">
+    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if batch_id %}{{batch_id.batch_name}}{% else %}Batch{% endif %}</button>
+    <ul class="dropdown-menu">
+      {% for x in batch_data %}
+      <li><a class="dropdown-item" href="{% url 'insert_offline_marks' %}?test_id={{test_id}}&std_id={{std_id}}&batch_id={{x.batch_id}}">{{x.batch_name}}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+
+<form action="{% url 'save_offline_marks' %}" method="post"> 
+    {% csrf_token %}    
+    <input type="hidden" name="test_id" value="{{test_id}}">    
+    <div class="card-datatable table-responsive pt-0">
+        <table class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Student name</th>
+                    <th>Enter marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in students_data %}
+                <tr>
+                    <input type="hidden" name="student_id" value="{{data.stud_id}}">
+                    <td>{{data.stud_name}} {{data.stud_lastname}}</td>
+                    <td><input type="number" class="form-control" name="marks" id="marks" style="width:150px"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+{% endblock %}

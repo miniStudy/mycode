@@ -47,12 +47,17 @@ urlpatterns = [
 
 
     # ==========================test===================================================
-    path('teacher_tests', teacherview.teacher_test, name='teacher_tests'),
+    path('teacher_tests/', teacherview.teacher_test, name='teacher_tests'),
     path('teacher_insert_update_tests/', teacherview.insert_update_tests, name='teacher_insert_update_tests'),
     path('teacher_delete_tests/', teacherview.delete_tests, name='teacher_delete_tests'),
+    
 
     path('show_test_questions_teacher/', teacherview.show_test_questions_teacher, name='show_test_questions_teacher'),
     path('insert_update_test_question_teacher/', teacherview.insert_update_test_questions_teacher, name='insert_update_test_question_teacher'),
+    path('view_attemp_students/', teacherview.view_attemp_students, name='view_attemp_students'),
+    
+    path('insert_offline_marks/', teacherview.teacher_insert_offline_marks, name='insert_offline_marks'),
+    path('save_offline_marks/', teacherview.teacher_save_offline_marks, name='save_offline_marks'),
     
     # ===============================announcements============================================
     path('teacher_announcement', teacherview.teacher_announcement, name='teacher_announcement'),
