@@ -21,15 +21,15 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', teacherview.teacher_home, name='teacher_home'),
-    path('teacher_events', teacherview.teacher_events, name='teacher_events'),
-    path('teacher_test', teacherview.teacher_test, name='teacher_test'),
-    path('teacher_timetable', teacherview.teacher_timetable, name='teacher_timetable'),
+    path('teacher_events/', teacherview.teacher_events, name='teacher_events'),
+    path('teacher_test/', teacherview.teacher_test, name='teacher_test'),
+    path('teacher_timetable/', teacherview.teacher_timetable, name='teacher_timetable'),
     path('teacher_attendance/', teacherview.teacher_attendance, name='teacher_attendance'),
-    path('teacher_syllabus', teacherview.teacher_syllabus, name='teacher_syllabus'),
-    path('teacher_doubts', teacherview.teacher_doubts, name='teacher_doubts'),
-    path('teacher_solution_verify', teacherview.show_teacher_solution_verified, name='teacher_solution_verify'),
+    path('teacher_syllabus/', teacherview.teacher_syllabus, name='teacher_syllabus'),
+    path('teacher_doubts/', teacherview.teacher_doubts, name='teacher_doubts'),
+    path('teacher_solution_verify/', teacherview.show_teacher_solution_verified, name='teacher_solution_verify'),
 
-    path('teacher_logout', teacherview.teacher_announcement, name='teacher_logout'),
+    path('teacher_logout/', teacherview.teacher_announcement, name='teacher_logout'),
 
     # <==============Insert Update==================>
     path('insert_update_attendance/', teacherview.insert_update_attendance, name='insert_update_attendance'),
@@ -59,15 +59,15 @@ urlpatterns = [
     path('save_offline_marks/', teacherview.teacher_save_offline_marks, name='save_offline_marks'),
     
     # ===============================announcements============================================
-    path('teacher_announcement', teacherview.teacher_announcement, name='teacher_announcement'),
-    path('announcements_insert_update_teacher', teacherview.announcements_insert_update_teacher, name='announcements_insert_update_teacher'),
-    path('announcements_delete_teacher', teacherview.announcements_delete_teacher, name='announcements_delete_teacher'),
+    path('teacher_announcement/', teacherview.teacher_announcement, name='teacher_announcement'),
+    path('announcements_insert_update_teacher/', teacherview.announcements_insert_update_teacher, name='announcements_insert_update_teacher'),
+    path('announcements_delete_teacher/', teacherview.announcements_delete_teacher, name='announcements_delete_teacher'),
 
 
     # =================================materials==================================================
 
-    path('teacher_materials', teacherview.teacher_materials, name='teacher_materials'),
-    path('teacher_insert_update_materials', teacherview.teacher_insert_update_materials, name='teacher_insert_update_materials'),
-    path('materials_delete_teacher', teacherview.materials_delete_teacher, name='materials_delete_teacher'),
+    path('teacher_materials/', teacherview.teacher_materials, name='teacher_materials'),
+    path('teacher_insert_update_materials/', teacherview.teacher_insert_update_materials, name='teacher_insert_update_materials'),
+    path('materials_delete_teacher/', teacherview.materials_delete_teacher, name='materials_delete_teacher'),
 
 ]

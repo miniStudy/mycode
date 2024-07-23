@@ -154,7 +154,7 @@ EMAIL_HOST_PASSWORD = '71554913@TmP'  # Replace with your Hostinger email passwo
 
 
 
-TIME_ZONE = 'Asia/Kolkata'
+# TIME_ZONE = 'Asia/Kolkata'
 
 # Enable timezone support
 USE_TZ = True
