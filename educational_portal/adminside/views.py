@@ -545,7 +545,7 @@ def insert_update_chepters(request):
         context.update({'get_std ':get_std,'std_data':std_data})
 
     if request.GET.get('get_subject'):
-        get_subject = int(request.GET['get_std'])
+        get_subject = int(request.GET['get_subject'])
         subject_data = subject_data.filter(sub_id = get_subject)
         context.update({'get_subject':get_subject,'subject_data':subject_data})     
 
@@ -1098,8 +1098,8 @@ def insert_update_packages(request):
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id = get_std)
-        subjects_data.filter(sub_std__std_id = get_std)
-        context.update({'get_std ':get_std,'std_data':std_data}) 
+        subjects_data = subjects_data.filter(sub_std__std_id = get_std)
+        context.update({'get_std ':get_std,'std_data':std_data, 'subjects_data':subjects_data}) 
 
 
    

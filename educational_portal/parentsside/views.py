@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
 import random
+from parentsside.decorators import *
 
 # mail integration 
 from django.core.mail import send_mail
@@ -13,17 +14,22 @@ from django.core.mail import EmailMultiAlternatives
 
 # Create your views here.
 
+@parent_login_required
 def parent_home(request):
-    return render(request, 'parentpanel/index.html')
+    context = {
+        'title': 'Home'
+    }
+    return render(request, 'parentpanel/index.html', context)
 
-def parent_login_page(request):  
+def parent_login_page(request):
+    title = 'Login' 
     login=1
     if request.COOKIES.get("stud_guardian_email"):
           cookie_email = request.COOKIES['stud_guardian_email']
           cookie_pass = request.COOKIES['stud_guardian_password']
-          return render(request, 'parentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass})
+          return render(request, 'parentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':title})
     else:
-          return render(request, 'parentpanel/master_auth.html',{'login_set':login})
+          return render(request, 'parentpanel/master_auth.html',{'login_set':login, 'title':title})
 
 def parent_login_handle(request):
     if request.method == "POST":
@@ -51,13 +57,14 @@ def parent_login_handle(request):
     else:
         return redirect('teacher_login')
 
-def parent_forget_password(request):  
+def parent_forget_password(request):
+    title = 'Forget Password'  
     login=2
     if request.COOKIES.get("stud_guardian_email"):
           cookie_email = request.COOKIES['stud_guardian_email']
-          return render(request, 'parentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email})
+          return render(request, 'parentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email, 'title':title})
     else:
-          return render(request, 'parentpanel/master_auth.html',{'login_set':login})
+          return render(request, 'parentpanel/master_auth.html',{'login_set':login, 'title':title})
     
 def parent_handle_forget_password(request):
      if request.method == "POST":
@@ -82,9 +89,9 @@ def parent_handle_forget_password(request):
     
 def parent_set_new_password(request):  
     login=3      
-    if request.GET.get('email'):
-         foremail = request.GET['email']
-    return render(request, 'parentpanel/master_auth.html',{'login_set':login,'email':foremail})
+    # if request.GET.get('email'):
+    #     foremail = request.GET['email']
+    return render(request, 'parentpanel/master_auth.html',{'login_set':login})
 
 def parent_handle_set_new_password(request):
      if request.method == "POST":
@@ -96,7 +103,7 @@ def parent_handle_set_new_password(request):
              if obj == 1:
                   data = Students.objects.get(stud_guardian_otp = otp)
                   data.stud_guardian_password = password
-                  data.stud_guardian_otp = otp
+                  data.stud_guardian_otp = None
                   data.save()
                   response = redirect("parent_login")
                   response.set_cookie('stud_guardian_password', password)
@@ -124,6 +131,7 @@ def parent_logout_page(request):
         pass
     return redirect("parent_login")
 
+@parent_login_required
 def show_parent_events(request):
     event_data = Event.objects.all()
     event_imgs = Event_Image.objects.all()
@@ -131,7 +139,8 @@ def show_parent_events(request):
     context={
         'event_data':event_data,
         'event_imgs':event_imgs,
-        'selected_events':selected_events
+        'selected_events':selected_events,
+        'title': 'Events'
     }
 
     if request.GET.get('event_id'):
@@ -143,7 +152,9 @@ def show_parent_events(request):
 
     return render(request, 'parentpanel/events.html', context)
 
+@parent_login_required
 def show_parent_profile(request):
+    title = 'Profile'
     parent_id = request.session['parent_id']
     parent_profile = Students.objects.filter(stud_id = parent_id)
-    return render(request, 'parentpanel/parent_profile.html', {'parent_profile':parent_profile})
+    return render(request, 'parentpanel/parent_profile.html', {'parent_profile':parent_profile, 'title':title})

@@ -4,16 +4,14 @@
   <div class="mb-4"><h4>Events</h4></div> 
   
 
-{% for message in messages %}
- {{message|safe}}
-{% endfor %}
+{% include "message_show.html" %}
 
 
 <div class="row mt-3">
   {% for data in event_data %}
   
   <div class="col-md-2">
-    <a href="{% url 'Student_Event' %}?event_id={{data.event_id}}">
+    <a href="{% url 'parent_events' %}?event_id={{data.event_id}}">
     <div class="card">
       <div class="card-body">
           {{data.event_name}}
