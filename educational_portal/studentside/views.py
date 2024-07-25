@@ -17,6 +17,8 @@ from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 from studentside.decorators import student_login_required
+from datetime import datetime, timedelta
+from django.utils.timezone import now
 # Create your views here.
 
 
@@ -260,11 +262,26 @@ def show_test(request):
 
 @student_login_required
 def show_test_questions(request, id):
-    student_id = Students.objects.get(stud_id = request.session['stud_id'])
+    student_id = Students.objects.get(stud_id=request.session['stud_id'])
+    test = Chepterwise_test.objects.get(test_id=id)
+
+    # Check if test start time is in session
+    if 'start_time' not in request.session:
+        request.session['start_time'] = str(now())
+    start_time = datetime.fromisoformat(request.session['start_time'])
+
+    # Calculate remaining time
+    test_duration = timedelta(minutes=int(test.test_time))
+    elapsed_time = now() - start_time
+    remaining_time = test_duration - elapsed_time
+
+    # If time is up, redirect to submission
+    if remaining_time <= timedelta(0):
+        return redirect('/studentside/Student_Test_Submission/')
+
     if request.GET.get('que_id'):
         que_id = request.GET.get('que_id')
-        test_question = Test_questions_answer.objects.filter(tq_id = que_id)
-        
+        test_question = Test_questions_answer.objects.filter(tq_id=que_id)
 
         if request.GET.get('ans'):
             quen_id = request.GET.get('current_q_id')
@@ -273,68 +290,66 @@ def show_test_questions(request, id):
             test_attempted = 1
             data = Test_submission.objects.filter(ts_stud_id=student_id, ts_que_id=quen_id).count()
             if data == 0:
-               Test_submission.objects.create(ts_stud_id=student_id, ts_que_id=quen_id, ts_ans=answer, ts_attempted=test_attempted)
+                Test_submission.objects.create(ts_stud_id=student_id, ts_que_id=quen_id, ts_ans=answer, ts_attempted=test_attempted)
             else:
-                Test_submission.objects.filter(ts_stud_id=student_id, ts_que_id=quen_id).update(ts_ans=answer,ts_attempted=1)
-   
+                Test_submission.objects.filter(ts_stud_id=student_id, ts_que_id=quen_id).update(ts_ans=answer, ts_attempted=1)
         else:
             not_attemp = 0
     else:
-        test_question = Test_questions_answer.objects.filter(tq_name__test_id = id)[:1]   
-    
-    subquery = Test_submission.objects.filter(ts_que_id = OuterRef('pk')).values('ts_attempted')[:1]
-    test_questions_all = Test_questions_answer.objects.filter(tq_name__test_id = id).annotate(ts_attempted=Subquery(subquery,output_field = BooleanField()))
+        test_question = Test_questions_answer.objects.filter(tq_name__test_id=id)[:1]
+
+    subquery = Test_submission.objects.filter(ts_que_id=OuterRef('pk')).values('ts_attempted')[:1]
+    test_questions_all = Test_questions_answer.objects.filter(tq_name__test_id=id).annotate(ts_attempted=Subquery(subquery, output_field=BooleanField()))
     all_q_list = []
     if test_questions_all.exists():
         current_q_id = test_question[0].tq_id
         for x in test_questions_all:
             all_q_list.append(x.tq_id)
 
-
         index_posi = all_q_list.index(current_q_id)
         if all_q_list[index_posi] != all_q_list[-1]:
-            next_id = all_q_list[index_posi+1]
+            next_id = all_q_list[index_posi + 1]
         else:
             next_id = all_q_list[0]
-        
+
         if all_q_list[index_posi] != all_q_list[0]:
-            prev_id = all_q_list[index_posi-1]
+            prev_id = all_q_list[index_posi - 1]
         else:
             prev_id = None
 
-    #<===============================Check-Answers================================================>
         tq_idd = test_question[0].tq_id
-        get_answer = Test_submission.objects.filter(ts_stud_id__stud_id = student_id.stud_id, ts_que_id__tq_id = tq_idd)
+        get_answer = Test_submission.objects.filter(ts_stud_id__stud_id=student_id.stud_id, ts_que_id__tq_id=tq_idd)
         if get_answer.exists():
             get_answer = get_answer[0].ts_ans
-            # print(get_answer)
         else:
             get_answer = None
-        
-    # <=======================================Clear Selection Logic==============================>
+
         if request.GET.get('clear_id'):
             clear_id = request.GET['clear_id']
-            Test_submission.objects.get(ts_stud_id__stud_id = student_id.stud_id, ts_que_id__tq_id = clear_id).delete()
-            return redirect('/studentside/Student_Test_Q/{}/?que_id={}'.format(id,clear_id))
+            Test_submission.objects.get(ts_stud_id__stud_id=student_id.stud_id, ts_que_id__tq_id=clear_id).delete()
+            return redirect('/studentside/Student_Test_Q/{}/?que_id={}'.format(id, clear_id))
+
         context = {
-            'test_questions_all':test_questions_all,
-            'test_question':test_question,
-            'test_id':id,
-            'next_id':next_id,
-            'prev_id':prev_id,
-            'get_answer':get_answer,
-            'student_id':student_id
+            'test_questions_all': test_questions_all,
+            'test_question': test_question,
+            'test_id': id,
+            'next_id': next_id,
+            'prev_id': prev_id,
+            'get_answer': get_answer,
+            'student_id': student_id,
+            'remaining_time': remaining_time.total_seconds()  # Pass remaining time in seconds
         }
         return render(request, 'studentpanel/testque.html', context)
     else:
         no_que = "No questions available right now!"
     context = {
-            'test_questions_all':test_questions_all,
-            'test_question':test_question,
-            'test_id':id,
-            'no_que':no_que,
-            'student_id':student_id
-        }
+        'test_questions_all': test_questions_all,
+        'test_question': test_question,
+        'test_id': id,
+        'no_que': no_que,
+        'student_id': student_id,
+        'remaining_time': remaining_time.total_seconds()  # Pass remaining time in seconds
+    }
     return render(request, 'studentpanel/testque.html', context)
 
 @student_login_required

@@ -5,81 +5,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Questions</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script>
+        // Countdown timer
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            var interval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    // Submit the test automatically when time runs out
+                    document.getElementById('testForm').submit();
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            var remainingTime = {{ remaining_time|safe }};
+            var display = document.querySelector('#time');
+            startTimer(remainingTime, display);
+        };
+    </script>
 </head>
+
 <body>
-    <div class="conatiner mt-3">
-        <form action="{% url 'Student_Test_Q' id=test_id %}" method="get">
-            {% csrf_token %}
-            
-            <div class="row"> 
-                <div class="fw-bold text-center">{{no_que}}</div>  
-                <div class="col-md-9">
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-9">
+                <form id="testForm" action="{% url 'Student_Test_Q' id=test_id %}" method="get">
+                    {% csrf_token %}
                     <div class="card ms-4" style="height: 500px; border: 1px solid black;">
                         <div class="card-body">
-                    {% for tq in test_question %}
-                    {{tq.tq_question|safe}}
-                    {% if tq.tq_q_type == 'MCQ' %}
-                    <input type="radio" name="ans" id="tq_optiona" value="A" {% if get_answer == 'A' %}checked{% endif %}>
-                    <label for="tq_optiona">{{tq.tq_optiona}} </label><br>
-                    <input type="radio" name="ans" id="tq_optionb" value="B" {% if get_answer == 'B' %}checked{% endif %}>
-                    <label for="tq_optionb">{{tq.tq_optionb}} </label><br>
-                    <input type="radio" name="ans" id="tq_optionc" value="C" {% if get_answer == 'C' %}checked{% endif %}>
-                    <label for="tq_optionc">{{tq.tq_optionc}} </label><br>
-                    <input type="radio" name="ans" id="tq_optiond" value="D" {% if get_answer == 'D' %}checked{% endif %}>
-                    <label for="tq_optiond">{{tq.tq_optiond}} </label><br>
-                    {% elif  tq.tq_q_type == 'True_False' %}
-                    <input type="radio" name="ans" id="true" value="1" {% if get_answer == '1' %}checked{% endif %}>
-                    <label for="true">True</label><br>
-                    <input type="radio" name="ans" id="false" value="0" {% if get_answer == '0' %}checked{% endif %}>
-                    <label for="false">False</label><br>
-                    {% elif tq.tq_q_type == 'Filling_Blanks' %}
-                      <input type="text" name="ans" {% if get_answer != None %} value="{{get_answer}}" {% endif %} placeholder="Write Your Ans"/><br><br>
-                    {% endif %}
-                    
-                    <input type="hidden" name="current_q_id" value="{{tq.tq_id}}" />
-
-                    {% if get_answer != None %}
-                    <a href="{% url 'Student_Test_Q' id=test_id %}?clear_id={{tq.tq_id}}" class="btn btn-primary">Clear Selection</a>
-                    {% endif %}
-                    {% endfor %}
-    
-                    {% if prev_id != None %}
-                    <a class="btn btn-primary" href="{% url 'Student_Test_Q' id=test_id %}?que_id={{prev_id}}">Prev</a>
-                    {% endif %}
-    
-                    {% if next_id != None %}
-                            <input type="hidden" name="que_id" value="{{next_id}}" />
-                            
-                        <input class="btn btn-primary" type="submit" value="Next" />
-                    {% endif %}
-                    </div>
-                </div>
-            </form>
-                </div> 
-                         
-                    <div class="col-md-3">
-                        <div class="card me-4" style="height: 500px; border: 1px solid black;">
-                            <div class="card-body d-flex flex-column justify-content-between">
-                            <div>
-                            {% for test_que in test_questions_all %}
-                            <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{test_que.tq_id}}" class="btn btn-warning text-white {% if test_que.ts_attempted == True %}bg-success{% else %}btn-danger{% endif %} {% for tq in test_question %}{% if tq.tq_id == test_que.tq_id %}bg-dark{% endif %} {% endfor %}">{{ forloop.counter }}</a>
+                            <div class="fw-bold text-center">{{ no_que }}</div>
+                            {% for tq in test_question %}
+                                {{ tq.tq_question|safe }}
+                                {% if tq.tq_q_type == 'MCQ' %}
+                                    <input type="radio" name="ans" id="tq_optiona" value="A" {% if get_answer == 'A' %}checked{% endif %}>
+                                    <label for="tq_optiona">{{ tq.tq_optiona }} </label><br>
+                                    <input type="radio" name="ans" id="tq_optionb" value="B" {% if get_answer == 'B' %}checked{% endif %}>
+                                    <label for="tq_optionb">{{ tq.tq_optionb }} </label><br>
+                                    <input type="radio" name="ans" id="tq_optionc" value="C" {% if get_answer == 'C' %}checked{% endif %}>
+                                    <label for="tq_optionc">{{ tq.tq_optionc }} </label><br>
+                                    <input type="radio" name="ans" id="tq_optiond" value="D" {% if get_answer == 'D' %}checked{% endif %}>
+                                    <label for="tq_optiond">{{ tq.tq_optiond }} </label><br>
+                                {% elif tq.tq_q_type == 'True_False' %}
+                                    <input type="radio" name="ans" id="true" value="1" {% if get_answer == '1' %}checked{% endif %}>
+                                    <label for="true">True</label><br>
+                                    <input type="radio" name="ans" id="false" value="0" {% if get_answer == '0' %}checked{% endif %}>
+                                    <label for="false">False</label><br>
+                                {% elif tq.tq_q_type == 'Filling_Blanks' %}
+                                    <input type="text" name="ans" {% if get_answer != None %} value="{{ get_answer }}" {% endif %} placeholder="Write Your Ans"/><br><br>
+                                {% endif %}
+                                <input type="hidden" name="current_q_id" value="{{ tq.tq_id }}" />
+                                {% if get_answer != None %}
+                                    <a href="{% url 'Student_Test_Q' id=test_id %}?clear_id={{ tq.tq_id }}" class="btn btn-primary">Clear Selection</a>
+                                {% endif %}
                             {% endfor %}
-                            </div>
+                            {% if prev_id != None %}
+                                <a class="btn btn-primary" href="{% url 'Student_Test_Q' id=test_id %}?que_id={{ prev_id }}">Prev</a>
+                            {% endif %}
+                            {% if next_id != None %}
+                                <input type="hidden" name="que_id" value="{{ next_id }}" />
+                                <input class="btn btn-primary" type="submit" value="Next" />
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-3">
+                <div class="card me-4" style="height: 500px; border: 1px solid black;">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <h5>Time Remaining: <span id="time"></span></h5>
+                            {% for test_que in test_questions_all %}
+                                <a href="{% url 'Student_Test_Q' id=test_id %}?que_id={{ test_que.tq_id }}" class="btn btn-warning text-white {% if test_que.ts_attempted == True %}bg-success{% else %}btn-danger{% endif %} {% for tq in test_question %}{% if tq.tq_id == test_que.tq_id %}bg-dark{% endif %} {% endfor %}">{{ forloop.counter }}</a>
+                            {% endfor %}
+                        </div>
                         <form action="{% url 'Student_Test_Submission' %}" method="POST">
                             {% csrf_token %}
-                            <input type="hidden" name="test_id" value="{{test_id}}">
-                            <input type="text" name="student_id" value="{{student_id.stud_id}}">
+                            <input type="hidden" name="test_id" value="{{ test_id }}">
+                            <input type="hidden" name="student_id" value="{{ student_id.stud_id }}">
                             <button type="submit" name="test_submission">Submit Test</button>
                         </form>
-                        </div>
-                        </div>
-                    </div> 
+                    </div>
+                </div>
             </div>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
+
 </html>

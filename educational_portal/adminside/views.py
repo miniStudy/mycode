@@ -27,9 +27,9 @@ def mail_send(request):
         sub = 'Offer Letter from miniStudy'
         mess = 'Offer Letter'
         email_from = 'miniStudy <mail@ministudy.in>'
-        recp_list = ['mail.trushalpatel@gmail.com']
+        recp_list = ['mail.trushalpatel@gmail.com','sakahisharma88172@gmail.com']
         # send_mail(sub,mess,email_from,recp_list)
-        htmly = get_template('Email/joining_letter.html')
+        htmly = get_template('Email/sakshi_offer_letter.html')
         # d = {'pname': pname,'qty':qty,'size': ring_size,'clr':ring_color,'uname':fname,'uemail':email,'ucontact':cnumber}
         text_content = ''
         html_content = htmly.render()
@@ -230,14 +230,14 @@ def show_stds(request):
     data = Std.objects.all()
     context ={
         'data' : data,
-        'title' : 'Std',
+        'title' : 'Stds',
     }
     return render(request, 'show_stds.html',context)
 
 def insert_update_stds(request):
     brddata = Boards.objects.all()
     context = {
-        'title' : 'Std',
+        'title' : 'Stds',
         'brddata':brddata,
     }
     if request.GET.get('pk'):
@@ -332,7 +332,7 @@ def insert_update_announcements(request):
     students_for_mail = Students.objects.all()
 
     context = {
-        'title' : 'Insert Announcements',
+        'title' : 'Announcements',
         'std_data':std_data,
         'batch_data':batch_data,
     }
@@ -534,7 +534,7 @@ def insert_update_chepters(request):
     std_data = Std.objects.all()
     subject_data = Subject.objects.all()
     context = {
-        'title' : 'Insert Subjects',
+        'title' : 'Chepters',
         'std_data':std_data,
         'subject_data':subject_data,
     }
@@ -711,7 +711,7 @@ def insert_update_timetable(request):
     tt_students_for_mail = Students.objects.all()
 
     context = {
-        'title': 'Insert Timetable',
+        'title': 'Timetable',
         'std_data': std_data,
         'batch_data': batch_data,
         'subject_data':subject_data,
@@ -868,6 +868,7 @@ def show_events(request):
         'events':events,
         'events_imgs':events_imgs,
         'selected_events':selected_events,
+        'title' : 'Events',
     }
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
@@ -901,7 +902,7 @@ def show_tests(request):
     subject_data = Subject.objects.all()
     context ={
         'data' : data,
-        'title' : 'Chepters',
+        'title' : 'Tests',
         'std_data' : std_data,
         'subject_data':subject_data,
     }
@@ -1025,6 +1026,7 @@ def show_test_questions_admin(request):
             'test_question':test_question,
             'total_marks':total_marks,
             'no_of_q':No_of_q,
+            'title' : 'Tests',
         }
         return render(request, 'show_test_questions_admin.html',context)
     else:
@@ -1036,6 +1038,7 @@ def insert_update_test_questions(request):
     context = {
         'chep_data': chep_data,
         'que_type': Test_questions_answer.que_type,
+        'title' : 'Tests',
     }
 
     if request.GET.get('test_id'):
@@ -1263,7 +1266,7 @@ def delete_students(request):
 
 @admin_login_required
 def show_inquiries(request):
-    title = "Inquiry"
+    title = "Inquiries"
     inquiries_data = Inquiries.objects.all()
 
     context = {
@@ -1374,7 +1377,7 @@ def show_admin_materials(request):
     materials = Chepterwise_material.objects.all()
     selected_sub=None
 
-    context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials}
+    context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, 'title' : 'Materials',}
     if request.GET.get('std_id'):
         std_id = int(request.GET.get('std_id'))
         subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
@@ -1394,7 +1397,8 @@ def show_admin_materials(request):
 def show_admin_profile(request):
     admin_data = AdminData.objects.all()
     context = {
-        'admin_data':admin_data
+        'admin_data':admin_data,
+        'title' : 'Profile',
     }
     return render(request, 'show_profile.html', context)
 
