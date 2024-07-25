@@ -450,10 +450,11 @@ def Student_doubt_solution_section(request):
 
 @student_login_required
 def Student_show_solution_section(request):
+    stud_id = request.session['stud_id']
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
         doubts_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
-        return render(request, 'studentpanel/show_solution.html', {'doubts_solution':doubts_solution}) 
+        return render(request, 'studentpanel/show_solution.html', {'doubts_solution':doubts_solution, 'stud_id':stud_id}) 
     else:
         return render(request, 'studentpanel/show_solution.html') 
 
