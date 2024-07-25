@@ -392,8 +392,9 @@ def student_profile(request):
 @student_login_required
 def Student_doubt_section(request):
     student_id = request.session['stud_id']
+    current_stud = Students.objects.get(stud_id = student_id) 
     doubt_data = Doubt_section.objects.filter(
-    doubt_stud_id__stud_id=student_id).annotate(count_solution=Count('doubt_solution'),verified_solution=Count(
+    doubt_subject__sub_std__std_id = current_stud.stud_std.std_id).annotate(count_solution=Count('doubt_solution'),verified_solution=Count(
         Case(
             When(doubt_solution__solution_verified=True, then=1),
             output_field=IntegerField(),
@@ -438,8 +439,10 @@ def Student_doubt_solution_section(request):
         form = solution_form(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "You'r solution has been added!")
+            return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(doubt_id))
         else:
-            print('hello wolrd')  
+            print('hello wolrd')    
     form = solution_form()   
     context.update({'form':form}) 
 

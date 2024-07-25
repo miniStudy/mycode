@@ -10,7 +10,7 @@
 {% endfor %}
 <!-- DataTable with Buttons -->
 
-<form action="{% url 'Student_Doubt_Solution' %}" method="post">
+<form action="{% url 'Student_Doubt_Solution' %}?doubt_id={{doubt_id}}" method="post">
   {% csrf_token %}
   <input type="hidden" name="solution_doubt_id" value={{doubt_id}}>
   <input type="hidden" name="solution_stud_id" value={{student_id}}>
