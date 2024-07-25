@@ -77,10 +77,9 @@
     </table>
 </div> 
 
-
-
-         
-
+{% for data in li %}
+<a href="{% url 'teacher_edit_attendance' %}?hour={{data.hour}}&date={{data.date}}&get_batch={{get_batch.batch_id}}&get_std={{get_std.std_id}}&minute={{data.minute}}&tt_id={{data.tt_id}}">{{data.date}} {{data.hour}}:{{data.minute}} | {{data.subject.tt_subject1}}</a> <br>
+{% endfor %}
     </div>
 </div>
 

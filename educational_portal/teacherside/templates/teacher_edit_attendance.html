@@ -19,15 +19,16 @@
 
         <br>
 
-        <form action="{% url 'handle_attendance' %}" method="POST">
+        <form action="{% url 'edit_handle_attendance' %}" method="POST">
             {% csrf_token %}
-            <input type="hidden" name="std_data" value={{std_data.std_id}}>
-            <input type="hidden" name="batch_data" value={{batch_data.batch_id}}>
+            <input type="hidden" name="get_hour" value="{{get_hour}}">
+            <input type="hidden" name="get_date" value="{{get_date}}">
             <label for="atten_timetable">Days</label>
             <select class="form-select" name="atten_timetable" id="atten_timetable" required>
                 <option value="">----</option>
                 {% for x in timetable_data %}
-                <option value="{{x.tt_id}}">{{x.tt_day}} - {{x.tt_time1}} - {{x.tt_subject1}}</option>
+                <option value="{{x.tt_id}}" {% for y in get_data|slice:":1" %}{% if y.atten_timetable.tt_id == x.tt_id %} selected {% endif %}
+                {% endfor %}>{{x.tt_day}} - {{x.tt_time1}} - {{x.tt_subject1}}</option>
                 {% endfor %}
             </select>
             <br>
@@ -41,11 +42,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for x in students_data %}
+                        {% for x in get_data %}
                         <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{x.stud_name}} {{x.stud_lastname}}</td> 
-                        <td><input type="checkbox" class="form-check-input" value="{{x.stud_id}}" name="selection" /> </td>
+                        <td>{{x.atten_student.stud_name}} {{x.atten_student.stud_lastname}}</td> 
+                        <td>
+                            <input type="checkbox" class="form-check-input" value="{{x.atten_student.stud_id}}" name="selection" {% if x.atten_present %} checked {% endif %} />
+                         </td>
                         </tr>
                         {% endfor %}
                     </tbody>

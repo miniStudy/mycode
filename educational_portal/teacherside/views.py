@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.conf import settings
 import math
 import datetime
+from datetime import datetime
 from django.utils import timezone
 from django.db.models.functions import TruncHour, TruncMinute, TruncDate
 from django.db.models import Sum,Count, Max, Min, Avg
@@ -162,20 +163,26 @@ def teacher_attendance(request):
      
      
      today = timezone.localdate()
+
      
      today_records = Attendance.objects.filter(atten_date__contains=today)
+     
      
      distinct_data = today_records.annotate(date=TruncDate('atten_date'),
                                             hour=TruncHour('atten_date'),
                                             minute=TruncMinute('atten_date'),
-                                            ).values('date', 'hour', 'minute').distinct()
-     
+                                            ).values('date', 'hour', 'minute','atten_timetable').distinct()
+     print(distinct_data)
+     li = []
      for x in distinct_data:
         date_hour = x['hour'].hour
+        date_minute = x['minute'].minute
         date_data = x['minute'].date()
+        date_str = date_data.strftime('%Y-%m-%d')
+        subjectt = Timetable.objects.get(tt_id = x['atten_timetable'])
+        li.append({'hour':date_hour,'date':date_str, 'minute':date_minute,'tt_id':x['atten_timetable'],'subject':subjectt})
    
-     get_data = Attendance.objects.filter(atten_date__hour=date_hour, atten_date__date=date_data)
-     print(get_data)
+   
 
      context ={
           'data' : data,
@@ -184,6 +191,7 @@ def teacher_attendance(request):
           'batch_data':batch_data,
           'stud_data':stud_data,
           'sub_data':subj_data,
+          'li':li,
     }
     
      if request.GET.get('get_std'):
@@ -241,6 +249,39 @@ def teacher_attendance(request):
      context.update({'combined_data': combined_data})
      return render(request, 'teacherpanel/attendance.html',context)
 
+def teacher_edit_attendance(request):
+    if request.GET.get('get_std') and request.GET.get('get_batch'):
+        get_std = request.GET['get_std']     
+        get_batch = request.GET['get_batch']
+        tt_id = request.GET['tt_id']
+        std_data = Std.objects.get(std_id=get_std)
+        batch_data = Batches.objects.get(batch_id=get_batch) 
+        timetable_data = Timetable.objects.filter(tt_batch__batch_id = get_batch)
+        students_data = Students.objects.filter(stud_std__std_id = get_std, stud_batch__batch_id = get_batch)
+        get_hour = request.GET.get('hour','')     
+        get_date = request.GET.get('date','')
+        get_minute = request.GET.get('minute','')
+        date_obj = datetime.strptime(get_date, '%Y-%m-%d')
+        get_data = Attendance.objects.filter(atten_date__hour=get_hour, atten_date__date=date_obj,atten_timetable__tt_id=tt_id)
+        context = {
+          'std_data':std_data,
+          'batch_data':batch_data,
+          'students_data':students_data,
+          'timetable_data':timetable_data,
+          'title': 'Insert Attendence',
+          'get_data':get_data,
+          'get_date':get_date,
+          'get_hour':get_hour,
+     
+          }
+    else:
+        messages.error(request, 'Please! Select Standard And Batch')
+        return redirect('teacher_attendance')
+    return render(request, 'teacher_edit_attendance.html', context)
+
+
+
+
 @teacher_login_required
 def insert_update_attendance(request):
      if request.GET.get('get_std') and request.GET.get('get_batch'):
@@ -267,15 +308,47 @@ def insert_update_attendance(request):
 @teacher_login_required
 def handle_attendance(request):
      if request.method == 'POST':
+        std_data = request.POST.get('std_data')
+        batch_data = request.POST.get('batch_data')
+        atten_timetable = request.POST.get('atten_timetable')
+        atten_tt = Timetable.objects.get(tt_id = atten_timetable)
+        selected_items = request.POST.getlist('selection')
+        students_all = Students.objects.filter(stud_batch__batch_id = batch_data, stud_std__std_id = std_data)
+        if selected_items:
+          selected_ids = [int(id) for id in selected_items]
+        for i in students_all:
+            if i.stud_id in selected_ids:
+                Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1)
+            else:
+                Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0) 
+
+            messages.success(request, "Attendance has been submitted!")
+     return redirect('teacher_attendance')
+
+@teacher_login_required
+def edit_handle_attendance(request):
+     if request.method == 'POST':
+        get_date = request.POST.get('get_date')
+        get_hour = request.POST.get('get_hour')
+        print(get_date)
+        get_date = datetime.strptime(get_date, '%Y-%m-%d')
         atten_timetable = request.POST.get('atten_timetable')
         atten_tt = Timetable.objects.get(tt_id = atten_timetable)
         selected_items = request.POST.getlist('selection')
         if selected_items:
           selected_ids = [int(id) for id in selected_items]
-        for i in selected_ids:
-            stud = Students.objects.get(stud_id = i)
-            Attendance.objects.create(atten_timetable=atten_tt, atten_student=stud, atten_present=1)
-            messages.success(request, "Attendance has been submitted!")
+        current_all_attendance = Attendance.objects.filter(atten_date__hour=get_hour, atten_date__date=get_date,atten_timetable__tt_id = atten_timetable)  
+        for i in current_all_attendance:
+            if i.atten_student.stud_id in selected_ids:
+                instance = Attendance.objects.get(atten_date__hour=get_hour, atten_date__date=get_date, atten_student__stud_id=i.atten_student.stud_id)  
+                instance.atten_present = 1
+                instance.save()
+            else:
+                instance = Attendance.objects.get(atten_date__hour=get_hour, atten_date__date=get_date, atten_student__stud_id=i.atten_student.stud_id)
+                instance.atten_present = 0
+                instance.save()
+
+        messages.success(request, "Attendance has been updated!")
      return redirect('teacher_attendance')
 
 
