@@ -4,9 +4,7 @@
   <div class="mb-4"><h4>Attendance</h4></div> 
   
 
-{% for message in messages %}
- {{message|safe}}
-{% endfor %}
+{% include 'show_messages.html' %}
 <!-- DataTable with Buttons -->
 <div class="card">
     
