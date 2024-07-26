@@ -1,0 +1,55 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Update Your Information</h4></div> 
+   
+  <div class="erroes">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+<form class="add-new-record pt-0 row g-2" id="form-add-new-record" action="{% url 'teacher_profile_update' %}" method="post">
+    {% csrf_token %} 
+    <div class="col-sm-12">
+      <label class="form-label mb-2">Full Name</label>
+      <div class="input-group input-group-merge">
+        <input type="text" class="form-control" name="fac_name" value="{{teacher_obj.fac_name}}" required>
+      </div>
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label mb-2">Email</label>
+        <div class="input-group input-group-merge">
+          <input type="email" class="form-control" name="fac_email" value="{{teacher_obj.fac_email}}" required>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label mb-2">Contact</label>
+        <div class="input-group input-group-merge">
+          <input type="text" class="form-control" name="fac_number" value="{{teacher_obj.fac_number}}" required>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label mb-2">Address</label>
+        <div class="input-group input-group-merge">
+          <input type="text" class="form-control" name="fac_address" value="{{teacher_obj.fac_address}}" required>
+        </div>
+    </div>
+    
+    <div class="col-sm-12">
+      <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Update</button>
+      <a href="{% url 'teacher_handle_forget_password' %}" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Change Password</a>
+    </div>
+</form>
+{% endblock %}
+<!-- ======================================================================== -->

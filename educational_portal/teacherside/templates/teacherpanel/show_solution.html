@@ -28,7 +28,7 @@
                 <span>Solution By: {{doubt.solution_stud_id.stud_name}} {{doubt.solution_stud_id.stud_lastname}}</span> <br>
                 {% if doubt.solution_verified %}
                 <form action="{% url 'teacher_solution_verify' %}?doubt_id={{doubt_id}}" method="post">
-                    {% csrf_token %}
+                    {% csrf_token %}    
                     <input type="hidden" name="solution_id" value="{{doubt.solution_id}}">
                     <input type="hidden" name="verification" value="0">
                     <button type="submit" class="btn border border-primary mt-2"><i class="fa-regular fa-circle-xmark me-1" style="color: #1e8fdc;"></i>unverify</button>

@@ -28,6 +28,9 @@ urlpatterns = [
     path('teacher_edit_attendance/', teacherview.teacher_edit_attendance, name='teacher_edit_attendance'),
     path('edit_handle_attendance/', teacherview.edit_handle_attendance, name='edit_handle_attendance'),
     path('teacher_syllabus/', teacherview.teacher_syllabus, name='teacher_syllabus'),
+
+
+    # <==============teacher doubts==================>
     path('teacher_doubts/', teacherview.teacher_doubts, name='teacher_doubts'),
     path('teacher_solution_verify/', teacherview.show_teacher_solution_verified, name='teacher_solution_verify'),
 
@@ -45,9 +48,12 @@ urlpatterns = [
     path('teacher_set_new_password/',teacherview.teacher_set_new_password, name='teacher_set_new_password'),
     path('teacher_handle_set_new_password/',teacherview.teacher_handle_set_new_password, name='teacher_handle_set_new_password'),
     path('teacher_logout/',teacherview.teacher_logout_page, name = 'teacher_logout' ),
+    
+    # <==============Teacher Profile==================>
+    path('teacher_profile/', teacherview.teacher_view_profile, name='teacher_profile'),
+    path('teacher_profile_update/', teacherview.teacher_profile_update, name='teacher_profile_update'),
 
-
-    # ==========================test===================================================
+    # ==========================Test===================================================
     path('teacher_tests/', teacherview.teacher_test, name='teacher_tests'),
     path('teacher_insert_update_tests/', teacherview.insert_update_tests, name='teacher_insert_update_tests'),
     path('teacher_delete_tests/', teacherview.delete_tests, name='teacher_delete_tests'),

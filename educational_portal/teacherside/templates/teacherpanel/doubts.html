@@ -9,15 +9,6 @@
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center">
       <div class="myheadfont">DOUBT SECTION</div>
-      <div>
-        <div class="d-inline-block" id="exportbtns"></div>
-
-        <a href="{% url 'Student_add_doubts' %}">
-          <button class="btn btn-primary">
-            <i class="fa-solid fa-plus me-2"></i> ADD DOUBT
-          </button>
-        </a>
-      </div>
     </div>
   </div>
 </div>
@@ -32,8 +23,6 @@
     <div class="card-body">
       <p class="fw-medium">{{data.doubt_doubt|safe}}</p>
       <span class="fst-italic" style="font-size:12px">Date: {{data.doubt_date}}</span> <br>
-      <a href="{% url 'Student_Doubt_Solution' %}?doubt_id={{data.doubt_id}}" class="btn border border-warning my-2"><i class="fa-solid fa-plus me-1"></i> Add
-        Solution</a>
       <a href="{% url 'teacher_solution_verify' %}?doubt_id={{data.doubt_id}}" class="btn border border-warning my-2 ms-1">{{data.count_solution}}
         Solution</a>
         <br>{% if data.verified_solution != 0 %}<span><img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 22px;">{{data.verified_solution}} Solution verified</span>{% endif %}

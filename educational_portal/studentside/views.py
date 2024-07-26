@@ -24,16 +24,18 @@ from django.utils.timezone import now
 
 @student_login_required
 def student_home(request):
-    return render(request, 'studentpanel/index.html')
+    title = 'Home'
+    return render(request, 'studentpanel/index.html', {'title':title})
 
-def student_login_page(request):  
+def student_login_page(request):
+    title = 'Login'  
     login=1
     if request.COOKIES.get("stud_email"):
             cookie_email = request.COOKIES['stud_email']
             cookie_pass = request.COOKIES['stud_password']
-            return render(request, 'studentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass})
+            return render(request, 'studentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':title})
     else:
-            return render(request, 'studentpanel/master_auth.html',{'login_set':login})
+            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':title})
 
 def student_login_handle(request):
     if request.method == "POST":
@@ -64,13 +66,14 @@ def student_login_handle(request):
     else:
         return redirect('Student_Login')
 
-def student_Forgot_Password(request):  
+def student_Forgot_Password(request): 
+    title = 'Forgot Password' 
     login=2
     if request.COOKIES.get("student_email"):
             cookie_email = request.COOKIES['stud_email']
-            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email})
+            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email, 'title':title})
     else:
-            return render(request, 'studentpanel/master_auth.html',{'login_set':login})
+            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':title})
     
 def student_handle_forgot_password(request):
      if request.method == "POST":
@@ -93,11 +96,12 @@ def student_handle_forgot_password(request):
      else:
         return redirect('Student_Forgot_Password')
     
-def student_Set_New_Password(request):  
+def student_Set_New_Password(request):
+    title = 'Set New Password'  
     login=3      
     if request.GET.get('email'):
          foremail = request.GET['email']
-    return render(request, 'studentpanel/master_auth.html',{'login_set':login,'email':foremail})
+    return render(request, 'studentpanel/master_auth.html',{'login_set':login,'email':foremail, 'title':title})
 
 def student_handle_set_new_password(request):
      if request.method == "POST":
@@ -141,6 +145,7 @@ def student_logout(request):
 
 @student_login_required
 def student_info_update(request):
+    title = 'Update Info'
     student_id = request.session['stud_id']
     student_obj = Students.objects.get(stud_id = student_id)
     if request.method == 'POST':
@@ -153,36 +158,40 @@ def student_info_update(request):
             messages.error(request, 'error')
     else:
         form = update_form(instance=student_obj)
-    return render(request, 'studentpanel/updateinfo.html', {'form':form, 'student_obj':student_obj})
+    return render(request, 'studentpanel/updateinfo.html', {'form':form, 'student_obj':student_obj, 'title':title})
 
 @student_login_required
 def student_announcement(request):
+    title = 'Announcements'
     announcements_data = Announcements.objects.filter(
     Q(announce_std=None, announce_batch=None) |
     Q(announce_std__std_id=request.session.get('stud_std'), announce_batch=None) |
     Q(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))
 ).order_by('-pk')[:50]
 
-    return render(request, 'studentpanel/announcements.html', {"announcements_data":announcements_data})
+    return render(request, 'studentpanel/announcements.html', {"announcements_data":announcements_data, 'title':title})
 
 
 @student_login_required
 def show_subjects(request):
+    title = 'Subjects'
     stud_standard = request.session.get('stud_std')
     subjects = Subject.objects.filter(sub_std__std_id = stud_standard)
-    return render(request, 'studentpanel/subjects.html', {'subjects':subjects})
+    return render(request, 'studentpanel/subjects.html', {'subjects':subjects, 'title':title})
 
 
 @student_login_required
 def show_chepters(request):
+    title = 'Chepters'
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']  
         chepters = Chepter.objects.filter(chep_sub__sub_id = id)
-    return render(request, 'studentpanel/chepters.html', {'chepters':chepters})
+    return render(request, 'studentpanel/chepters.html', {'chepters':chepters, 'title':title})
 
 
 @student_login_required
 def show_materials(request):
+    title = 'Materials'
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
     materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std)
@@ -192,17 +201,19 @@ def show_materials(request):
         materials = materials.filter(cm_chepter__chep_sub__sub_id = id)
         selected_sub = Subject.objects.get(sub_id=id)
 
-    return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects,'selected_sub':selected_sub})
+    return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects,'selected_sub':selected_sub, 'title':title})
 
 @student_login_required
 def show_timetables(request):
+    title = 'Timetable'
     student_batch = request.session['stud_batch']
     timetable_data = Timetable.objects.filter(tt_batch__batch_id = student_batch)
-    return render(request, 'studentpanel/timetable.html', {'timetable_data':timetable_data})
+    return render(request, 'studentpanel/timetable.html', {'timetable_data':timetable_data, 'title':title})
 
 
 @student_login_required
 def show_attendence(request):
+    title = 'Attendance'
     student_id = request.session['stud_id']
     student_name = request.session['stud_name']
     student_std = request.session['stud_std']
@@ -232,7 +243,7 @@ def show_attendence(request):
         
     absent_days = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
     attendence_data = attendence_data.order_by('-pk')
-    return render(request, 'studentpanel/attendence.html', {'student_name':student_name, 'attendence_data':attendence_data, 'attendence_prec':attendence_prec, 'subject_attendance':subject_attendance,'total_days':total_days, 'absent_days':absent_days})
+    return render(request, 'studentpanel/attendence.html', {'student_name':student_name, 'attendence_data':attendence_data, 'attendence_prec':attendence_prec, 'subject_attendance':subject_attendance,'total_days':total_days, 'absent_days':absent_days, 'title':title})
 
 @student_login_required
 def show_event(request):
@@ -242,7 +253,8 @@ def show_event(request):
     context={
         'event_data':event_data,
         'event_imgs':event_imgs,
-        'selected_events':selected_events
+        'selected_events':selected_events,
+        'title': 'Events'
     }
 
     if request.GET.get('event_id'):
@@ -256,9 +268,10 @@ def show_event(request):
 
 @student_login_required
 def show_test(request):
+    title = 'Tests'
     standard_id = request.session['stud_std']
     test_names = Chepterwise_test.objects.filter(test_std__std_id = standard_id)
-    return render(request, 'studentpanel/test.html', {'test_names':test_names})
+    return render(request, 'studentpanel/test.html', {'test_names':test_names, 'title':title})
 
 @student_login_required
 def show_test_questions(request, id):
@@ -271,7 +284,7 @@ def show_test_questions(request, id):
     start_time = datetime.fromisoformat(request.session['start_time'])
 
     # Calculate remaining time
-    test_duration = timedelta(minutes=int(test.test_time))
+    test_duration = timedelta(minutes=int(test.test_time))  
     elapsed_time = now() - start_time
     remaining_time = test_duration - elapsed_time
 
@@ -337,8 +350,9 @@ def show_test_questions(request, id):
             'prev_id': prev_id,
             'get_answer': get_answer,
             'student_id': student_id,
-            'remaining_time': remaining_time.total_seconds()  # Pass remaining time in seconds
-        }
+            'remaining_time': remaining_time.total_seconds(),  # Pass remaining time in seconds
+            'title': 'Test Questions',
+        }   
         return render(request, 'studentpanel/testque.html', context)
     else:
         no_que = "No questions available right now!"
@@ -365,10 +379,11 @@ def Student_Test_Submission(request):
         
 @student_login_required
 def show_syllabus(request):
+    title = 'Syllabus'
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
     chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std)
-    return render(request, 'studentpanel/syllabus.html', {'subjects':subjects,'chepters':chepters})
+    return render(request, 'studentpanel/syllabus.html', {'subjects':subjects,'chepters':chepters, 'title':title})
 
 def student_inquiries_data(request):
     standard_data = Std.objects.all()
@@ -385,9 +400,10 @@ def student_inquiries_data(request):
 
 @student_login_required
 def student_profile(request):
+    title = 'Profile'
     student_id = request.session['stud_id']
     student_profile = Students.objects.filter(stud_id = student_id)
-    return render(request, 'studentpanel/myprofile.html', {'student_profile':student_profile})
+    return render(request, 'studentpanel/myprofile.html', {'student_profile':student_profile, 'title':title})
 
 @student_login_required
 def Student_doubt_section(request):
@@ -402,6 +418,7 @@ def Student_doubt_section(request):
     
     context = {
         'doubt_data':doubt_data,
+        'title': 'Doubts'
     }
     return render(request, 'studentpanel/doubt.html', context)
 
@@ -412,8 +429,11 @@ def Student_add_doubts(request):
     std_id = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = std_id)
 
-    context = {'student_id':student_id,'subjects':subjects}
-
+    context = {
+    'student_id':student_id,
+    'subjects':subjects,
+    'title': 'Add Doubts'
+    }
 
     if request.method == 'POST':
         form = doubts_form(request.POST)
@@ -429,7 +449,7 @@ def Student_add_doubts(request):
 @student_login_required
 def Student_doubt_solution_section(request):
     student_id = request.session['stud_id']
-    context = {'student_id':student_id}
+    context = {'student_id':student_id, 'title': 'Add Solution'}
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
         doubt_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
@@ -438,9 +458,18 @@ def Student_doubt_solution_section(request):
     if request.method == 'POST':
         form = solution_form(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "You'r solution has been added!")
-            return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(doubt_id))
+            student_id = form.cleaned_data['solution_stud_id']
+            doubt_id = form.cleaned_data['solution_doubt_id']
+            a = doubt_id.doubt_id
+            count_sol = Doubt_solution.objects.filter(solution_stud_id = student_id, solution_doubt_id__doubt_id=a).count()
+
+            if count_sol == 1:
+                messages.error(request, "Cannot add more than one solution!")
+                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(a))
+            else:
+                form.save()
+                messages.success(request, "You'r solution has been added!")
+                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(a))
         else:
             print('hello wolrd')    
     form = solution_form()   
@@ -450,16 +479,18 @@ def Student_doubt_solution_section(request):
 
 @student_login_required
 def Student_show_solution_section(request):
+    title = 'Show Solution'
     stud_id = request.session['stud_id']
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
         doubts_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
-        return render(request, 'studentpanel/show_solution.html', {'doubts_solution':doubts_solution, 'stud_id':stud_id}) 
+        return render(request, 'studentpanel/show_solution.html', {'doubts_solution':doubts_solution, 'stud_id':stud_id, 'title':title}) 
     else:
-        return render(request, 'studentpanel/show_solution.html') 
+        return render(request, 'studentpanel/show_solution.html', {'title':title}) 
 
 @student_login_required
 def Student_edit_solution(request,id):
+    title = 'Edit Solution'
     solution_id = Doubt_solution.objects.get(solution_id=id)
     if request.POST.get('solution'):
         form = solution_form(request.POST, instance=solution_id)
@@ -469,4 +500,4 @@ def Student_edit_solution(request,id):
             return redirect('Student_Doubt')
     else:
         form = solution_form(instance=solution_id)
-    return render(request, 'studentpanel/edit_solution.html',{'form':form, 'solution_id':solution_id, 'sol_id':id})
+    return render(request, 'studentpanel/edit_solution.html',{'form':form, 'solution_id':solution_id, 'sol_id':id, 'title':title})
