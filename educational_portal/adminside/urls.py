@@ -111,4 +111,7 @@ urlpatterns = [
 
     # =========================================Admin Profile =========================================
     path('admin_profile/', adminview.show_admin_profile, name="admin_profile"),
+
+    # =========================================Admin Student Doubts =========================================
+    path('Student_doubts_adminside/', adminview.Student_doubts_adminside, name="Student_doubts_adminside"),
 ]
