@@ -366,12 +366,18 @@ def teacher_syllabus(request):
 
 @teacher_login_required
 def teacher_doubts(request):
-     doubts_data = Doubt_section.objects.all()
+     doubts_data = Doubt_section.objects.all().annotate(count_solution=Count('doubt_solution'), verified_solution=Count(
+        Case(
+            When(doubt_solution__solution_verified=True, then=1),
+            output_field=IntegerField(),
+        ))).order_by('-pk')[:30]
+     
      context = {
         'title':'Doubts',
         'doubts_data':doubts_data
      }
-     return render(request, 'teacherpanel/doubts.html', context)     
+     return render(request, 'teacherpanel/doubts.html', context)
+
 
 @teacher_login_required
 def show_teacher_solution_verified(request):
@@ -848,3 +854,42 @@ def materials_delete_teacher(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('teacher_materials')
+
+@teacher_login_required
+def teacher_view_profile(request):
+    teacher_id = request.session['fac_id']
+    teacher_profile = Faculties.objects.filter(fac_id = teacher_id)
+    context = {
+        'teacher_profile' : teacher_profile,
+        'title': 'Profile'
+    }
+    return render(request, 'teacherpanel/myprofile.html', context)
+
+
+@teacher_login_required
+def teacher_profile_update(request):
+    teacher_id = request.session['fac_id']
+    teacher_obj = Faculties.objects.get(fac_id = teacher_id)
+    print(teacher_id)
+    print()
+    print(teacher_obj)
+    print()
+    if request.method == 'POST':
+        form = teacher_update_form(request.POST, instance=teacher_obj)
+        print(form)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your information updated successfully')
+            return redirect('teacher_profile')
+        else:
+            messages.error(request, 'error')
+    else:
+        form = teacher_update_form(instance=teacher_obj)
+    context={
+        'form':form,
+        'teacher_obj':teacher_obj,
+        'title': 'Update Profile',
+    }
+    return render(request, 'teacherpanel/updateprofile.html',context)
+
+

@@ -5,9 +5,7 @@
   <h4>Doubt Solution</h4>
 </div>
 
-{% for message in messages %}
-{{message|safe}}
-{% endfor %}
+{% include "message_show.html" %}
 <!-- DataTable with Buttons -->
 
 <form action="{% url 'Student_Doubt_Solution' %}?doubt_id={{doubt_id}}" method="post">
