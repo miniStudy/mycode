@@ -126,6 +126,13 @@
           <div>Faculties</div>
         </a>
       </li>
+
+      <li class="menu-item {% if title == 'Doubts' %} active {% endif %}">
+        <a href="{% url 'Student_doubts_adminside' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-regular fa-circle-question"></i>
+          <div>Student Doubts</div>
+        </a>
+      </li>
     </ul>
     
     

@@ -17,6 +17,8 @@ from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 from adminside.decorators import admin_login_required
+from django.db.models import Count, Q
+
 
 # -----------------------------auth Start---------------------------
 
@@ -1403,4 +1405,28 @@ def show_admin_profile(request):
     return render(request, 'show_profile.html', context)
 
 
+def Student_doubts_adminside(request):
+
+    Total_doubts = Doubt_section.objects.count()
+    Total_solutions = Doubt_solution.objects.count()
+
+    unverified_doubts_count = Doubt_section.objects.annotate(
+    verified_solution_count=Count('doubt_solution', filter=Q(doubt_solution__solution_verified=True))
+    ).filter(verified_solution_count = 0).count()
+
+    verified_doubts_count = Doubt_solution.objects.filter(solution_verified=1).count()
+
+    doubts_zero_solution = Doubt_section.objects.annotate(
+        zero_solution_count = Count('doubt_solution')
+    ).filter(zero_solution_count=0).count()
+
+    context = {
+        'title' : 'Doubts',
+        'Total_doubts':Total_doubts,
+        'Total_solutions':Total_solutions,
+        'unverified_doubts_count':unverified_doubts_count,
+        'verified_doubts_count':verified_doubts_count,
+        'doubts_zero_solution':doubts_zero_solution,
+    }
+    return render(request, 'show_doubts_admin.html', context)
 
