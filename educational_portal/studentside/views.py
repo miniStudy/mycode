@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
 import math
-from django.db.models import Sum,Count
+import statistics
+from django.db.models import Sum,Count,Avg
 from django.db.models import Count, Case, When, IntegerField
 import random
 from django.http import Http404,JsonResponse
@@ -501,3 +502,89 @@ def Student_edit_solution(request,id):
     else:
         form = solution_form(instance=solution_id)
     return render(request, 'studentpanel/edit_solution.html',{'form':form, 'solution_id':solution_id, 'sol_id':id, 'title':title})
+
+
+def student_analysis_view(request): 
+    student_id = request.session['stud_id']
+    student_std = request.session['stud_std']
+
+    # ===============Overall Attendance==================
+    student_data = Students.objects.filter(stud_std__std_id = student_std)
+
+    total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
+    
+    present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
+
+    absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
+    
+    if total_attendence > 0:
+        overall_attendence = (present_attendence/total_attendence)*100
+    else:
+        overall_attendence = 0
+
+
+
+    # ==================Test Report and Attendance Report============
+    students_li = Students.objects.filter(stud_std__std_id = student_std)
+    overall_attendance_li = []
+    for x in students_li:
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+        if total_attendence_studentwise > 0:
+            overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+        else:
+            overall_attendence_studentwise = 0
+        
+
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        print(total_marks)
+        
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        print(obtained_marks)
+
+        if total_marks == 0:
+            overall_result = 0
+        else:
+            overall_result = round((obtained_marks/total_marks)*100,2)
+        overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+    
+   
+
+    overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+    overall_attendance_li = overall_attendance_li[:5]
+    
+
+
+   # ===================SubjectsWise Attendance============================
+    subjects_li = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
+    overall_attendance_subwise = []
+
+    for x in subjects_li:
+        x = x['sub_name']
+        total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
+
+        present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
+
+        if total_attendence_subwise > 0:
+            attendance_subwise = (present_attendence_subwise/total_attendence_subwise)*100
+        else:
+            attendance_subwise = 0
+        overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
+    
+
+    # ====================Average Test Result=================================
+    overall_results = [i['overall_result'] for i in overall_attendance_li]
+    average_result = round(statistics.mean(overall_results),2)
+
+
+    context = {
+        'student_data':student_data,
+        'title': 'Report-Card',
+        'overall_attendence':overall_attendence,
+        'overall_attendance_li':overall_attendance_li,
+        'overall_attendance_subwise':overall_attendance_subwise,
+        'total_attendence':total_attendence,
+        'absent_attendence':absent_attendence,
+        'average_result':average_result
+    }
+    return render(request, 'studentpanel/student_analysis.html', context)

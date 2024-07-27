@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    <h4 class="text-center mb-5">Analysis Report</h4>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">SN</th>
+            <th scope="col">Student's Name</th>
+            <th scope="col">Test Report</th>
+            <th scope="col">Attendence Report</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for data in overall_attendance_li %}
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{data.stud_name}}</td>
+            <td>{{data.overall_result}}</td>
+            <td>{{data.overall_attendance_studentwise}}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="row">
+        <div class="col-md-12 my-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Total class conducted: </h5>{{total_attendence}}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 my-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Absent days: </h5>{{absent_attendence}}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Overall Attedance: </h5>{{overall_attendence}}%
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Avg Performance of test: </h5>{{average_result}}%
+                </div>
+            </div>
+        </div>
+        {% for data in overall_attendance_subwise %}
+        <div class="col-md-4 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    {{data.sub_name}}   
+                    {{data.attendance_subwise}} <br>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
