@@ -509,6 +509,8 @@ def student_analysis_view(request):
     student_std = request.session['stud_std']
 
     # ===============Overall Attendance==================
+    student = Students.objects.get(stud_id = student_id)
+
     student_data = Students.objects.filter(stud_std__std_id = student_std)
 
     total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
@@ -537,16 +539,20 @@ def student_analysis_view(request):
         
 
         total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
-        print(total_marks)
+        
         
         obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
-        print(obtained_marks)
+        
 
         if total_marks == 0:
             overall_result = 0
         else:
             overall_result = round((obtained_marks/total_marks)*100,2)
+        if student_id == x.stud_id: 
+            current_student_overall_test_result = overall_result
+
         overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
     
    
 
@@ -571,13 +577,59 @@ def student_analysis_view(request):
             attendance_subwise = 0
         overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
     
+    # ======================SubjectWise TestResult==============================
+
+    subjects_data = Subject.objects.filter(sub_std=student_std)
+    final_average_marks_subwise = []
+
+    for x in subjects_data:
+        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+       
+
+        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+        
+        
+        if total_marks_subwise == 0:
+            average_marks_subwise = 0
+        else:
+            average_marks_subwise = round((obtained_marks_subwise/total_marks_subwise)*100,2)
+        
+        final_average_marks_subwise.append({'subject_name':x.sub_name, 'average_marks_subwise':average_marks_subwise})
 
     # ====================Average Test Result=================================
     overall_results = [i['overall_result'] for i in overall_attendance_li]
-    average_result = round(statistics.mean(overall_results),2)
+    class_average_result = round(statistics.mean(overall_results),2)
+    
 
+    total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+
+    absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0).count()
+
+
+    # =============Doubts and Solution Counts================================
+
+    doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).count()
+
+    solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).annotate(verified_solution=Count(
+        Case(
+            When(doubt_solution__solution_verified=True, then=1),
+            output_field=IntegerField(),
+        )))
+    
+    my_solve_doubts = 0
+    for x in solutions_gives:
+        if x.verified_solution > 0:
+            my_solve_doubts += 1
+        else:
+            print("no verified")
+
+    doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
+
+    
 
     context = {
+        'logo_url': 'https://metrofoods.co.nz/1nobg.png',
+        'student':student,
         'student_data':student_data,
         'title': 'Report-Card',
         'overall_attendence':overall_attendence,
@@ -585,6 +637,16 @@ def student_analysis_view(request):
         'overall_attendance_subwise':overall_attendance_subwise,
         'total_attendence':total_attendence,
         'absent_attendence':absent_attendence,
-        'average_result':average_result
+        'class_average_result':class_average_result,
+        'final_average_marks_subwise':final_average_marks_subwise,
+        'doubt_asked':doubt_asked,
+        'solutions_gives':solutions_gives,
+        'doubt_solved_byme':doubt_solved_byme,
+        'current_student_overall_test_result':current_student_overall_test_result,
+        'my_solve_doubts':my_solve_doubts,
+        'total_test_conducted':total_test_conducted,
+        'absent_in_test':absent_in_test,
+
     }
+
     return render(request, 'studentpanel/student_analysis.html', context)
