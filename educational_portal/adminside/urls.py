@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', adminview.home, name='Admin Home'),
     path('send_mail/', adminview.mail_send, name='send_mail'),
+    path('send_report_card/', adminview.send_report_card, name='send_report_card'),
     path('boards/', adminview.show_boards, name='boards'),
     path('insert_update_boards/',adminview.insert_update_boards,name='insert_update_boards'),
     path('delete_boards/', adminview.delete_boards, name='delete_boards'),
@@ -114,4 +115,7 @@ urlpatterns = [
 
     # =========================================Admin Student Doubts =========================================
     path('Student_doubts_adminside/', adminview.Student_doubts_adminside, name="Student_doubts_adminside"),
+
+    # =========================================Admin Student Report Card =========================================
+    path('adminside_report_card/', adminview.adminside_report_card, name="adminside_report_card"),
 ]
