@@ -110,11 +110,8 @@
 <script>
   var options = {
     series: [{
-      name: 'Students',
-      data: [44, 55, 57, 56, 61, 58, 63, 60]
-    }, {
-      name: 'Tests',
-      data: [15, 30, 22, 24, 34, 25, 30, 23]
+      name: 'Stds',
+      data: {{ students_for_that_std|safe }}
     }],
     chart: {
       type: 'bar',
@@ -125,8 +122,8 @@
       }
     },
     grid: {
-        borderColor: '#626567', // Dark grey grid lines
-      },
+      borderColor: '#626567', // Dark grey grid lines
+    },
     plotOptions: {
       bar: {
         horizontal: false,
@@ -143,7 +140,7 @@
       colors: ['transparent']
     },
     xaxis: {
-      categories: ['Std 5', 'Std 6', 'Std 7', 'Std 8', 'Std 9', 'Std 10', 'Std 11', 'Std 12'],
+      categories: {{ std_list|safe }},
       labels: {
         style: {
           colors: '#FFFFFF'
@@ -165,7 +162,7 @@
     },
     yaxis: {
       title: {
-        text: 'Data',
+        text: 'No of Students',
         style: {
           color: '#FFFFFF', // White color for y-axis title
           fontSize: 15,
@@ -189,7 +186,7 @@
     tooltip: {
       y: {
         formatter: function (val) {
-          return  val
+          return val
         }
       }
     },
@@ -202,4 +199,45 @@
 
   var students_chart = new ApexCharts(document.querySelector("#students_chart"), options);
   students_chart.render();
+</script>
+
+
+
+<script>
+  var options = {
+    series: {{ piechart_data|safe }},
+    chart: {
+      width: 380,
+      type: 'pie',
+      background: 'transparent',
+    },
+    labels: {{ piechart_category|safe }},
+    dataLabels: {
+      style: {
+        colors: ['#FFFFFF']  // Set text color to white
+      }
+    },
+    legend: {
+      labels: {
+        colors: '#FFFFFF'  // Set legend text color to white
+      }
+    },
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200
+        },
+        legend: {
+          position: 'bottom',
+          labels: {
+            colors: '#FFFFFF'  // Ensure legend text color is white on smaller screens too
+          }
+        }
+      }
+    }]
+  };
+
+  var chart = new ApexCharts(document.querySelector("#students_male_female_ratio"), options);
+  chart.render();
 </script>
