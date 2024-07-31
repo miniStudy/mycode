@@ -70,7 +70,7 @@ def student_home(request):
         if student_id == x.stud_id: 
             current_student_overall_test_result = overall_result
 
-        overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+        overall_attendance_li.append({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
 
 
     overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)

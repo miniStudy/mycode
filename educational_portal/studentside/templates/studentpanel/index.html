@@ -211,28 +211,28 @@
         {% if forloop.counter == 1 %}
         <tr>
           <td><img src="/static/imgs/medal (3).png" class="me-2" style="width: 25px;" /> <span
-          class="fw-medium">{{x.stud_name}}</span></td>
+          class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
           <td>{{x.overall_result}}</td>
           <td>{{x.overall_attendance_studentwise}}</td>
         </tr>
         {% elif forloop.counter == 2 %}
         <tr>
           <td><img src="/static/imgs/medal (4).png" class="me-2" style="width: 25px;" /> <span
-          class="fw-medium">{{x.stud_name}}</span></td>
+          class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
           <td>{{x.overall_result}}</td>
           <td>{{x.overall_attendance_studentwise}}</td>
         </tr>
         {% elif forloop.counter == 3 %}
         <tr>
           <td><img src="/static/imgs/medal (5).png" class="me-2" style="width: 25px;" /> <span
-          class="fw-medium">{{x.stud_name}}</span></td>
+          class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
           <td>{{x.overall_result}}</td>
           <td>{{x.overall_attendance_studentwise}}</td>
         </tr>
         {% else %}
         <tr>
-          <td><img src="/static/imgs/medalll.png" class="me-2" style="width: 25px;" /> <span
-          class="fw-medium">{{x.stud_name}}</span></td>
+          <td><img src="/static/imgs/hand2.png" class="me-2" style="width: 25px;" /> <span
+          class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
           <td>{{x.overall_result}}</td>
           <td>{{x.overall_attendance_studentwise}}</td>
         </tr>
