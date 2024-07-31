@@ -1,0 +1,116 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Report Card</h4></div> 
+  
+
+{% include 'message_show.html' %}
+<!-- DataTable with Buttons -->
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+                <div class="myheadfont">{{title}} Data</div>   
+        </div>
+    
+          <br>
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}?get_std={{get_std.std_id}}">ALL</a></li>
+              {% for x in batch_data %}
+              <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x.batch_name}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+
+
+          <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_student %}{{get_student.stud_name}} {{get_student.stud_lastname}}{% else %}Students{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}?get_std={{get_std.std_id}}">ALL</a></li>
+              {% for x in stud_data %}
+              <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}?get_std={{x.stud_std.std_id}}&get_batch={{x.stud_batch.batch_id}}&get_student={{x.stud_id}}">{{x.stud_name}} {{x.stud_lastname}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+
+
+ <br><br>     
+
+    </div>
+</div>
+
+
+<br>
+{% if overall_attendance %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="avatar">
+                    <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                  </div>
+                  <div class="card-info">
+                    <h5 class="card-title mb-0 me-2">{{overall_attendance}}%</h5>
+                    <small class="text-muted">Overall Attendance</small>
+                  </div>
+                </div>
+                <div id="conversationChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+{% endif %}  
+
+
+<div class="row">
+    {% for x, y in combined_data %}
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar">
+                            <span class="avatar-initial bg-label-primary rounded-circle">
+                                <i class="bx bx-user fs-4"></i>
+                            </span>
+                        </div>
+                        <div class="card-info">
+                            <h5 class="card-title mb-0 me-2">{{ x }}%</h5>
+                            <small class="text-muted">{{ y }}</small>
+                        </div>
+                    </div>
+                    <div id="conversationChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+        </div>
+
+
+{% endblock %}
+
+
+
+
+
+ 
+
+
+          

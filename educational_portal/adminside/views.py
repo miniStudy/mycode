@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404,redirect
+from django.shortcuts import render,get_object_or_404,redirect,HttpResponse
 from adminside.form import *
 from adminside.models import *
 from django.contrib import messages
@@ -12,6 +12,7 @@ from django.core.files.storage import FileSystemStorage
 from adminside.send_mail import *
 # Create your views here.
 # mail integration 
+from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
@@ -19,6 +20,63 @@ from django.core.mail import EmailMultiAlternatives
 from adminside.decorators import admin_login_required
 from django.db.models import Count, Q
 
+
+
+def send_report_card(request):
+    # Define your context
+    context = {
+        'logo_url': 'https://metrofoods.co.nz/1nobg.png',
+        'student': {
+            'name': 'Trushal Patel',
+            'roll_no': '20'
+        },
+        'attendance': {
+            'overall': '50%',
+            'maths': '70%',
+            'english': '50%',
+            'science': '60%',
+            'total_classes': '50',
+            'absent_classes': '10'
+        },
+        'test_results': {
+            'overall': '70%',
+            'maths': '30%',
+            'science': '60%',
+            'english': '80%',
+            'total_tests': '10',
+            'absent_tests': '2',
+            'average': '70%'
+        },
+        'doubts': {
+            'solved': '20',
+            'asked': '10',
+            'verified': '8'
+        }
+    }
+    
+
+    # Generate the PDF
+    # pdf = render_to_pdf('reportcardtable.html', context)
+    # # Email configuration
+    # subject = 'Student Report Card'
+    # body = 'Please find attached the report card.'
+    # from_email = 'miniStudy <mail@ministudy.in>'
+    # to_email = 'tmp1221pmt@gmail.com'
+
+    # # Create EmailMessage instance
+    # email = EmailMessage(
+    #     subject,
+    #     body,
+    #     from_email,
+    #     [to_email],
+    # )
+
+    # # Attach PDF
+    # email.attach('report_card.pdf', pdf, 'application/pdf')
+    # # Send the email
+    # email.send()
+    # return HttpResponse("Email sent successfully!")
+    return render(request, 'reportcardtable.html',context)
 
 # -----------------------------auth Start---------------------------
 
@@ -157,8 +215,32 @@ def admin_logout(request):
 # -----------------------------------auth End -------------------------
 @admin_login_required
 def home(request):
+    all_students= Students.objects.filter().count()
+
+    all_male=Students.objects.filter(stud_gender='Male').count()
+    all_female=Students.objects.filter(stud_gender='Female').count()
+    all_other=Students.objects.filter(stud_gender='Other').count()
+    piechart_category = ['Male','Female','Other']
+    piechart_data = [all_male,all_female,all_other]
+    stds = Std.objects.all().order_by('-std_board')
+
+    std_list = []
+    students_for_that_std = []
+    for x in stds:
+        n = (x.std_name+' '+x.std_board.brd_name)
+        std_list.append(n)
+        noss = Students.objects.filter(stud_std__std_id=x.std_id).count()
+        students_for_that_std.append(noss)
+
+    print(std_list)
+    print(students_for_that_std)
     context={
-        'title' : 'Home' 
+        'title' : 'Home',
+        'all_students':all_students,
+        'piechart_category':piechart_category,
+        'piechart_data':piechart_data,
+        'std_list':std_list,
+        'students_for_that_std':students_for_that_std,
     }
     return render(request, 'index.html',context)
 
@@ -1429,4 +1511,78 @@ def Student_doubts_adminside(request):
         'doubts_zero_solution':doubts_zero_solution,
     }
     return render(request, 'show_doubts_admin.html', context)
+
+
+def adminside_report_card(request):
+    data = Attendance.objects.all()
+    std_data = Std.objects.all()
+    batch_data = Batches.objects.all()
+    stud_data = Students.objects.all()
+    subj_data = Subject.objects.all()
+    
+
+    context ={
+        'data' : data,
+        'title' : 'Report-Card',
+        'std_data' : std_data,
+        'batch_data':batch_data,
+        'stud_data':stud_data,
+        'sub_data':subj_data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            stud_data = stud_data.filter(stud_std__std_id = get_std)
+            subj_data = subj_data.filter(sub_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'batch_data':batch_data,'get_std':get_std,'stud_data':stud_data,'sub_data':subj_data})
+            
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            context.update({'data':data,'get_batch':get_batch,'stud_data':stud_data}) 
+
+    if request.GET.get('get_student'):
+        get_student = int(request.GET['get_student'])
+        if get_student == 0:
+            pass
+        else:
+            data = data.filter(atten_student__stud_id = get_student)
+            get_student = Students.objects.get(stud_id = get_student)
+            context.update({'data':data,'get_student':get_student})                     
+
+
+    attendance_present = data.filter(atten_present = True).count()
+    attendance_all = data.all().count()
+    if attendance_all>0:
+        overall_attendance = round((attendance_present/attendance_all) * 100,2)
+        context.update({'overall_attendance':overall_attendance})
+
+    sub_list = subj_data.all().values('sub_name').distinct()
+    subject_wise_attendance = []
+    subjects = []
+    for x in sub_list:
+        sub_name = x['sub_name']
+        sub_one = data.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
+        sub_all = data.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
+        if sub_all>0:
+            sub_attendance = round((sub_one/sub_all) * 100, 2)
+            subject_wise_attendance.append(sub_attendance)
+            subjects.append(sub_name)
+            
+    combined_data = zip(subject_wise_attendance, subjects)
+
+    context.update({'combined_data': combined_data})
+    return render(request, 'show_report_card_admin.html', context)
 
