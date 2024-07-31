@@ -53,5 +53,4 @@ urlpatterns = [
 
     # ---------------------------studentside analysis-------------------------------------------------------
     path('student_analysis/', studentview.student_analysis_view, name='student_analysis'),
-    path('current_doubts/', studentview.student_current_doubts, name='current_doubts'),
 ]
