@@ -138,7 +138,7 @@ def teacher_logout_page(request):
         del request.session['fac_id']
         del request.session['fac_logged_in']
         messages.success(request, "Logged out Successfully")
-        return redirect("teacher_login")
+        return redirect("teacher_login")    
     except:
         pass
     return redirect("teacher_login")
