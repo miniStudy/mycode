@@ -160,7 +160,7 @@ class Faculties(models.Model):
     fac_password = models.CharField(max_length=100)
     fac_otp = models.IntegerField(blank=True,null=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.fac_name}"
     
     class Meta:
@@ -361,3 +361,15 @@ class Doubt_solution(models.Model):
     
     class Meta:
         db_table = 'Doubt_solution'
+
+class Faculty_Access(models.Model):
+    fa_id = models.BigAutoField(primary_key=True)
+    fa_faculty = models.ForeignKey(Faculties, on_delete=models.CASCADE)
+    fa_batch = models.ForeignKey(Batches, on_delete=models.CASCADE)
+    fa_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.fa_faculty.fac_name, self.fa_batch.batch_name, self.fa_subject.sub_name}"
+    
+    class Meta:
+        db_table = 'Faculty_Access'

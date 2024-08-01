@@ -30,8 +30,71 @@ from teacherside.decorators import *
 
 @teacher_login_required
 def teacher_home(request):
+    msg = None
+    overall_attendance_li = None
+    fac_id = request.session['fac_id']
+    
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+    std_access_list=[]
+    for x in faculty_access:
+        std_access_list.append(x.fa_batch.batch_std.std_id)
+
+    std_data = Std.objects.filter(std_id__in = std_access_list)
+
+    if request.GET.get('get_std'):
+        get_std = request.GET.get('get_std')
+
+        get_std = Std.objects.get(std_id = get_std)
+        students_li = Students.objects.filter(stud_std = get_std)
+        overall_attendance_li = []
+        for x in students_li:
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+            if total_attendence_studentwise > 0:
+                overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+            else:
+                overall_attendence_studentwise = 0
+            
+
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            
+            
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            
+
+            if total_marks == 0:
+                overall_result = 0
+            else:
+                overall_result = round((obtained_marks/total_marks)*100,2)
+
+            overall_attendance_li.append({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
+
+        overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+        overall_attendance_li = overall_attendance_li[:5]        
+    else:
+        get_std = 0
+        msg = "Please! Select standard for data"
+    #=====================Count Unverified Doubts=======================================================
+    fac_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+    l = []
+    for data in fac_data:
+        l.append(data.fa_subject.sub_id)
+    
+    unverified_solution = Doubt_section.objects.filter(doubt_subject__sub_id__in = l).annotate(verified_solution=Count(
+        Case(
+            When(doubt_solution__solution_verified=True, then=1),
+            output_field=IntegerField(),
+        ))).filter(verified_solution=0).count()
+    
+    
     context={
-        'title':'Home'
+        'title':'Home',
+        'unverified_solution':unverified_solution,
+        'std_data':std_data,
+        'get_std': get_std,
+        'msg': msg,
+        'overall_attendance_li':overall_attendance_li
     }
     return render(request, 'teacherpanel/index.html',context)
 
@@ -155,9 +218,17 @@ def teacher_timetable(request):
 
 @teacher_login_required
 def teacher_attendance(request):
+     fac_id = request.session['fac_id']
+     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+     batch_access_list = []
+     std_access_list=[]
+     for x in faculty_access:
+        batch_access_list.append(x.fa_batch.batch_id)
+        std_access_list.append(x.fa_batch.batch_std.std_id)
+
      data = Attendance.objects.all()
-     std_data = Std.objects.all()
-     batch_data = Batches.objects.all()
+     std_data = Std.objects.filter(std_id__in = std_access_list)   
+     batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
      stud_data = Students.objects.all()
      subj_data = Subject.objects.all()
      
@@ -647,9 +718,17 @@ def insert_update_test_questions_teacher(request):
 
 @teacher_login_required
 def teacher_announcement(request):
+    fac_id = request.session['fac_id']
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+    batch_access_list = []
+    std_access_list=[]
+    for x in faculty_access:
+        batch_access_list.append(x.fa_batch.batch_id)
+        std_access_list.append(x.fa_batch.batch_std.std_id)
+
     data = Announcements.objects.all()
-    std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
+    std_data = Std.objects.filter(std_id__in = std_access_list)
+    batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
    
     context ={
         'data' : data,
@@ -859,9 +938,11 @@ def materials_delete_teacher(request):
 def teacher_view_profile(request):
     teacher_id = request.session['fac_id']
     teacher_profile = Faculties.objects.filter(fac_id = teacher_id)
+    teacher_access = Faculty_Access.objects.filter(fa_faculty__fac_id = teacher_id)
     context = {
         'teacher_profile' : teacher_profile,
-        'title': 'Profile'
+        'title': 'Profile',
+        'teacher_access':teacher_access,
     }
     return render(request, 'teacherpanel/myprofile.html', context)
 

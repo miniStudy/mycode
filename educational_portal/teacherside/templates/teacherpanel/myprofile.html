@@ -58,10 +58,11 @@
       <!-- Profile Overview -->
       <div class="card mb-4">
         <div class="card-body">
-          <p class="card-text text-uppercase">Overview</p>
+          <p class="card-text text-uppercase">My Access</p>
           <ul class="list-unstyled mb-0">
-            <li class="d-flex align-items-center mb-3"><button class="btn btn-primary">Report Card</button></li>
-            <li class="d-flex align-items-center mb-3"><button class="btn btn-primary">Fees Payments</button></li>
+            {% for x in teacher_access %}
+            <li>{{x.fa_subject.sub_name}} | {{x.fa_batch}}</li>
+            {% endfor %}
           </ul>
         </div>
       </div>
