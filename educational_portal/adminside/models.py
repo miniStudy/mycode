@@ -393,17 +393,17 @@ class Fees_Collection(models.Model):
     class Meta:
         db_table = 'Fees_Collection'
 
-class Check_Collection(models.Model):
-    cehck_id = models.BigIntegerField(primary_key=True)
-    check_stud_id = models.ForeignKey(Students, on_delete=models.CASCADE)
-    check_number = models.IntegerField()
-    check_paid = models.BooleanField(default=0)
+class Cheque_Collection(models.Model):
+    cheque_id = models.BigIntegerField(primary_key=True)
+    cheque_stud_id = models.ForeignKey(Students, on_delete=models.CASCADE)
+    cheque_number = models.IntegerField()
+    cheque_paid = models.BooleanField(default=0)
 
     def __str__(self):
-        return f"{self.check_stud_id.stud_name, self.check_paid}"
+        return f"{self.cheque_stud_id.stud_name, self.cheque_paid}"
     
     class Meta:
-        db_table = 'Check_Collection'
+        db_table = 'cheque_Collection'
 
 class Discount(models.Model):
     discount_id = models.BigIntegerField(primary_key=True)
