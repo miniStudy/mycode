@@ -5,8 +5,9 @@
   <h4>{{title}}</h4>
 </div>
 
-<div class="row">
+{% include "studentpanel/message_show.html" %}
 
+<div class="row">
   <div class="col-md-3 mb-4">
     <div class="card">
       <a href="{% url 'Student_Timetable' %}">

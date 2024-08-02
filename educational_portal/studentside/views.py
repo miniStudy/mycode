@@ -39,9 +39,8 @@ def student_home(request):
         Q(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))).count()
 
     day_name = today.strftime('%A')
-    print(day_name)
+
     today_timetable = Timetable.objects.filter(tt_day=day_name, tt_batch__batch_id = request.session['stud_batch'], tt_subject1__sub_std__std_id = std_id)
-    print(today_timetable)
     
 
     student_id = request.session['stud_id']
@@ -688,10 +687,11 @@ def student_analysis_view(request):
     
 
     context = {
+        'title': 'Report-Card',
         'logo_url': 'https://metrofoods.co.nz/1nobg.png',
         'student':student,
         'student_data':student_data,
-        'title': 'Report-Card',
+
         'overall_attendence':overall_attendence,
         'overall_attendance_li':overall_attendance_li,
         'overall_attendance_subwise':overall_attendance_subwise,
