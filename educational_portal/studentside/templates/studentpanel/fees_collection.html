@@ -9,21 +9,13 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-body">
-                    {% for x in total_amount %}
-                    <h5>Total Fees Collections:{{x.fees_stud_id.stud_pack.pack_fees}}</h5>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5>Remaining Fees Collections: {{remain_amount}}</h5>
+                <div class="card-body">       
+                    <h5>Fees: <del>{{student_data.stud_pack.pack_fees}}</del> {{fees_to_paid}}</h5>
                 </div>
             </div>
         </div>
     </div>
+    <hr>
     <table>
         <thead>
             <tr>
@@ -33,7 +25,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for x in total_amount %}
+            {% for x in fees_collection %}
             <tr>
                 <td>{{x.fees_paid}}</td>
                 <td>{{x.fees_date}}</td>
@@ -42,5 +34,34 @@
             {% endfor %}
         </tbody>
     </table>
+    <hr>
+    <h4>Cheque Data</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Amount Paid</th>
+                <th>Cheque Date</th>
+                <th>Cheque Expiry Date</th>
+                <th>Cheque Paid</th>
+                <th>Bounce</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for x in cheque_data %}
+            {% if x.cheque_paid == 0 %}
+            <tr>
+                <td>{{x.cheque_amount}}</td>
+                <td>{{x.cheque_date}}</td>
+                <td>{{x.cheque_expiry}}</td>
+                <td>{{x.cheque_paid}}</td>
+                <td>{{x.cheque_bounce}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <h4>With Pending Cheques Remaining = {{amount_with_pending}}</h4> <br> <hr>
+    <h4>Without Pending Cheques Remaining = {{remaining_fees}}</h4> <br> <hr>
 </body>
 </html>

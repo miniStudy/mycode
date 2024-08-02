@@ -96,7 +96,7 @@ class Packs(models.Model):
     pack_name = models.CharField(max_length=50)
     pack_std = models.ForeignKey(Std,on_delete=models.CASCADE)
     pack_subjects = models.ManyToManyField(Subject, blank=True)
-    pack_fees = models.CharField(max_length=20)
+    pack_fees = models.IntegerField()
 
     def __str__(self):
         return f"{self.pack_name} - {self.pack_std.std_name} | {self.pack_std.std_board.brd_name}"
@@ -375,6 +375,17 @@ class Faculty_Access(models.Model):
     class Meta:
         db_table = 'Faculty_Access'
 
+class Banks(models.Model):
+    bank_id = models.BigAutoField(primary_key=True)
+    bank_name = models.CharField(max_length=355)
+    bank_code = models.CharField(max_length=155)
+
+    def __str__(self):
+        return f"{self.bank_name}"
+    
+    class Meta:
+        db_table = 'Banks'
+
 class Fees_Collection(models.Model):
     class mode_choices(models.TextChoices):
         UPI = 'UPI', 'UPI'
@@ -399,6 +410,7 @@ class Cheque_Collection(models.Model):
     cheque_stud_id = models.ForeignKey(Students, on_delete=models.CASCADE)
     cheque_amount = models.FloatField()
     cheque_number = models.IntegerField()
+    cheque_bank = models.ForeignKey(Banks, on_delete=models.CASCADE, blank=True, null=True)
     cheque_bounce = models.BooleanField(default=False)
     cheque_date = models.DateField()
     cheque_expiry = models.DateField(blank=True, null=True)
