@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import timedelta
 from django_summernote.fields import SummernoteTextField
 
 
@@ -396,14 +397,23 @@ class Fees_Collection(models.Model):
 class Cheque_Collection(models.Model):
     cheque_id = models.BigAutoField(primary_key=True)
     cheque_stud_id = models.ForeignKey(Students, on_delete=models.CASCADE)
+    cheque_amount = models.FloatField()
     cheque_number = models.IntegerField()
-    cheque_paid = models.BooleanField(default=0)
+    cheque_bounce = models.BooleanField(default=False)
+    cheque_date = models.DateField()
+    cheque_expiry = models.DateField(blank=True, null=True)
+    cheque_paid = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.cheque_expiry:
+            self.cheque_expiry = self.cheque_date + timedelta(days=90)
+        super(Cheque_Collection, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.cheque_stud_id.stud_name, self.cheque_paid}"
     
     class Meta:
-        db_table = 'cheque_Collection'
+        db_table = 'Cheque_Collection'
 
 class Discount(models.Model):
     discount_id = models.BigAutoField(primary_key=True)

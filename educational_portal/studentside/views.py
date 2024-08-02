@@ -713,4 +713,13 @@ def student_analysis_view(request):
 
 def student_fees_collection_view(request):
     student_id = request.session['stud_id']
-    return render(request, 'studentpanel/fees_collection.html')
+    total_amount = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id)
+    discount_amount = Discount.objects.filter(discount_stud_id__stud_id = student_id).aggregate(dis_amount=Sum('discount_amount'))
+
+    for x in total_amount:
+        tol_amount = int(x.fees_stud_id.stud_pack.pack_fees)
+    
+    discount_amount = int(discount_amount['dis_amount'])
+    remain_amount = tol_amount - discount_amount
+
+    return render(request, 'studentpanel/fees_collection.html', {'total_amount':total_amount, 'remain_amount':remain_amount})
