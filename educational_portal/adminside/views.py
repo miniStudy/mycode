@@ -1586,3 +1586,7 @@ def adminside_report_card(request):
     context.update({'combined_data': combined_data})
     return render(request, 'show_report_card_admin.html', context)
 
+
+
+def fees_collection_admin(request):
+    pass
