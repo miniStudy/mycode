@@ -53,4 +53,9 @@ urlpatterns = [
 
     # ---------------------------studentside analysis-------------------------------------------------------
     path('student_analysis/', studentview.student_analysis_view, name='student_analysis'),
+
+    # ---------------------------studentside feesCollection-------------------------------------------------------
+    path('student_fees_collection/', studentview.student_fees_collection_view, name='student_fees_collection'),
+
+
 ]

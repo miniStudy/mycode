@@ -710,3 +710,7 @@ def student_analysis_view(request):
     }
 
     return render(request, 'studentpanel/student_analysis.html', context)
+
+def student_fees_collection_view(request):
+    student_id = request.session['stud_id']
+    return render(request, 'studentpanel/fees_collection.html')
