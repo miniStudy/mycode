@@ -19,7 +19,7 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 from adminside.decorators import admin_login_required
 from django.db.models import Count, Q
-
+import requests
 
 
 def send_report_card(request):
@@ -1589,4 +1589,22 @@ def adminside_report_card(request):
 
 
 def fees_collection_admin(request):
-    pass
+    context={}
+    return render(request, 'fees_collection_admin.html', context)
+
+def add_cheques_admin(request):
+    context={}
+    return render(request, 'add_cheques_admin.html', context)
+
+def add_fees_collection_admin(request):
+    context={}
+    return render(request, 'add_fees_collection_admin.html', context)
+
+def update_cheques_admin(request):
+    context={}
+    return render(request, 'update_cheques_admin.html', context)
+
+def payments_history_admin(request):    
+    context={}
+    return render(request, 'payments_history_admin.html', context)
+
