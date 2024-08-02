@@ -373,3 +373,46 @@ class Faculty_Access(models.Model):
     
     class Meta:
         db_table = 'Faculty_Access'
+
+class Fees_Collection(models.Model):
+    class mode_choices(models.TextChoices):
+        UPI = 'UPI', 'UPI'
+        CHECK = 'CHECK', 'CHECK'
+        CASH = 'CASH', 'CASH'
+        DEBIT = 'DEBIT', 'DEBIT'
+        CREDIT = 'CREDIT', 'CREDIT'
+    fees_id = models.BigAutoField(primary_key=True)
+    fees_stud_id = models.ForeignKey(Students, on_delete=models.CASCADE)
+    fees_paid = models.IntegerField()
+    fees_mode = models.CharField(choices=mode_choices, max_length=255)
+    fees_date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.fees_stud_id.stud_name, self.fees_paid, self.fees_mode, self.fees_date}"
+    
+    class Meta:
+        db_table = 'Fees_Collection'
+
+class Check_Collection(models.Model):
+    cehck_id = models.BigIntegerField(primary_key=True)
+    check_stud_id = models.ForeignKey(Students, on_delete=models.CASCADE)
+    check_number = models.IntegerField()
+    check_paid = models.BooleanField(default=0)
+
+    def __str__(self):
+        return f"{self.check_stud_id.stud_name, self.check_paid}"
+    
+    class Meta:
+        db_table = 'Check_Collection'
+
+class Discount(models.Model):
+    discount_id = models.BigIntegerField(primary_key=True)
+    discount_stud_id = models.ForeignKey(Students, on_delete=models.CASCADE)
+    discount_pack_id = models.ForeignKey(Packs, on_delete=models.CASCADE)
+    discount_amount = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.discount_stud_id.stud_name, self.discount_amount}"
+    
+    class Meta:
+        db_table = 'Discount'
