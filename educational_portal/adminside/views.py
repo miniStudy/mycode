@@ -1608,14 +1608,18 @@ def add_cheques_admin(request):
         'banks':banks,    
              }   
 
- # ================update Logic============================
+ # ================update Logic==================================
     if request.GET.get('pk'):
         if request.method == 'POST':
             instance = get_object_or_404(Cheque_Collection, pk=request.GET['pk'])
             form = Cheque_Collection_form(request.POST, instance=instance)
+<<<<<<< HEAD
         
             
          
+=======
+    
+>>>>>>> 245b0bcb306668810c6503eede8e57bcfa150b55
             if form.is_valid():
                 form.save()
                 return redirect('fees_collection_admin')

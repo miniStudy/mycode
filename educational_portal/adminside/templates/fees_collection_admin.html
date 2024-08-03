@@ -112,6 +112,7 @@
                   <th>Bank Name</th>
                   <th>Cheque Date</th>
                   <th>Expiry Date</th>
+                  <th>Edit</th>
                 </tr>
               </thead>
               <tbody>
@@ -123,6 +124,7 @@
                   <td>{{x.cheque_bank}}</td>
                   <td>{{x.cheque_date}}</td>
                   <td>{{x.cheque_expiry}}</td>                 
+                  <td><a href="{% url 'add_cheques_admin' %}?pk={{x.cheque_id}}">Edit</a></td>                 
                 </tr>
                 {% endfor %}
               </tbody>
