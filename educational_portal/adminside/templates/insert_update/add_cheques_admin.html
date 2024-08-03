@@ -49,14 +49,14 @@
         <div class="col-sm-12">
             <label class="form-label mb-2">Cheque Number</label>
             <div class="input-group input-group-merge">
-              <input type="number" class="form-control" name="cheque_amount" max="6" placeholder="xxxxxx" {% if update_data %} value="{{update_data.cheque_amount}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_amount}}" {% endif %}/>
+              <input type="number" class="form-control" name="cheque_number" min="000000" max="999999" placeholder="xxxxxx" {% if update_data %} value="{{update_data.cheque_amount}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_amount}}" {% endif %}/>
             </div>
           </div>
 
         
           <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
             <label for="defaultSelect" class="form-label">Bank</label>
-            <select id="defaultSelect" class="form-select" name="cheque_stud_id">
+            <select id="defaultSelect" class="form-select" name="cheque_bank">
               <option value="">--</option>
               {% for x in banks %}
               
