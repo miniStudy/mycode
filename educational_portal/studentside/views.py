@@ -715,26 +715,40 @@ def student_fees_collection_view(request):
     student_id = request.session['stud_id']
     student_data = Students.objects.get(stud_id = student_id)
 
-    discount_amount = Discount.objects.get(discount_stud_id__stud_id = student_id) 
-    fees_to_paid = int(student_data.stud_pack.pack_fees) - int(discount_amount.discount_amount)
+    discount_amount = Discount.objects.filter(discount_stud_id__stud_id = student_id) 
+    if discount_amount:
+        fees_to_paid = int(student_data.stud_pack.pack_fees) - int(discount_amount[0].discount_amount)
+    else:
+        fees_to_paid = int(student_data.stud_pack.pack_fees)
+    # ===========================Paid Fees========================================
 
-    # ===========================paid fees========================================
     fees_collection = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id)
-    paid_fees = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).aggregate(tol_amount=Sum('fees_paid'))
-    paid_fees = int(paid_fees['tol_amount'])
+    if fees_collection:
+        paid_fees = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).aggregate(tol_amount=Sum('fees_paid'))
+        paid_fees = int(paid_fees['tol_amount'])
+    else:
+        paid_fees = 0
+    # ==========================Remaining_Fees====================================
 
-    # ===========remaining_fees====================
     remaining_fees = fees_to_paid - paid_fees
 
-    # ====================cheque fees================
-    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id)
-    cheque_data_payment = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id).aggregate(payment=Sum('cheque_amount'))
-    amount_with_pending = cheque_data_payment['payment']
-    amount_with_pending = remaining_fees - amount_with_pending
-    completed_cheques_amount = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid=True).aggregate(payment=Sum('cheque_amount'))
-    completed_cheques_amount = completed_cheques_amount['payment']
-    remaining_fees = remaining_fees - completed_cheques_amount
+    # ===========================Cheque Fees======================================
 
+    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id)
+    if cheque_data:
+        cheque_data_payment = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id).aggregate(payment=Sum('cheque_amount'))
+        amount_with_pending = cheque_data_payment['payment']
+        amount_with_pending = remaining_fees - amount_with_pending
+        completed_cheques_amount = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid=True).aggregate(payment=Sum('cheque_amount'))
+        
+        if completed_cheques_amount == None:
+            completed_cheques_amount = 0
+        else:
+            completed_cheques_amount = completed_cheques_amount['payment']
+
+        remaining_fees = remaining_fees - completed_cheques_amount
+    else:
+        amount_with_pending = 0
     context = {
         'fees_collection':fees_collection, 
         'fees_to_paid':fees_to_paid, 
