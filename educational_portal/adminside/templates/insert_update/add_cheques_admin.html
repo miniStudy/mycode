@@ -49,7 +49,7 @@
         <div class="col-sm-12">
             <label class="form-label mb-2">Cheque Number</label>
             <div class="input-group input-group-merge">
-              <input type="number" class="form-control" name="cheque_number" min="000000" max="999999" placeholder="xxxxxx" {% if update_data %} value="{{update_data.cheque_amount}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_amount}}" {% endif %}/>
+              <input type="number" class="form-control" name="cheque_number" min="000000" max="999999" placeholder="xxxxxx" {% if update_data %} value="{{update_data.cheque_number}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_number}}" {% endif %}/>
             </div>
           </div>
 
@@ -74,7 +74,7 @@
           <div class="col-sm-12">
             <label class="form-label mb-2">Cheque Date</label>
             <div class="input-group input-group-merge">
-              <input type="date" class="form-control" name="cheque_date" {% if update_data %} value="{{update_data.cheque_date}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_date}}" {% endif %}/>
+              <input type="date" class="form-control" name="cheque_date" {% if update_data %} value="{{update_data.cheque_date|date:'d-m-Y'}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_date|date:'d-m-Y'}}" {% endif %}/>
             </div>
           </div>
 
