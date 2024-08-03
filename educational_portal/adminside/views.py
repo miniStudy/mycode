@@ -1613,7 +1613,6 @@ def add_cheques_admin(request):
         if request.method == 'POST':
             instance = get_object_or_404(Cheque_Collection, pk=request.GET['pk'])
             form = Cheque_Collection_form(request.POST, instance=instance)
-    
             if form.is_valid():
                 form.save()
                 return redirect('fees_collection_admin')
