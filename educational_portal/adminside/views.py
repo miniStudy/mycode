@@ -1608,21 +1608,18 @@ def add_cheques_admin(request):
         'banks':banks,    
              }   
 
- # ================update Logic============================
+ # ================update Logic==================================
     if request.GET.get('pk'):
         if request.method == 'POST':
             instance = get_object_or_404(Cheque_Collection, pk=request.GET['pk'])
             form = Cheque_Collection_form(request.POST, instance=instance)
-            check = Cheque_Collection.objects.filter(cheque_number = form.data['cheque_number']).count()
-            if check >= 1:
-                messages.error(request,'{} is already Exists'.format(form.data['cheque_number']))
+    
+            if form.is_valid():
+                form.save()
+                return redirect('fees_collection_admin')
             else:
-                if form.is_valid():
-                    form.save()
-                    return redirect('fees_collection_admin')
-                else:
-                    filled_data = form.data
-                    context.update({'filled_data ':filled_data,'errors':form.errors})
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
         
         update_data = Cheque_Collection.objects.get(cheque_id = request.GET['pk'])
         context.update({'update_data':update_data})  
