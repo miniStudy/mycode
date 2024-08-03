@@ -19,7 +19,7 @@
           <div class="avatar me-2">
             <span class="avatar-initial rounded bg-label-warning"><i class="fa-solid fa-sack-dollar"></i></span>
           </div>
-          <h4 class="ms-1 mb-0">8</h4>
+          <h4 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_fees_amount_after_discount}}</h4>
         </div>
         <p class="mb-1">Total Fees</p>
       </div>
@@ -32,7 +32,7 @@
           <div class="avatar me-2">
             <span class="avatar-initial rounded bg-label-danger"><i class="fa-solid fa-circle-dollar-to-slot"></i></span>
           </div>
-          <h4 class="ms-1 mb-0">Add</h4>
+          <h4 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_amount_fees_paid}}</h4>
         </div>
         <p class="mb-1">Paid Fees</p>
       </div>
@@ -45,7 +45,7 @@
           <div class="avatar me-2">
             <span class="avatar-initial rounded bg-label-info"><i class="fa-solid fa-hand-holding-dollar"></i></span>
           </div>
-          <h4 class="ms-1 mb-0">13</h4>
+          <h4 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_pending_fees}}</h4>
         </div>
         <p class="mb-1">Pending Fees</p>
       </div>
@@ -54,9 +54,7 @@
 </div>
  <!-- =============================================================================================== -->
 <!-- DataTable with Buttons -->
-Total-amount-fees-paid = {{total_amount_fees_paid}} <br> <hr>
-Total-amount-fees-pending = {{total_pending_fees}} <br> <hr>
-Total-amount-fees-after-discount = {{total_fees_amount_after_discount}} <br> <hr>
+
 <div class="row mb-3">
   <div class="col-md-12">
     <div class="card">
