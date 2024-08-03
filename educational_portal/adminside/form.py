@@ -81,3 +81,10 @@ class batch_form(forms.ModelForm):
     class Meta:
         model = Batches
         fields = "__all__"
+
+
+class Cheque_Collection_form(forms.ModelForm):
+    class Meta:
+        model = Cheque_Collection
+        fields = "__all__"
+
