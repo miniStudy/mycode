@@ -1589,7 +1589,13 @@ def adminside_report_card(request):
 
 
 def fees_collection_admin(request):
-    context={}
+    fees_collections_data = Fees_Collection.objects.all()
+    cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False)
+
+    context={
+        'fees_collections_data':fees_collections_data,
+        'cheque_collections_data':cheque_collections_data,
+    }
     return render(request, 'fees_collection_admin.html', context)
 
 def add_cheques_admin(request):
