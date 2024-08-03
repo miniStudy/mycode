@@ -1592,9 +1592,40 @@ def fees_collection_admin(request):
     fees_collections_data = Fees_Collection.objects.all()
     cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False)
 
+
+    #=================Total Amount Fees Paid============================================
+    total_amount_fees_paid = Fees_Collection.objects.all().aggregate(total_amu_paid = Sum('fees_paid'))
+    
+    if total_amount_fees_paid['total_amu_paid'] != None:
+        total_amount_fees_paid = total_amount_fees_paid['total_amu_paid']
+    else:
+        total_amount_fees_paid = 0
+
+    #==================Total Fees Amount After Discount=================================
+    total_discount_amount = Discount.objects.all().aggregate(discount_amount=Sum('discount_amount'))
+    if total_discount_amount['discount_amount'] != None:
+        total_discount_amount = total_discount_amount['discount_amount']
+    else:
+        total_discount_amount = 0
+
+    total_fees_amount = Students.objects.all().aggregate(fees_amount=Sum('stud_pack__pack_fees'))
+    if total_fees_amount['fees_amount'] != None:
+        total_fees_amount = total_fees_amount['fees_amount']
+    else:
+        total_fees_amount = 0
+
+    total_fees_amount_after_discount = (total_fees_amount-total_discount_amount)
+    
+    #===================Total Pending Fees==============================================
+    total_pending_fees = total_fees_amount_after_discount - total_amount_fees_paid
+    
+
     context={
         'fees_collections_data':fees_collections_data,
         'cheque_collections_data':cheque_collections_data,
+        'total_amount_fees_paid':total_amount_fees_paid,
+        'total_fees_amount_after_discount':total_fees_amount_after_discount,
+        'total_pending_fees':total_pending_fees
     }
     return render(request, 'fees_collection_admin.html', context)
 
@@ -1649,7 +1680,7 @@ def update_cheques_admin(request):
     context={}
     return render(request, 'update_cheques_admin.html', context)
 
-def payments_history_admin(request):    
+def payments_history_admin(request):
     context={}
     return render(request, 'payments_history_admin.html', context)
 
