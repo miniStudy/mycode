@@ -1614,6 +1614,17 @@ def add_cheques_admin(request):
             instance = get_object_or_404(Cheque_Collection, pk=request.GET['pk'])
             form = Cheque_Collection_form(request.POST, instance=instance)
             if form.is_valid():
+                
+                if form.cleaned_data['cheque_paid']==True:
+                    studid = form.cleaned_data['cheque_stud_id']
+                    cheque_amt = form.cleaned_data['cheque_amount']
+                    cheque_amt = form.cleaned_data['cheque_amount']
+                    fees_mode = 'CHECK'
+                    cheque_date = form.cleaned_data['cheque_date']
+                    abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date)
+                    print(abcd)
+                    
+
                 form.save()
                 return redirect('fees_collection_admin')
             else:

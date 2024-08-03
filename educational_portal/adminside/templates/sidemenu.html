@@ -108,6 +108,12 @@
           <div>Attendance</div>
         </a>
       </li>
+      <li class="menu-item {% if title == 'Payments' %} active {% endif %}">
+        <a href="{% url 'fees_collection_admin' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-hand-holding-dollar"></i>
+          <div>Payments</div>
+        </a>
+      </li>
       <li class="menu-item {% if title == 'Analysis' %} active {% endif %}">
         <a href="{% url 'adminside_report_card' %}" class="menu-link">
           <i class="menu-icon tf-icons fa-solid fa-magnifying-glass-chart"></i>
