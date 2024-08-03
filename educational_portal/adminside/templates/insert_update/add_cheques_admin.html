@@ -74,9 +74,14 @@
           <div class="col-sm-12">
             <label class="form-label mb-2">Cheque Date</label>
             <div class="input-group input-group-merge">
-              <input type="date" class="form-control" name="cheque_date" {% if update_data %} value="{{update_data.cheque_date|date:'d-m-Y'}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_date|date:'d-m-Y'}}" {% endif %}/>
+                <input type="date" class="form-control" name="cheque_date"
+                       {% if update_data and update_data.cheque_date %} 
+                           value="{{ update_data.cheque_date|date:'c'}}" 
+                       {% elif filled_data and filled_data.cheque_date %} 
+                           value="{{ filled_data.cheque_date|date:'c'}}" 
+                       {% endif %}/>
             </div>
-          </div>
+        </div>
 
           <div class="col-sm-12 mt-3">
             <input type="checkbox" class="form-check-input" id="cheque_paid" name="cheque_paid" {% if update_data.cheque_paid %} checked {% endif %}{% if filled_data.cheque_paid %} checked {% endif %}/>
