@@ -1687,6 +1687,10 @@ def add_fees_collection_admin(request):
     context={}
     return render(request, 'insert_update/add_fees_collection_admin.html', context)
 
+def admin_fees_collection_delete(request):
+    if request.GET.get('delfees_collection'):
+        pass
+
 def update_cheques_admin(request):
     context={}
     return render(request, 'update_cheques_admin.html', context)

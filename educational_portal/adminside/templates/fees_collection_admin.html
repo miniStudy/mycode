@@ -64,7 +64,7 @@
           <div>
             <div class="d-inline-block" id="exportbtns"></div>
 
-            <a href="{% url 'insert_update_boards' %}">
+            <a href="{% url 'add_cheques_admin' %}">
               <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
               </button>
@@ -72,58 +72,31 @@
 
           </div>
         </div>
-        <form action="{% url 'delete_boards' %}" method="POST">
-          {% csrf_token %}
+  
           <div class="card-datatable table-responsive pt-0">
             <table id="example" class="display table table-bordered" style="width:100%;">
               <thead>
                 <tr>
-                  <th>Student's Name</th>
+                  <th style="width: auto !important;">Student's Name</th>
                   <th>Fees Paid</th>
                   <th>Fees Mode</th>
                   <th>Fees Date</th>
+                  <th>Delete</th>
                 </tr>
               </thead>
               <tbody>
                 {% for x in fees_collections_data %}
                 <tr>
                   <td>{{x.fees_stud_id}}</td>
-                  <td>{{x.fees_paid}}</td>
+                  <td><i class="fa-solid fa-indian-rupee-sign"></i> {{x.fees_paid}}</td>
                   <td>{{x.fees_mode}}</td>
                   <td>{{x.fees_date}}</td>
+                  <td><a href="{% url 'admin_fees_collection_delete' %}?"><i class="fa-solid fa-trash" style="color: tomato;"></i></a></td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
-          <!-- Modal -->
-          <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="confirmdeletemodelLabel"><i class="fa-solid fa-trash me-2"></i> Confirm
-                    Delete
-                  </h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  Are you sure you want to delete this data ..?<br>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash me-2"></i> Delete</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected"
-            name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i
-              class="fa-solid fa-trash me-2"></i>
-            Delete</button>
-
-        </form>
       </div>
     </div>
   </div>
@@ -137,7 +110,7 @@
           <div>
             <div class="d-inline-block" id="exportbtns2"></div>
 
-            <a href="{% url 'insert_update_boards' %}">
+            <a href="{% url 'add_cheques_admin' %}">
               <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
               </button>
@@ -163,7 +136,7 @@
                 <tr>
                   <td>{{x.cheque_stud_id}}</td>
                   <td>{{x.cheque_number}}</td>
-                  <td>{{x.cheque_amount}}</td>
+                  <td><i class="fa-solid fa-indian-rupee-sign"></i> {{x.cheque_amount}}</td>
                   <td>{{x.cheque_bank}}</td>
                   <td>{{x.cheque_date}}</td>
                   <td>{{x.cheque_expiry}}</td>                 
