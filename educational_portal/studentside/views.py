@@ -746,6 +746,7 @@ def student_fees_collection_view(request):
         'student_data':student_data, 
         'remaining_fees':remaining_fees,
         'cheque_data':cheque_data,
+        'discount_amount':discount_amount
 
     }
     return render(request, 'studentpanel/fees_collection.html', context)
