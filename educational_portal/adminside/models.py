@@ -132,6 +132,11 @@ class Students(models.Model):
     stud_email = models.EmailField(max_length=100)
     stud_dob = models.DateField()
     stud_gender = models.CharField(max_length=10,choices=Gender.choices,default=Gender.MALE)
+    stud_nationality = models.CharField(max_length=255, default='India')
+    stud_profile = models.ImageField(blank=True, null=True, upload_to='uploads/')
+    stud_admission_no = models.IntegerField(blank=True, null=True)
+    stud_roll_no = models.IntegerField(blank=True, null=True)
+    stud_enrollment_no = models.IntegerField(blank=True, null=True)
     stud_guardian_name = models.CharField(max_length=200)
     stud_guardian_email = models.EmailField(max_length=200)
     stud_guardian_number = models.CharField(max_length=20)
@@ -438,3 +443,26 @@ class Discount(models.Model):
     
     class Meta:
         db_table = 'Discount'
+
+
+class Credits(models.Model):
+    credit_id = models.BigAutoField(primary_key=True)
+    credit_amount = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.credit_id, self.credit_amount}"
+    
+    class Meta:
+        db_table = 'Credits'
+
+class Transactions(models.Model):
+    transaction_id = models.BigAutoField(primary_key=True)
+    transaction_amount = models.IntegerField()
+    transaction_date = models.DateTimeField(auto_now_add=True)
+    transaction_verified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.transaction_id, self.transaction_amount, self.transaction_date}"
+    
+    class Meta:
+        db_table = 'Transactions'

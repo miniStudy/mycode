@@ -84,8 +84,12 @@
           <div>Doubt-Box</div>
         </a>
       </li>
-
-
+      <li class="menu-item {% if title == 'Payments' %} active {% endif %}">
+        <a href="{% url 'student_fees_collection' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-hand-holding-dollar"></i>
+          <div>Payments</div>
+        </a>
+      </li>
       <li class="menu-item {% if title == 'Report-Card' %} active {% endif %}">
         <a href="{% url 'student_analysis' %}" class="menu-link">
           <i class="menu-icon tf-icons fa-solid fa-magnifying-glass-chart"></i>
