@@ -60,16 +60,19 @@
     <div class="card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
-          <div class="myheadfont">Payments</div>
+          <div class="myheadfont">Student's Payment</div>
           <div>
             <div class="d-inline-block" id="exportbtns"></div>
 
+<<<<<<< HEAD
             <a href="{% url 'add_cheques_admin' %}">
               <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
               </button>
             </a>
 
+=======
+>>>>>>> 91253c61077284dcbe10e3bb3061a9ece91283ef
           </div>
         </div>
   
@@ -77,6 +80,7 @@
             <table id="example" class="display table table-bordered" style="width:100%;">
               <thead>
                 <tr>
+<<<<<<< HEAD
                   <th style="width: auto !important;">Student's Name</th>
                   <th>Fees Paid</th>
                   <th>Fees Mode</th>
@@ -93,9 +97,36 @@
                   <td>{{x.fees_date}}</td>
                   <td><a href="{% url 'admin_fees_collection_delete' %}?"><i class="fa-solid fa-trash" style="color: tomato;"></i></a></td>
                 </tr>
+=======
+                  <th>Student's Name</th>
+                  <th>Total Payable Amount</th>
+                  <th>Discount Fees</th>
+                  <th>Amount Paid</th>
+                  <th>Remaining Amount</th>
+              </tr>
+              </thead>
+              <tbody>
+                {% for x in students_data %}
+                  <tr>
+                        <td>{{x.stud_name}} {{x.stud_lastname}}</td>
+                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {{x.stud_pack.pack_fees}}</td>
+                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {% if x.discountt %}{{x.discountt}}{% else %}0{% endif %}</td>
+                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {% if x.amount_paid %}{{x.amount_paid}}{% else %}0{% endif %}</td>
+                        <td id="abcd{{x.stud_id}}"><script>   var packFees = {{ x.stud_pack.pack_fees|default:0|escapejs }};
+                            var discount = {{ x.discountt|default:0|escapejs }};
+                            var amountPaid = {{ x.amount_paid|default:0|escapejs }};
+                            
+                            // Perform the calculation
+                            var remaining = packFees - discount - amountPaid;
+                            
+                            document.getElementById('abcd{{x.stud_id}}').innerHTML = '<i class="fa-solid fa-indian-rupee-sign"></i> '+ remaining;
+                           </script></td>
+                  </tr>
+>>>>>>> 91253c61077284dcbe10e3bb3061a9ece91283ef
                 {% endfor %}
               </tbody>
             </table>
+            <a href="{% url 'payments_history_admin' %}" class='btn btn-primary'>View Payments</a>
           </div>
       </div>
     </div>

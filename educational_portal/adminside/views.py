@@ -7,7 +7,7 @@ from django.conf import settings
 import math
 import random
 from django.http import Http404,JsonResponse
-from django.db.models import Count,Sum
+from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
 from django.core.files.storage import FileSystemStorage
 from adminside.send_mail import *
 # Create your views here.
@@ -1589,9 +1589,14 @@ def adminside_report_card(request):
 
 
 def fees_collection_admin(request):
-    fees_collections_data = Fees_Collection.objects.all()
     cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False)
 
+    students_data = Students.objects.annotate(
+    amount_paid=Sum('fees_collection__fees_paid'),
+    discountt=Case(
+        When(discount__discount_amount=None, then=Value(0)),
+        default=F('discount__discount_amount'),output_field=IntegerField()
+    ))
 
     #=================Total Amount Fees Paid============================================
     total_amount_fees_paid = Fees_Collection.objects.all().aggregate(total_amu_paid = Sum('fees_paid'))
@@ -1621,11 +1626,11 @@ def fees_collection_admin(request):
     
 
     context={
-        'fees_collections_data':fees_collections_data,
         'cheque_collections_data':cheque_collections_data,
         'total_amount_fees_paid':total_amount_fees_paid,
         'total_fees_amount_after_discount':total_fees_amount_after_discount,
-        'total_pending_fees':total_pending_fees
+        'total_pending_fees':total_pending_fees,
+        'students_data':students_data,
     }
     return render(request, 'fees_collection_admin.html', context)
 
@@ -1696,6 +1701,8 @@ def update_cheques_admin(request):
     return render(request, 'update_cheques_admin.html', context)
 
 def payments_history_admin(request):
-    context={}
+    fees_collections_data = Fees_Collection.objects.all()
+    context = {
+        'fees_collections_data':fees_collections_data,
+    }
     return render(request, 'payments_history_admin.html', context)
-
