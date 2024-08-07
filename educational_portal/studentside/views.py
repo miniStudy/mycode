@@ -109,6 +109,7 @@ def student_login_handle(request):
                 request.session['stud_name'] = item.stud_name
                 request.session['stud_batch'] = item.stud_batch.batch_id
                 request.session['stud_std'] = item.stud_std.std_id
+                request.session['stud_profile'] = '{}'.format(item.stud_profile)
                 request.session['stud_logged_in'] = 'yes'
 
             if request.POST.get("remember"):
@@ -462,8 +463,8 @@ def student_inquiries_data(request):
 def student_profile(request):
     title = 'Profile'
     student_id = request.session['stud_id']
-    student_profile = Students.objects.filter(stud_id = student_id)
-    return render(request, 'studentpanel/myprofile.html', {'student_profile':student_profile, 'title':title})
+    student_profile = Students.objects.get(stud_id = student_id)
+    return render(request, 'studentpanel/myprofile.html', {'student':student_profile, 'title':title})
 
 @student_login_required
 def Student_doubt_section(request):

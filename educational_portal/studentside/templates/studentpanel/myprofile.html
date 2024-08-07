@@ -16,12 +16,12 @@
         </div>
         <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
           <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
-            <img src="/static/assets/img/avatars/1.png" alt="user image" class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" style="width: 120px;border: 2px solid black;">
+            <img src="/media/{{student.stud_profile}}" alt="user image" class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" style="width: 120px;border: 2px solid black;">
           </div>
           <div class="flex-grow-1 mt-3 mt-sm-5">
             <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
               <div class="user-profile-info">
-                {% for student in student_profile %}
+                
                 <h4>{{student.stud_name}} {{student.stud_lastname}}</h4>
                 <ul class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-2">
                   <li class="list-inline-item fw-medium">
@@ -34,7 +34,7 @@
                     <i class='bx bx-calendar-alt'></i> Package : {{student.stud_pack.pack_name}}
                   </li>
                 </ul>
-                {% endfor %}
+              
               </div>
               
               <a href="{% url 'Student_InfoUpdate' %}" class="btn btn-primary text-nowrap">
@@ -55,8 +55,7 @@
       <!-- About User -->
       <div class="card mb-4">
         <div class="card-body">
-          <p class="card-text text-uppercase">About</p>
-          {% for student in student_profile %}
+          <p class="card-text text-uppercase">About</p>    
           <ul class="list-unstyled mb-4">
             <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Full Name:</span> <span>{{student.stud_name}} {{student.stud_lastname}}</span></li>
             <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Username:</span> <span>{{student.stud_username}}</span></li>
@@ -66,7 +65,7 @@
             <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Gender:</span> <span>{{student.stud_gender}}</span></li>
             <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Address:</span> <span>{{student.stud_address}}</span></li>
           </ul>
-          {% endfor %}
+     
         </div>
       </div>
       <!--/ About User -->
