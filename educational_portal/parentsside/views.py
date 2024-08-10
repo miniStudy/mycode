@@ -13,6 +13,7 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 
 # Create your views here.
+# Shivam is on testing
 
 @parent_login_required
 def parent_home(request):
