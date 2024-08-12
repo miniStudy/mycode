@@ -329,6 +329,7 @@ def show_event(request):
 
 @student_login_required
 def show_test(request):
+    return redirect('comming_soon')
     title = 'Tests'
     standard_id = request.session['stud_std']
     test_names = Chepterwise_test.objects.filter(test_std__std_id = standard_id)
@@ -750,3 +751,11 @@ def student_fees_collection_view(request):
 
     }
     return render(request, 'studentpanel/fees_collection.html', context)
+
+
+
+# ============================coming soon function========================
+def comming_soon_page(request):
+    return render(request, 'studentpanel/coming-soon.html')
+
+

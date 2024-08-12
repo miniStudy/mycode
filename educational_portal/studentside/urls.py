@@ -57,5 +57,7 @@ urlpatterns = [
     # ---------------------------studentside feesCollection-------------------------------------------------------
     path('student_fees_collection/', studentview.student_fees_collection_view, name='student_fees_collection'),
 
+        # ---------------------------Coming Soon-------------------------------------------------------
+    path('comming_soon/', studentview.comming_soon_page, name='comming_soon'),
 
 ]
