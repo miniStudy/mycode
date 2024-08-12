@@ -107,14 +107,12 @@
 
 
 
-<script>
+<!-- <script>
   var options = {
     series: [{
-      name: 'Students',
-      data: [44, 55, 57, 56, 61, 58, 63, 60]
-    }, {
       name: 'Tests',
-      data: [15, 30, 22, 24, 34, 25, 30, 23]
+      data: {{test_result_list|safe}},
+
     }],
     chart: {
       type: 'bar',
@@ -129,7 +127,7 @@
       },
     plotOptions: {
       bar: {
-        horizontal: false,
+        horizontal: true,
         columnWidth: '55%',
         endingShape: 'rounded'
       },
@@ -143,7 +141,7 @@
       colors: ['transparent']
     },
     xaxis: {
-      categories: ['Std 5', 'Std 6', 'Std 7', 'Std 8', 'Std 9', 'Std 10', 'Std 11', 'Std 12'],
+      categories: {{test_name_list|safe}},
       labels: {
         style: {
           colors: '#FFFFFF'
@@ -156,7 +154,7 @@
         color: '#FFFFFF'
       },
       title: {
-        text: 'STDS',
+        text: 'Test Names',
         style: {
           color: '#FFFFFF', // White color for x-axis title
           fontSize: 15,
@@ -165,7 +163,7 @@
     },
     yaxis: {
       title: {
-        text: 'Data',
+        text: 'Obtained Marks',
         style: {
           color: '#FFFFFF', // White color for y-axis title
           fontSize: 15,
@@ -202,4 +200,61 @@
 
   var students_chart = new ApexCharts(document.querySelector("#students_chart"), options);
   students_chart.render();
+</script> -->
+
+
+<script>
+          var options = {
+          series: [
+          {
+            name: "",
+            data: {{test_result_list|safe}},
+          },
+        ],
+          chart: {
+          type: 'bar',
+          height: 350,
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 0,
+            horizontal: true,
+            distributed: true,
+            barHeight: '80%',
+            isFunnel: true,
+          },
+        },
+        colors: [
+          '#F44F5E',
+          '#E55A89',
+          '#D863B1',
+          '#CA6CD8',
+          '#B57BED',
+          '#8D95EB',
+          '#62ACEA',
+          '#4BC3E6',
+        ],
+        dataLabels: {
+          enabled: true,
+          formatter: function (val, opt) {
+            return opt.w.globals.labels[opt.dataPointIndex] 
+          },
+          dropShadow: {
+            enabled: true,
+          },
+        },
+        title: {
+          text: '',
+          align: 'middle',
+        },
+        xaxis: {
+          categories: {{test_name_list|safe}},
+        },
+        legend: {
+          show: false,
+        },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#students_chart"), options);
+        chart.render();
 </script>

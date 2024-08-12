@@ -31,6 +31,7 @@
     }
 
     .header h1 {
+        font-family:Georgia, 'Times New Roman', Times, serif;
         margin: 0;
         font-size: 24px;
         color: #ffffff;
@@ -38,10 +39,12 @@
 
     .section {
         margin-bottom: 20px;
+        font-family:Georgia, 'Times New Roman', Times, serif;
     }
 
     .section h2 {
-        font-size: 20px;
+        font-size: 16px;
+        font-family:Georgia, 'Times New Roman', Times, serif;
         margin-bottom: 10px;
         color: #ffffff;
 
@@ -66,19 +69,21 @@
     }
 
     .thank-you {
+        font-family:Georgia, 'Times New Roman', Times, serif;
         text-align: center;
         margin-top: 20px;
         font-size: 16px;
         color: #ffffff;
     }
 </style>
-<div class="row">
+<div class="row d-flex justify-content-center">
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
                 <div class="report-card">
                     <div class="header">
                         <img src="{{ logo_url }}" alt="ministudy logo" style="width: 100%;" /><br />
+                        <hr>
                         <h1>Report Card</h1>
                     </div>
                     <div class="section">
@@ -122,12 +127,12 @@
                         <table>
                             <tr>
                                 <th>Overall Test Result</th>
-                                <td>{{ current_student_overall_test_result }}</td>
+                                <td>{{ current_student_overall_test_result }}%</td>
                             </tr>
                             {% for x in final_average_marks_subwise %}
                             <tr>
                                 <th>{{x.subject_name}}</th>
-                                <td>{{x.average_marks_subwise}}</td>
+                                <td>{{x.average_marks_subwise}}%</td>
                             </tr>
                             {% endfor %}
                             <tr>
@@ -140,7 +145,7 @@
                             </tr>
                             <tr>
                                 <th>Class Average Result</th>
-                                <td>{{ class_average_result }}</td>
+                                <td>{{ class_average_result }}%</td>
                             </tr>
                         </table>
                     </div>
@@ -170,13 +175,13 @@
             </div>
         </div>
     </div>    
-    <div class="col-md-6">
+    {% comment %} <div class="col-md-6">
         <div class="card">
             <div class="card-body">
                 <h4>Comming soon......</h4>
             </div>
         </div>
-    </div>
+    </div> {% endcomment %}
 </div>
 
 {% endblock %}
