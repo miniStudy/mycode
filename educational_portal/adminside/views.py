@@ -19,6 +19,8 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 from adminside.decorators import admin_login_required
 from django.db.models import Count, Q
+from django.http import Http404
+
 import requests
 
 
@@ -1686,6 +1688,18 @@ def add_cheques_admin(request):
                 return render(request, 'insert_update/add_cheques_admin.html', context)          
             
     return render(request, 'insert_update/add_cheques_admin.html', context)
+
+
+def delete_cheques_admin(request):
+    if request.GET.get('delete_cheque'):
+        del_id = request.GET['delete_cheque']
+        print(del_id)
+        try:
+            check_data = Cheque_Collection.objects.get(cheque_id=del_id)
+            check_data.delete()
+        except Cheque_Collection.DoesNotExist:
+            raise Http404("Cheque not found")
+    return redirect('fees_collection_admin') 
 
 
 def add_fees_collection_admin(request):
