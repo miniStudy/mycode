@@ -75,15 +75,27 @@ def student_home(request):
     overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
     overall_attendance_li = overall_attendance_li[:5]
 
+    #=============== Test Result Dashboard ===============================================================
+    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).order_by('-pk')
 
+    test_counts = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
 
+    test_result_list = []
+    test_name_list = []
+    for x in test_result_analysis:
+        test_name_list.append(x.tau_test_id.test_name)
+        test_result_list.append(x.tau_obtained_marks)
+    
     context = {
         'title':'Home',
         'current_doubts':current_doubts,
         'current_announcements':current_announcements,
         'today_timetable': today_timetable,
-        'overall_attendance_li':overall_attendance_li
-
+        'overall_attendance_li':overall_attendance_li,
+        'test_result_analysis':test_result_analysis,
+        'test_result_list':test_result_list,
+        'test_name_list': test_name_list,
+        'test_counts':test_counts,
     }
     return render(request, 'studentpanel/index.html',context)
 
@@ -329,6 +341,7 @@ def show_event(request):
 
 @student_login_required
 def show_test(request):
+    return redirect('comming_soon')
     title = 'Tests'
     standard_id = request.session['stud_std']
     test_names = Chepterwise_test.objects.filter(test_std__std_id = standard_id)
@@ -750,3 +763,11 @@ def student_fees_collection_view(request):
 
     }
     return render(request, 'studentpanel/fees_collection.html', context)
+
+
+
+# ============================coming soon function========================
+def comming_soon_page(request):
+    return render(request, 'studentpanel/coming-soon.html')
+
+

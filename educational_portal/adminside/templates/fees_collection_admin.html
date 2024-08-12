@@ -64,15 +64,14 @@
           <div>
             <div class="d-inline-block" id="exportbtns"></div>
 
-<<<<<<< HEAD
+
             <a href="{% url 'add_cheques_admin' %}">
               <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
               </button>
             </a>
 
-=======
->>>>>>> 91253c61077284dcbe10e3bb3061a9ece91283ef
+
           </div>
         </div>
   
@@ -80,29 +79,12 @@
             <table id="example" class="display table table-bordered" style="width:100%;">
               <thead>
                 <tr>
-<<<<<<< HEAD
-                  <th style="width: auto !important;">Student's Name</th>
-                  <th>Fees Paid</th>
-                  <th>Fees Mode</th>
-                  <th>Fees Date</th>
-                  <th>Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for x in fees_collections_data %}
-                <tr>
-                  <td>{{x.fees_stud_id}}</td>
-                  <td><i class="fa-solid fa-indian-rupee-sign"></i> {{x.fees_paid}}</td>
-                  <td>{{x.fees_mode}}</td>
-                  <td>{{x.fees_date}}</td>
-                  <td><a href="{% url 'admin_fees_collection_delete' %}?"><i class="fa-solid fa-trash" style="color: tomato;"></i></a></td>
-                </tr>
-=======
                   <th>Student's Name</th>
                   <th>Total Payable Amount</th>
                   <th>Discount Fees</th>
                   <th>Amount Paid</th>
                   <th>Remaining Amount</th>
+                  <th>Delete</th>
               </tr>
               </thead>
               <tbody>
@@ -121,8 +103,8 @@
                             
                             document.getElementById('abcd{{x.stud_id}}').innerHTML = '<i class="fa-solid fa-indian-rupee-sign"></i> '+ remaining;
                            </script></td>
+                           <td><a href="{% url 'delete_cheques_admin' %}?delete_fees_collection={{x.fees_id}}"><span class="btn btn-small btn-danger me-sm-3 me-1">Delete</span></a></td>
                   </tr>
->>>>>>> 91253c61077284dcbe10e3bb3061a9ece91283ef
                 {% endfor %}
               </tbody>
             </table>

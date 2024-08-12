@@ -245,17 +245,17 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <a class="dropdown-item" href="pages-account-settings-account.html">
+                <a class="dropdown-item" href="{% url 'Student_Profile' %}">
                   <div class="d-flex">
                     <div class="flex-shrink-0 me-3">
                       <div class="avatar avatar-online">
                         <img src="/media/{{request.session.stud_profile}}" alt="/media/{{request.session.stud_profile}}" class="rounded-circle">
                       </div>
-                    </div>
-                    <div class="flex-grow-1">
-                      <span class="fw-medium d-block lh-1">John Doe</span>
-                      <small>Admin</small>
-                    </div>
+                    </div>                    
+                      <div class="flex-grow-1">
+                        <span class="fw-medium d-block lh-1">{{request.session.stud_name}}</span>
+                        <small>Student</small>
+                      </div>
                   </div>
                 </a>
               </li>

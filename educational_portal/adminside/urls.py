@@ -125,4 +125,6 @@ urlpatterns = [
     path('add_fees_collection_admin/', adminview.add_fees_collection_admin, name="add_fees_collection_admin"),
     path('update_cheques_admin/', adminview.update_cheques_admin, name="update_cheques_admin"),
     path('payments_history_admin/', adminview.payments_history_admin, name="payments_history_admin"),
+    path('delete_cheques_admin/', adminview.delete_cheques_admin, name="delete_cheques_admin"),
+
 ]

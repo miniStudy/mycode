@@ -90,7 +90,12 @@
         
         <div class="col-sm-12">
           <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+          {% if update_data %}
+            <a href="{% url 'delete_cheques_admin' %}?delete_cheque={{update_data.cheque_id}}"><span class="btn btn-danger data-submit me-sm-3 me-1 mt-2">Delete</span></a>
+        {% endif %}
         </div>
+
+        
       </form>
     </div>
   </div>
