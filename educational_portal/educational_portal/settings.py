@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-(_72&%1odk@)znfemmq*5edqicu5jzu21&(4@o5z+b&^wv@rt)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'miniStudy',
         'USER': 'miniStudy',
-        'PASSWORD': '71554913@TmP',
+        'PASSWORD': '71554913@TmP@',
         'HOST': '93.127.167.143',
         'PORT': '3306',
     }
