@@ -42,7 +42,9 @@ urlpatterns = [
 
     path('api_faculties/', apiviews.api_faculties, name='api_faculties'),
     path('api_update_faculties/', apiviews.api_update_faculties, name='api_update_faculties'),
+    path('api_delete_faculties/', apiviews.api_delete_faculties, name='api_delete_faculties'),
 
+    path('api_timetable/', apiviews.api_timetable, name='api_timetable'),
 
 
 ]

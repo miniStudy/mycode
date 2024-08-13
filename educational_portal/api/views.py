@@ -456,6 +456,8 @@ def api_delete_chepters(request):
     })
 
 
+#======================================================Faculties====================================================================
+
 @api_view(['GET'])
 def api_faculties(request):
     faculties = Faculties.objects.all()
@@ -474,7 +476,7 @@ def api_update_faculties(request):
             instance = get_object_or_404(Faculties, pk=request.GET['pk'])
             data = request.data
             form = FacultiesSerializer(data=data, instance=instance, partial = True)
-            check = Faculties.objects.filter(fac_email=form.data['fac_email']).exclude(pk=request.GET['pk']).count()
+            check = Faculties.objects.filter(fac_email=data['fac_email']).exclude(pk=request.GET['pk']).count()
             if check >= 1:
                 return Response({
                     'Message': 'already exits'
@@ -504,7 +506,7 @@ def api_update_faculties(request):
             data = request.data
             form = FacultiesSerializer(data = data)
             if form.is_valid():
-                check = Faculties.objects.filter(fac_email=form.data['fac_email']).count()
+                check = Faculties.objects.filter(fac_email=data['fac_email']).count()
                 if check >= 1:
                     return Response({
                         'Status': 'Error',
@@ -524,3 +526,68 @@ def api_update_faculties(request):
             
     return Response({'Message':'Something went Wrong'}) 
 
+
+@api_view(['POST', 'GET'])
+def api_delete_faculties(request):
+    if request.method == 'POST':
+        selected_items = request.POST.get('selection', [])
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Faculties.objects.filter(fac_id__in=selected_ids).delete()
+                return Response({
+                    'status': True,
+                    'Message': 'Deleted successfully'
+                })
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': "Can't delete {}".format(e)  
+                    
+                })
+            
+    return Response({
+        'status': False,
+        'message': 'Something is wrong'
+    })
+
+
+#==============================================TimeTable==================================================================
+
+@api_view(['GET'])
+def api_timetable(request):
+    data = Timetable.objects.all()
+    data_serializer = TimetableSerializer(data)
+
+    std_data = Std.objects.all()
+    std_serializer = stdSerializer(std_data)
+
+    # batch_data = Batches.objects.all()
+    # batch_serializer = batchSerializer(batch_data)
+   
+ 
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std != 0:  
+            data = data.filter(tt_batch__batch_std__std_id=get_std)
+            # batch_data = batch_data.filter(batch_std__std_id=get_std)
+            get_std = Std.objects.get(std_id=get_std)
+            serializer = stdSerializer(get_std)
+            return Response({'data': data_serializer.data,
+                            'Title': 'Timetable',
+                            # 'batch_data': batch_data,
+                            'get_std': serializer.data
+                            })
+
+    # if request.GET.get('get_batch'):
+    #     get_batch = int(request.GET['get_batch'])
+    #     if get_batch != 0:
+    #         data = data.filter(tt_batch__batch_id=get_batch)
+    #         get_batch = Batches.objects.get(batch_id=get_batch)
+    #         batch_serializer = 
+    #         return Response({'data': data, 'get_batch': get_batch})        
+            
+    return Response({
+        'Status': False,
+        'Error': 'Something is wrong'
+    })
