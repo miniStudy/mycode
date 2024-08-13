@@ -47,7 +47,7 @@
             <select class="form-select" name="tt_batch">
               <option value="">--</option>
               {% for x in batch_data %}
-              <option value="{{x.batch_id}}" {% if update_data and update_data.tt_batch.batch_id == x.batch_id %} selected {% endif %}{% if filled_data and filled_data.tt_batch.batch_id == x.batch_id %} selected {% endif %}>{{ x.batch_name }}</option>
+              <option value="{{x.batch_id}}" {% if update_data and update_data.tt_batch.batch_id == x.batch_id %} selected {% endif %}{% if filled_data and filled_data.tt_batch.batch_id == x.batch_id %} selected {% endif %}>{{ x }}</option>
               {% endfor %}
             </select>
           </div>
