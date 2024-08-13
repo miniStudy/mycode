@@ -147,7 +147,7 @@ class Students(models.Model):
     stud_std = models.ForeignKey(Std, on_delete = models.CASCADE)
     stud_batch = models.ForeignKey(Batches, on_delete = models.CASCADE)
     stud_pack = models.ForeignKey(Packs, on_delete = models.CASCADE)
-    stud_pass = models.TextField(blank=True,null=True)
+    stud_pass = models.TextField(default='12345678')
     stud_otp = models.CharField(blank=True,null=True,max_length=10)
 
     def __str__(self):

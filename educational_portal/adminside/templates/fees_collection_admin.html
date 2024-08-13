@@ -79,6 +79,7 @@
             <table id="example" class="display table table-bordered" style="width:100%;">
               <thead>
                 <tr>
+                  <th>Student's Standard</th>
                   <th>Student's Name</th>
                   <th>Total Payable Amount</th>
                   <th>Discount Fees</th>
@@ -90,6 +91,7 @@
               <tbody>
                 {% for x in students_data %}
                   <tr>
+                        <td>{{x.stud_std}}</td>
                         <td>{{x.stud_name}} {{x.stud_lastname}}</td>
                         <td><i class="fa-solid fa-indian-rupee-sign"></i> {{x.stud_pack.pack_fees}}</td>
                         <td><i class="fa-solid fa-indian-rupee-sign"></i> {% if x.discountt %}{{x.discountt}}{% else %}0{% endif %}</td>
