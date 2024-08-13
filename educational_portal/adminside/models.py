@@ -42,7 +42,7 @@ class Std(models.Model):
 
 class Subject(models.Model):
     sub_id = models.BigAutoField(primary_key=True)
-    sub_name = models.CharField(max_length=50,unique=True)
+    sub_name = models.CharField(max_length=50)
     sub_std = models.ForeignKey(Std, on_delete=models.CASCADE)    
 
     def __str__(self):
@@ -132,8 +132,8 @@ class Students(models.Model):
     stud_email = models.EmailField(max_length=100)
     stud_dob = models.DateField()
     stud_gender = models.CharField(max_length=10,choices=Gender.choices,default=Gender.MALE)
-    stud_nationality = models.CharField(max_length=255, default='India')
-    stud_profile = models.ImageField(blank=True, null=True, upload_to='uploads/')
+    stud_nationality = models.CharField(null=True, blank=True, max_length=255, default='India')
+    stud_profile = models.ImageField(blank=True, null=True, upload_to='uploads/',default='uploads/default_profile.jpg')
     stud_admission_no = models.IntegerField(blank=True, null=True)
     stud_roll_no = models.IntegerField(blank=True, null=True)
     stud_enrollment_no = models.IntegerField(blank=True, null=True)
@@ -147,7 +147,7 @@ class Students(models.Model):
     stud_std = models.ForeignKey(Std, on_delete = models.CASCADE)
     stud_batch = models.ForeignKey(Batches, on_delete = models.CASCADE)
     stud_pack = models.ForeignKey(Packs, on_delete = models.CASCADE)
-    stud_pass = models.TextField(blank=True,null=True)
+    stud_pass = models.TextField(null=True, blank=True,default='12345678')
     stud_otp = models.CharField(blank=True,null=True,max_length=10)
 
     def __str__(self):

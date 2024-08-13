@@ -583,7 +583,6 @@ def student_analysis_view(request):
 
     # ===============Overall Attendance==================
     student = Students.objects.get(stud_id = student_id)
-
     student_data = Students.objects.filter(stud_std__std_id = student_std)
 
     total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()

@@ -1,0 +1,18 @@
+
+insert chepters of maths std 10
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('Real Numbers','1','','13','5'),
+('Polynomials','1','','13','5'),
+('Pair Of Linear Equations In Two Variables','1','','13','5'),
+('Quadratic Equations','1','','13','5'),
+('Arithmetic Progressions','1','','13','5'),
+('Triangles','1','','13','5'),
+('Coordinate Geometry','1','','13','5'),
+('Introduction To Trigonometry','1','','13','5'),
+('Some Applications Of Trigonometry','1','','13','5'),
+
+('Circles','1','','13','5'),
+('Areas Related To Circles','1','','13','5'),
+('Surface Areas And Volumes','1','','13','5'),
+('Statistics','1','','13','5'),
+('Probability','1','','13','5'),;

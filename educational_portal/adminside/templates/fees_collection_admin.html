@@ -79,17 +79,19 @@
             <table id="example" class="display table table-bordered" style="width:100%;">
               <thead>
                 <tr>
+                  <th>Student's Standard</th>
                   <th>Student's Name</th>
                   <th>Total Payable Amount</th>
                   <th>Discount Fees</th>
                   <th>Amount Paid</th>
                   <th>Remaining Amount</th>
-                  <th>Delete</th>
+                  <!-- <th>Delete</th> -->
               </tr>
               </thead>
               <tbody>
                 {% for x in students_data %}
                   <tr>
+                        <td>{{x.stud_std}}</td>
                         <td>{{x.stud_name}} {{x.stud_lastname}}</td>
                         <td><i class="fa-solid fa-indian-rupee-sign"></i> {{x.stud_pack.pack_fees}}</td>
                         <td><i class="fa-solid fa-indian-rupee-sign"></i> {% if x.discountt %}{{x.discountt}}{% else %}0{% endif %}</td>
@@ -103,7 +105,7 @@
                             
                             document.getElementById('abcd{{x.stud_id}}').innerHTML = '<i class="fa-solid fa-indian-rupee-sign"></i> '+ remaining;
                            </script></td>
-                           <td><a href="{% url 'delete_cheques_admin' %}?delete_fees_collection={{x.fees_id}}"><span class="btn btn-small btn-danger me-sm-3 me-1">Delete</span></a></td>
+                           <!-- <td><a href="{% url 'delete_cheques_admin' %}?delete_fees_collection={{x.fees_id}}"><span class="btn btn-small btn-danger me-sm-3 me-1">Delete</span></a></td> -->
                   </tr>
                 {% endfor %}
               </tbody>
