@@ -25,5 +25,24 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('get_boards/', apiviews.get_boards, name='get_boards'),
+    path('api_update_boards/', apiviews.api_update_boards, name='api_update_boards'),
     path('delete_boards/', apiviews.delete_boards, name='delete_boards'),
+
+    path('get_stds/', apiviews.get_stds, name='get_stds'),
+    path('api_update_stds/', apiviews.api_update_stds, name='api_update_stds'),
+    path('api_delete_stds/', apiviews.api_delete_stds, name='api_delete_stds'),
+    
+    path('api_subjects/', apiviews.api_subjects, name='api_subjects'),
+    path('api_update_subjects/', apiviews.api_update_subjects, name='api_update_subjects'),
+    path('api_delete_subjects/', apiviews.api_delete_subjects, name='api_delete_subjects'),
+
+    path('api_chepters/', apiviews.api_chepters, name='api_chepters'),
+    # path('insert_update_chepters/', apiviews.insert_update_chepters, name='insert_update_chepters'),
+    path('api_delete_chepters/', apiviews.api_delete_chepters, name='api_delete_chepters'),
+
+    path('api_faculties/', apiviews.api_faculties, name='api_faculties'),
+    path('api_update_faculties/', apiviews.api_update_faculties, name='api_update_faculties'),
+
+
+
 ]
