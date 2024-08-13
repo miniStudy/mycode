@@ -308,7 +308,6 @@ def delete_boards(request):
 
     return redirect('boards')
 
-
 # -------------------------Logic for Std-======================
 
 @admin_login_required
