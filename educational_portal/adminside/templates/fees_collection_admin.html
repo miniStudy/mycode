@@ -84,7 +84,7 @@
                   <th>Discount Fees</th>
                   <th>Amount Paid</th>
                   <th>Remaining Amount</th>
-                  <th>Delete</th>
+                  <!-- <th>Delete</th> -->
               </tr>
               </thead>
               <tbody>
@@ -103,7 +103,7 @@
                             
                             document.getElementById('abcd{{x.stud_id}}').innerHTML = '<i class="fa-solid fa-indian-rupee-sign"></i> '+ remaining;
                            </script></td>
-                           <td><a href="{% url 'delete_cheques_admin' %}?delete_fees_collection={{x.fees_id}}"><span class="btn btn-small btn-danger me-sm-3 me-1">Delete</span></a></td>
+                           <!-- <td><a href="{% url 'delete_cheques_admin' %}?delete_fees_collection={{x.fees_id}}"><span class="btn btn-small btn-danger me-sm-3 me-1">Delete</span></a></td> -->
                   </tr>
                 {% endfor %}
               </tbody>
