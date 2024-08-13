@@ -466,3 +466,4 @@ class Transactions(models.Model):
     
     class Meta:
         db_table = 'Transactions'
+
