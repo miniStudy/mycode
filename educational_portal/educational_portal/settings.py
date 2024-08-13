@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'teacherside',
     'parentsside',
     'django_summernote',
-
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
