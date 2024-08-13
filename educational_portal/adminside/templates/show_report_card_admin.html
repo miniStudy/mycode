@@ -129,6 +129,8 @@
       color: #ffffff;
   }
 </style>
+
+{% if noreport_card == 1 %} {% else %}
 <div class="row d-flex justify-content-center mt-2">
   <div class="col-md-6">
       <div class="card">
@@ -236,4 +238,5 @@
       </div>
   </div> {% endcomment %}
 </div>
+{% endif %}
 {% endblock %}
