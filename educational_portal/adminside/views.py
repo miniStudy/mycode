@@ -308,7 +308,6 @@ def delete_boards(request):
 
     return redirect('boards')
 
-
 # -------------------------Logic for Std-======================
 
 @admin_login_required
@@ -599,7 +598,7 @@ def show_chepters(request):
             data = data.filter(chep_sub__sub_std__std_id = get_std)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
-            context.update({'data':data,'get_std':get_std,'std_data':std_data}) 
+            context.update({'data':data,'get_std':get_std,'std_data':std_data,'subject_data':subject_data}) 
 
 
     if request.GET.get('get_subject'):

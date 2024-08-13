@@ -1,3 +1,7 @@
+
+
+
+
 """educational_portal URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -15,20 +19,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from adminside import views as adminview
+from api import views as apiviews
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('adminside/', include('adminside.urls')),
-
-    path('summernote/', include('django_summernote.urls')),
-    path('studentside/', include('studentside.urls')),
-    path('teacherside/', include('teacherside.urls')),
-    path('parentsside/', include('parentsside.urls')),
-    path('api/', include('api.apiurls')),
+    path('get_boards/', apiviews.get_boards, name='get_boards'),
+    path('delete_boards/', apiviews.delete_boards, name='delete_boards'),
 ]
-
-
-urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

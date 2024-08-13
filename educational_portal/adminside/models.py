@@ -42,7 +42,7 @@ class Std(models.Model):
 
 class Subject(models.Model):
     sub_id = models.BigAutoField(primary_key=True)
-    sub_name = models.CharField(max_length=50,unique=True)
+    sub_name = models.CharField(max_length=50)
     sub_std = models.ForeignKey(Std, on_delete=models.CASCADE)    
 
     def __str__(self):
