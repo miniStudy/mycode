@@ -1011,22 +1011,17 @@ def api_update_packages(request):
     subjects_data = Subject.objects.all()
     subject_serializer = subjectsSerializer(subjects_data, many=True)
 
-    context = {
-        'title' : 'Packages',
-        'std_data':std_data,
-        'subjects_data':subjects_data,
-    }
 
     if request.GET.get('get_std'): 
         get_std = int(request.GET['get_std'])      # Doubt
         std_data = std_data.filter(std_id = get_std)
-        # std_data_serializer = std_data
+        std_serializer = stdSerializer(std_data)              # Testing remaining
         subjects_data = subjects_data.filter(sub_std__std_id = get_std)
-        # subject_serializer = subjects_data
+        sub_serializer = subjectsSerializer(subjects_data)
 
         return Response({
-            'std_data':std_data_serializer.data,
-            'subjects_data':subject_serializer.data
+            'std_data':std_serializer.data,
+            'subjects_data':sub_serializer.data
             }) 
 
 
