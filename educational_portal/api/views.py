@@ -37,11 +37,10 @@ def api_update_boards(request):
                 'data': form.data
             })
             else:
-                filled_data = form.data
                 return Response({
                     'status': False,
                     'message': 'Error occur',
-                    'data': form.data
+                    'Required Field': form.errors
                 })
     
     if request.GET.get('update_id'):
@@ -65,12 +64,10 @@ def api_update_boards(request):
                 'data': form.data
             })
         else:
-            filled_data = form.data
-            print(filled_data)
             return Response({
                 'status': True,
                 'message': 'nothing happend',
-                'data': filled_data
+                'Required Field': form.errors
             })
     return Response({
         'message':'something is wrong'
@@ -131,11 +128,10 @@ def api_update_stds(request):
                     'brddata':brd_serializers.data,
                 })
             else:
-                filled_data = form.data
                 return Response({
                     'status': 'Failed',
                     'message': 'Error occur',
-                    'data': form.data
+                    'Required Field': form.errors
                 })
     
     if request.GET.get('update_id'):
@@ -158,12 +154,10 @@ def api_update_stds(request):
                 'data': form.data
             })
         else:
-            filled_data = form.data
-            print(filled_data)
             return Response({
                 'status': True,
                 'message': 'nothing happend',
-                'data': filled_data
+                'data': form.errors
             })
         
     return Response({
@@ -251,8 +245,8 @@ def api_update_subjects(request):
                     })
                 else:
                     return Response({
-                        'status':'Error',
-                        'message':'error in form'
+                        'status': False,
+                        'Required Field': form.errors
                     })
         
         update_data = Subject.objects.get(sub_id = request.GET['pk'])
@@ -277,13 +271,14 @@ def api_update_subjects(request):
                 else:    
                     form.save()
                     return Response({
-                        'Status':'Form saved'
+                        'Status':'Form saved',
+                        'Data': form.data
                     })
             else:
                 return Response({
                     'Status': False,
                     'Message': 'Invalid data',
-                    'errors': form.errors,
+                    'Required Field': form.errors,
                 })
         
     return Response({'Message':'Something went Wrong'})   
@@ -490,8 +485,8 @@ def api_update_faculties(request):
                     })
                 else:
                     return Response({
-                        'status':'Error',
-                        'message':'error in form'
+                        'status':False,
+                        'Required Field':form.errors
                     })
 
         update_data = Faculties.objects.get(fac_id=request.GET['pk'])
@@ -515,13 +510,14 @@ def api_update_faculties(request):
                 else:
                     form.save()
                     return Response({
-                        'Status':'Form saved'
+                        'Status':'Form saved',
+                        'Data': form.data
                     })
             else:
                 return Response({
                     'Status': False,
                     'Message': 'Invalid data',
-                    'errors': form.errors,
+                    'Required Field': form.errors,
                 })
             
     return Response({'Message':'Something went Wrong'}) 
@@ -551,43 +547,573 @@ def api_delete_faculties(request):
         'message': 'Something is wrong'
     })
 
+#=====================================================Batches===========================================================
+
+@api_view(['GET'])
+def api_batches(request):
+    data = Batches.objects.all()
+    data_serializer = BatchSerializer(data, many=True)
+    std_data = Std.objects.all()
+    std_data_serializer = stdSerializer(std_data, many=True)
+
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(batch_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            get_std_serializer = stdSerializer(get_std)
+            return Response({
+                'data':data_serializer,
+                'get_std':get_std_serializer
+                })     
+    return Response({
+        'Data': data_serializer.data,
+        'Title': 'Standard',
+        'Std_data': std_data_serializer.data
+    })
+
+@api_view(['POST', 'GET'])
+def api_update_batches(request):
+    std_data = Std.objects.all()
+    std_serializer = stdSerializer(std_data, many = True)
+    
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id = get_std)
+   
+
+ # ================update Logic============================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Batches, pk=request.GET['pk'])
+            data = request.data
+            form = BatchSerializer(data=data, instance=instance, partial = True)
+            check = Batches.objects.filter(batch_name = data['batch_name'], batch_std__std_id = data['batch_std']).count()
+            if check >= 1:
+                return Response({
+                    'Message': 'already exits'
+                })
+            else:
+                if form.is_valid():
+                    form.save()
+                    return Response({
+                        'status': 'success',
+                        'data': form.data,
+                        'stdData':std_serializer.data
+                    })
+                else:
+                    return Response({
+                        'status':'Error',
+                        'Required Field':form.errors
+                    })
+        
+        update_data = Batches.objects.get(batch_id = request.GET['pk'])
+        serializer = BatchSerializer(update_data)
+        return Response({
+            'status': 'Done',
+            'data':serializer.data
+        }) 
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            data = request.data
+            form = BatchSerializer(data = data)
+            if form.is_valid():
+                check = Batches.objects.filter(batch_name = data['batch_name'], batch_std__std_id = data['batch_std']).count()
+                if check >= 1:
+                    return Response({
+                        'Status': 'Error',
+                        'Message':'Already exist'
+                    })
+                else:    
+                    form.save()
+                    return Response({
+                        'Status':'Form saved',
+                        'Data': form.data
+                    })
+            else:
+                return Response({
+                    'Status': False,
+                    'Message': 'Invalid data',
+                    'Required Field': form.errors,
+                })
+            
+    return Response({'Message':'Something went Wrong'})                   
+
+
+@api_view(['POST', 'GET'])
+def api_delete_batches(request):
+    if request.method == 'POST':
+        selected_items = request.POST.get('selection', [])
+        # selected_items = [7]
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Batches.objects.filter(batch_id__in=selected_ids).delete()
+                return Response({
+                    'status': True,
+                    'Message': 'Deleted successfully'
+                })
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': "Can't delete {}".format(e)  
+                    
+                })
+            
+    return Response({
+        'status': False,
+        'message': 'Something is wrong'
+    })
+
+
+#==============================================Announcements==============================================
+
+
+@api_view(['GET'])
+def api_announcements(request):
+    data = Announcements.objects.all()
+    data_serializer = AnnouncementSerializer(data, many=True)
+    std_data = Std.objects.all()
+    std_data_serializer = stdSerializer(std_data, many=True)
+    batch_data = Batches.objects.all()
+    batch_serializer = BatchSerializer(batch_data, many=True)
+   
+    
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(announce_std__std_id = get_std)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            get_std_serializer = stdSerializer(get_std, many=True)
+            return Response({
+                'data':data_serializer.data,
+                'batch_data':batch_serializer.data,
+                'get_std':get_std_serializer.data
+                })
+            
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(announce_batch__batch_id = get_batch)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            get_batch_serializer = BatchSerializer(get_batch, many = True)
+            return Response({
+                    'data':data_serializer.data,
+                    'get_batch':get_batch_serializer.data
+                    }) 
+
+    return Response({
+        'data' : data_serializer.data,
+        'title' : 'Announcements',
+        'std_data' : std_data_serializer.data,
+        'batch_data':batch_serializer.data,
+    })
+
+
+@api_view(['POST', 'GET'])
+def api_update_announcements(request):
+    std_data = Std.objects.all()
+    std_serializer = stdSerializer(std_data, many = True)
+    batch_data = Batches.objects.all()
+    batch_serializer = BatchSerializer(batch_data, many=True)
+
+    # ------------getting students for mail------------------
+    # students_for_mail = Students.objects.all()
+
+    # if request.GET.get('get_std'):
+    #     get_std = int(request.GET['get_std'])
+    #     std_data = std_data.filter(std_id = get_std)
+    #     batch_data = batch_data.filter(batch_std__std_id = get_std)
+    #     students_for_mail = students_for_mail.filter(stud_std=get_std)
+        # context.update({'get_std ':get_std,'std_data':std_data,'batch_data':batch_data}) 
+        
+    
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        batch_data = batch_data.filter(batch_id = get_batch)
+        # students_for_mail = students_for_mail.filter(stud_batch=get_batch)
+        # context.update({'get_batch ':get_batch,'batch_data':batch_data})
+
+    if request.method == 'POST':
+
+        # ================update Logic============================
+        if request.GET.get('pk'):
+            instance = get_object_or_404(Announcements, pk=request.GET['pk'])
+            data = request.data
+            form = AnnouncementSerializer(data=data, instance=instance, partial = True)       
+            if form.is_valid():
+                form.save()
+                return Response({
+                        'status': 'success',
+                        'data': form.data,
+                        'StdData':std_serializer.data
+                    })
+            else:
+                return Response({
+                        'status':'Error',
+                        'Required Field':form.errors
+                    })
+            
+        # ===================insert_logic===========================
+        data = request.data
+        form = AnnouncementSerializer(data=data)
+        if form.is_valid():
+            form.save()
+            # ---------------------sendmail Logic===================================
+            # students_email_list = []
+            # for x in students_for_mail:
+            #     students_email_list.append(x.stud_email)
+            # print(students_email_list)    
+            # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
+     
+            return Response({
+                    'Status':'Form saved',
+                    'Data': form.data
+                })
+        else:
+           return Response({
+                    'Status': False,
+                    'Message': 'Invalid data',
+                    'Required Field': form.errors,
+                })
+        
+    if request.GET.get('pk'):
+        update_data = Announcements.objects.get(announce_id = request.GET['pk'])
+        serializer = AnnouncementSerializer(update_data)
+        return Response({
+            'status': 'Done',
+            'data':serializer.data
+        }) 
+
+
+@api_view(['POST', 'GET'])
+def api_delete_announcements(request):
+    if request.method == 'POST':
+        selected_items = request.POST.get('selection', [])
+        # selected_items = [2]
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Announcements.objects.filter(announce_id__in=selected_ids).delete()
+                return Response({
+                    'status': True,
+                    'Message': 'Deleted successfully'
+                })
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': "Can't delete {}".format(e)  
+                })
+
+    return Response({
+        'status': False,
+        'message': 'Something is wrong'
+    })
+
 
 #==============================================TimeTable==================================================================
+
 
 @api_view(['GET'])
 def api_timetable(request):
     data = Timetable.objects.all()
-    data_serializer = TimetableSerializer(data)
+    data_serializer = TimetableSerializer(data, many =True)
 
     std_data = Std.objects.all()
-    std_serializer = stdSerializer(std_data)
+    std_serializer = stdSerializer(std_data, many =True)
 
-    # batch_data = Batches.objects.all()
-    # batch_serializer = batchSerializer(batch_data)
+    batch_data = Batches.objects.all()
+    batch_serializer = BatchSerializer(batch_data, many =True)
    
  
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std != 0:  
             data = data.filter(tt_batch__batch_std__std_id=get_std)
-            # batch_data = batch_data.filter(batch_std__std_id=get_std)
+            batch_data = batch_data.filter(batch_std__std_id=get_std)
             get_std = Std.objects.get(std_id=get_std)
             serializer = stdSerializer(get_std)
             return Response({'data': data_serializer.data,
                             'Title': 'Timetable',
-                            # 'batch_data': batch_data,
+                            'batch_data': batch_serializer.data,
                             'get_std': serializer.data
                             })
 
-    # if request.GET.get('get_batch'):
-    #     get_batch = int(request.GET['get_batch'])
-    #     if get_batch != 0:
-    #         data = data.filter(tt_batch__batch_id=get_batch)
-    #         get_batch = Batches.objects.get(batch_id=get_batch)
-    #         batch_serializer = 
-    #         return Response({'data': data, 'get_batch': get_batch})        
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch != 0:
+            data = data.filter(tt_batch__batch_id=get_batch)
+            get_batch = Batches.objects.get(batch_id=get_batch)
+            batch_serializer = BatchSerializer(get_batch, many =True)
+            return Response({'data': data_serializer.data, 'get_batch': batch_serializer.data})        
             
     return Response({
         'Status': False,
         'Error': 'Something is wrong'
+    })
+
+
+@api_view(['POST', 'GET'])
+def api_update_timetable(request):
+    std_data = Std.objects.all()
+    std_data_serializer = stdSerializer(std_data, many = True)
+    batch_data = Batches.objects.all()
+    batch_serializer = BatchSerializer(batch_data, many=True)
+    faculty_data = Faculties.objects.all()
+    faculty_serializer = FacultiesSerializer(faculty_data, many= True)
+    subject_data = Subject.objects.all()
+    subject_serializer = subjectsSerializer(subject_data, many=True)
+    # tt_students_for_mail = Students.objects.all()
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        std_data = std_data.filter(std_id=get_std)
+        subject_data = Subject.objects.filter(sub_std__std_id = get_std)
+        batch_data = batch_data.filter(batch_std__std_id=get_std)
+        # tt_students_for_mail = tt_students_for_mail.filter(stud_std=get_std)
+        return Response({
+            'std_data': std_data_serializer.data, 
+            'batch_data': batch_serializer.data, 
+            'subject_data':subject_serializer.data
+        }) 
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        batch_data = batch_data.filter(batch_id=get_batch)
+        # tt_students_for_mail = tt_students_for_mail.filter(stud_batch=get_batch)
+        return Response({
+            'get_batch': get_batch, 
+            'batch_data': batch_serializer.data
+            })
+
+    if request.method == 'POST':
+        # Update logic
+        if request.GET.get('pk'):
+            instance = get_object_or_404(Timetable, pk=request.GET['pk'])
+            data = request.data
+            form = TimetableSerializer(data=data, instance=instance, partial = True)
+            if form.is_valid():
+                form.save()
+                return Response({
+                        'status': 'success',
+                        'data': form.data,
+                        'StdData':std_data_serializer.data
+                    })
+            else:
+                return Response({
+                        'status':'Error',
+                        'Required Field':form.errors
+                    })
+
+        # Insert logic
+        data = request.data
+        form = TimetableSerializer(data=data)
+        if form.is_valid():
+            form.save()
+            # ---------------------sendmail Logic===================================
+            # tt_students_email_list = []
+            # for x in tt_students_for_mail:
+            #     tt_students_email_list.append(x.stud_email)
+            # print(tt_students_email_list)    
+            # timetable_mail(tt_students_email_list)
+
+            return Response({
+                    'Status':'Form saved',
+                    'Data': form.data
+                })
+    
+        else:
+            return Response({
+                    'Status': False,
+                    'Message': 'Invalid data',
+                    'Required Field': form.errors,
+                })
+
+    if request.GET.get('pk'):
+        update_data = Timetable.objects.get(tt_id=request.GET['pk'])
+        serializer = TimetableSerializer(update_data)
+        return Response({
+            'status': 'Done',
+            'data':serializer.data,
+            'Faculty': faculty_serializer.data
+        }) 
+
+
+@api_view(['POST', 'GET'])
+def api_delete_timetable(request):
+    if request.method == 'POST':
+        selected_items = request.POST.get('selection', [])
+        # selected_items = [4]
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Timetable.objects.filter(tt_id__in=selected_ids).delete()
+                return Response({
+                    'status': True,
+                    'Message': 'Deleted successfully'
+                })
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': "Can't delete {}".format(e)  
+                })
+
+    return Response({
+        'status': False,
+        'message': 'Something is wrong'
+    })
+
+
+#=============================================================== Packages =======================================================================
+
+@api_view(['GET'])
+def api_packages(request):
+    data = Packs.objects.prefetch_related('pack_subjects').all()
+    data_serializer = PackageSerializer(data, many=True)
+    std_data = Std.objects.all()
+    std_serializer = stdSerializer(std_data, many = True)
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(pack_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            serializer = stdSerializer(get_std, many = True)
+            return Response({
+                'data':data_serializer.data,
+                'get_std':serializer.data
+                })
+             
+    return Response({
+        'title' : 'Packages',
+        'data' : data_serializer.data,
+        'std_data' : std_serializer.data,
+    })
+
+
+
+@api_view(['POST', 'GET'])
+def api_update_packages(request):
+    std_data = Std.objects.all()
+    std_data_serializer = stdSerializer(std_data, many = True)
+    subjects_data = Subject.objects.all()
+    subject_serializer = subjectsSerializer(subjects_data, many=True)
+
+    context = {
+        'title' : 'Packages',
+        'std_data':std_data,
+        'subjects_data':subjects_data,
+    }
+
+    if request.GET.get('get_std'): 
+        get_std = int(request.GET['get_std'])      # Doubt
+        std_data = std_data.filter(std_id = get_std)
+        # std_data_serializer = std_data
+        subjects_data = subjects_data.filter(sub_std__std_id = get_std)
+        # subject_serializer = subjects_data
+
+        return Response({
+            'std_data':std_data_serializer.data,
+            'subjects_data':subject_serializer.data
+            }) 
+
+
+   
+
+ # ================update Logic============================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Packs, pk=request.GET['pk'])
+            data = request.data
+            form = PackageSerializer(data = data, instance=instance, partial = True)
+            check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std']).count()
+            if check >= 1:
+                return Response({
+                    'Message': 'already exits',
+                    'Data': form.data
+                })
+            else:
+                if form.is_valid():
+                    form.save()
+                    return Response({
+                        'Status': True,
+                        'Data': form.data,
+                        'std_data':std_data_serializer.data,
+                        'subjects_data':subject_serializer.data 
+                    })
+                else:
+                    return Response({
+                        'status':'Error',
+                        'Required Field':form.errors
+                    })
+                
+        update_data = Packs.objects.get(pack_id = request.GET['pk'])
+        serializer = PackageSerializer(update_data)
+        return Response({
+            'status': 'Done',
+            'data':serializer.data
+        })  
+    
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            data = request.data
+            form = PackageSerializer(data = data)
+            if form.is_valid():
+                check = Packs.objects.filter(pack_name = data['pack_name'], pack_std__std_id = data['pack_std']).count()
+                if check >= 1:
+                    return Response({
+                        'Status': 'Error',
+                        'Message':'Already exist'
+                    })
+                else:    
+                    form.save()
+                    return Response({
+                        'Status':'Form saved',
+                        'Data': form.data
+                    })
+            else:
+                return Response({
+                    'Status': False,
+                    'Message': 'Invalid data',
+                    'Required Field': form.errors,
+                })
+
+    return Response({'Message':'Something went Wrong'}) 
+
+
+@api_view(['POST', 'GET'])
+def api_delete_package(request):
+    if request.method == 'POST':
+        selected_items = request.POST.get('selection', [])
+        selected_items = [8]
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Packs.objects.filter(pack_id__in=selected_ids).delete()
+                return Response({
+                    'status': True,
+                    'Message': 'Deleted successfully'
+                })
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': "Can't delete {}".format(e)  
+                })
+
+    return Response({
+        'status': False,
+        'message': 'Something is wrong'
     })
