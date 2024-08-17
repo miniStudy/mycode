@@ -1566,6 +1566,12 @@ def adminside_report_card(request):
         else:
             data = data.filter(atten_student__stud_id = get_student)
             get_student = Students.objects.get(stud_id = get_student)
+            my_package = Packs.objects.prefetch_related('pack_subjects').get(pack_id = get_student.stud_pack.pack_id)
+            pack_subject_list = []
+            for subject in my_package.pack_subjects.all():
+                pack_subject_list.append(subject.sub_id)
+                print(subject.sub_id)
+            print(pack_subject_list)
             context.update({'data':data,'get_student':get_student})
 
         student_id = get_student.stud_id
@@ -1620,7 +1626,8 @@ def adminside_report_card(request):
         overall_attendance_li = overall_attendance_li[:5]
         
         # ===================SubjectsWise Attendance============================
-        subjects_li = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
+        subjects_li = Subject.objects.filter(sub_std__std_id = student_std, sub_id__in = pack_subject_list).values('sub_name').distinct()
+        print(subjects_li)
         overall_attendance_subwise = []
         for x in subjects_li:
             x = x['sub_name']
@@ -1635,7 +1642,7 @@ def adminside_report_card(request):
             overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
 
         # ======================SubjectWise TestResult==============================
-        subjects_data = Subject.objects.filter(sub_std=student_std)
+        subjects_data = Subject.objects.filter(sub_std=student_std, sub_id__in = pack_subject_list )
         final_average_marks_subwise = []
         for x in subjects_data:
             total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
