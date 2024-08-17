@@ -42,7 +42,22 @@ urlpatterns = [
 
     path('api_faculties/', apiviews.api_faculties, name='api_faculties'),
     path('api_update_faculties/', apiviews.api_update_faculties, name='api_update_faculties'),
+    path('api_delete_faculties/', apiviews.api_delete_faculties, name='api_delete_faculties'),
 
+    path('api_batches/', apiviews.api_batches, name='api_batches'),
+    path('api_update_batches/', apiviews.api_update_batches, name='api_update_batches'),
+    path('api_delete_batches/', apiviews.api_delete_batches, name='api_delete_batches'),
 
+    path('api_announcements/', apiviews.api_announcements, name='api_announcements'),
+    path('api_update_announcements/', apiviews.api_update_announcements, name='api_update_announcements'),
+    path('api_delete_announcements/', apiviews.api_delete_announcements, name='api_delete_announcements'),
+
+    path('api_timetable/', apiviews.api_timetable, name='api_timetable'),
+    path('api_update_timetable/', apiviews.api_update_timetable, name='api_update_timetable'),
+    path('api_delete_timetable/', apiviews.api_delete_timetable, name='api_delete_timetable'),
+
+    path('api_packages/', apiviews.api_packages, name='api_packages'),
+    path('api_update_packages/', apiviews.api_update_packages, name='api_update_packages'),
+    path('api_delete_package/', apiviews.api_delete_package, name='api_delete_package'),
 
 ]

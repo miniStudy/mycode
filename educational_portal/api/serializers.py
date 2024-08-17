@@ -26,3 +26,29 @@ class FacultiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculties
         fields = ('__all__')
+
+class BatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Batches
+        fields = ('__all__')
+
+class AnnouncementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Announcements
+        fields = ('__all__')
+
+class TimetableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Timetable
+        fields = ('__all__')
+
+class PackageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Packs
+        fields = ('__all__')
+
+
+
+
+
+
