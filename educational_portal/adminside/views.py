@@ -1743,6 +1743,7 @@ def fees_collection_admin(request):
     
 
     context={
+        'title':'Payments',
         'cheque_collections_data':cheque_collections_data,
         'total_amount_fees_paid':total_amount_fees_paid,
         'total_fees_amount_after_discount':total_fees_amount_after_discount,
