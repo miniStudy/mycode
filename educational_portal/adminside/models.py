@@ -163,7 +163,7 @@ class Faculties(models.Model):
     fac_email = models.EmailField(unique=True,default='abc@gmail.com')
     fac_address = models.TextField()
     Subjects = models.CharField(max_length=100)
-    fac_password = models.CharField(max_length=100)
+    fac_password = models.CharField(max_length=100,null=True, blank=True,default='12345678')
     fac_otp = models.IntegerField(blank=True,null=True)
 
     def __str__(self):
