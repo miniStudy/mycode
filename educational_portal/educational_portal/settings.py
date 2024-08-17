@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'teacherside',
     'parentsside',
     'django_summernote',
-    'rest_framework'
+    'rest_framework',
+    'website'
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,7 @@ ROOT_URLCONF = 'educational_portal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'adminside/templates'),os.path.join(BASE_DIR,'studentside/templates'),os.path.join(BASE_DIR,'teacherside/templates')],
+        'DIRS': [os.path.join(BASE_DIR,'adminside/templates'),os.path.join(BASE_DIR,'studentside/templates'),os.path.join(BASE_DIR,'teacherside/templates'),os.path.join(BASE_DIR,'website/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
