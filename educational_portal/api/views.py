@@ -5,6 +5,11 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import math
+import statistics
+import random
+from django.http import Http404,JsonResponse
+from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
 
 #=========================================Boards======================================================
 
@@ -1441,3 +1446,225 @@ def api_attendance(request):
     return Response(api_data)
 
 
+# ========================================================= Report Card ===============================================================
+
+@api_view(['GET'])
+def api_admin_report_card(request):
+    data = Attendance.objects.all()
+    Attendance_serial = AttendanceSerializer(data, many =True)
+    
+    std_data = Std.objects.all()
+    std_serial = stdSerializer(std_data, many = True)
+    
+    batch_data = Batches.objects.all()
+    batch_serial = BatchSerializer(batch_data, many = True)
+
+    stud_data = Students.objects.all()
+    stud_serial = StudentSerializer(stud_data, many = True)
+
+    subj_data = Subject.objects.all()
+    subj_serial = subjectsSerializer(subj_data, many = True)
+
+    apidata ={
+        'title' : 'Report-Card',
+        'data' : Attendance_serial.data,
+        'std_data' : std_serial.data,
+        'batch_data':batch_serial.data,
+        'stud_data':stud_serial.data,
+        'sub_data':subj_serial.data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+            Attendance_serial = AttendanceSerializer(data, many =True)
+
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            batch_serial = BatchSerializer(batch_data, many = True)
+
+            stud_data = stud_data.filter(stud_std__std_id = get_std)
+            stud_serial = StudentSerializer(stud_data, many = True)
+
+            subj_data = subj_data.filter(sub_std__std_id = get_std)
+            subj_serial = subjectsSerializer(subj_data, many = True)
+
+            get_std = Std.objects.get(std_id = get_std)
+            serializer = stdSerializer(get_std)
+            apidata.update({'data': Attendance_serial.data,
+                            'batch_data':batch_serial.data,
+                            'get_std':serializer.data,
+                            'stud_data':stud_serial.data,
+                            'sub_data':subj_serial.data})
+            
+            student_std = get_std.std_name
+        student_std = get_std.std_id
+    
+    
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            Attendance_serial = AttendanceSerializer(data, many =True)
+
+            stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
+            stud_serial = StudentSerializer(stud_data, many = True)
+
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            get_batch_serial = BatchSerializer(get_batch)
+            apidata.update({'data':Attendance_serial.data,'get_batch':get_batch_serial.data,'stud_data':stud_serial.data}) 
+        student_batch = get_batch.batch_name
+    
+    
+    if request.GET.get('get_student'):
+        get_student = int(request.GET['get_student'])
+        if get_student == 0:
+            pass
+        else:
+            data = data.filter(atten_student__stud_id = get_student)
+            Attendance_serial = AttendanceSerializer(data, many =True)
+
+            get_student = Students.objects.get(stud_id = get_student)
+            get_stud_serial = StudentSerializer(get_student)
+            apidata.update({'data':Attendance_serial.data,'get_student':get_stud_serial.data})
+
+        student_id = get_student.stud_id
+        
+    if ((request.GET.get('get_std')) and (request.GET.get('get_batch')) and (request.GET.get('get_student'))):
+        # ===============Overall Attendance==================
+
+
+        total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
+        
+        present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
+
+        absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
+        
+        if total_attendence > 0:
+            overall_attendence = (present_attendence/total_attendence)*100
+        else:
+            overall_attendence = 0
+
+
+        # ==================Test Report and Attendance Report============
+        students_li = Students.objects.filter(stud_std__std_id = student_std)
+        overall_attendance_li = []
+        for x in students_li:
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+          
+            if total_attendence_studentwise > 0:
+                overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+            else:
+                overall_attendence_studentwise = 0
+            
+
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            
+            
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            
+
+            if total_marks == 0:
+                overall_result = 0
+            else:
+                overall_result = round((obtained_marks/total_marks)*100,2)
+            if student_id == x.stud_id: 
+                current_student_overall_test_result = overall_result
+                apidata.update({'current_student_overall_test_result':current_student_overall_test_result})
+
+            overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+        overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+        overall_attendance_li = overall_attendance_li[:5]
+        
+        # ===================SubjectsWise Attendance============================
+
+
+        subjects_li = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
+        overall_attendance_subwise = []
+        for x in subjects_li:
+            x = x['sub_name']
+            total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
+
+            present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
+
+            if total_attendence_subwise > 0:
+                attendance_subwise = (present_attendence_subwise/total_attendence_subwise)*100
+            else:
+                attendance_subwise = 0
+            overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
+
+        # ======================SubjectWise TestResult==============================
+        subjects_data = Subject.objects.filter(sub_std=student_std)
+        final_average_marks_subwise = []
+        for x in subjects_data:
+            total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+        
+
+            obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+            
+            
+            if total_marks_subwise == 0:
+                average_marks_subwise = 0
+            else:
+                average_marks_subwise = round((obtained_marks_subwise/total_marks_subwise)*100,2)
+            
+            final_average_marks_subwise.append({'subject_name':x.sub_name, 'average_marks_subwise':average_marks_subwise})
+
+        # ====================Average Test Result=================================
+        overall_results = [i['overall_result'] for i in overall_attendance_li]
+        if overall_results:
+            class_average_result = round(statistics.mean(overall_results),2)
+        else:
+            class_average_result = 0
+
+        total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+
+        absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0).count()
+
+
+        # =============Doubts and Solution Counts================================
+
+        doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).count()
+
+        solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).annotate(verified_solution=Count(
+            Case(
+                When(doubt_solution__solution_verified=True, then=1),
+                output_field=IntegerField(),
+            )))
+        
+        my_solve_doubts = 0
+        for x in solutions_gives:
+            if x.verified_solution > 0:
+                my_solve_doubts += 1
+            else:
+                print("no verified")
+
+        doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
+        
+        apidata.update({
+            'title': 'Report-Card',
+            'logo_url': 'https://metrofoods.co.nz/1nobg.png',
+            'overall_attendence':overall_attendence,
+            'overall_attendance_li':overall_attendance_li,
+            'overall_attendance_subwise':overall_attendance_subwise,
+            'total_attendence':total_attendence,
+            'absent_attendence':absent_attendence,
+            'class_average_result':class_average_result,
+            'final_average_marks_subwise':final_average_marks_subwise,
+            'doubt_asked':doubt_asked,
+            'solutions_gives':solutions_gives,
+            'doubt_solved_byme':doubt_solved_byme,
+            'my_solve_doubts':my_solve_doubts,
+            'total_test_conducted':total_test_conducted,
+            'absent_in_test':absent_in_test,
+        })
+    else:
+        noreport_card = 1
+        message =  'Please Select Standard, Batch and Student!'
+        apidata.update({'message':message, 'noreport_card':noreport_card})
+    return Response(apidata)
