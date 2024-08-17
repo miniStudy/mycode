@@ -47,8 +47,24 @@ class PackageSerializer(serializers.ModelSerializer):
         model = Packs
         fields = ('__all__')
 
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Students
+        fields = ('__all__')
 
+class InquiriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inquiries
+        fields = ('__all__')
 
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminData
+        fields = ('__all__')
 
+class AttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = ('__all__')
 
 

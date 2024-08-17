@@ -60,4 +60,15 @@ urlpatterns = [
     path('api_update_packages/', apiviews.api_update_packages, name='api_update_packages'),
     path('api_delete_package/', apiviews.api_delete_package, name='api_delete_package'),
 
+    path('api_students/', apiviews.api_students, name='api_students'),
+    path('api_update_students/', apiviews.api_update_students, name='api_update_students'),
+    path('api_delete_students/', apiviews.api_delete_students, name='api_delete_students'),
+
+    path('api_admin_profile/', apiviews.api_admin_profile, name='api_admin_profile'),
+
+    path('api_attendance/', apiviews.api_attendance, name='api_attendance'),
+
+
+
+
 ]

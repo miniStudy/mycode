@@ -200,18 +200,24 @@ def api_subjects(request):
     std_data = Std.objects.all()
     std_serializer = stdSerializer(std_data, many= True)
    
+    apidata = {
+        'data' : serializer.data,
+        'title' : 'Subjects',
+        'std_data' : std_serializer.data,
+    }
+
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std == 0:
             pass
         else:    
             data = data.filter(sub_std__std_id = get_std)
-            get_std = Std.objects.get(std_id = get_std)    
-    return Response({
-        'data' : serializer.data,
-        'title' : 'Subjects',
-        'std_data' : std_serializer.data,
-    })
+            serializer = subjectsSerializer(data, many = True)
+            get_std = Std.objects.get(std_id = get_std)  
+            get_std_serializer = stdSerializer(get_std)
+            apidata.update({'data' : serializer.data, 'get_std': get_std_serializer.data})
+
+    return Response(apidata)
     
 
 
@@ -220,9 +226,16 @@ def api_update_subjects(request):
     std_data = Std.objects.all()
     std_serializer = stdSerializer(std_data, many = True)
 
+    apidata = {
+        'std_data': std_serializer.data
+    }
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id = get_std) 
+        std_serializer = stdSerializer(std_data, many = True)
+        get_std = Std.objects.get(std_id = get_std)
+        get_std_serializer = stdSerializer(get_std)
+        apidata.update({'get_std ':get_std_serializer.data,'std_data':std_serializer.data})
 
  # ================update Logic============================
     if request.GET.get('pk'):
@@ -281,7 +294,7 @@ def api_update_subjects(request):
                     'Required Field': form.errors,
                 })
         
-    return Response({'Message':'Something went Wrong'})   
+    return Response(apidata)   
 
 
 @api_view(['POST', 'GET'])
@@ -321,33 +334,43 @@ def api_chepters(request):
     subject_data = Subject.objects.all()
     subject_serializer = subjectsSerializer(subject_data, many=True)
 
+    apidata = {
+        'Status': True,
+        'Data': data_serializer.data,
+        'std_data': std_data_serializer.data,
+        'subject': subject_serializer.data
+    }
+
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
+        print(get_std)
         if get_std == 0:
             pass
         else:    
             data = data.filter(chep_sub__sub_std__std_id = get_std)
+            data_serializer = chapterSerializer(data, many=True)
+            print(data_serializer.data)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
+            subject_serializer = subjectsSerializer(subject_data, many=True)
             get_std = Std.objects.get(std_id = get_std)
+            serializer = stdSerializer(get_std)
+            apidata.update({'Data':data_serializer.data,
+                            'get_std':serializer.data,
+                            'subject':subject_serializer.data})
             
-
-
     if request.GET.get('get_subject'):
         get_subject = int(request.GET['get_subject'])
+
         if get_subject == 0:
             pass
         else:    
             data = data.filter(chep_sub__sub_id = get_subject)
+            data_serializer = chapterSerializer(data, many=True) 
             get_subject = Subject.objects.get(sub_id = get_subject)
+            get_subject_serializer = subjectsSerializer(get_subject)
+            apidata.update({'Data':data_serializer.data, 'subject':subject_serializer.data,'get_subject':get_subject_serializer.data})
             
-
-    return Response({
-        'Status': True,
-        'Data': data_serializer.data,
-        'Title': 'Chapters',
-        'std': std_data_serializer.data,
-        'subject': subject_serializer.data
-    })
+    return Response(apidata)
 
 
 # @api_view(['POST', 'GET'])
@@ -527,6 +550,7 @@ def api_update_faculties(request):
 def api_delete_faculties(request):
     if request.method == 'POST':
         selected_items = request.POST.get('selection', [])
+        # selected_items = [3]
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
@@ -556,6 +580,11 @@ def api_batches(request):
     std_data = Std.objects.all()
     std_data_serializer = stdSerializer(std_data, many=True)
 
+    apidata = {
+        'Data': data_serializer.data,
+        'Title': 'Standard',
+        'Std_data': std_data_serializer.data
+    }
 
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
@@ -563,26 +592,27 @@ def api_batches(request):
             pass
         else:    
             data = data.filter(batch_std__std_id = get_std)
+            data_serializer = BatchSerializer(data, many=True)
             get_std = Std.objects.get(std_id = get_std)
             get_std_serializer = stdSerializer(get_std)
-            return Response({
-                'data':data_serializer,
-                'get_std':get_std_serializer
-                })     
-    return Response({
-        'Data': data_serializer.data,
-        'Title': 'Standard',
-        'Std_data': std_data_serializer.data
-    })
+            apidata.update({'Data':data_serializer.data,'get_std':get_std_serializer.data})     
+
+    return Response(apidata)
 
 @api_view(['POST', 'GET'])
 def api_update_batches(request):
     std_data = Std.objects.all()
     std_serializer = stdSerializer(std_data, many = True)
+
+    apidata = {'std_data': std_serializer.data}
     
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id = get_std)
+        std_serializer = stdSerializer(std_data, many = True)
+        get_std = Std.objects.get(std_id = get_std)
+        get_std_serializer = stdSerializer(get_std)
+        apidata.update({'get_std ':get_std_serializer.data,'std_data':std_serializer.data})
    
 
  # ================update Logic============================
@@ -641,7 +671,7 @@ def api_update_batches(request):
                     'Required Field': form.errors,
                 })
             
-    return Response({'Message':'Something went Wrong'})                   
+    return Response(apidata)                   
 
 
 @api_view(['POST', 'GET'])
@@ -682,21 +712,25 @@ def api_announcements(request):
     batch_data = Batches.objects.all()
     batch_serializer = BatchSerializer(batch_data, many=True)
    
-    
+    apidata = {
+        'title' : 'Announcements',
+        'data' : data_serializer.data,
+        'std_data' : std_data_serializer.data,
+        'batch_data': batch_serializer.data,
+    }
+
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std == 0:
             pass
         else:    
             data = data.filter(announce_std__std_id = get_std)
+            data_serializer = AnnouncementSerializer(data, many=True)
             batch_data = batch_data.filter(batch_std__std_id = get_std)
+            batch_serializer = BatchSerializer(batch_data, many=True)
             get_std = Std.objects.get(std_id = get_std)
-            get_std_serializer = stdSerializer(get_std, many=True)
-            return Response({
-                'data':data_serializer.data,
-                'batch_data':batch_serializer.data,
-                'get_std':get_std_serializer.data
-                })
+            get_std_serializer = stdSerializer(get_std)
+            apidata.update({'data':data_serializer.data,'batch_data':batch_serializer.data,'get_std':get_std_serializer.data})
             
 
     if request.GET.get('get_batch'):
@@ -705,19 +739,12 @@ def api_announcements(request):
             pass
         else:
             data = data.filter(announce_batch__batch_id = get_batch)
+            data_serializer = AnnouncementSerializer(data, many=True)
             get_batch = Batches.objects.get(batch_id = get_batch)
-            get_batch_serializer = BatchSerializer(get_batch, many = True)
-            return Response({
-                    'data':data_serializer.data,
-                    'get_batch':get_batch_serializer.data
-                    }) 
+            get_batch_serializer = BatchSerializer(get_batch)
+            apidata.update({'data':data_serializer.data,'get_batch':get_batch_serializer.data})
 
-    return Response({
-        'data' : data_serializer.data,
-        'title' : 'Announcements',
-        'std_data' : std_data_serializer.data,
-        'batch_data':batch_serializer.data,
-    })
+    return Response(apidata)
 
 
 @api_view(['POST', 'GET'])
@@ -727,22 +754,32 @@ def api_update_announcements(request):
     batch_data = Batches.objects.all()
     batch_serializer = BatchSerializer(batch_data, many=True)
 
+    apidata = {
+        'std_data': std_serializer.data,
+        'batch_data': batch_serializer.data
+    }
+
     # ------------getting students for mail------------------
     # students_for_mail = Students.objects.all()
 
-    # if request.GET.get('get_std'):
-    #     get_std = int(request.GET['get_std'])
-    #     std_data = std_data.filter(std_id = get_std)
-    #     batch_data = batch_data.filter(batch_std__std_id = get_std)
-    #     students_for_mail = students_for_mail.filter(stud_std=get_std)
-        # context.update({'get_std ':get_std,'std_data':std_data,'batch_data':batch_data}) 
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        get_std_serializer = stdSerializer(get_std)
+        std_data = std_data.filter(std_id = get_std)
+        std_serializer = stdSerializer(std_data, many = True)
+        batch_data = batch_data.filter(batch_std__std_id = get_std)
+        batch_serializer = BatchSerializer(batch_data, many=True)
+        # students_for_mail = students_for_mail.filter(stud_std=get_std)
+        apidata.update({'get_std ':get_std_serializer.data,'std_data':std_serializer.data,'batch_data':batch_serializer.data}) 
         
     
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
+        get_batch_serializer = BatchSerializer(get_batch)
         batch_data = batch_data.filter(batch_id = get_batch)
+        batch_serializer = BatchSerializer(batch_data, many=True)
         # students_for_mail = students_for_mail.filter(stud_batch=get_batch)
-        # context.update({'get_batch ':get_batch,'batch_data':batch_data})
+        apidata.update({'get_batch ':get_batch_serializer.data,'batch_data':batch_serializer.data})
 
     if request.method == 'POST':
 
@@ -794,13 +831,15 @@ def api_update_announcements(request):
             'status': 'Done',
             'data':serializer.data
         }) 
+    
+    return Response(apidata)
 
 
 @api_view(['POST', 'GET'])
 def api_delete_announcements(request):
     if request.method == 'POST':
         selected_items = request.POST.get('selection', [])
-        # selected_items = [2]
+        # selected_items = [3]
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
@@ -835,32 +874,34 @@ def api_timetable(request):
     batch_data = Batches.objects.all()
     batch_serializer = BatchSerializer(batch_data, many =True)
    
+    apidata = {
+        'title': 'Timetable',
+        'data': data_serializer.data,
+        'std_data': std_serializer.data,
+        'batch_data': batch_serializer.data,
+        }
  
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std != 0:  
             data = data.filter(tt_batch__batch_std__std_id=get_std)
+            data_serializer = TimetableSerializer(data, many =True)
             batch_data = batch_data.filter(batch_std__std_id=get_std)
+            batch_serializer = BatchSerializer(batch_data, many =True)
             get_std = Std.objects.get(std_id=get_std)
             serializer = stdSerializer(get_std)
-            return Response({'data': data_serializer.data,
-                            'Title': 'Timetable',
-                            'batch_data': batch_serializer.data,
-                            'get_std': serializer.data
-                            })
+            apidata.update({'data': data_serializer.data, 'batch_data': batch_serializer.data, 'get_std': serializer.data}) 
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         if get_batch != 0:
             data = data.filter(tt_batch__batch_id=get_batch)
+            data_serializer = TimetableSerializer(data, many =True)
             get_batch = Batches.objects.get(batch_id=get_batch)
-            batch_serializer = BatchSerializer(get_batch, many =True)
-            return Response({'data': data_serializer.data, 'get_batch': batch_serializer.data})        
+            get_batch_serializer = BatchSerializer(get_batch)       
+            apidata.update({'data':  data_serializer.data, 'get_batch': get_batch_serializer.data})        
             
-    return Response({
-        'Status': False,
-        'Error': 'Something is wrong'
-    })
+    return Response(apidata)
 
 
 @api_view(['POST', 'GET'])
@@ -875,26 +916,41 @@ def api_update_timetable(request):
     subject_serializer = subjectsSerializer(subject_data, many=True)
     # tt_students_for_mail = Students.objects.all()
 
+    apidata = {
+        'std_data': std_data_serializer.data, 
+        'batch_data': batch_serializer.data, 
+        'subject_data':subject_serializer.data,
+        'faculty_data':  faculty_serializer.data,
+        'DaysChoice': Timetable.DaysChoice,
+    }
+
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id=get_std)
+        std_data_serializer = stdSerializer(std_data, many = True)
+
         subject_data = Subject.objects.filter(sub_std__std_id = get_std)
+        subject_serializer = subjectsSerializer(subject_data, many=True)
+        
         batch_data = batch_data.filter(batch_std__std_id=get_std)
+        batch_serializer = BatchSerializer(batch_data, many=True)
+        
+        get_std = Std.objects.get(std_id = get_std)
+        get_std_serializer = stdSerializer(get_std)
         # tt_students_for_mail = tt_students_for_mail.filter(stud_std=get_std)
-        return Response({
-            'std_data': std_data_serializer.data, 
-            'batch_data': batch_serializer.data, 
-            'subject_data':subject_serializer.data
-        }) 
+        apidata.update({'get_std': get_std_serializer.data,
+                        'std_data': std_data_serializer.data,
+                        'batch_data':batch_serializer.data,
+                        'subject_data':subject_serializer.data}) 
+
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
+        get_batch_serializer = BatchSerializer(get_batch)
         batch_data = batch_data.filter(batch_id=get_batch)
+        batch_serializer = BatchSerializer(batch_data, many=True)
         # tt_students_for_mail = tt_students_for_mail.filter(stud_batch=get_batch)
-        return Response({
-            'get_batch': get_batch, 
-            'batch_data': batch_serializer.data
-            })
+        apidata.update({'get_batch': get_batch_serializer.data, 'batch_data': batch_serializer.data})
 
     if request.method == 'POST':
         # Update logic
@@ -906,14 +962,12 @@ def api_update_timetable(request):
                 form.save()
                 return Response({
                         'status': 'success',
-                        'data': form.data,
+                        'Data': form.data,
                         'StdData':std_data_serializer.data
                     })
             else:
-                return Response({
-                        'status':'Error',
-                        'Required Field':form.errors
-                    })
+                apidata.update({'status':False,'Required Field':form.errors})
+                return Response(apidata)
 
         # Insert logic
         data = request.data
@@ -926,11 +980,9 @@ def api_update_timetable(request):
             #     tt_students_email_list.append(x.stud_email)
             # print(tt_students_email_list)    
             # timetable_mail(tt_students_email_list)
-
-            return Response({
-                    'Status':'Form saved',
-                    'Data': form.data
-                })
+            apidata.update({'Status':True,
+                    'Data': form.data})
+            return Response(apidata)
     
         else:
             return Response({
@@ -947,13 +999,15 @@ def api_update_timetable(request):
             'data':serializer.data,
             'Faculty': faculty_serializer.data
         }) 
+    
+    return Response(apidata)
 
 
 @api_view(['POST', 'GET'])
 def api_delete_timetable(request):
     if request.method == 'POST':
         selected_items = request.POST.get('selection', [])
-        # selected_items = [4]
+        selected_items = [5]
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
@@ -983,24 +1037,24 @@ def api_packages(request):
     std_data = Std.objects.all()
     std_serializer = stdSerializer(std_data, many = True)
 
+    apidata = {
+        'title' : 'Packages',
+        'data' : data_serializer.data,
+        'std_data' : std_serializer.data,
+    }
+
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std == 0:
             pass
         else:    
             data = data.filter(pack_std__std_id = get_std)
+            data_serializer = PackageSerializer(data, many=True)
             get_std = Std.objects.get(std_id = get_std)
-            serializer = stdSerializer(get_std, many = True)
-            return Response({
-                'data':data_serializer.data,
-                'get_std':serializer.data
-                })
-             
-    return Response({
-        'title' : 'Packages',
-        'data' : data_serializer.data,
-        'std_data' : std_serializer.data,
-    })
+            serializer = stdSerializer(get_std)
+            apidata.update({'data':data_serializer.data,'get_std':serializer.data}) 
+
+    return Response(apidata)
 
 
 
@@ -1011,29 +1065,33 @@ def api_update_packages(request):
     subjects_data = Subject.objects.all()
     subject_serializer = subjectsSerializer(subjects_data, many=True)
 
+    apidata = {
+        'std_data': std_data_serializer.data,
+        'subjects_data': subject_serializer.data
+    }
 
     if request.GET.get('get_std'): 
-        get_std = int(request.GET['get_std'])      # Doubt
+        get_std = int(request.GET['get_std'])  
         std_data = std_data.filter(std_id = get_std)
-        std_serializer = stdSerializer(std_data)              # Testing remaining
+        std_data_serializer = stdSerializer(std_data, many = True)             # Testing  remaining
         subjects_data = subjects_data.filter(sub_std__std_id = get_std)
-        sub_serializer = subjectsSerializer(subjects_data)
-
-        return Response({
-            'std_data':std_serializer.data,
-            'subjects_data':sub_serializer.data
-            }) 
+        subject_serializer = subjectsSerializer(subjects_data, many=True)
+        get_std = Std.objects.get(std_id = get_std)
+        get_std_serializer = stdSerializer(get_std)    # Doubt
 
 
-   
+        apidata.update({'get_std ':get_std_serializer.data,'std_data':std_data_serializer.data, 'subjects_data':subject_serializer.data})
+        return Response(apidata)
+
 
  # ================update Logic============================
     if request.GET.get('pk'):
         if request.method == 'POST':
             instance = get_object_or_404(Packs, pk=request.GET['pk'])
             data = request.data
+            print(data)
             form = PackageSerializer(data = data, instance=instance, partial = True)
-            check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std']).count()
+            check = Packs.objects.filter(pack_name = data['pack_name'], pack_std__std_id = data['pack_std']).count()
             if check >= 1:
                 return Response({
                     'Message': 'already exits',
@@ -1049,17 +1107,13 @@ def api_update_packages(request):
                         'subjects_data':subject_serializer.data 
                     })
                 else:
-                    return Response({
-                        'status':'Error',
-                        'Required Field':form.errors
-                    })
+                    filled_data = form.data
+                    apidata.update({'filled_data ':filled_data,'errors':form.errors})
                 
         update_data = Packs.objects.get(pack_id = request.GET['pk'])
         serializer = PackageSerializer(update_data)
-        return Response({
-            'status': 'Done',
-            'data':serializer.data
-        })  
+        apidata.update({'data':serializer.data})
+        
     
     else:
         # ===================insert_logic===========================
@@ -1086,14 +1140,14 @@ def api_update_packages(request):
                     'Required Field': form.errors,
                 })
 
-    return Response({'Message':'Something went Wrong'}) 
+    return Response(apidata) 
 
 
 @api_view(['POST', 'GET'])
 def api_delete_package(request):
     if request.method == 'POST':
         selected_items = request.POST.get('selection', [])
-        selected_items = [8]
+        selected_items = [9]
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
@@ -1112,3 +1166,278 @@ def api_delete_package(request):
         'status': False,
         'message': 'Something is wrong'
     })
+
+
+
+# ====================================================== Students ====================================================================
+
+@api_view(['GET'])
+def api_students(request):
+    data = Students.objects.all()
+    data_serializer = StudentSerializer(data, many = True)
+    std_data = Std.objects.all()
+    std_serializer = stdSerializer(std_data, many = True)
+    batch_data = Batches.objects.all()
+    batch_serializer = BatchSerializer(batch_data, many = True)
+     
+    api_data = {
+        'data': data_serializer.data,
+        'std_data' : std_serializer.data,
+        'batch_data':batch_serializer.data,
+    } 
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(stud_std__std_id = get_std)
+            data_serializer = StudentSerializer(data, many = True)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            batch_serializer = BatchSerializer(batch_data, many = True)
+            get_std = Std.objects.get(std_id = get_std)
+            get_std_serializer = stdSerializer(get_std)
+            api_data.update({'data':data_serializer.data,'get_std' : get_std_serializer.data,
+            'batch_data':batch_serializer.data,})
+                       
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(stud_batch__batch_id = get_batch)
+            data_serializer = StudentSerializer(data, many = True)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            get_batch_serializer = BatchSerializer(get_batch)       
+            api_data.update({'data':data_serializer.data,'get_batch' : get_batch_serializer.data})
+    
+    return Response(api_data)
+
+
+@api_view(['POST', 'GET'])
+def api_update_students(request):
+    std_data = Std.objects.all()
+    std_data_serializer = stdSerializer(std_data, many = True)
+    batch_data = Batches.objects.all()
+    batch_serializer = BatchSerializer(batch_data, many = True)
+    pack_data = Packs.objects.all()
+    pack_serializer = PackageSerializer(pack_data, many = True)
+
+    api_data = {
+        'title' : 'Students',
+        'std_data':std_data_serializer.data,
+        'batch_data':batch_serializer.data,
+        'pack_data':pack_serializer.data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        get_std_serializer = stdSerializer(get_std)
+        std_data = std_data.filter(std_id = get_std)
+        std_data_serializer = stdSerializer(std_data, many = True)
+        batch_data = batch_data.filter(batch_std__std_id = get_std)
+        batch_serializer = BatchSerializer(batch_data, many = True)
+        pack_data = pack_data.filter(pack_std__std_id = get_std)
+        pack_serializer = PackageSerializer(pack_data, many = True)
+        api_data.update({'get_std ':get_std_serializer.data,
+                        'std_data':std_data_serializer.data,
+                        'batch_data':batch_serializer.data,
+                        'pack_data':pack_serializer.data
+                        }) 
+
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        get_batch_serializer = BatchSerializer(get_batch)
+        batch_data = batch_data.filter(batch_id = get_batch)
+        batch_serializer = BatchSerializer(batch_data, many = True)
+        api_data.update({'get_batch ':get_batch_serializer.data,'batch_data':batch_serializer.data})
+
+    if request.method == 'POST':
+
+        # ================update Logic============================
+        if request.GET.get('pk'):
+            instance = get_object_or_404(Students, pk=request.GET['pk'])
+            data = request.data
+            form = StudentSerializer(data = data, instance=instance, partial = True)
+            if form.is_valid():
+                form.save()
+                return Response({
+                    'Status': True,
+                    'Data': form.data
+                })
+            else:
+                return Response({
+                        'status':'Error',
+                        'Required Field':form.errors
+                    })
+                
+        # ===================insert_logic===========================
+        data = request.data
+        form = StudentSerializer(data = data)
+        if form.is_valid():
+            form.save()
+            return Response({
+                'Status':'Form saved',
+                'Data': form.data
+            })
+        else:
+            return Response({
+                    'Status': False,
+                    'Message': 'Invalid data',
+                    'Required Field': form.errors,
+                })
+        
+    if request.GET.get('pk'):
+        update_data = Students.objects.get(stud_id = request.GET['pk'])
+        serializer = StudentSerializer(update_data, many = True)
+        return Response({
+            'status': 'Done',
+            'data':serializer.data
+        })  
+    return Response(api_data)
+
+
+@api_view(['POST', 'GET'])
+def api_delete_students(request):
+    if request.method == 'POST':
+        selected_items = request.POST.get('selection', [])
+        selected_items = [19,20,21]
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Students.objects.filter(stud_id__in=selected_ids).delete()
+                return Response({
+                    'status': True,
+                    'Message': 'Deleted successfully'
+                })
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': "Can't delete"
+                })
+            
+    return Response({
+        'status': False,
+        'message': 'Something is wrong'
+    })
+
+
+# ========================================================= Admin =============================================================
+
+@api_view(['GET'])
+def api_admin_profile(request):
+    admin_data = AdminData.objects.all()
+    serializer = AdminSerializer(admin_data, many =True)
+   
+    return Response({
+        'Title': 'Admin Profile',
+        'Data': serializer.data
+    })
+
+
+# ==================================================== Attendance =============================================================
+
+@api_view(['GET'])
+def api_attendance(request):
+    data = Attendance.objects.all()
+    data_serializer = AttendanceSerializer(data, many = True)
+    std_data = Std.objects.all()
+    std_serializer = stdSerializer(std_data, many = True)
+    batch_data = Batches.objects.all()
+    batch_serializer = BatchSerializer(batch_data, many = True)
+    stud_data = Students.objects.all()
+    stud_serializer = StudentSerializer(stud_data, many = True)
+    subj_data = Subject.objects.all()
+    subj_serializer = subjectsSerializer(subj_data, many = True)
+    
+
+    api_data ={
+        'data' : data_serializer.data,
+        'title' : 'Attendance',
+        'std_data' : std_serializer.data,
+        'batch_data':batch_serializer.data,
+        'stud_data':stud_serializer.data,
+        'sub_data':subj_serializer.data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+            data_serializer = AttendanceSerializer(data, many = True)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            batch_serializer = BatchSerializer(batch_data, many = True)
+            stud_data = stud_data.filter(stud_std__std_id = get_std)
+            stud_serializer = StudentSerializer(stud_data, many = True)
+            subj_data = subj_data.filter(sub_std__std_id = get_std)
+            subj_serializer = subjectsSerializer(subj_data, many = True)
+            get_std = Std.objects.get(std_id = get_std)
+            get_std_serializer = stdSerializer(get_std)
+            api_data.update({
+                'data' : data_serializer.data,
+                'get_std' : get_std_serializer.data,
+                'batch_data':batch_serializer.data,
+                'stud_data':stud_serializer.data,
+                'sub_data':subj_serializer.data
+                })
+            
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            data_serializer = AttendanceSerializer(data, many = True)
+            stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
+            stud_serializer = StudentSerializer(stud_data, many = True)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            get_batch_serializer = BatchSerializer(get_batch)
+            api_data.update({
+                'data' : data_serializer.data,
+                'title' : 'Attendance',
+                'stud_data':stud_serializer.data,
+                'get_batch':get_batch_serializer.data
+                })
+            
+            
+
+    if request.GET.get('get_student'):
+        get_student = int(request.GET['get_student'])
+        if get_student == 0:
+            pass
+        else:
+            data = data.filter(atten_student__stud_id = get_student)
+            data_serializer = AttendanceSerializer(data, many = True)
+            get_student = Students.objects.get(stud_id = get_student)
+            get_stud_serializer = StudentSerializer(get_student)
+            api_data.update({'data':data_serializer.data,'get_student': get_stud_serializer.data})                     
+
+
+    attendance_present = data.filter(atten_present = True).count()
+    attendance_all = data.all().count()
+    if attendance_all>0:
+        overall_attendance = round((attendance_present/attendance_all) * 100,2)
+        api_data.update({'overall_attendance':overall_attendance})
+
+    sub_list = subj_data.all().values('sub_name').distinct()
+    subject_wise_attendance = []
+    subjects = []
+    for x in sub_list:
+        sub_name = x['sub_name']
+        sub_one = data.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
+        sub_all = data.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
+        if sub_all>0:
+            sub_attendance = round((sub_one/sub_all) * 100, 2)
+            subject_wise_attendance.append(sub_attendance)
+            subjects.append(sub_name)
+            
+    combined_data = zip(subject_wise_attendance, subjects)
+    api_data.update({'combined_data': combined_data})
+    
+    return Response(api_data)
+
+
