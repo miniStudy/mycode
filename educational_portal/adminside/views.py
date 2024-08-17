@@ -1530,49 +1530,51 @@ def adminside_report_card(request):
         'stud_data':stud_data,
         'sub_data':subj_data,
     }
-    if ((request.GET.get('get_std')) and (request.GET.get('get_batch')) and (request.GET.get('get_student'))):
-        if request.GET.get('get_std'):
-            get_std = int(request.GET['get_std'])
-            if get_std == 0:
-                pass
-            else:    
-                data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
-                batch_data = batch_data.filter(batch_std__std_id = get_std)
-                stud_data = stud_data.filter(stud_std__std_id = get_std)
-                subj_data = subj_data.filter(sub_std__std_id = get_std)
-                get_std = Std.objects.get(std_id = get_std)
-                context.update({'data':data,'batch_data':batch_data,'get_std':get_std,'stud_data':stud_data,'sub_data':subj_data})
-                student_std = get_std.std_name
+    
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            stud_data = stud_data.filter(stud_std__std_id = get_std)
+            subj_data = subj_data.filter(sub_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'data':data,'batch_data':batch_data,'get_std':get_std,'stud_data':stud_data,'sub_data':subj_data})
             student_std = get_std.std_name
-        
-        
-        if request.GET.get('get_batch'):
-            get_batch = int(request.GET['get_batch'])
-            if get_batch == 0:
-                pass
-            else:
-                data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
-                stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
-                get_batch = Batches.objects.get(batch_id = get_batch)
-                context.update({'data':data,'get_batch':get_batch,'stud_data':stud_data}) 
-            student_batch = get_batch.batch_name
-        
-        
-        if request.GET.get('get_student'):
-            get_student = int(request.GET['get_student'])
-            if get_student == 0:
-                pass
-            else:
-                data = data.filter(atten_student__stud_id = get_student)
-                get_student = Students.objects.get(stud_id = get_student)
-                context.update({'data':data,'get_student':get_student})
+        student_std = get_std.std_id
+        print(student_std) 
+    
+    
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            context.update({'data':data,'get_batch':get_batch,'stud_data':stud_data}) 
+        student_batch = get_batch.batch_name      
+    
+    
+    if request.GET.get('get_student'):
+        get_student = int(request.GET['get_student'])
+        if get_student == 0:
+            pass
+        else:
+            data = data.filter(atten_student__stud_id = get_student)
+            get_student = Students.objects.get(stud_id = get_student)
+            context.update({'data':data,'get_student':get_student})
 
-            student_id = get_student.stud_id
-        
+        student_id = get_student.stud_id
+
+    if ((request.GET.get('get_std')) and (request.GET.get('get_batch')) and (request.GET.get('get_student'))):    
         # ===============Overall Attendance==================
 
-        student_data = Students.objects.filter(stud_std__std_id = student_std)
-
+        # student_data = Students.objects.filter(stud_std__std_id = student_std)
+        # print(student_data)
         total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
         
         present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
@@ -1592,6 +1594,7 @@ def adminside_report_card(request):
         for x in students_li:
             total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
             present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+            # print("==============================================",total_attendence_studentwise)
             if total_attendence_studentwise > 0:
                 overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
             else:
@@ -1678,11 +1681,11 @@ def adminside_report_card(request):
                 print("no verified")
 
         doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
-
+        # print(student_data)
         context.update({
             'title': 'Report-Card',
             'logo_url': 'https://metrofoods.co.nz/1nobg.png',
-            'student_data':student_data,
+            # 'student_data':student_data,
             'overall_attendence':overall_attendence,
             'overall_attendance_li':overall_attendance_li,
             'overall_attendance_subwise':overall_attendance_subwise,
@@ -1698,8 +1701,8 @@ def adminside_report_card(request):
             'absent_in_test':absent_in_test,
         })
     else:
-        noreport_card = 1
-        nobody = messages.error(request, 'Please Select Standard, Batch and Student!')
+        noreport_card = 1       
+        nobody = messages.error(request, 'Please Select Student!')
         context.update({'nobody':nobody, 'noreport_card':noreport_card})
     return render(request, 'show_report_card_admin.html', context)
 
