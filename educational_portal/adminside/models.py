@@ -467,6 +467,7 @@ class Transactions(models.Model):
     class Meta:
         db_table = 'Transactions'
 
+
 class Today_Teaching(models.Model):
     today_teaching_id = models.BigAutoField(primary_key=True)
     today_teaching_chap_id = models.ForeignKey(Chepter, on_delete=models.CASCADE)
@@ -480,3 +481,4 @@ class Today_Teaching(models.Model):
     
     class Meta:
         db_table = 'Today_Teaching'
+
