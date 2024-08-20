@@ -163,7 +163,7 @@ class Faculties(models.Model):
     fac_email = models.EmailField(unique=True,default='abc@gmail.com')
     fac_address = models.TextField()
     Subjects = models.CharField(max_length=100)
-    fac_password = models.CharField(max_length=100)
+    fac_password = models.CharField(max_length=100,null=True, blank=True,default='12345678')
     fac_otp = models.IntegerField(blank=True,null=True)
 
     def __str__(self):
@@ -467,6 +467,7 @@ class Transactions(models.Model):
     class Meta:
         db_table = 'Transactions'
 
+
 class Today_Teaching(models.Model):
     today_teaching_id = models.BigAutoField(primary_key=True)
     today_teaching_chap_id = models.ForeignKey(Chepter, on_delete=models.CASCADE)
@@ -480,3 +481,4 @@ class Today_Teaching(models.Model):
     
     class Meta:
         db_table = 'Today_Teaching'
+
