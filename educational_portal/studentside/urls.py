@@ -51,13 +51,15 @@ urlpatterns = [
     path('Student_Show_Solution/', studentview.Student_show_solution_section, name='Student_Show_Solution'),
     path('Student_Edit_Solution/<int:id>/', studentview.Student_edit_solution, name='Student_Edit_Solution'),
 
-    # ---------------------------studentside analysis-------------------------------------------------------
+    # ---------------------------studentside analysis----------------------------------------------------------
     path('student_analysis/', studentview.student_analysis_view, name='student_analysis'),
 
-    # ---------------------------studentside feesCollection-------------------------------------------------------
+    # ---------------------------studentside feesCollection-----------------------------------------------------
     path('student_fees_collection/', studentview.student_fees_collection_view, name='student_fees_collection'),
 
         # ---------------------------Coming Soon-------------------------------------------------------
     path('comming_soon/', studentview.comming_soon_page, name='comming_soon'),
 
+    # ---------------------------Today's Study------------------------------------------------------------------
+    path('today_study/', studentview.today_study_page, name='today_study'),
 ]

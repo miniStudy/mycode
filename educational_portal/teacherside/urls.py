@@ -76,4 +76,6 @@ urlpatterns = [
     path('teacher_insert_update_materials/', teacherview.teacher_insert_update_materials, name='teacher_insert_update_materials'),
     path('materials_delete_teacher/', teacherview.materials_delete_teacher, name='materials_delete_teacher'),
 
+    # =================================Report-Card==================================================
+    path('report_card/', teacherview.report_card_show, name='report_card'),
 ]

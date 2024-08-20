@@ -33,7 +33,7 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'teacher_tests' %}?get_std={{get_std.std_id}}">ALL</a></li>
               {% for x in subject_data %}
-              <li><a class="dropdown-item" href="{% url 'teacher_tests' %}?get_std={{x.sub_std.std_id}}&get_subject={{x.sub_id}}">{{x.sub_name}}</a></li>
+              <li><a class="dropdown-item" href="{% url 'teacher_tests' %}?get_std={{x.sub_std.std_id}}&get_subject={{x.sub_id}}">{{x}}</a></li>
               {% endfor %}
             </ul>
           </div>
