@@ -104,17 +104,17 @@ class Packs(models.Model):
     class Meta:
         db_table = 'packages'     
 
-# class Syllabus(models.Model):
-#     syllabus_id = models.BigAutoField(primary_key=True)
-#     syllabus_status = models.BooleanField(default=0)
-#     syllabus_chapter = models.ForeignKey(Chepter, on_delete=models.CASCADE)
-#     syllabus_date = models.DateTimeField(auto_now_add=True)
+class Syllabus(models.Model):
+    syllabus_id = models.BigAutoField(primary_key=True)
+    syllabus_status = models.BooleanField(blank=True, null=True, default=0)
+    syllabus_chapter = models.ForeignKey(Chepter, on_delete=models.CASCADE)
+    syllabus_date = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return f"{self.syllabus_status} - {self.syllabus_chapter}"
+    def __str__(self):
+        return f"{self.syllabus_status} - {self.syllabus_chapter}"
     
-#     class Meta:
-#         db_table = 'Syllabus'
+    class Meta:
+        db_table = 'Syllabus'
     
 class Announcements(models.Model):
     announce_id = models.BigAutoField(primary_key=True)

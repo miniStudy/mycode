@@ -9,7 +9,7 @@ import statistics
 from datetime import datetime
 from django.utils import timezone
 from django.db.models.functions import TruncHour, TruncMinute, TruncDate
-from django.db.models import Sum,Count, Max, Min, Avg
+from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
 
 import random
@@ -426,13 +426,21 @@ def edit_handle_attendance(request):
 @teacher_login_required
 def teacher_syllabus(request):
     fac_id = request.session['fac_id']
+    if request.GET.get('chep_id'):
+        chep_id = request.GET.get('chep_id')
+        status_id = request.GET.get('status')
+        chep_obj = Chepter.objects.get(chep_id=chep_id)
+        Syllabus.objects.update_or_create(syllabus_chapter=chep_obj, defaults={'syllabus_status':status_id, 'syllabus_chapter':chep_obj})
+
     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
     subjects_list = []
     for x in faculty_access:
         subjects_list.append(x.fa_subject.sub_id)
     
     subjects = Subject.objects.filter(sub_id__in = subjects_list)
-    chepters = Chepter.objects.filter()
+    chepters = Chepter.objects.filter().annotate(status=F('syllabus__syllabus_status'))
+
+
     context = {
         'title':'Syllabus',
         'subjects':subjects,
