@@ -1668,3 +1668,55 @@ def api_admin_report_card(request):
         message =  'Please Select Standard, Batch and Student!'
         apidata.update({'message':message, 'noreport_card':noreport_card})
     return Response(apidata)
+
+
+
+# ==================================================== Bank ==================================================================
+
+
+def fees_collection_admin(request):
+    cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False)
+
+    students_data = Students.objects.annotate(
+    amount_paid=Sum('fees_collection__fees_paid'),
+    discountt=Case(
+        When(discount__discount_amount=None, then=Value(0)),
+        default=F('discount__discount_amount'),output_field=IntegerField()
+    ))
+
+    #=================Total Amount Fees Paid============================================
+    total_amount_fees_paid = Fees_Collection.objects.all().aggregate(total_amu_paid = Sum('fees_paid'))
+    
+    if total_amount_fees_paid['total_amu_paid'] != None:
+        total_amount_fees_paid = total_amount_fees_paid['total_amu_paid']
+    else:
+        total_amount_fees_paid = 0
+
+    #==================Total Fees Amount After Discount=================================
+    total_discount_amount = Discount.objects.all().aggregate(discount_amount=Sum('discount_amount'))
+    if total_discount_amount['discount_amount'] != None:
+        total_discount_amount = total_discount_amount['discount_amount']
+    else:
+        total_discount_amount = 0
+
+    total_fees_amount = Students.objects.all().aggregate(fees_amount=Sum('stud_pack__pack_fees'))
+    if total_fees_amount['fees_amount'] != None:
+        total_fees_amount = total_fees_amount['fees_amount']
+    else:
+        total_fees_amount = 0
+
+    total_fees_amount_after_discount = (total_fees_amount-total_discount_amount)
+    
+    #===================Total Pending Fees==============================================
+    total_pending_fees = total_fees_amount_after_discount - total_amount_fees_paid
+
+
+    context={
+        'title':'Payments',
+        'cheque_collections_data':cheque_collections_data,
+        'total_amount_fees_paid':total_amount_fees_paid,
+        'total_fees_amount_after_discount':total_fees_amount_after_discount,
+        'total_pending_fees':total_pending_fees,
+        'students_data':students_data,
+    }
+    return render(request, 'fees_collection_admin.html', context)

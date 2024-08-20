@@ -69,6 +69,10 @@ urlpatterns = [
     path('api_attendance/', apiviews.api_attendance, name='api_attendance'),
 
     path('api_admin_report_card/', apiviews.api_admin_report_card, name='api_admin_report_card'),
+    
+    path('api_admin_report_card/', apiviews.api_admin_report_card, name='api_admin_report_card'),
+
+
 
 
 
