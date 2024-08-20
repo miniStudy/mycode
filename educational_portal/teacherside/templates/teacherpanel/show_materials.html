@@ -35,7 +35,7 @@
                 <li><a class="dropdown-item" href="{% url 'teacher_materials' %}">ALL</a></li>
                 {% for data in subjects_data %}
                 <li><a class="dropdown-item"
-                        href="{% url 'teacher_materials' %}?std_id={{data.sub_std.std_id}}&sub_id={{data.sub_id}}">{{data.sub_name}}</a>
+                        href="{% url 'teacher_materials' %}?std_id={{data.sub_std.std_id}}&sub_id={{data.sub_id}}">{{data}}</a>
                 </li>
                 {% endfor %}
             </ul>

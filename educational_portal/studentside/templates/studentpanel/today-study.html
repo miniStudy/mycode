@@ -1,0 +1,25 @@
+{% extends 'studentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Class Overview for Today</h4> 
+</div>
+
+
+{% for message in messages %}
+{{message|safe}}
+{% endfor %}
+<!-- DataTable with Buttons -->
+
+{% for data in todays_study_data %}
+<div class="card p-4 mt-3">
+
+  <h5 class="d-flex align-items-center">
+    {{data.today_teaching_chap_id.chep_name}}
+  </h5>
+  <label for="item{{x.announce_id}}">
+    {{data.today_teaching_desc}} <br> <small>{{data.today_teaching_date}}</small>
+  </label>
+</div>
+{% endfor %}
+{% endblock %}

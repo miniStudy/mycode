@@ -78,6 +78,13 @@
         </a>
       </li>
 
+      <li class="menu-item {% if title == 'Today-Learning' %} active {% endif %}">
+        <a href="{% url 'today_study' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-bullhorn"></i>
+          <div>Today's Learning</div>
+        </a>
+      </li>
+
       <li class="menu-item {% if title == 'Doubts' %} active {% endif %}">
         <a href="{% url 'Student_Doubt' %}" class="menu-link">
           <i class="menu-icon tf-icons fa-regular fa-circle-question"></i>

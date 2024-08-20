@@ -342,10 +342,10 @@ def show_event(request):
 @student_login_required
 def show_test(request):
     return redirect('comming_soon')
-    title = 'Tests'
-    standard_id = request.session['stud_std']
-    test_names = Chepterwise_test.objects.filter(test_std__std_id = standard_id)
-    return render(request, 'studentpanel/test.html', {'test_names':test_names, 'title':title})
+    # title = 'Tests'
+    # standard_id = request.session['stud_std']
+    # test_names = Chepterwise_test.objects.filter(test_std__std_id = standard_id)
+    # return render(request, 'studentpanel/test.html', {'test_names':test_names, 'title':title})
 
 @student_login_required
 def show_test_questions(request, id):
@@ -453,11 +453,16 @@ def Student_Test_Submission(request):
         
 @student_login_required
 def show_syllabus(request):
-    title = 'Syllabus'
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
     chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std)
-    return render(request, 'studentpanel/syllabus.html', {'subjects':subjects,'chepters':chepters, 'title':title})
+
+    context = {
+        'subjects':subjects,
+        'chepters':chepters, 
+        'title':'Syllabus',
+    }
+    return render(request, 'studentpanel/syllabus.html', context)
 
 def student_inquiries_data(request):
     standard_data = Std.objects.all()
@@ -770,3 +775,12 @@ def comming_soon_page(request):
     return render(request, 'studentpanel/coming-soon.html')
 
 
+def today_study_page(request):
+    student_standard = request.session['stud_std']
+    todays_study_data = Today_Teaching.objects.filter(today_teaching_chap_id__chep_std__std_id = student_standard).order_by('-today_teaching_chap_id')[:3]
+
+    context = {
+        'title': 'Today-Learning',
+        'todays_study_data':todays_study_data
+    }
+    return render(request, 'studentpanel/today-study.html', context)

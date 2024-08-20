@@ -67,4 +67,8 @@ class AttendanceSerializer(serializers.ModelSerializer):
         model = Attendance
         fields = ('__all__')
 
+class Cheque_Collection_serial(serializers.ModelSerializer):
+    class Meta:
+        model = Cheque_Collection
+        fields = ('__all__')
 
