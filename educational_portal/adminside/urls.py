@@ -66,21 +66,21 @@ urlpatterns = [
     path('delete_faculties/', adminview.delete_faculties, name='delete_faculties'),
 
 
-    # ============================= adminside Timetable=====================================
+    # ============================= adminside Timetable ===========================================
 
     path('admin_timetable/', adminview.show_timetable, name='admin_timetable'),
     path('insert_update_timetable/', adminview.insert_update_timetable, name='insert_update_timetable'),
     path('delete_timetable/', adminview.delete_timetable, name='delete_timetable'),
 
-    # ============================= adminside Timetable============================================
+    # ============================= adminside Attendence============================================
 
     path('admin_attendance/', adminview.show_attendance, name='admin_attendance'),
 
-    # ==========================add events ========================================================
+    # ==========================add events =========================================================
 
     path('insert_event/', adminview.insert_events, name="insert_event"),
 
-    # ==========================Tests =============================================================
+    # ==========================Tests ==============================================================
 
     path('admin_tests/', adminview.show_tests, name='admin_tests'),
     path('insert_update_tests/', adminview.insert_update_tests, name='insert_update_tests'),

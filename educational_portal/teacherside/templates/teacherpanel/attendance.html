@@ -40,7 +40,7 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?get_std={{get_std.std_id}}">ALL</a></li>
               {% for x in batch_data %}
-              <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x.batch_name}}</a></li>
+              <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x}}</a></li>
               {% endfor %}
             </ul>
           </div>
@@ -76,7 +76,7 @@
 </div> 
 
 {% for data in li %}
-<a href="{% url 'teacher_edit_attendance' %}?hour={{data.hour}}&date={{data.date}}&get_batch={{get_batch.batch_id}}&get_std={{get_std.std_id}}&minute={{data.minute}}&tt_id={{data.tt_id}}">{{data.date}} {{data.hour}}:{{data.minute}} | {{data.subject.tt_subject1}}</a> <br>
+<a href="{% url 'teacher_edit_attendance' %}?hour={{data.hour}}&date={{data.date}}&get_batch={{data.subject.tt_batch.batch_id}}&get_std={{data.subject.tt_batch.batch_std.std_id}}&minute={{data.minute}}&tt_id={{data.tt_id}}">{{data.date}} {{data.hour}}:{{data.minute}} | {{data.subject.tt_subject1}}</a> <br>
 {% endfor %}
     </div>
 </div>
