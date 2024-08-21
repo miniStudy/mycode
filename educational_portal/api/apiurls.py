@@ -70,7 +70,29 @@ urlpatterns = [
 
     path('api_admin_report_card/', apiviews.api_admin_report_card, name='api_admin_report_card'),
     
-    path('api_admin_report_card/', apiviews.api_admin_report_card, name='api_admin_report_card'),
+    path('api_fees_collection/', apiviews.api_fees_collection, name='api_fees_collection'),
+    path('api_add_cheques/', apiviews.api_add_cheques, name='api_add_cheques'),
+    path('api_delete_cheques/', apiviews.api_delete_cheques, name='api_delete_cheques'),
+    path('api_payments_history/', apiviews.api_payments_history, name='api_payments_history'),
+
+    path('api_events/', apiviews.api_events, name='api_events'),
+    path('api_insert_events/', apiviews.api_insert_events, name='api_insert_events'),
+    path('images/', apiviews.images, name='images'),
+
+
+    # ============================================ Studentside =========================================================
+
+    path('student_profile/', apiviews.student_profile, name='student_profile'),
+    path('student_info_update/', apiviews.student_info_update, name='student_info_update'),
+    path('student_announcement/', apiviews.student_announcement, name='student_announcement'),
+    path('stud_subjects/', apiviews.stud_subjects, name='stud_subjects'),
+    path('stud_chepters/', apiviews.stud_chepters, name='stud_chepters'),
+    path('stud_timetables/', apiviews.stud_timetables, name='stud_timetables'),
+    path('stud_attendence/', apiviews.stud_attendence, name='stud_attendence'),
+    path('stud_fees_collection/', apiviews.stud_fees_collection, name='stud_fees_collection'),
+    path('student_analysis_view/', apiviews.student_analysis_view, name='student_analysis_view'),
+    path('student_inquiries_data/', apiviews.student_inquiries_data, name='student_inquiries_datac'),
+
 
 
 

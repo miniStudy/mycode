@@ -22,6 +22,11 @@ class chapterSerializer(serializers.ModelSerializer):
         model = Chepter
         fields = ('__all__')
 
+class MaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chepterwise_material
+        fields = ('__all__')
+
 class FacultiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculties
@@ -71,4 +76,48 @@ class Cheque_Collection_serial(serializers.ModelSerializer):
     class Meta:
         model = Cheque_Collection
         fields = ('__all__')
+
+class Fees_Collection_serial(serializers.ModelSerializer):
+    class Meta:
+        model = Fees_Collection
+        fields = ('__all__')
+
+class DiscountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Discount
+        fields = ('__all__')
+
+class BankSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Banks
+        fields = ('__all__')
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ('__all__')
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event_Image
+        fields = ('__all__')
+
+class DoubtSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doubt_section
+        fields = ('__all__')
+
+class Test_attemted_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Test_attempted_users
+        fields = ('__all__')
+
+
+
+
+
+
+
+
+
 
