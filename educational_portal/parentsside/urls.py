@@ -38,5 +38,8 @@ urlpatterns = [
 
     path('parent_events/',parentview.show_parent_events, name = 'parent_events' ),
     path('parent_profile/',parentview.show_parent_profile, name = 'parent_profile' ),
-
+    path('parentside_report_card/',parentview.show_parentside_report_card, name = 'parentside_report_card' ),
+    path('parentside_payment/',parentview.show_parentside_payment, name = 'parentside_payment' ),
+    path('parentside_announcement/',parentview.show_parentside_announcement, name = 'parentside_announcement'),
+    path('parentside_timetable/',parentview.show_parentside_timetable, name = 'parentside_timetable'),
 ]

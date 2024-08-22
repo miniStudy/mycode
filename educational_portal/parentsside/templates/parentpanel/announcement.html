@@ -1,0 +1,25 @@
+{% extends 'parentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Announcements</h4>
+</div>
+
+
+{% for message in messages %}
+{{message|safe}}
+{% endfor %}
+<!-- DataTable with Buttons -->
+
+{% for announe in announcements_data %}
+<div class="card p-4 mt-3">
+
+  <h5 class="d-flex align-items-center">
+    {{announe.announce_title}}
+  </h5>
+  <label for="item{{x.announce_id}}">
+    {{announe.announce_msg}} <br> <small>{{announe.announce_date}}</small>
+  </label>
+</div>
+{% endfor %}
+{% endblock %}

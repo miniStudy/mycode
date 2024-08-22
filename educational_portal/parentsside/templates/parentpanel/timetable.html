@@ -1,0 +1,43 @@
+{% extends 'parentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Timetable</h4>
+</div>
+
+
+{% for message in messages %}
+{{message|safe}}
+{% endfor %}
+
+
+<div class="card">
+  <div class="card-body">
+    <div class="card-datatable table-responsive pt-0">
+      <table id="#" class="display table table-bordered" style="width:100%">
+        <thead>
+          <tr>
+            <th>SN</th>
+            <th>Day</th>
+            <th>Subject</th>
+            <th>Time</th>
+            <th>Faculty</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for data in timetable_data %}
+          <tr>
+            <th>{{ forloop.counter }}</th>
+            <td>{{ data.tt_day }}</td>
+            <td>{{ data.tt_subject1 }}</td>
+            <td>{{ data.tt_time1 }}</td>
+            <td>{{ data.tt_tutor1.fac_name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'parentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+    <h4>Payment</h4>
+</div>
+
+{% include "parentpanel/message_show.html" %}
+
+<div class="row">
+    <div class="col-sm-12 col-lg-4 mb-4">
+      <div class="card card-border-shadow-warning h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2 pb-1">
+            <div class="avatar me-2">
+              <span class="avatar-initial rounded bg-label-warning"><i class="fa-solid fa-sack-dollar"></i></span>
+            </div>
+            <h5 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i>{% if discount_amount %}
+                    <del>{{student_data.stud_pack.pack_fees}}</del> {{fees_to_paid}}
+                {% else %}
+                {{fees_to_paid}}
+                {% endif %}</h5>
+          </div>
+          <p class="mb-1">Total Fees To Pay</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-lg-4 mb-4">
+      <div class="card card-border-shadow-danger h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2 pb-1">
+            <div class="avatar me-2">
+              <span class="avatar-initial rounded bg-label-danger"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+            </div>
+            <h5 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{remaining_fees}}</h5>
+          </div>
+          <p class="mb-1">Remaining Fees</p>
+        </div>
+      </div>  
+    </div>
+    <div class="col-sm-12 col-lg-4 mb-4">
+      <div class="card card-border-shadow-info h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2 pb-1">
+            <div class="avatar me-2">
+              <span class="avatar-initial rounded bg-label-info"><i class="fa-solid fa-circle-dollar-to-slot"></i></span>
+            </div>
+            <h5 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{paid_fees}}</h5>
+          </div>
+          <p class="mb-1">Total Paid Fees</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<hr>
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="myheadfont">You'r Payment</div>
+        <div class="card-datatable table-responsive pt-0">
+            <table id="example" class="display table table-bordered" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th style="width: auto !important;">Student's Name</th>
+                        <th>Amount Paid</th>
+                        <th>Date</th>
+                        <th>Mode of transaction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in fees_collection %}
+                    <tr>
+                        <td>{{x.fees_stud_id.stud_name}} {{x.fees_stud_id.stud_lastname}}</td>
+                        <td>{{x.fees_paid}}</td>
+                        <td>{{x.fees_date}}</td>
+                        <td>{{x.fees_mode}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<hr>
+<div class="card">
+    <div class="card-body">
+        <div class="myheadfont mb-2">Cheque History</div>
+        <div class="card-datatable table-responsive pt-0">
+            <table id="example" class="display table table-bordered" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th>Amount Paid</th>
+                        <th>Cheque Date</th>
+                        <th>Cheque Expiry Date</th>
+                        <th>Cheque Paid</th>
+                        <th>Bounce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in cheque_data %}
+                    {% if x.cheque_paid == 0 %}
+                    <tr>
+                        <td>{{x.cheque_amount}}</td>
+                        <td>{{x.cheque_date}}</td>
+                        <td>{{x.cheque_expiry}}</td>
+                        <td>{{x.cheque_paid}}</td>
+                        <td>{{x.cheque_bounce}}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

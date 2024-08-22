@@ -9,7 +9,7 @@ import statistics
 from datetime import datetime
 from django.utils import timezone
 from django.db.models.functions import TruncHour, TruncMinute, TruncDate
-from django.db.models import Sum,Count, Max, Min, Avg
+from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
 
 import random
@@ -426,13 +426,21 @@ def edit_handle_attendance(request):
 @teacher_login_required
 def teacher_syllabus(request):
     fac_id = request.session['fac_id']
+    if request.GET.get('chep_id'):
+        chep_id = request.GET.get('chep_id')
+        status_id = request.GET.get('status')
+        chep_obj = Chepter.objects.get(chep_id=chep_id)
+        Syllabus.objects.update_or_create(syllabus_chapter=chep_obj, defaults={'syllabus_status':status_id, 'syllabus_chapter':chep_obj})
+
     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
     subjects_list = []
     for x in faculty_access:
         subjects_list.append(x.fa_subject.sub_id)
     
     subjects = Subject.objects.filter(sub_id__in = subjects_list)
-    chepters = Chepter.objects.filter()
+    chepters = Chepter.objects.filter().annotate(status=F('syllabus__syllabus_status'))
+
+
     context = {
         'title':'Syllabus',
         'subjects':subjects,
@@ -1206,3 +1214,129 @@ def report_card_show(request):
         nobody = messages.error(request, 'Please Select Student!')
         context.update({'nobody':nobody, 'noreport_card':noreport_card})
     return render(request, 'teacherpanel/report_card.html', context)
+
+
+def today_learning_show(request):
+    fac_id = request.session['fac_id']
+    fac_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+
+    std_access = []
+    batch_access = []
+    for x in fac_data:
+        std_access.append(x.fa_batch.batch_std.std_id)
+        batch_access.append(x.fa_batch.batch_id)
+    
+    standard_access_data = Std.objects.filter(std_id__in = std_access)
+    batch_access_data = Batches.objects.filter(batch_id__in = batch_access)
+
+    today_learn_data = Today_Teaching.objects.filter(today_teaching_batches_id__batch_id__in = batch_access, today_teaching_batches_id__batch_std__std_id__in = std_access)
+
+    context = {
+        'today_learn_data':today_learn_data,
+        'standard_access_data':standard_access_data,
+        'batch_access_data':batch_access_data,
+        'title': 'Class-Overview'
+    }
+
+    if request.GET.get('get_std'):
+        get_std = request.GET['get_std']
+        if get_std == 0:
+            pass
+        else:
+            today_learn_data = today_learn_data.filter(today_teaching_batches_id__batch_std__std_id = get_std)
+            batch_access_data = batch_access_data.filter(batch_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'today_learn_data':today_learn_data,'batch_access_data':batch_access_data,'get_std':get_std})
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            today_learn_data = today_learn_data.filter(today_teaching_batches_id__batch_id = get_batch)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            context.update({'today_learn_data':today_learn_data,'get_batch':get_batch}) 
+
+    return render(request, 'teacherpanel/today_learn.html', context)
+
+def today_learning_insert_update(request):
+    fac_id = request.session['fac_id']
+    fac_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+
+    std_access = []
+    batch_access = []
+    for x in fac_data:
+        std_access.append(x.fa_batch.batch_std.std_id)
+        batch_access.append(x.fa_batch.batch_id)
+    
+    standard_access_data = Std.objects.filter(std_id__in = std_access)
+    batch_access_data = Batches.objects.filter(batch_id__in = batch_access)
+    today_learning_data = Today_Teaching.objects.filter(today_teaching_batches_id__batch_id__in = batch_access)
+
+    context = {
+        'standard_access_data':standard_access_data,
+        'batch_access_data':batch_access_data,
+        'today_learning_data':today_learning_data
+    }
+    
+    if request.GET.get('get_std'):
+        get_std = request.GET['get_std']
+        if get_std == 0:
+            pass
+        else:
+            batch_access_data = batch_access_data.filter(batch_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'batch_access_data':batch_access_data,'get_std':get_std})
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            get_batch = Batches.objects.get(batch_id = get_batch) 
+            context.update({'get_batch':get_batch}) 
+
+    if request.method == 'POST':
+        # ================update Logic============================
+        if request.GET.get('pk'):
+            instance = get_object_or_404(Today_Teaching, pk=request.GET['pk'])
+            form = teacher_todaylearn_form(request.POST, instance=instance)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Updated Sucessfully!')
+                return redirect('today_learning')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+
+        # ===================insert_logic===========================
+        form = teacher_todaylearn_form(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Add Sucessfully!')
+            return redirect('today_learning')
+        else:
+            filled_data = form.data
+            context.update({'filled_data ':filled_data,'errors':form.errors})
+            return render(request, 'teacherpanel/today_learn_insert_update.html', context)
+
+    if request.GET.get('pk'):
+        update_data = Today_Teaching.objects.get(today_teaching_id = request.GET['pk'])
+        context.update({'update_data':update_data})
+    
+
+    return render(request, 'teacherpanel/today_learn_insert_update.html', context)
+
+
+
+def today_learning_delete(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Today_Teaching.objects.filter(today_teaching_id__in=selected_ids).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+    return redirect('today_learning')

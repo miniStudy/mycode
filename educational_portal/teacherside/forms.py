@@ -22,4 +22,9 @@ class teacher_solution_form(forms.ModelForm):
     class Meta:
         model = Doubt_solution
         fields = "__all__"   
+
+class teacher_todaylearn_form(forms.ModelForm):
+    class Meta:
+        model = Today_Teaching
+        fields = "__all__" 
                 

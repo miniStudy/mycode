@@ -32,21 +32,42 @@
       <li class="menu-header small text-uppercase"><span class="menu-header-text">Educational Portal</span></li>
       <li class="menu-item {% if title == 'Home' %} active {% endif %}">
         <a href="/parentsside/" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-envelope"></i>
+          <i class="menu-icon tf-icons fa-solid fa-house"></i>
           <div>Dashboard</div>
         </a>
       </li>
 
-      <li class="menu-item">
-        <a href="" class="menu-link">
+      <li class="menu-item {% if title == 'Report-Card' %}active{% endif %}">
+        <a href="{% url 'parentside_report_card' %}" class="menu-link">
           <i class="menu-icon tf-icons fa-solid fa-magnifying-glass-chart"></i>
           <div>Report Card</div>
         </a>
       </li>
 
+      <li class="menu-item {% if title == 'Payments' %}active{% endif %}">
+        <a href="{% url 'parentside_payment' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-hand-holding-dollar"></i>
+          <div>Payments</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Announcement' %}active{% endif %}">
+        <a href="{% url 'parentside_announcement' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-bullhorn"></i>
+          <div>Announcement</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Timetable' %}active{% endif %}">
+        <a href="{% url 'parentside_timetable' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-regular fa-clock"></i>
+          <div>Timetable</div>
+        </a>
+      </li>
+
       <li class="menu-item {% if title == 'Events' %}active{% endif %}">
         <a href="{% url 'parent_events' %}" class="menu-link">
-          <i class="menu-icon tf-icons fa-solid fa-cake-candles"></i>
+          <i class="menu-icon tf-icons fa-brands fa-galactic-republic"></i>
           <div>Events</div>
         </a>
       </li>

@@ -2,14 +2,16 @@ from django.shortcuts import render, HttpResponse, get_object_or_404
 from .models import *
 from .serializers import * 
 from rest_framework import status 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import math
 import statistics
+from django.core.files.storage import FileSystemStorage
 import random
 from django.http import Http404,JsonResponse
-from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
+from django.db.models import Count,Sum, F, Case, When, Value, IntegerField, Q
 
 #=========================================Boards======================================================
 
@@ -1671,11 +1673,12 @@ def api_admin_report_card(request):
 
 
 
-# ==================================================== Bank ==================================================================
+# ==================================================== Fees ==================================================================
 
-
-def fees_collection_admin(request):
+@api_view(['GET'])
+def api_fees_collection(request):
     cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False)
+    collection = Cheque_Collection_serial(cheque_collections_data, many = True)
 
     students_data = Students.objects.annotate(
     amount_paid=Sum('fees_collection__fees_paid'),
@@ -1683,6 +1686,7 @@ def fees_collection_admin(request):
         When(discount__discount_amount=None, then=Value(0)),
         default=F('discount__discount_amount'),output_field=IntegerField()
     ))
+    Studentdata = StudentSerializer(students_data, many = True)
 
     #=================Total Amount Fees Paid============================================
     total_amount_fees_paid = Fees_Collection.objects.all().aggregate(total_amu_paid = Sum('fees_paid'))
@@ -1709,14 +1713,636 @@ def fees_collection_admin(request):
     
     #===================Total Pending Fees==============================================
     total_pending_fees = total_fees_amount_after_discount - total_amount_fees_paid
+    stud_li = []
+    for stud in students_data:
+        li = {}
+        if stud.amount_paid ==None:
+            stud_amount_paid = 0
+        else:
+            stud_amount_paid= stud.amount_paid
 
-
-    context={
+        remaining_amount = stud.stud_pack.pack_fees - stud.discountt - stud_amount_paid
+        li.update({'std':"{} - {}".format(stud.stud_std.std_name, stud.stud_std.std_board),
+                   'name':"{} {}".format(stud.stud_name, stud.stud_lastname),
+                   'Total payable amount': stud.stud_pack.pack_fees,
+                   'Discount Fees': stud.discountt,
+                   'Amount Paid': stud_amount_paid,
+                   'Remaining Amount': remaining_amount})
+        stud_li.append(li)
+    apidata={
         'title':'Payments',
-        'cheque_collections_data':cheque_collections_data,
+        'cheque_collections_data':collection.data,
         'total_amount_fees_paid':total_amount_fees_paid,
         'total_fees_amount_after_discount':total_fees_amount_after_discount,
         'total_pending_fees':total_pending_fees,
-        'students_data':students_data,
+        'stud_data': stud_li,
+        'students_data':Studentdata.data,
     }
-    return render(request, 'fees_collection_admin.html', context)
+    return Response(apidata)
+
+
+@api_view(['POST', 'GET'])
+def api_add_cheques(request):
+    students = Students.objects.all()
+    student_serial = StudentSerializer(students, many = True)
+    banks = Banks.objects.all()
+    bank_serial = BankSerializer(banks, many = True)
+
+    apidata={
+        'title' : 'Add Cheques',
+        # 'students':student_serial.data,
+        'banks':bank_serial.data,    
+             }   
+
+ # ================update Logic==================================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Cheque_Collection, pk=request.GET['pk'])
+            data = request.data
+            form = Cheque_Collection_serial(data = data, instance=instance, partial = True)
+            if form.is_valid():
+                
+                if form.validated_data.get('cheque_paid') == True:
+                    studid = form.validated_data.get('cheque_stud_id')
+                    cheque_amt = form.validated_data.get('cheque_amount')
+                    fees_mode = 'CHECK'
+                    cheque_date = form.validated_data.get('cheque_date')
+                    abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date)
+                    print(abcd)
+                    
+
+                form.save()
+                return Response({
+                    'Status': True,
+                    'Data': form.data,
+                    'students':student_serial.data,
+                    'banks':bank_serial.data,   
+                })
+            else:
+                filled_data = form.data
+                apidata.update({'filled_data ':filled_data,'errors':form.errors})
+        
+        update_data = Cheque_Collection.objects.get(cheque_id = request.GET['pk'])
+        update_serial = Cheque_Collection_serial(update_data)
+        apidata.update({'update_data':update_serial.data})  
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            data = request.data
+            form = Cheque_Collection_serial(data = data)
+            if form.is_valid():
+                check = Cheque_Collection.objects.filter(cheque_number = data['cheque_number']).count()
+                if check >= 1:
+                    return Response({
+                        'Status': 'Error',
+                        'Message':'Already exist'
+                    })
+                else:    
+                    form.save()
+                    return Response({
+                        'Status':'Form saved',
+                        'Data': form.data
+                    })
+            else:
+                filled_data = form.data
+                apidata.update({'filled_data ':filled_data,'errors':form.errors})
+                # return Response(apidata)          
+            
+    return Response(apidata)
+
+
+@api_view(['POST', 'GET'])
+def api_delete_cheques(request):
+    if request.GET.get('delete_cheque'):
+        del_id = request.GET['delete_cheque']
+        print(del_id)
+        try:
+            check_data = Cheque_Collection.objects.get(cheque_id=del_id)
+            check_data.delete()
+        except Cheque_Collection.DoesNotExist:
+            raise Http404("Cheque not found")
+    return Response({
+        'Status': True,
+        'Message': 'Deleted Successfully'
+    })
+
+@api_view(['GET'])
+def api_payments_history(request):
+    fees_collections_data = Fees_Collection.objects.all()
+    serializer = Fees_Collection_serial(fees_collections_data, many = True)
+
+    return Response({
+        'fees_collections_data':serializer.data,
+    })
+
+
+# =============================================== Events ===================================================================
+
+@api_view(['GET'])
+def api_events(request):
+    events = Event.objects.all()
+    event_serial = EventSerializer(events, many=True)
+    events_imgs = Event_Image.objects.all()
+    imgs = ImageSerializer(events_imgs, many = True)
+    selected_events = Event.objects.all()[:1]
+    selected_serial = EventSerializer(selected_events, many = True)
+    apidata = {
+        'title' : 'Events',
+        'events':event_serial.data,
+        'events_imgs':imgs,
+        'selected_events':selected_serial.data,
+    }
+    if request.GET.get('event_id'):
+        event_id = request.GET['event_id']
+        selected_events = Event.objects.filter(event_id = event_id)
+        selected_serial = EventSerializer(selected_events, many = True)
+        events_imgs = Event_Image.objects.filter(event__event_id = event_id)
+        imgs = ImageSerializer(events_imgs, many = True)
+        apidata.update({'selected_events':selected_serial.data,'events_imgs':events_imgs})
+    return Response(apidata)
+
+
+def insert_events(request):
+    if request.method == 'POST':
+        event_name = request.POST.get('event_name')
+        event_date = request.POST.get('event_date')
+        event_desc = request.POST.get('event_desc')
+        event_images = request.FILES.getlist('event_img')
+        print(event_images)
+        event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
+        serializer = EventSerializer(event)
+        event.save()
+
+        # fs = FileSystemStorage(location='media/uploads/events/')
+        # for image in event_images:
+        #     filename = fs.save(image.name, image)
+        #     Event_Image.objects.create(event=event, event_img=filename)
+    return Response({
+        'Title': 'Event updated',
+        'Event': serializer.data
+    })
+
+@api_view(['GET'])
+def api_events(request):
+    events = Event.objects.all()
+    event_serial = EventSerializer(events, many = True)
+    events_imgs = Event_Image.objects.all()
+    images = ImageSerializer(events_imgs, many = True)
+    selected_events = Event.objects.all()[:1]
+    selected = EventSerializer(selected_events, many = True)
+    apidata = {
+        'title' : 'Events',
+        'events':event_serial.data,
+        'events_imgs':images.data,
+        'selected_events':selected.data,
+    }
+    if request.GET.get('event_id'):
+        event_id = request.GET['event_id']
+        selected_events = Event.objects.filter(event_id = event_id)
+        selected = EventSerializer(selected_events, many = True)
+        events_imgs = Event_Image.objects.filter(event__event_id = event_id)
+        images = ImageSerializer(events_imgs, many = True)
+
+        apidata.update({'selected_events':selected.data,'events_imgs':images.data})
+    return Response(apidata)
+
+
+
+@api_view(['GET', 'POST'])
+@parser_classes([MultiPartParser, FormParser])
+def api_insert_events(request):
+    if request.method == 'POST':
+        # Use request.data to retrieve form data
+        event_name = request.data.get('event_name')
+        event_date = request.data.get('event_date')
+        event_desc = request.data.get('event_desc')
+        event_images = request.FILES.getlist('event_img')  # Use the correct key name
+        print(event_images)
+        print(event_name)
+        # Validate that all required fields are present
+        if not event_name or not event_date or not event_desc or not event_images:
+            return Response({'Status': False, 'Message': 'All fields are required'}, status=400)
+
+        # Save the event
+        event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
+        event.save()
+
+        # Save each uploaded image associated with the event
+        fs = FileSystemStorage(location='media/uploads/events/')
+        for image in event_images:
+            filename = fs.save(image.name, image)
+            Event_Image.objects.create(event=event, event_img=filename)
+        
+        return Response({'Status': True, 'Message': 'Event created successfully'}, status=201)
+    
+    # Default response for GET request or other methods
+    return Response({'Status': False, 'Message': 'Invalid request method'}, status=405)
+
+
+
+def images(request):
+    return HttpResponse('<form action="http://localhost:8000/api/api_insert_events/" method="post" enctype="multipart/form-data"><input type="text" name="event_name" placeholder="Event Name"><input type="date" name="event_date" placeholder="Event Date"><input type="text" name="event_desc" placeholder="Event Description"><input type="file" name="event_img" multiple><button type="submit">Submit</button></form>')
+
+
+# ==============================================================================================================================
+                                                     # STUDENTSIDE                  
+# ==============================================================================================================================
+
+@api_view(['GET'])
+def student_profile(request):
+    student_id = request.GET.get('stud_id')
+
+    if not student_id:
+        return Response({'error': 'stud_id parameter is required'}, status=400)
+
+    try:
+        student_profile = Students.objects.get(stud_id=student_id)
+    except Students.DoesNotExist:
+        return Response({'error': 'Student not found'}, status=404)
+
+    profile_serializer = StudentSerializer(student_profile)
+
+    return Response({
+        'Title': 'Profile',
+        'Data': profile_serializer.data
+    })
+
+@api_view(['GET', 'POST'])
+def student_info_update(request):
+    # student_id = request.session['stud_id']
+    student_id = request.GET.get('stud_id')
+    if not student_id:
+        return Response({'error': 'stud_id parameter is required'}, status=400)
+    
+    student_obj = Students.objects.get(stud_id = student_id)
+    stud = StudentSerializer(student_obj)
+    apidata = {'title' : 'Update Info', 'Student': stud.data}
+    if request.method == 'POST':
+        instance = get_object_or_404(Students, pk=request.GET['stud_id'])
+        data = request.data
+        form = StudentSerializer(data = data, instance=instance, partial = True)
+        if form.is_valid():
+            form.save()
+            apidata.update({
+                'Status': True,
+                'Message': 'Profile updated',
+                'Form': form.data
+            })
+           
+        else:
+            apidata.update({
+                'Status': False,
+                'Message': 'Updation failed',
+                'error': form.errors
+            })
+    else:
+        form = StudentSerializer(instance=student_obj)
+        apidata.update({'Form': form.data})
+    return Response(apidata)
+
+
+@api_view(['GET'])
+def student_announcement(request):
+    apidata = {'Title': 'Announcements'}
+
+    stud_std = request.GET.get('stud_std')
+    stud_batch = request.GET.get('stud_batch')
+
+    if not stud_std:
+        return Response({'error': 'stud_std parameter is required'}, status=400)
+
+    announcements_data = Announcements.objects.filter(
+        Q(announce_std=None, announce_batch=None) |
+        Q(announce_std__std_id=stud_std, announce_batch=None) |
+        Q(announce_std__std_id=stud_std, announce_batch__batch_id=stud_batch)
+    ).order_by('-pk')[:50]  # Limit to 50 most recent announcements
+
+    serializer = AnnouncementSerializer(announcements_data, many=True)
+    apidata.update({'Announcement': serializer.data})
+
+    return Response(apidata)
+
+@api_view(['GET'])
+def stud_subjects(request):
+    stud_standard = request.GET.get('stud_std')
+    if not stud_standard:
+        return Response({'error': 'stud_std parameter is required'}, status=400)
+    subjects = Subject.objects.filter(sub_std__std_id = stud_standard)
+    serializer = subjectsSerializer(subjects, many = True)
+
+    return Response({'Title': 'Subjects',
+                     'Your Subjects': serializer.data})
+
+
+@api_view(['GET'])
+def stud_chepters(request):
+    stud_subject = request.GET.get('sub_id')
+    if not stud_subject:
+        return Response({'error': 'sub_id parameter is required'}, status=400) 
+    
+    chepters = Chepter.objects.filter(chep_sub__sub_id = stud_subject)
+    serializer = chapterSerializer(chepters, many = True)
+
+    return Response({'Title': 'Chapters',
+                   'Your Chapters': serializer.data})
+
+
+@api_view(['GET'])
+def stud_timetables(request):
+    student_batch = request.GET.get('stud_batch')
+    if not student_batch:
+        return Response({'error': 'stud_batch parameter is required'}, status=400)
+    
+    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student_batch)
+    timetable = TimetableSerializer(timetable_data, many = True)
+
+    return Response({'Title' : 'Timetable',
+                   'Your TT': timetable.data})
+
+
+
+@api_view(['GET'])
+def stud_attendence(request):
+    student_id = request.GET.get('stud_id')
+    student_std = request.GET.get('stud_std')
+
+    if not student_id or not student_std:
+        return Response({'error': 'stud_id and stud_std parameters are required'}, status=400)
+
+    attendence_data = Attendance.objects.filter(atten_student__stud_id=student_id).order_by('-pk')
+    attend = AttendanceSerializer(attendence_data, many=True)
+
+    total_days = attendence_data.count()
+    present_days = attendence_data.filter(atten_present=True).count()
+
+    if total_days > 0:
+        attendence_prec = round((present_days / total_days) * 100, 2)
+    else:
+        attendence_prec = 0
+
+    subject_attendance = []
+    subjects = Subject.objects.filter(sub_std__std_id=student_std).values('sub_name').distinct()
+    for subject in subjects:
+        subject_name = subject['sub_name']
+        total_days_subwise = Attendance.objects.filter(
+            atten_student__stud_id=student_id,
+            atten_timetable__tt_subject1__sub_name=subject_name
+        ).count()
+        present_days_subwise = Attendance.objects.filter(
+            atten_student__stud_id=student_id,
+            atten_timetable__tt_subject1__sub_name=subject_name,
+            atten_present=True
+        ).count()
+        if total_days_subwise > 0:
+            attendence_prec_subwise = round((present_days_subwise / total_days_subwise) * 100, 2)
+            subject_attendance.append({
+                'subject': subject_name,
+                'attendance_percentage': attendence_prec_subwise,
+            })
+
+    absent_days = total_days - present_days
+
+    apidata = {
+        'title': 'Attendance',
+        'attendance_data': attend.data,
+        'attendance_percentage': attendence_prec,
+        'subject_attendance': subject_attendance,
+        'total_days': total_days,
+        'absent_days': absent_days,
+    }
+
+    return Response(apidata)
+
+
+@api_view(['GET'])
+def stud_fees_collection(request):
+    student_id = request.GET.get('stud_id')
+
+    if not student_id:
+        return Response({'error': 'stud_id parameter is required'}, status=400)
+    try:
+        student_data = Students.objects.get(stud_id=student_id)
+    except Students.DoesNotExist:
+        return Response({'error': 'Student not found'}, status=404)
+    
+    student = StudentSerializer(student_data)
+
+    discount_amount = Discount.objects.filter(discount_stud_id__stud_id = student_id) 
+    stud_discount = DiscountSerializer(discount_amount, many = True)
+    if discount_amount:
+        fees_to_paid = int(student_data.stud_pack.pack_fees) - int(discount_amount[0].discount_amount)
+    else:
+        fees_to_paid = int(student_data.stud_pack.pack_fees)
+
+    # ===========================Paid Fees========================================
+
+    fees_collection = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id)
+    collection = Fees_Collection_serial(fees_collection, many = True)
+    if fees_collection:
+        paid_fees = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).aggregate(tol_amount=Sum('fees_paid'))
+        paid_fees = int(paid_fees['tol_amount'])
+    else:
+        paid_fees = 0
+
+    # ==========================Remaining_Fees====================================
+
+    remaining_fees = fees_to_paid - paid_fees
+   
+    # ===========================Cheque Fees======================================
+
+    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid = False)
+    cheque = Cheque_Collection_serial(cheque_data, many = True)
+
+    apidata = {
+        'title': 'Payments',
+        'fees_collection':collection.data, 
+        'fees_to_paid':fees_to_paid, 
+        'paid_fees':paid_fees,
+        'student_data':student.data, 
+        'remaining_fees':remaining_fees,
+        'cheque_data':cheque.data,
+        'discount_amount':stud_discount.data
+
+    }
+    return Response(apidata)
+
+
+
+@api_view(['GET'])
+def student_analysis_view(request): 
+    student_id = int(request.GET.get('stud_id'))
+    student_std = int(request.GET.get('stud_std'))
+
+    # ===============Overall Attendance==================
+    if not student_id or not student_std:
+        return Response({'error': 'stud_id and stud_std parameter is required'}, status=400)
+    try:
+        student_info = Students.objects.get(stud_id=student_id)
+    except Students.DoesNotExist:
+        return Response({'error': 'Student not found'}, status=404)
+    
+    student = StudentSerializer(student_info)
+
+    student_data = Students.objects.filter(stud_std__std_id = student_std)
+    student_data_serial = StudentSerializer(student_data, many = True)
+
+    total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
+    
+    present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
+
+    absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
+        
+    if total_attendence > 0:
+        overall_attendence = (present_attendence/total_attendence)*100
+    else:
+        overall_attendence = 0
+
+
+
+    # ==================Test Report and Attendance Report============
+    students_li = Students.objects.filter(stud_std__std_id = student_std)
+    overall_attendance_li = []
+
+    for x in students_li:
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+        if total_attendence_studentwise > 0:
+            overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+        else:
+            overall_attendence_studentwise = 0
+        
+      
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        
+        if total_marks == 0:
+            overall_result = 0
+        else:
+            overall_result = round((obtained_marks/total_marks)*100,2)
+        print(x.stud_id)
+        print(student_id)
+
+        if student_id == x.stud_id: 
+            current_student_overall_test_result = overall_result
+            
+
+        overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
+    overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+    overall_attendance_li = overall_attendance_li[:5]
+    
+
+
+   # ===================SubjectsWise Attendance============================
+    subjects_li = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
+    overall_attendance_subwise = []
+    for x in subjects_li:
+        x = x['sub_name']
+        total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
+
+        present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
+
+        if total_attendence_subwise > 0:
+            attendance_subwise = (present_attendence_subwise/total_attendence_subwise)*100
+        else:
+            attendance_subwise = 0
+        overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
+      
+    # ======================SubjectWise TestResult==============================
+
+    subjects_data = Subject.objects.filter(sub_std=student_std)
+    final_average_marks_subwise = []
+
+    for x in subjects_data:
+        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+       
+
+        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+        
+        
+        if total_marks_subwise == 0:
+            average_marks_subwise = 0
+        else:
+            average_marks_subwise = round((obtained_marks_subwise/total_marks_subwise)*100,2)
+        
+        final_average_marks_subwise.append({'subject_name':x.sub_name, 'average_marks_subwise':average_marks_subwise})
+
+    # ====================Average Test Result=================================
+
+    overall_results = [i['overall_result'] for i in overall_attendance_li]
+    if overall_results:
+        class_average_result = round(statistics.mean(overall_results), 2)
+    else:
+        class_average_result = 0
+    
+
+    total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+    
+    absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0).count()
+
+    # =============Doubts and Solution Counts================================
+
+    doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).count()
+    solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).annotate(verified_solution=Count(
+        Case(
+            When(doubt_solution__solution_verified=True, then=1),
+            output_field=IntegerField(),
+        )))
+    solutions = DoubtSerializer(solutions_gives, many = True)
+    
+    my_solve_doubts = 0
+    for x in solutions_gives:
+        if x.verified_solution > 0:
+            my_solve_doubts += 1
+        else:
+            print("no verified")
+
+    doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
+
+    
+
+    apidata = {
+        'title': 'Report-Card',
+        'student':student.data,
+        'student_data':student_data_serial.data,
+        'overall_attendence':overall_attendence,
+        'overall_attendance_li':overall_attendance_li,
+        'overall_attendance_subwise':overall_attendance_subwise,
+        'total_attendence':total_attendence,
+        'absent_attendence':absent_attendence,
+        'class_average_result':class_average_result,
+        'final_average_marks_subwise':final_average_marks_subwise,
+        'doubt_asked':doubt_asked,
+        'solutions_gives':solutions.data,
+        'doubt_solved_byme':doubt_solved_byme,
+        'current_student_overall_test_result':current_student_overall_test_result,
+        'my_solve_doubts':my_solve_doubts,
+        'total_test_conducted':total_test_conducted,
+        'absent_in_test':absent_in_test,
+
+    }
+
+    return Response(apidata)
+
+
+@api_view(['GET', 'POST'])
+def student_inquiries_data(request):
+    standard_data = Std.objects.all()
+    standard = stdSerializer(standard_data, many = True)
+
+    if request.method == 'POST':
+        data = request.data
+        form = InquiriesSerializer(data = data)
+        if form.is_valid():
+            form.save()
+        else:
+            return Response({
+                'Status': False,
+                'Error': form.errors
+            })
+        
+    return Response({
+        'Status': False,
+        'Standard': standard.data
+    })
