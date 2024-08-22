@@ -18,7 +18,7 @@ from django.urls import path,include
 from adminside import views as adminview
 from django.conf import settings
 from django.conf.urls.static import static
-
+from website import views as websiteview
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('adminside/', include('adminside.urls')),
@@ -28,6 +28,8 @@ urlpatterns = [
     path('teacherside/', include('teacherside.urls')),
     path('parentsside/', include('parentsside.urls')),
     path('api/', include('api.apiurls')),
+
+    path('', websiteview.firstpage, name="FirstPage")
 ]
 
 
