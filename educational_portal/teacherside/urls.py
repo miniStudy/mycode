@@ -78,4 +78,9 @@ urlpatterns = [
 
     # =================================Report-Card==================================================
     path('report_card/', teacherview.report_card_show, name='report_card'),
+
+    # =================================Today's Learning==================================================
+    path('today_learning/', teacherview.today_learning_show, name='today_learning'),
+    path('today_learning_delete/', teacherview.today_learning_delete, name='today_learning_delete'),
+    path('today_learning_insert_update/', teacherview.today_learning_insert_update, name='today_learning_insert_update'),
 ]

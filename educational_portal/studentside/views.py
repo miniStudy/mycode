@@ -777,7 +777,8 @@ def comming_soon_page(request):
 
 def today_study_page(request):
     student_standard = request.session['stud_std']
-    todays_study_data = Today_Teaching.objects.filter(today_teaching_chap_id__chep_std__std_id = student_standard).order_by('-today_teaching_chap_id')[:3]
+    student_batch = request.session['stud_batch']
+    todays_study_data = Today_Teaching.objects.filter(today_teaching_chap_id__chep_std__std_id = student_standard, today_teaching_batches_id__batch_id = student_batch).order_by('-today_teaching_chap_id')[:3]
 
     context = {
         'title': 'Today-Learning',
