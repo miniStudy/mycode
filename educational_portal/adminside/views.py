@@ -965,6 +965,7 @@ def show_events(request):
 
 @admin_login_required
 def insert_events(request):
+    title = 'Insert Events'
     if request.method == 'POST':
         event_name = request.POST.get('event_name')
         event_date = request.POST.get('event_date')
@@ -978,7 +979,7 @@ def insert_events(request):
         for image in event_images:
             filename = fs.save(image.name, image)
             Event_Image.objects.create(event=event, event_img=filename)
-    return render(request, 'insert_update/events_insert_admin.html')
+    return render(request, 'insert_update/events_insert_admin.html', {'title':title})
 
 
 @admin_login_required
@@ -1846,3 +1847,49 @@ def payments_history_admin(request):
         'fees_collections_data':fees_collections_data,
     }
     return render(request, 'payments_history_admin.html', context)
+
+def faculty_access_show(request):
+    standard_data = Std.objects.all()
+    batch_data = Batches.objects.all()
+    subject_data = Subject.objects.all()
+    teachers_names = Faculties.objects.all()
+    context = {
+        'standard_data':standard_data,
+        'batch_data':batch_data,
+        'subject_data':subject_data,
+        'teachers_names':teachers_names,
+        'title': 'Faculty-Access',
+    }
+    if request.GET.get('get_std'):
+        get_std = request.GET.get('get_std')
+        batch_data = Batches.objects.filter(batch_std__std_id = get_std)
+        subject_data = Subject.objects.filter(sub_std__std_id = get_std)
+        context.update({'batch_data':batch_data, 'subject_data':subject_data})
+
+    selected_teacher = request.POST.get('fa_faculty')
+    selected_standard = request.POST.get('fa_faculty')
+    selected_batch = request.POST.get('fa_batch')
+
+
+    selected_subjects = request.POST.getlist('fa_subject')
+    
+
+    context.update({
+        'selected_teacher':selected_teacher,
+        'selected_batch':selected_batch,
+        'selected_subjects':selected_subjects,
+        'selected_standard':selected_standard,
+    })
+    if request.method == 'POST':
+        form = faculty_access_form(request.POST)
+        if form.is_valid():
+            fac = form.cleaned_data['fa_faculty']
+            batch = form.cleaned_data['fa_batch']
+            for x in selected_subjects:
+                x_obj = Subject.objects.get(sub_id=x)
+                Faculty_Access.objects.create(fa_faculty=fac, fa_batch=batch, fa_subject=x_obj)
+            return redirect('Admin Home')
+    else:
+        form = faculty_access_form()
+        context.update({'form':form})
+    return render(request, 'faculty_access.html', context)

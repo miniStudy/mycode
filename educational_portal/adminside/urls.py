@@ -119,7 +119,7 @@ urlpatterns = [
     # =========================================Admin Student Report Card =========================================
     path('adminside_report_card/', adminview.adminside_report_card, name="adminside_report_card"),
 
-    # =========================================Admin Payments =========================================
+    # =========================================Admin Payments ====================================================
     path('fees_collection_admin/', adminview.fees_collection_admin, name="fees_collection_admin"),
     path('add_cheques_admin/', adminview.add_cheques_admin, name="add_cheques_admin"),
     path('add_fees_collection_admin/', adminview.add_fees_collection_admin, name="add_fees_collection_admin"),
@@ -127,4 +127,6 @@ urlpatterns = [
     path('payments_history_admin/', adminview.payments_history_admin, name="payments_history_admin"),
     path('delete_cheques_admin/', adminview.delete_cheques_admin, name="delete_cheques_admin"),
 
+    # ========================================Faculty Access======================================================
+    path('faculty_access/', adminview.faculty_access_show, name="faculty_access"),
 ]

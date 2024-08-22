@@ -32,7 +32,7 @@
       <li class="menu-header small text-uppercase"><span class="menu-header-text">Educational Portal</span></li>
       <li class="menu-item {% if title == 'Home' %} active {% endif %}">
         <a href="/adminside/" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-envelope"></i>
+          <i class="menu-icon tf-icons fa-solid fa-house"></i>
           <div>Dashboard</div>
         </a>
       </li>
@@ -44,13 +44,13 @@
       </li>
       <li class="menu-item {% if title == 'Stds' %} active {% endif %}">
         <a href="{% url 'stds' %}" class="menu-link">
-          <i class="menu-icon tf-icons fa-solid fa-atom"></i>
+          <i class="menu-icon tf-icons fa-brands fa-firstdraft"></i>
           <div>Stds</div>
         </a>
       </li>
       <li class="menu-item {% if title == 'Subjects' %} active {% endif %}">
         <a href="{% url 'admin_subjects' %}" class="menu-link">
-          <i class="menu-icon tf-icons fa-solid fa-diagram-successor"></i>
+          <i class="menu-icon tf-icons fa-solid fa-book"></i>
           <div>Subjects</div>
         </a>
       </li>
@@ -92,19 +92,19 @@
       </li>
       <li class="menu-item {% if title == 'Materials' %} active {% endif %}">
         <a href="{% url 'admin_materials' %}" class="menu-link">
-          <i class="menu-icon tf-icons fa-solid fa-book"></i>
+          <i class="menu-icon tf-icons fa-solid fa-file-pdf"></i>
           <div>Materials</div>
         </a>
       </li>
       <li class="menu-item {% if title == 'Timetable' %} active {% endif %}">
         <a href="{% url 'admin_timetable' %}" class="menu-link">
-          <i class="menu-icon tf-icons fa-solid fa-bolt"></i>
+          <i class="menu-icon tf-icons fa-solid fa-clock"></i>
           <div>Timetable</div>
         </a>
       </li>
       <li class="menu-item {% if title == 'Attendance' %} active {% endif %}">
         <a href="{% url 'admin_attendance' %}" class="menu-link">
-          <i class="menu-icon tf-icons fa-solid fa-bolt"></i>
+          <i class="menu-icon tf-icons fa-brands fa-creative-commons-by"></i>
           <div>Attendance</div>
         </a>
       </li>
@@ -139,9 +139,21 @@
           <div>Student Doubts</div>
         </a>
       </li>
+
+      <li class="menu-item {% if title == 'Faculty-Access' %} active {% endif %}">
+        <a href="{% url 'faculty_access' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-universal-access"></i>
+          <div>Faculty Access</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Events' %} active {% endif %}">
+        <a href="{% url 'show_events' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-brands fa-galactic-republic"></i>
+          <div>Events</div>
+        </a>
+      </li>
     </ul>
-    
-    
-  
+
   </aside>
   <!-- / Menu -->

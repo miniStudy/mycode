@@ -482,6 +482,7 @@ class Transactions(models.Model):
 class Today_Teaching(models.Model):
     today_teaching_id = models.BigAutoField(primary_key=True)
     today_teaching_chap_id = models.ForeignKey(Chepter, on_delete=models.CASCADE)
+    today_teaching_batches_id = models.ForeignKey(Batches, on_delete=models.CASCADE, null=True, blank=True)
     today_teaching_fac_id = models.ForeignKey(Faculties, on_delete=models.CASCADE)
     today_teaching_desc = models.CharField(max_length=600)
     today_teaching_date = models.DateTimeField(auto_now_add=True)

@@ -4,6 +4,10 @@ from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
 import random
+import statistics
+from django.db.models import Sum,Count
+from django.db.models import Count, Case, When, IntegerField
+from django.db.models import OuterRef, Subquery, BooleanField,Q
 from parentsside.decorators import *
 
 # mail integration 
@@ -159,3 +163,212 @@ def show_parent_profile(request):
     parent_id = request.session['parent_id']
     parent_profile = Students.objects.filter(stud_id = parent_id)
     return render(request, 'parentpanel/parent_profile.html', {'parent_profile':parent_profile, 'title':title})
+
+
+
+@parent_login_required
+def show_parentside_report_card(request):
+    student_id = request.session['stud_id']
+    student_std = request.session['stud_std']
+
+    # ===============Overall Attendance==================
+    student = Students.objects.get(stud_id = student_id)
+    student_data = Students.objects.filter(stud_std__std_id = student_std)
+
+    total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
+    
+    present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
+
+    absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
+    
+    if total_attendence > 0:
+        overall_attendence = (present_attendence/total_attendence)*100
+    else:
+        overall_attendence = 0
+
+
+
+    # ==================Test Report and Attendance Report============
+    students_li = Students.objects.filter(stud_std__std_id = student_std)
+    overall_attendance_li = []
+    for x in students_li:
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+        if total_attendence_studentwise > 0:
+            overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+        else:
+            overall_attendence_studentwise = 0
+        
+
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        
+        
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        
+
+        if total_marks == 0:
+            overall_result = 0
+        else:
+            overall_result = round((obtained_marks/total_marks)*100,2)
+        if student_id == x.stud_id: 
+            current_student_overall_test_result = overall_result
+
+        overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
+    
+   
+
+    overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+    overall_attendance_li = overall_attendance_li[:5]
+    
+
+
+   # ===================SubjectsWise Attendance============================
+    subjects_li = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
+    overall_attendance_subwise = []
+
+    for x in subjects_li:
+        x = x['sub_name']
+        total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
+
+        present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
+
+        if total_attendence_subwise > 0:
+            attendance_subwise = (present_attendence_subwise/total_attendence_subwise)*100
+        else:
+            attendance_subwise = 0
+        overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
+    
+    # ======================SubjectWise TestResult==============================
+
+    subjects_data = Subject.objects.filter(sub_std=student_std)
+    final_average_marks_subwise = []
+
+    for x in subjects_data:
+        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+       
+
+        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+        
+        
+        if total_marks_subwise == 0:
+            average_marks_subwise = 0
+        else:
+            average_marks_subwise = round((obtained_marks_subwise/total_marks_subwise)*100,2)
+        
+        final_average_marks_subwise.append({'subject_name':x.sub_name, 'average_marks_subwise':average_marks_subwise})
+
+    # ====================Average Test Result=================================
+    overall_results = [i['overall_result'] for i in overall_attendance_li]
+    class_average_result = round(statistics.mean(overall_results),2)
+    
+
+    total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+
+    absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0).count()
+
+
+    # =============Doubts and Solution Counts================================
+
+    doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).count()
+
+    solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).annotate(verified_solution=Count(
+        Case(
+            When(doubt_solution__solution_verified=True, then=1),
+            output_field=IntegerField(),
+        )))
+    
+    my_solve_doubts = 0
+    for x in solutions_gives:
+        if x.verified_solution > 0:
+            my_solve_doubts += 1
+        else:
+            print("no verified")
+
+    doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
+
+    
+
+    context = {
+        'title': 'Report-Card',
+        'logo_url': 'https://metrofoods.co.nz/1nobg.png',
+        'student':student,
+        'student_data':student_data,
+        'overall_attendence':overall_attendence,
+        'overall_attendance_li':overall_attendance_li,
+        'overall_attendance_subwise':overall_attendance_subwise,
+        'total_attendence':total_attendence,
+        'absent_attendence':absent_attendence,
+        'class_average_result':class_average_result,
+        'final_average_marks_subwise':final_average_marks_subwise,
+        'doubt_asked':doubt_asked,
+        'solutions_gives':solutions_gives,
+        'doubt_solved_byme':doubt_solved_byme,
+        'current_student_overall_test_result':current_student_overall_test_result,
+        'my_solve_doubts':my_solve_doubts,
+        'total_test_conducted':total_test_conducted,
+        'absent_in_test':absent_in_test,
+
+    }
+
+    return render(request, 'parentpanel/report_card.html', context)
+
+
+@parent_login_required
+def show_parentside_payment(request):
+    student_id = request.session['stud_id']
+    student_data = Students.objects.get(stud_id = student_id)
+
+    discount_amount = Discount.objects.filter(discount_stud_id__stud_id = student_id) 
+    if discount_amount:
+        fees_to_paid = int(student_data.stud_pack.pack_fees) - int(discount_amount[0].discount_amount)
+    else:
+        fees_to_paid = int(student_data.stud_pack.pack_fees)
+
+    # ===========================Paid Fees========================================
+
+    fees_collection = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id)
+    if fees_collection:
+        paid_fees = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).aggregate(tol_amount=Sum('fees_paid'))
+        paid_fees = int(paid_fees['tol_amount'])
+    else:
+        paid_fees = 0
+
+    # ==========================Remaining_Fees====================================
+
+    remaining_fees = fees_to_paid - paid_fees
+   
+    # ===========================Cheque Fees======================================
+
+    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid = False)
+
+    context = {
+        'title': 'Payments',
+        'fees_collection':fees_collection, 
+        'fees_to_paid':fees_to_paid, 
+        'paid_fees':paid_fees,
+        'student_data':student_data, 
+        'remaining_fees':remaining_fees,
+        'cheque_data':cheque_data,
+        'discount_amount':discount_amount
+
+    }
+    return render(request, 'parentpanel/fee_payment.html', context)
+
+@parent_login_required
+def show_parentside_announcement(request):
+    title = 'Announcement'
+    announcements_data = Announcements.objects.filter(
+    Q(announce_std=None, announce_batch=None) |
+    Q(announce_std__std_id=request.session.get('stud_std'), announce_batch=None) |
+    Q(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))
+).order_by('-pk')[:50]
+
+    return render(request, 'parentpanel/announcement.html', {"announcements_data":announcements_data, 'title':title})
+
+@parent_login_required
+def show_parentside_timetable(request):
+    title = 'Timetable'
+    student_batch = request.session['stud_batch']
+    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student_batch)
+    return render(request, 'parentpanel/timetable.html', {'timetable_data':timetable_data, 'title':title})
