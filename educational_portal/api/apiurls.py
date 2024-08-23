@@ -119,5 +119,7 @@ urlpatterns = [
     path('api_announcements_update_teacher/', apiviews.api_announcements_update_teacher, name='api_announcements_update_teacher'), 
     path('api_announcements_delete_teacher/', apiviews.api_announcements_delete_teacher, name='api_announcements_delete_teacher'), 
 
+    path('api_teacher_profile/', apiviews.api_teacher_profile, name='api_teacher_profile'), 
+    path('api_teacher_profile_update/', apiviews.api_teacher_profile_update, name='api_teacher_profile_update'), 
 
 ]

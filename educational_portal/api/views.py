@@ -3097,3 +3097,42 @@ def api_announcements_delete_teacher(request):
         'status': False,
         'message': 'Something is wrong'
     })
+
+
+@api_view(['GET'])
+def api_teacher_profile(request):
+    teacher_id = request.GET.get('fac_id')
+    teacher_profile = Faculties.objects.filter(fac_id = teacher_id)
+    profile = FacultiesSerializer(teacher_profile, many =True)
+    teacher_access = Faculty_Access.objects.filter(fa_faculty__fac_id = teacher_id)
+    access = Faculty_Access_Serializer(teacher_access, many = True)
+    context = {
+        'title': 'Profile',
+        'teacher_profile' : profile.data,
+        'teacher_access':access.data,
+    }
+    return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def api_teacher_profile_update(request):
+    teacher_id = request.GET.get('fac_id')
+    teacher_obj = Faculties.objects.get(fac_id = teacher_id)
+    obj = FacultiesSerializer(teacher_obj)
+    if request.method == 'POST':
+        data = request.data
+        form = FacultiesSerializer(data = data, instance=teacher_obj, partial = True)
+        print(form)
+        if form.is_valid():
+            form.save()
+            return Response({'Status': True, 'Message':'Your information updated successfully', 'Data': form.data})
+        
+        else:
+            return Response({'Status': False, 'Error': form.errors})
+ 
+    context={
+        'form':form,
+        'teacher_obj':obj.data,
+        'title': 'Update Profile',
+    }
+    return Response({context})
