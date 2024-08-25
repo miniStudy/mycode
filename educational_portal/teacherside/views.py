@@ -384,7 +384,7 @@ def handle_attendance(request):
         batch_data = request.POST.get('batch_data')
         atten_timetable = request.POST.get('atten_timetable')
         atten_tt = Timetable.objects.get(tt_id = atten_timetable)
-        selected_items = request.POST.getlist('selection')
+        selected_items = request.POST.getlist('selection_attendance')
         students_all = Students.objects.filter(stud_batch__batch_id = batch_data, stud_std__std_id = std_data)
         if selected_items:
           selected_ids = [int(id) for id in selected_items]
@@ -394,7 +394,7 @@ def handle_attendance(request):
             else:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0) 
 
-            messages.success(request, "Attendance has been submitted!")
+        messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
 
 @teacher_login_required
@@ -405,7 +405,7 @@ def edit_handle_attendance(request):
         get_date = datetime.strptime(get_date, '%Y-%m-%d')
         atten_timetable = request.POST.get('atten_timetable')
         atten_tt = Timetable.objects.get(tt_id = atten_timetable)
-        selected_items = request.POST.getlist('selection')
+        selected_items = request.POST.getlist('selection_attendance')
         if selected_items:
           selected_ids = [int(id) for id in selected_items]
         current_all_attendance = Attendance.objects.filter(atten_date__hour=get_hour, atten_date__date=get_date,atten_timetable__tt_id = atten_timetable)  
