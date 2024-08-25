@@ -1,6 +1,10 @@
+import datetime
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from .models import *
 from .serializers import * 
+from datetime import timezone, datetime
+from django.utils import timezone
+from django.db.models.functions import TruncDate, TruncHour, TruncMinute
 from rest_framework import status 
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -19,7 +23,6 @@ from django.db.models import Count,Sum, F, Case, When, Value, IntegerField, Q
 def get_boards(request):
     result = Boards.objects.all()
     apidata = BoardsSerializer(result, many=True)
-    print(apidata)
     return Response ({
         'data': apidata.data,
         'message' : 'Boards',
@@ -32,10 +35,9 @@ def api_update_boards(request):
         pk = request.GET['pk']
         instance = get_object_or_404(Boards, pk=pk)
         data = request.data
-        print(instance)
         if request.method == "POST":
             form = BoardsSerializer(data = data, instance=instance, partial = True)
-            print(form)
+      
             if form.is_valid():
                 form.save()
                 return Response({
@@ -308,7 +310,6 @@ def api_update_subjects(request):
 def api_delete_subjects(request):
     if request.method == 'POST':
         selected_items = request.POST.get('selection', [])
-        print(selected_items)
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
@@ -350,13 +351,11 @@ def api_chepters(request):
 
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
-        print(get_std)
         if get_std == 0:
             pass
         else:    
             data = data.filter(chep_sub__sub_std__std_id = get_std)
             data_serializer = chapterSerializer(data, many=True)
-            print(data_serializer.data)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             subject_serializer = subjectsSerializer(subject_data, many=True)
             get_std = Std.objects.get(std_id = get_std)
@@ -1096,7 +1095,6 @@ def api_update_packages(request):
         if request.method == 'POST':
             instance = get_object_or_404(Packs, pk=request.GET['pk'])
             data = request.data
-            print(data)
             form = PackageSerializer(data = data, instance=instance, partial = True)
             check = Packs.objects.filter(pack_name = data['pack_name'], pack_std__std_id = data['pack_std']).count()
             if check >= 1:
@@ -1768,7 +1766,7 @@ def api_add_cheques(request):
                     fees_mode = 'CHECK'
                     cheque_date = form.validated_data.get('cheque_date')
                     abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date)
-                    print(abcd)
+              
                     
 
                 form.save()
@@ -1815,7 +1813,6 @@ def api_add_cheques(request):
 def api_delete_cheques(request):
     if request.GET.get('delete_cheque'):
         del_id = request.GET['delete_cheque']
-        print(del_id)
         try:
             check_data = Cheque_Collection.objects.get(cheque_id=del_id)
             check_data.delete()
@@ -1868,7 +1865,6 @@ def insert_events(request):
         event_date = request.POST.get('event_date')
         event_desc = request.POST.get('event_desc')
         event_images = request.FILES.getlist('event_img')
-        print(event_images)
         event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
         serializer = EventSerializer(event)
         event.save()
@@ -1917,8 +1913,6 @@ def api_insert_events(request):
         event_date = request.data.get('event_date')
         event_desc = request.data.get('event_desc')
         event_images = request.FILES.getlist('event_img')  # Use the correct key name
-        print(event_images)
-        print(event_name)
         # Validate that all required fields are present
         if not event_name or not event_date or not event_desc or not event_images:
             return Response({'Status': False, 'Message': 'All fields are required'}, status=400)
@@ -2220,8 +2214,7 @@ def student_analysis_view(request):
             overall_result = 0
         else:
             overall_result = round((obtained_marks/total_marks)*100,2)
-        print(x.stud_id)
-        print(student_id)
+
 
         if student_id == x.stud_id: 
             current_student_overall_test_result = overall_result
@@ -2346,3 +2339,800 @@ def student_inquiries_data(request):
         'Status': False,
         'Standard': standard.data
     })
+
+
+
+# ==========================================================================================================================================
+                                                        # PARENTSIDE
+# ==========================================================================================================================================
+
+@api_view(['GET'])
+def api_parent_profile(request):
+    parent_id = request.GET.get('parent_id')
+
+    if not parent_id:
+        return Response({'Status': False, 'Message': 'parent_id is required'})
+    
+    parent_profile = Students.objects.filter(stud_id = parent_id)
+    parent = StudentSerializer(parent_profile, many = True)
+    return Response({
+        'Title': 'Profile',
+        'Parent data': parent.data
+    })
+
+
+@api_view(['GET'])
+def api_parent_events(request):
+    event_data = Event.objects.all()
+    event = EventSerializer(event_data, many = True)
+    event_imgs = Event_Image.objects.all()
+    event_image = ImageSerializer(event_imgs, many = True)
+    selected_events = Event.objects.all()[:1]
+    selected = EventSerializer(selected_events, many = True)
+
+    apidata={
+        'title': 'Events',
+        'event_data':event.data,
+        'event_imgs':event_image.data,
+        'selected_events':selected.data
+    }
+
+    if request.GET.get('event_id'):
+        event_id = request.GET['event_id']
+        selected_events = Event.objects.filter(event_id = event_id)
+        selected = EventSerializer(selected_events, many = True)
+        event_imgs = Event_Image.objects.filter(event__event_id = event_id)
+        event_image = ImageSerializer(event_imgs, many = True)
+        
+        apidata.update({'selected_events':selected.data, 'events_img':event_image.data})
+
+    return Response(apidata)
+
+
+@api_view(['GET'])
+def api_parentside_report_card(request):
+    student_id = int(request.GET.get('stud_id'))
+    student_std = int(request.GET.get('stud_std'))
+
+    # ===============Overall Attendance==================
+    if not student_id or not student_std:
+        return Response({'error': 'stud_id and stud_std parameter is required'}, status=400)
+    try:
+        student_info = Students.objects.get(stud_id=student_id)
+    except Students.DoesNotExist:
+        return Response({'error': 'Student not found'}, status=404)
+    
+    student = StudentSerializer(student_info)
+
+    student_data = Students.objects.filter(stud_std__std_id = student_std)
+    student_data_serial = StudentSerializer(student_data, many = True)
+
+    total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
+    
+    present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
+
+    absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
+    
+    if total_attendence > 0:
+        overall_attendence = (present_attendence/total_attendence)*100
+    else:
+        overall_attendence = 0
+
+
+
+    # ==================Test Report and Attendance Report============
+    students_li = Students.objects.filter(stud_std__std_id = student_std)
+    overall_attendance_li = []
+    for x in students_li:
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+        if total_attendence_studentwise > 0:
+            overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+        else:
+            overall_attendence_studentwise = 0
+        
+
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        
+        
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        
+
+        if total_marks == 0:
+            overall_result = 0
+        else:
+            overall_result = round((obtained_marks/total_marks)*100,2)
+
+        if student_id == x.stud_id: 
+            current_student_overall_test_result = overall_result
+
+        overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
+    
+    overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+    overall_attendance_li = overall_attendance_li[:5]
+    
+
+
+   # ===================SubjectsWise Attendance============================
+    subjects_li = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
+    overall_attendance_subwise = []
+
+    for x in subjects_li:
+        x = x['sub_name']
+        total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
+
+        present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
+
+        if total_attendence_subwise > 0:
+            attendance_subwise = (present_attendence_subwise/total_attendence_subwise)*100
+        else:
+            attendance_subwise = 0
+        overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
+    
+    # ======================SubjectWise TestResult==============================
+
+    subjects_data = Subject.objects.filter(sub_std=student_std)
+    final_average_marks_subwise = []
+
+    for x in subjects_data:
+        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+       
+
+        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+        
+        
+        if total_marks_subwise == 0:
+            average_marks_subwise = 0
+        else:
+            average_marks_subwise = round((obtained_marks_subwise/total_marks_subwise)*100,2)
+        
+        final_average_marks_subwise.append({'subject_name':x.sub_name, 'average_marks_subwise':average_marks_subwise})
+
+    # ====================Average Test Result=================================
+    overall_results = [i['overall_result'] for i in overall_attendance_li]
+    if overall_results:
+        class_average_result = round(statistics.mean(overall_results), 2)
+    else:
+        class_average_result = 0
+    
+
+    total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+
+    absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0).count()
+
+
+    # =============Doubts and Solution Counts================================
+
+    doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).count()
+
+    solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).annotate(verified_solution=Count(
+        Case(
+            When(doubt_solution__solution_verified=True, then=1),
+            output_field=IntegerField(),
+        )))
+    solutions = DoubtSerializer(solutions_gives, many = True)
+
+    my_solve_doubts = 0
+    for x in solutions_gives:
+        if x.verified_solution > 0:
+            my_solve_doubts += 1
+        else:
+            print("no verified")
+
+    doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
+
+    
+
+    apidata = {
+        'title': 'Report-Card',
+        'student':student.data,
+        'student_data':student_data_serial.data,
+        'overall_attendence':overall_attendence,
+        'overall_attendance_li':overall_attendance_li,
+        'overall_attendance_subwise':overall_attendance_subwise,
+        'total_attendence':total_attendence,
+        'absent_attendence':absent_attendence,
+        'class_average_result':class_average_result,
+        'final_average_marks_subwise':final_average_marks_subwise,
+        'doubt_asked':doubt_asked,
+        'solutions_gives':solutions.data,
+        'doubt_solved_byme':doubt_solved_byme,
+        'current_student_overall_test_result':current_student_overall_test_result,
+        'my_solve_doubts':my_solve_doubts,
+        'total_test_conducted':total_test_conducted,
+        'absent_in_test':absent_in_test,
+
+    }
+    
+    return Response(apidata)
+
+
+@api_view(['GET'])
+def api_parentside_payment(request):
+    student_id = request.GET.get('stud_id')
+    student_data = Students.objects.get(stud_id = student_id)
+    student = StudentSerializer(student_data)
+
+    discount_amount = Discount.objects.filter(discount_stud_id__stud_id = student_id) 
+    discount_fee = DiscountSerializer(discount_amount, many = True)
+    if discount_amount:
+        fees_to_paid = int(student_data.stud_pack.pack_fees) - int(discount_amount[0].discount_amount)
+    else:
+        fees_to_paid = int(student_data.stud_pack.pack_fees)
+
+    # ===========================Paid Fees========================================
+
+    fees_collection = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id)
+    feecollection = Fees_Collection_serial(fees_collection, many = True)
+    if fees_collection:
+        paid_fees = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).aggregate(tol_amount=Sum('fees_paid'))
+        paid_fees = int(paid_fees['tol_amount'])
+    else:
+        paid_fees = 0
+
+    # ==========================Remaining_Fees====================================
+
+    remaining_fees = fees_to_paid - paid_fees
+   
+    # ===========================Cheque Fees======================================
+
+    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid = False)
+    cheque = Cheque_Collection_serial(cheque_data, many = True)
+
+    apidata = {
+        'title': 'Payments',
+        'fees_collection':feecollection.data, 
+        'fees_to_paid':fees_to_paid, 
+        'paid_fees':paid_fees,
+        'student_data':student.data, 
+        'remaining_fees':remaining_fees,
+        'cheque_data':cheque.data,
+        'discount_amount':discount_fee.data
+
+    }
+    return Response(apidata)
+
+
+@api_view(['GET'])
+def api_parentside_announcement(request):
+    announcements_data = Announcements.objects.filter(
+    Q(announce_std=None, announce_batch=None) |
+    Q(announce_std__std_id=request.session.get('stud_std'), announce_batch=None) |
+    Q(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))
+    ).order_by('-pk')[:50]
+
+    Announcement = AnnouncementSerializer(announcements_data, many = True)
+    return Response({'Title': 'Announcement', 'Announcements': Announcement.data})
+
+
+@api_view(['GET'])
+def api_parentside_timetable(request):
+    student_batch = request.GET.get('stud_batch')
+    
+    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student_batch)
+    Timetable_info = TimetableSerializer(timetable_data, many = True)
+
+    return Response({'Title': 'Timetable', 'Timetable': Timetable_info.data})
+
+
+
+# ========================================================================================================================================================
+                                                            # TEACHERSIDE
+# ========================================================================================================================================================
+
+@api_view(['GET'])
+def api_teacher_timetable(request):
+     timetable_data = Timetable.objects.all()
+
+     teacher_tt = TimetableSerializer(timetable_data, many = True)
+
+     apidata = {
+        'Title':'Timetable',
+        'timetable_data':teacher_tt.data,
+     }
+     return Response(apidata)
+
+
+@api_view(['GET', 'POST'])
+def api_teacher_attendance(request):
+     fac_id = request.GET.get('fac_id')
+     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+     batch_access_list = []
+     std_access_list=[]
+     for x in faculty_access:
+        batch_access_list.append(x.fa_batch.batch_id)
+        std_access_list.append(x.fa_batch.batch_std.std_id)
+
+     data = Attendance.objects.all()
+     attended = AttendanceSerializer(data, many =True)
+     std_data = Std.objects.filter(std_id__in = std_access_list)
+     standard = stdSerializer(std_data, many = True)   
+     batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
+     batch = BatchSerializer(batch_data, many = True)
+     stud_data = Students.objects.all()
+     student = StudentSerializer(stud_data, many = True)
+     subj_data = Subject.objects.all()
+     subject = subjectsSerializer(subj_data, many =True)
+          
+     today = timezone.localdate()
+     
+     today_records = Attendance.objects.filter(atten_date__contains=today)
+     
+     distinct_data = today_records.annotate(date=TruncDate('atten_date'),
+                                            hour=TruncHour('atten_date'),
+                                            minute=TruncMinute('atten_date'),
+                                            ).values('date', 'hour', 'minute','atten_timetable').distinct()
+     
+     li = []
+     for x in distinct_data:
+        date_hour = x['hour'].hour
+        date_minute = x['minute'].minute
+        date_data = x['minute'].date()
+        date_str = date_data.strftime('%Y-%m-%d')
+        subjectt = Timetable.objects.get(tt_id = x['atten_timetable'])
+        subj = TimetableSerializer(subjectt)
+        li.append({'hour':date_hour,'date':date_str, 'minute':date_minute,'tt_id':x['atten_timetable'],'subject':subj.data})
+    
+    
+    
+     context ={
+          'Title' : 'Attendance',
+          'data' : attended.data,
+          'std_data' : standard.data,
+          'batch_data':batch.data,
+          'stud_data':student.data,
+          'sub_data':subject.data,
+          'li':li,
+    }
+    
+     if request.GET.get('get_std'):
+          get_std = int(request.GET['get_std'])
+          if get_std == 0:
+               pass
+          else:    
+               data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+               attended = AttendanceSerializer(data, many =True)
+               batch_data = batch_data.filter(batch_std__std_id = get_std)
+               batch_info = BatchSerializer(batch_data, many = True)
+               stud_data = stud_data.filter(stud_std__std_id = get_std)
+               student = StudentSerializer(stud_data, many = True)
+               subj_data = subj_data.filter(sub_std__std_id = get_std)
+               subject = subjectsSerializer(subj_data, many =True)
+               get_std = Std.objects.get(std_id = get_std)
+               getting_std = stdSerializer(get_std)
+               context.update({'data':attended.data,'batch_data':batch_info.data,'get_std':getting_std.data, 'stud_data':student.data,'sub_data':subject.data})
+     
+     if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            attended = AttendanceSerializer(data, many =True)
+            stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
+            student = StudentSerializer(stud_data, many = True)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            getting_batch = BatchSerializer(get_batch)
+            context.update({'data':attended.data,'get_batch':getting_batch.data,'stud_data':student.data}) 
+
+     if request.GET.get('get_student'):
+        get_student = int(request.GET['get_student'])
+        if get_student == 0:
+            pass
+        else:
+            data = data.filter(atten_student__stud_id = get_student)
+            attended = AttendanceSerializer(data, many =True)
+            get_student = Students.objects.get(stud_id = get_student)
+            getting_stud = StudentSerializer(get_student)
+            context.update({'data':attended.data,'get_student':getting_stud.data})                     
+
+
+     attendance_present = data.filter(atten_present = True).count()
+     attendance_all = data.all().count()
+     if attendance_all>0:
+        overall_attendance = round((attendance_present/attendance_all) * 100,2)
+        context.update({'overall_attendance':overall_attendance})
+
+     sub_list = subj_data.all().values('sub_name').distinct()
+     subject_wise_attendance = []
+     subjects = []
+     for x in sub_list:
+        sub_name = x['sub_name']
+        sub_one = data.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
+        sub_all = data.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
+        if sub_all>0:
+            sub_attendance = round((sub_one/sub_all) * 100,2)
+            subject_wise_attendance.append(sub_attendance)
+            subjects.append(sub_name)
+            
+     combined_data = zip(subject_wise_attendance, subjects)
+
+     context.update({'combined_data': combined_data})
+     return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def api_teacher_edit_attendance(request):
+    if request.GET.get('get_std') and request.GET.get('get_batch'):
+        get_std = request.GET['get_std']     
+        get_batch = request.GET['get_batch']
+        tt_id = request.GET['tt_id']
+        std_data = Std.objects.get(std_id=get_std)
+        standard_data = stdSerializer(std_data)
+        batch_data = Batches.objects.get(batch_id=get_batch) 
+        batch = BatchSerializer(batch_data)
+        timetable_data = Timetable.objects.filter(tt_batch__batch_id = get_batch)
+        teacher_tt = TimetableSerializer(timetable_data, many = True)
+        students_data = Students.objects.filter(stud_std__std_id = get_std, stud_batch__batch_id = get_batch)
+        student = StudentSerializer(students_data, many = True)
+        get_hour = request.GET.get('hour','')    
+        get_date = request.GET.get('date','')
+        get_minute = request.GET.get('minute','')
+        date_obj = datetime.strptime(get_date, '%Y-%m-%d')
+        get_data = Attendance.objects.filter(atten_date__hour=get_hour, atten_date__date=date_obj,atten_timetable__tt_id=tt_id)
+        data = AttendanceSerializer(get_data, many = True)
+        context = {
+          'title': 'Insert Attendence',
+          'std_data':standard_data.data,
+          'batch_data':batch.data,
+          'students_data':student.data,
+          'timetable_data':teacher_tt.data,
+          'get_data':data.data,
+          'get_date':get_date,
+          'get_hour':get_hour,
+          'get_minute':get_minute,
+     
+          }
+    else:
+        return Response({'Error' : 'Please! Select Standard (get_std) And Batch (get_batch)'})
+    
+    return Response(context)
+
+
+# @api_view(['GET', 'POST'])
+# def api_edit_handle_attendance(request):
+#      if request.method == 'POST':
+#         get_date = request.POST.get('get_date')
+#         get_hour = request.POST.get('get_hour')
+#         get_date = datetime.strptime(get_date, '%Y-%m-%d')
+#         atten_timetable = request.POST.get('atten_timetable')
+#         atten_tt = Timetable.objects.get(tt_id = atten_timetable)
+#         # selected_items = request.POST.getlist('selection')
+#         selected_items = [2]
+#         if selected_items:
+#           selected_ids = [int(id) for id in selected_items]
+#         current_all_attendance = Attendance.objects.filter(atten_date__hour=get_hour, atten_date__date=get_date,atten_timetable__tt_id = atten_timetable)  
+#         for i in current_all_attendance:
+#             if i.atten_student.stud_id in selected_ids:
+#                 instance = Attendance.objects.get(atten_date__hour=get_hour, atten_date__date=get_date, atten_student__stud_id=i.atten_student.stud_id)  
+#                 instance.atten_present = 1
+#                 instance.save()
+#             else:
+#                 instance = Attendance.objects.get(atten_date__hour=get_hour, atten_date__date=get_date, atten_student__stud_id=i.atten_student.stud_id)
+#                 instance.atten_present = 0
+#                 instance.save()
+
+#         return Response({'Status': True, 'Message' : "Attendance has been updated!"})
+#      return Response({'Status': 'Use post method'})
+
+
+@api_view(['GET', 'POST'])
+def api_edit_handle_attendance(request):
+    if request.method == 'POST':
+        get_date = request.POST.get('get_date')
+        get_hour = request.POST.get('get_hour')
+        
+        # Check if get_date is provided
+        if not get_date:
+            return Response({'Status': False, 'Message': 'Date is required'}, status=400)
+        
+        try:
+            # Convert get_date to a datetime object
+            get_date = datetime.strptime(get_date, '%Y-%m-%d')
+        except ValueError:
+            return Response({'Status': False, 'Message': 'Invalid date format. Use YYYY-MM-DD.'}, status=400)
+        
+        atten_timetable = request.POST.get('atten_timetable')
+        try:
+            atten_tt = Timetable.objects.get(tt_id=atten_timetable)
+        except Timetable.DoesNotExist:
+            return Response({'Status': False, 'Message': 'Timetable not found'}, status=404)
+
+        # selected_items = request.POST.getlist('selection')
+        selected_items = [2]  # Example: Replace this with actual data
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+
+        # Query for the attendance records for the specified date, hour, and timetable
+        current_all_attendance = Attendance.objects.filter(
+            atten_date__hour=get_hour, 
+            atten_date__date=get_date,
+            atten_timetable__tt_id=atten_timetable
+        )
+        
+        # Update attendance records based on selected items
+        for i in current_all_attendance:
+            instance = Attendance.objects.get(
+                atten_date__hour=get_hour,
+                atten_date__date=get_date,
+                atten_student__stud_id=i.atten_student.stud_id
+            )
+            instance.atten_present = 1 if i.atten_student.stud_id in selected_ids else 0
+            instance.save()
+
+        return Response({'Status': True, 'Message': "Attendance has been updated!"})
+    
+    return Response({'Status': 'Use POST method'}, status=405)
+
+
+@api_view(['GET'])
+def api_insert_update_attendance(request):
+     if request.GET.get('get_std') and request.GET.get('get_batch'):
+        get_std = request.GET['get_std']     
+        get_batch = request.GET['get_batch']
+        std_data = Std.objects.get(std_id=get_std)
+        std_serial = stdSerializer(std_data)
+        batch_data = Batches.objects.get(batch_id=get_batch) 
+        batch_serial = BatchSerializer(batch_data)
+        timetable_data = Timetable.objects.filter(tt_batch__batch_id = get_batch)
+        tt = TimetableSerializer(timetable_data, many = True)
+        students_data = Students.objects.filter(stud_std__std_id = get_std, stud_batch__batch_id = get_batch)
+        student = StudentSerializer(students_data, many = True)
+
+        context = {
+          'title': 'Insert Attendence',
+          'std_data':std_serial.data,
+          'batch_data':batch_serial.data,
+          'students_data':student.data,
+          'timetable_data':tt.data,
+     
+          }
+     else:
+        return Response({'Status': False, 'Message':"Please! Select get_std And get_batch"})
+       
+     return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def api_handle_attendance(request):
+     if request.method == 'POST':
+        std_data = request.POST.get('std_data')
+        batch_data = request.POST.get('batch_data')
+        atten_timetable = request.POST.get('atten_timetable')
+        atten_tt = Timetable.objects.get(tt_id = atten_timetable)
+        # selected_items = request.POST.getlist('selection')
+        selected_items = [2]
+        students_all = Students.objects.filter(stud_batch__batch_id = batch_data, stud_std__std_id = std_data)
+        if selected_items:
+          selected_ids = [int(id) for id in selected_items]
+        for i in students_all:
+            if i.stud_id in selected_ids:
+                Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1)
+            else:
+                Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0) 
+
+            return Response({'Status': True, 'message':"Attendance has been submitted!"})
+     return Response({'Status': False, 'Message': 'Use post method'})
+
+
+@api_view(['GEt'])
+def api_teacher_events(request):
+    event_data = Event.objects.all()
+    event_serial = EventSerializer(event_data, many = True)
+    event_imgs = Event_Image.objects.all()
+    image = ImageSerializer(event_imgs, many = True)
+    selected_events = Event.objects.all()[:1]
+    selected = EventSerializer(selected_events, many = True)
+    context={
+        'title':'Events',
+        'event_data':event_serial.data,
+        'event_imgs':image.data,
+        'selected_events':selected.data,
+    }
+
+    if request.GET.get('event_id'):
+        event_id = request.GET['event_id']
+        selected_events = Event.objects.filter(event_id = event_id)
+        selected = EventSerializer(selected_events, many = True)
+        event_imgs = Event_Image.objects.filter(event__event_id = event_id)
+        image = ImageSerializer(event_imgs, many = True)
+        context.update({'selected_events':selected_events, 'events_img':event_imgs})
+
+    return Response(context)
+
+
+@api_view(['GET'])
+def api_teacher_announcement(request):
+    fac_id = request.GET.get('fac_id')
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+    batch_access_list = []
+    std_access_list=[]
+    for x in faculty_access:
+        batch_access_list.append(x.fa_batch.batch_id)
+        std_access_list.append(x.fa_batch.batch_std.std_id)
+
+    data = Announcements.objects.all()
+    Announcement = AnnouncementSerializer(data, many =True)
+    std_data = Std.objects.filter(std_id__in = std_access_list)
+    standard = stdSerializer(std_data, many = True)
+    batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
+    batch = BatchSerializer(batch_data, many = True)
+   
+    context ={
+        'title' : 'Announcements',
+        'data' : Announcement.data,
+        'std_data' : standard.data,
+        'batch_data':batch.data,
+    }
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(announce_std__std_id = get_std)
+            Announcement = AnnouncementSerializer(data, many =True)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            batch = BatchSerializer(batch_data, many = True)
+            get_std = Std.objects.get(std_id = get_std)
+            getting_std = stdSerializer(get_std)
+            context.update({'data':Announcement.data,'batch_data':batch.data,'get_std':getting_std.data})
+            
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(announce_batch__batch_id = get_batch)
+            Announcement = AnnouncementSerializer(data, many =True)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            getting_batch = BatchSerializer(get_batch)
+            context.update({'data':Announcement.data,'get_batch':getting_batch.data})        
+            
+    return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def api_announcements_update_teacher(request):
+    std_data = Std.objects.all()
+    std_serializer = stdSerializer(std_data, many = True)
+    batch_data = Batches.objects.all()
+    batch_serializer = BatchSerializer(batch_data, many=True)
+
+    apidata = {
+        'std_data': std_serializer.data,
+        'batch_data': batch_serializer.data
+    }
+    # ------------getting students for mail------------------
+    # students_for_mail = Students.objects.all()
+
+    
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        get_std_serializer = stdSerializer(get_std)
+        std_data = std_data.filter(std_id = get_std)
+        std_serializer = stdSerializer(std_data, many = True)
+        batch_data = batch_data.filter(batch_std__std_id = get_std)
+        batch_serializer = BatchSerializer(batch_data, many=True)
+        # students_for_mail = students_for_mail.filter(stud_std=get_std)
+        apidata.update({'get_std ':get_std_serializer.data,'std_data':std_serializer.data,'batch_data':batch_serializer.data}) 
+    
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        get_batch_serializer = BatchSerializer(get_batch)
+        batch_data = batch_data.filter(batch_id = get_batch)
+        batch_serializer = BatchSerializer(batch_data, many=True)
+        # students_for_mail = students_for_mail.filter(stud_batch=get_batch)
+        apidata.update({'get_batch ':get_batch_serializer.data,'batch_data':batch_serializer.data})
+
+    if request.method == 'POST':
+
+        # ================update Logic============================
+        if request.GET.get('pk'):
+            instance = get_object_or_404(Announcements, pk=request.GET['pk'])
+            data = request.data
+            form = AnnouncementSerializer(data=data, instance=instance, partial = True)       
+            if form.is_valid():
+                form.save()
+                return Response({
+                        'status': 'success',
+                        'data': form.data,
+                        'StdData':std_serializer.data
+                    })
+            else:
+                filled_data = form.data
+                return Response({'filled_data ':filled_data,'errors':form.errors})
+
+        # ===================insert_logic===========================
+        data = request.data
+        form = AnnouncementSerializer(data=data)
+        if form.is_valid():
+            form.save()
+            # ---------------------sendmail Logic===================================
+            # students_email_list = []
+            # for x in students_for_mail:
+            #     students_email_list.append(x.stud_email)
+            # print(students_email_list)    
+            # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
+         
+            return Response({
+                    'Status':'Form saved',
+                    'Data': form.data
+                })
+        else:
+            filled_data = form.data
+            return Response({'filled_data ':filled_data,'errors':form.errors})
+
+    if request.GET.get('pk'):
+        update_data = Announcements.objects.get(announce_id = request.GET['pk'])
+        serializer = AnnouncementSerializer(update_data)
+        return Response({
+            'status': 'Done',
+            'data':serializer.data
+        }) 
+    
+    return Response(apidata)
+
+
+@api_view(['POST', 'GET'])
+def api_announcements_delete_teacher(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Announcements.objects.filter(announce_id__in=selected_ids).delete()
+                return Response({
+                    'status': True,
+                    'Message': 'Deleted successfully'
+                })
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': "Can't delete {}".format(e)  
+                })
+
+    return Response({
+        'status': False,
+        'message': 'Something is wrong'
+    })
+
+
+@api_view(['GET'])
+def api_teacher_profile(request):
+    teacher_id = request.GET.get('fac_id')
+    teacher_profile = Faculties.objects.filter(fac_id = teacher_id)
+    profile = FacultiesSerializer(teacher_profile, many =True)
+    teacher_access = Faculty_Access.objects.filter(fa_faculty__fac_id = teacher_id)
+    access = Faculty_Access_Serializer(teacher_access, many = True)
+    context = {
+        'title': 'Profile',
+        'teacher_profile' : profile.data,
+        'teacher_access':access.data,
+    }
+    return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def api_teacher_profile_update(request):
+    teacher_id = request.GET.get('fac_id')
+    teacher_obj = Faculties.objects.get(fac_id = teacher_id)
+    obj = FacultiesSerializer(teacher_obj)
+    if request.method == 'POST':
+        data = request.data
+        form = FacultiesSerializer(data = data, instance=teacher_obj, partial = True)
+        print(form)
+        if form.is_valid():
+            form.save()
+            return Response({'Status': True, 'Message':'Your information updated successfully', 'Data': form.data})
+        
+        else:
+            return Response({'Status': False, 'Error': form.errors})
+ 
+    context={
+        'form':form,
+        'teacher_obj':obj.data,
+        'title': 'Update Profile',
+    }
+    return Response({context})

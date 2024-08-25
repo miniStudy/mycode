@@ -1862,22 +1862,13 @@ def faculty_access_show(request):
         get_std = request.GET.get('get_std')
         batch_data = Batches.objects.filter(batch_std__std_id = get_std)
         subject_data = Subject.objects.filter(sub_std__std_id = get_std)
-        context.update({'batch_data':batch_data, 'subject_data':subject_data})
+        selected_standard = Std.objects.get(std_id = get_std)
+        context.update({'batch_data':batch_data, 'subject_data':subject_data, 'selected_standard':selected_standard})
 
-    selected_teacher = request.POST.get('fa_faculty')
-    selected_standard = request.POST.get('fa_faculty')
-    selected_batch = request.POST.get('fa_batch')
 
 
     selected_subjects = request.POST.getlist('fa_subject')
     
-
-    context.update({
-        'selected_teacher':selected_teacher,
-        'selected_batch':selected_batch,
-        'selected_subjects':selected_subjects,
-        'selected_standard':selected_standard,
-    })
     if request.method == 'POST':
         form = faculty_access_form(request.POST)
         if form.is_valid():

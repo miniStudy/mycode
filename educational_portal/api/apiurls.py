@@ -95,7 +95,31 @@ urlpatterns = [
 
 
 
+    # ============================================ Parentside ==========================================================
 
+    path('api_parent_profile/', apiviews.api_parent_profile, name='api_parent_profile'),
+    path('api_parent_events/', apiviews.api_parent_events, name='api_parent_events'),
+    path('api_parentside_report_card/', apiviews.api_parentside_report_card, name='api_parentside_report_card'),
+    path('api_parentside_payment/', apiviews.api_parentside_payment, name='api_parentside_payment'),
+    path('api_parentside_announcement/', apiviews.api_parentside_announcement, name='api_parentside_announcement'),
+    path('api_parentside_timetable/', apiviews.api_parentside_timetable, name='api_parentside_timetable'),
 
+    # =========================================== Teacherside =============================================================
+
+    path('api_teacher_timetable/', apiviews.api_teacher_timetable, name='api_teacher_timetable'),
+
+    path('api_teacher_attendance/', apiviews.api_teacher_attendance, name='api_teacher_attendance'),
+    path('api_teacher_edit_attendance/', apiviews.api_teacher_edit_attendance, name='api_teacher_edit_attendance'), 
+    path('api_edit_handle_attendance/', apiviews.api_edit_handle_attendance, name='api_edit_handle_attendance'), 
+    path('api_insert_update_attendance/', apiviews.api_insert_update_attendance, name='api_insert_update_attendance'), 
+    path('api_handle_attendance/', apiviews.api_handle_attendance, name='api_handle_attendance'), 
+
+    path('api_teacher_events/', apiviews.api_teacher_events, name='api_teacher_events'), 
+    path('api_teacher_announcement/', apiviews.api_teacher_announcement, name='api_teacher_announcement'), 
+    path('api_announcements_update_teacher/', apiviews.api_announcements_update_teacher, name='api_announcements_update_teacher'), 
+    path('api_announcements_delete_teacher/', apiviews.api_announcements_delete_teacher, name='api_announcements_delete_teacher'), 
+
+    path('api_teacher_profile/', apiviews.api_teacher_profile, name='api_teacher_profile'), 
+    path('api_teacher_profile_update/', apiviews.api_teacher_profile_update, name='api_teacher_profile_update'), 
 
 ]
