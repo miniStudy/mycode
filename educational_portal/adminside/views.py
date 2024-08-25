@@ -235,8 +235,6 @@ def home(request):
         noss = Students.objects.filter(stud_std__std_id=x.std_id).count()
         students_for_that_std.append(noss)
 
-    print(std_list)
-    print(students_for_that_std)
     context={
         'title' : 'Home',
         'all_students':all_students,
