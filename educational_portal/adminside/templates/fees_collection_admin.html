@@ -75,8 +75,8 @@
           </div>
         </div>
 <!-- ------------------------------filter option--------------------------------- -->
-        <br>
-          <div class="btn-group">
+        
+          <div class="btn-group mt-1">
             <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'fees_collection_admin' %}">ALL</a></li>
@@ -85,7 +85,6 @@
               {% endfor %}
             </ul>
           </div>
-<br><br>
  <!-- ----------------------endfilter option------------------------------------------  -->
           <div class="card-datatable table-responsive pt-0">
             <table id="example" class="display table table-bordered" style="width:100%;">
