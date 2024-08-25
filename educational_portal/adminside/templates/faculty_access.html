@@ -8,35 +8,27 @@
  {{message|safe}}
 {% endfor %}
 
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Faculty Acccess</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  </head>
-  <body>
     <h2 class="text-center">Faculty Access</h2> <br>
     <hr>
-
+    
     <div class="container dropdown mx-2 mt-3">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          {% if selected_standard %}
-            {{ selected_standard }}
-          {% else %}
-            Select Standard
-          {% endif %}
-        </button>
-        <ul class="dropdown-menu">
-            {% for data in standard_data %}
-            <li>
-              <a href="{% url 'faculty_access' %}?get_std={{data.std_id}}" class="dropdown-item">{{ data }}</a> 
-            </li>
-            {% endfor %}
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {% if selected_standard %}
+        {{ selected_standard }}
+        {% else %}
+        Select Standard
+        {% endif %}
+      </button>
+      <ul class="dropdown-menu">
+          {% for data in standard_data %}
+          <li class="dropdown-item">
+            <a href="{% url 'faculty_access' %}?get_std={{data.std_id}}" >{{ data }}</a> 
+          </li>
+          {% endfor %}
         </ul>
     </div>
+    <br>
+    <hr>
 
     <form action="{% url 'faculty_access' %}"  method="POST">
         {% csrf_token %}
@@ -70,9 +62,6 @@
     
     <button type="submit" class="btn btn-warning mx-4">Submit</button>
     </form>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  </body>
-</html>
+
 
 {% endblock %}

@@ -112,6 +112,11 @@ class Test_attemted_Serializer(serializers.ModelSerializer):
         model = Test_attempted_users
         fields = ('__all__')
 
+class Faculty_Access_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faculty_Access
+        fields = ('__all__')
+
 
 
 

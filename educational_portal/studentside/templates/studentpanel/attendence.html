@@ -79,7 +79,7 @@
 
 
 <div class="row">
-  {% for subject in subject_attendance %}
+  {% for subject_data in subject_attendance %}
   <div class="col-md-3 mb-4">
     <div class="card">
       <div class="card-body">
@@ -91,8 +91,8 @@
               </span>
             </div>
             <div class="card-info">
-              <h5 class="card-title mb-0 me-2">{{ subject.attendence_prec_subwise }}%</h5>
-              <small class="text-muted">{{ subject.subject }}</small>
+              <h5 class="card-title mb-0 me-2">{{ subject_data.attendence_prec_subwise }}%</h5>
+              <small class="text-muted">{{ subject_data.subject }}</small>
             </div>
           </div>
           <div id="conversationChart"></div>

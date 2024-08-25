@@ -21,10 +21,60 @@ from django.core.mail import EmailMultiAlternatives
 
 @parent_login_required
 def parent_home(request):
+    student_id = request.session['parent_id']
+    student = Students.objects.get(stud_id = student_id)
+    student_std = student.stud_std.std_id
+    students_li = Students.objects.filter(stud_std__std_id = student_std)
+    overall_attendance_li = []
+    for x in students_li:
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+        if total_attendence_studentwise > 0:
+            overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+        else:
+            overall_attendence_studentwise = 0
+        
+
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        
+        
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        
+
+        if total_marks == 0:
+            overall_result = 0
+        else:
+            overall_result = round((obtained_marks/total_marks)*100,2)
+        if student_id == x.stud_id: 
+            current_student_overall_test_result = overall_result
+
+        overall_attendance_li.append({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
+
+    overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+    overall_attendance_li = overall_attendance_li[:5]
+
+
+        #=============== Test Result Dashboard ===============================================================
+    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).order_by('-pk')
+
+    test_counts = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+
+    test_result_list = []
+    test_name_list = []
+    for x in test_result_analysis:
+        test_name_list.append(x.tau_test_id.test_name)
+        test_result_list.append(x.tau_obtained_marks)
+
     context = {
-        'title': 'Home'
+        'title': 'Home',
+        'overall_attendance_li':overall_attendance_li,
+        'test_result_list':test_result_list,
+        'test_name_list': test_name_list,
     }
     return render(request, 'parentpanel/index.html', context)
+
+
 
 def parent_login_page(request):
     title = 'Login' 
@@ -168,11 +218,11 @@ def show_parent_profile(request):
 
 @parent_login_required
 def show_parentside_report_card(request):
-    student_id = request.session['stud_id']
-    student_std = request.session['stud_std']
+    student_id = request.session['parent_id']
 
     # ===============Overall Attendance==================
     student = Students.objects.get(stud_id = student_id)
+    student_std = student.stud_std.std_id
     student_data = Students.objects.filter(stud_std__std_id = student_std)
 
     total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
@@ -316,7 +366,7 @@ def show_parentside_report_card(request):
 
 @parent_login_required
 def show_parentside_payment(request):
-    student_id = request.session['stud_id']
+    student_id = request.session['parent_id']
     student_data = Students.objects.get(stud_id = student_id)
 
     discount_amount = Discount.objects.filter(discount_stud_id__stud_id = student_id) 
@@ -358,17 +408,20 @@ def show_parentside_payment(request):
 @parent_login_required
 def show_parentside_announcement(request):
     title = 'Announcement'
+    student_id = request.session['parent_id']
+    student = Students.objects.get(stud_id = student_id)
     announcements_data = Announcements.objects.filter(
     Q(announce_std=None, announce_batch=None) |
-    Q(announce_std__std_id=request.session.get('stud_std'), announce_batch=None) |
-    Q(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))
+    Q(announce_std__std_id=student.stud_std.std_id, announce_batch=None) |
+    Q(announce_std__std_id=student.stud_std.std_id, announce_batch__batch_id=student.stud_batch.batch_id)
 ).order_by('-pk')[:50]
 
     return render(request, 'parentpanel/announcement.html', {"announcements_data":announcements_data, 'title':title})
 
 @parent_login_required
 def show_parentside_timetable(request):
+    student_id = request.session['parent_id']
+    student = Students.objects.get(stud_id = student_id)
     title = 'Timetable'
-    student_batch = request.session['stud_batch']
-    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student_batch)
+    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student.stud_batch.batch_id)
     return render(request, 'parentpanel/timetable.html', {'timetable_data':timetable_data, 'title':title})

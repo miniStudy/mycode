@@ -566,7 +566,10 @@ def teacher_insert_offline_marks(request):
         batch_data = Batches.objects.filter(batch_std__std_id = std_id)
         students_data = Students.objects.filter(stud_std__std_id = std_id)
         context.update({'std_id':std_id, 'batch_data':batch_data, 'students_data':students_data})
-
+    else:
+        messages.error(request, 'Please! Select Standard')
+        return redirect('teacher_test')
+    
     if request.GET.get('batch_id'):
         batch_id = request.GET.get('batch_id')
         students_data = Students.objects.filter(stud_batch__batch_id = batch_id)
