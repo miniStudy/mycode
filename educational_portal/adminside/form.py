@@ -92,3 +92,10 @@ class faculty_access_form(forms.ModelForm):
     class Meta:
         model = Faculty_Access
         fields = "__all__"
+
+
+
+class fees_collection_form(forms.ModelForm):
+    class Meta:
+        model = Fees_Collection
+        fields = "__all__"        
