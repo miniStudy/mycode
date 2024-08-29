@@ -186,6 +186,3 @@ INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep
 ('A Tiger in the House - II','sem 1','uploads/default_chep_icon.png','10','32'),
 ('An Alien Hand - II','sem 1','uploads/default_chep_icon.png','10','32');
 
-
-
->>>>>>> cf17e988d7d533e107cf48e7a61a45cf90084543
