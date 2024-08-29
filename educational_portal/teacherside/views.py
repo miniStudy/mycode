@@ -884,7 +884,7 @@ def teacher_materials(request):
 
     standard_data = Std.objects.filter(std_id__in = std_access_list)
     subjects_data = Subject.objects.filter(sub_id__in = subject_access_list)
-    materials = Chepterwise_material.objects.all()
+    materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id__in = subject_access_list)
     selected_sub=None
 
     context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, "title":'Materials'}
