@@ -32,7 +32,7 @@
                 <label class="form-label mb-2">Chapter</label>
                 <select name="cm_chepter" class="form-select">
                     {% for chepters in chepter_data %}
-                        <option value="{{ chepters.chep_id }}" {% if update_data and update_data.cm_chepter_id == chepter.chep_id %}selected{% endif %}>{{chepters.chep_name}} | {{chepters.chep_sub}}</option>
+                        <option value="{{ chepters.chep_id }}" {% if update_data.cm_chepter_id == chepters.chep_id %}selected{% endif %}>{{chepters.chep_name}} | {{chepters.chep_sub}}</option>
                     {% endfor %}
                 </select>
             </div>
