@@ -28,7 +28,6 @@ from django.core.mail import EmailMultiAlternatives
 from teacherside.decorators import *
 
 
-
 @teacher_login_required
 def teacher_home(request):
     msg = None
