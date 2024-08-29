@@ -117,6 +117,11 @@ class Faculty_Access_Serializer(serializers.ModelSerializer):
         model = Faculty_Access
         fields = ('__all__')
 
+class Today_Teaching_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Today_Teaching
+        fields = ('__all__')
+
 
 
 
