@@ -235,8 +235,6 @@ def home(request):
         noss = Students.objects.filter(stud_std__std_id=x.std_id).count()
         students_for_that_std.append(noss)
 
-    print(std_list)
-    print(students_for_that_std)
     context={
         'title' : 'Home',
         'all_students':all_students,
@@ -1001,7 +999,7 @@ def show_tests(request):
             data = data.filter(test_sub__sub_std__std_id = get_std)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
-            context.update({'data':data,'get_std':get_std,'std_data':std_data}) 
+            context.update({'data':data,'get_std':get_std,'std_data':std_data,'subject_data':subject_data}) 
 
 
     if request.GET.get('get_subject'):
@@ -1093,6 +1091,7 @@ def delete_tests(request):
 @admin_login_required
 def show_test_questions_admin(request):
     if request.GET.get('test_id'):
+        
         Test_Questions_data = Test_questions_answer.objects.filter(tq_name = request.GET['test_id'])
         No_of_q = Test_Questions_data.count()
         total_marks = 0
@@ -1130,14 +1129,20 @@ def insert_update_test_questions(request):
 
     if request.GET.get('test_id'):
         test_id = request.GET['test_id']
-        print(test_id)
-        context.update({'test_id': test_id})
+        test_data = Chepterwise_test.objects.get(test_id = request.GET['test_id'])
+        chep_data = chep_data.filter(chep_sub__sub_id = test_data.test_sub.sub_id)
+        context.update({'test_id': test_id,'chep_data': chep_data})
 
     if request.method == 'POST':
         form = TestQuestionsAnswerForm(request.POST, request.FILES)
         if form.is_valid():
+            testt_id = form.cleaned_data['tq_name']
+            chep_id = form.cleaned_data['tq_chepter']
+            testt_id = testt_id.test_id
+            chep_id = chep_id.chep_id
             form.save()
-            return redirect('success_url')  # Replace 'success_url' with your actual success URL
+            url = '/adminside/insert_update_test_question_admin/?test_id={}&chep_id={}'.format(testt_id,chep_id)
+            return redirect(url) 
         else:
             context.update({'form': form,'errors':form.errors})
             return render(request, 'insert_update/add_test_questions.html', context)
@@ -1718,13 +1723,26 @@ def adminside_report_card(request):
 
 def fees_collection_admin(request):
     cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False)
-
+    std_data = Std.objects.all()
+    Context = {'std_data':std_data}
+             
     students_data = Students.objects.annotate(
     amount_paid=Sum('fees_collection__fees_paid'),
     discountt=Case(
         When(discount__discount_amount=None, then=Value(0)),
         default=F('discount__discount_amount'),output_field=IntegerField()
     ))
+
+    # -------------filter--------------------------------------------
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            students_data = students_data.filter(stud_std__std_id = get_std)
+            get_std = Std.objects.get(std_id = get_std)
+            Context.update({'get_std':get_std,'students_data':students_data}) 
+    # ------------------end filter-------------------------------------
 
     #=================Total Amount Fees Paid============================================
     total_amount_fees_paid = Fees_Collection.objects.all().aggregate(total_amu_paid = Sum('fees_paid'))
@@ -1753,15 +1771,16 @@ def fees_collection_admin(request):
     total_pending_fees = total_fees_amount_after_discount - total_amount_fees_paid
     
 
-    context={
+    Context.update({
         'title':'Payments',
+        'std_data':std_data,
         'cheque_collections_data':cheque_collections_data,
         'total_amount_fees_paid':total_amount_fees_paid,
         'total_fees_amount_after_discount':total_fees_amount_after_discount,
         'total_pending_fees':total_pending_fees,
         'students_data':students_data,
-    }
-    return render(request, 'fees_collection_admin.html', context)
+    })
+    return render(request, 'fees_collection_admin.html', Context)
 
 def add_cheques_admin(request):
     students = Students.objects.all()
@@ -1830,16 +1849,50 @@ def delete_cheques_admin(request):
 
 
 def add_fees_collection_admin(request):
-    context={}
+    students = Students.objects.all()
+    context={
+        'title' : 'Add Fees',
+        'students':students,    
+    }
+    # ================update Logic==================================
+    if request.GET.get('pk'):
+        if request.method == 'POST':
+            instance = get_object_or_404(Fees_Collection, pk=request.GET['pk'])
+            form = fees_collection_form(request.POST, instance=instance)
+            if form.is_valid():
+                form.save()
+                return redirect('fees_collection_admin')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+        
+        update_data = Fees_Collection.objects.get(fees_id = request.GET['pk'])
+        context.update({'update_data':update_data})  
+    else:
+        # ===================insert_logic===========================
+        if request.method == 'POST':
+            form = fees_collection_form(request.POST)
+            if form.is_valid():   
+                form.save()
+                return redirect('fees_collection_admin')
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+                return render(request, 'insert_update/add_fees_collection_admin.html', context)
     return render(request, 'insert_update/add_fees_collection_admin.html', context)
 
 def admin_fees_collection_delete(request):
-    if request.GET.get('delfees_collection'):
-        pass
-
-def update_cheques_admin(request):
-    context={}
-    return render(request, 'update_cheques_admin.html', context)
+    if request.GET.get('delete_payment'):
+        del_id = request.GET['delete_payment']
+        print(del_id)
+        try:
+            fees_data = Fees_Collection.objects.get(fees_id=del_id)
+            fees_data.delete()
+        except Fees_Collection.DoesNotExist:
+            messages.error(request, 'Error in Deleting Data') 
+            raise Http404("Cheque not found")
+              
+    return redirect('fees_collection_admin') 
 
 def payments_history_admin(request):
     fees_collections_data = Fees_Collection.objects.all()

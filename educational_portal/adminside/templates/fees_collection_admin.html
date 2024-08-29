@@ -63,18 +63,28 @@
           <div class="myheadfont">Student's Payment</div>
           <div>
             <div class="d-inline-block" id="exportbtns"></div>
-
-
-            <a href="{% url 'add_cheques_admin' %}">
+            <input type="text" class="" id="searchbox" placeholder="Search.."/>
+            
+            <a href="{% url 'add_fees_collection_admin' %}">
               <button class="btn btn-primary">
                 <i class="fa-solid fa-plus me-2"></i> ADD
               </button>
             </a>
 
-
           </div>
         </div>
-  
+<!-- ------------------------------filter option--------------------------------- -->
+        
+          <div class="btn-group mt-1">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'fees_collection_admin' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'fees_collection_admin' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+ <!-- ----------------------endfilter option------------------------------------------  -->
           <div class="card-datatable table-responsive pt-0">
             <table id="example" class="display table table-bordered" style="width:100%;">
               <thead>
@@ -110,7 +120,7 @@
                 {% endfor %}
               </tbody>
             </table>
-            <a href="{% url 'payments_history_admin' %}" class='btn btn-primary'>View Payments</a>
+            <a href="{% url 'payments_history_admin' %}" class='btn btn-primary mt-3'>View Payments</a>
           </div>
       </div>
     </div>

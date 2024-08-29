@@ -107,6 +107,40 @@
 
 
 <script>
+    $(document).ready(function() {
+        // Initially hide the delete button
+        $('#selected_attendance').hide();
+
+        // Function to update the delete button text and visibility
+        function updateattendanceButton() {
+            var selectedCount = $('input[name="selection_attendance"]:checked').length;
+            if (selectedCount > 0) {
+                $('#selected_attendance').html('Submit ' + selectedCount).show();
+            } else {
+                $('#selected_attendance').hide();
+            }
+        }
+        updateattendanceButton();
+
+        // Handle click on "select all" control
+        $('input[name="selectionall_attendance"]').on('click', function() {
+            var checked = this.checked;
+            $('input[name="selection_attendance"]').each(function() {
+                this.checked = checked;
+            });
+            updateattendanceButton();
+        });
+
+        // Handle click on individual checkboxes
+        $('input[name="selection_attendance"]').on('change', function() {
+            updateattendanceButton();
+        });
+    });
+</script>
+
+
+
+<script>
     document.addEventListener('DOMContentLoaded', function () {
         setTimeout(function() {
             var messageDiv = document.getElementById('returnmessage');

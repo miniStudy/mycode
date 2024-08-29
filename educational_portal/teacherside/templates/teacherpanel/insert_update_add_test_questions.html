@@ -1,0 +1,118 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+<div class="mb-4"><h4>Test Questions</h4></div> 
+   
+<div class="errors">
+    {% if errors %}
+    <ul>
+        {% for field, field_errors in errors.items %}
+        <li>{{ field }}:</li>
+        <ul>
+            {% for error in field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+</div>
+<!-- Modal to add new record -->
+<div class="card">
+    {% include 'message_show.html' %}
+    <div class="card-header">
+        <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %}Update Record{% else %}New Record{% endif %}</h5>
+    </div>
+    
+    <div class="card-body">
+        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_test_question_teacher' %}{% if update_data %}?pk={{update_data.tq_id}}{% endif %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <input type="hidden" name="tq_name" value="{{test_id}}" />
+
+            <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+                <label for="defaultSelect" class="form-label">Chapter Name</label>
+                <select id="defaultSelect" class="form-select" name="tq_chepter">
+                    <option value="">--</option>
+                    {% for x in chep_data %}
+                    <option value="{{x.chep_id}}" {% if request.GET.chep_id == x.chep_id|stringformat:"s" %} selected {% endif %}>{{x.chep_name}} {{x.chep_sub}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+                <label for="defaultSelect" class="form-label">Question Type</label>
+                <select id="defaultSelect" class="form-select" name="tq_q_type">
+                    <option value="">--</option>
+                    {% for x in que_type %}
+                    <option value="{{x.value}}">{{x.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>  
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Question</label>
+                
+                    {{ form.tq_question }}                
+               
+            </div>  
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Answer</label>
+                
+                    {{ form.tq_answer }} 
+                
+            </div>  
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">weightage</label>
+                <div class="input-group input-group-merge">
+                    <input type="number" class="form-control" name="tq_weightage" placeholder="2" required/>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Hint</label>
+                <div class="input-group input-group-merge">
+                    <textarea class="form-control summernote" id="tq_hint" name="tq_hint"></textarea>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Option A</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="tq_optiona"/>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Option B</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="tq_optionb" />
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Option C</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="tq_optionc" />
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <label class="form-label mb-2">Option D</label>
+                <div class="input-group input-group-merge">
+                    <input type="text" class="form-control" name="tq_optiond"/>
+                </div>
+            </div>
+            
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}

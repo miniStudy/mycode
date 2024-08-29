@@ -24,6 +24,7 @@
     <div class="card-header">
         <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %}Update Record{% else %}New Record{% endif %}</h5>
     </div>
+    
     <div class="card-body">
         <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_test_question_admin' %}{% if update_data %}?pk={{update_data.sub_id}}{% endif %}" enctype="multipart/form-data">
             {% csrf_token %}
@@ -35,7 +36,7 @@
                 <select id="defaultSelect" class="form-select" name="tq_chepter">
                     <option value="">--</option>
                     {% for x in chep_data %}
-                    <option value="{{x.chep_id}}">{{x.chep_name}} {{x.chep_sub}}</option>
+                    <option value="{{x.chep_id}}" {% if request.GET.chep_id == x.chep_id|stringformat:"s" %} selected {% endif %}>{{x.chep_name}} {{x.chep_sub}}</option>
                     {% endfor %}
                 </select>
             </div>

@@ -1,54 +1,57 @@
 {% extends 'master.html' %}
  
 {% block contentsection %}
-  <div class="mb-4"><h4>Announcements</h4></div> 
+  <div class="mb-4"><h4>Faculty Access</h4></div> 
   
 
 {% for message in messages %}
  {{message|safe}}
 {% endfor %}
 
-    <h2 class="text-center">Faculty Access</h2> <br>
-    <hr>
-    
-    <div class="container dropdown mx-2 mt-3">
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="btn-group">
+      <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         {% if selected_standard %}
-        {{ selected_standard }}
+          {{ selected_standard }}
         {% else %}
-        Select Standard
-        {% endif %}
-      </button>
+          Select Standard
+        {% endif %}</button>
       <ul class="dropdown-menu">
-          {% for data in standard_data %}
-          <li class="dropdown-item">
-            <a href="{% url 'faculty_access' %}?get_std={{data.std_id}}" >{{ data }}</a> 
-          </li>
-          {% endfor %}
-        </ul>
+        <li><a class="dropdown-item" href="{% url 'faculty_access' %}">ALL</a></li>
+        {% for x in standard_data %}
+        <li><a class="dropdown-item" href="{% url 'faculty_access' %}?get_std={{x.std_id}}">{{ x }}</a></li>
+        {% endfor %}
+      </ul>
     </div>
+
+    
     <br>
     <hr>
 
     <form action="{% url 'faculty_access' %}"  method="POST">
         {% csrf_token %}
         
-
-        <select name="fa_faculty">
+        
+        <div class="row">
+          <div class="col-md-6"><select name="fa_faculty" class="form-select" required>
             {% for data in teachers_names %}
             <option value="{{data.fac_id}}">{{data.fac_name}}</option>
             {% endfor %}
-        </select>
-        
-            
-        <select name="fa_batch">
+        </select></div>
+        <div class="col-md-6">
+          <select name="fa_batch" class="form-select" required>
             {% for data in batch_data %}
             <option value="{{data.batch_id}}">{{data}}</option>
             {% endfor %}
         </select>
+        </div>
+        </div>
+        
+        
+            
+       
 
         <hr>
-        <div class="container">
+        
             <h5>Select Subjects</h5>
             {% for data in subject_data %}
             <ul class="list-group">
@@ -58,9 +61,9 @@
                 </li>
             </ul>
             {% endfor %}
-        </div>
+        
     
-    <button type="submit" class="btn btn-warning mx-4">Submit</button>
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
     </form>
 
 
