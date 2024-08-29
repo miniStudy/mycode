@@ -3136,3 +3136,387 @@ def api_teacher_profile_update(request):
         'title': 'Update Profile',
     }
     return Response({context})
+
+
+
+@api_view(['GET'])
+def api_teacher_report_card(request):
+    fac_id = request.GET.get('fac_id')
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+    access = Faculty_Access_Serializer(faculty_access, many = True)
+    subject_access_list = []
+    std_access_list = []
+    batch_access_list = []
+    for x in faculty_access:
+        subject_access_list.append(x.fa_subject.sub_id)
+        std_access_list.append(x.fa_batch.batch_std.std_id)
+        batch_access_list.append(x.fa_batch.batch_id)
+
+    data = Attendance.objects.all()
+    attended = AttendanceSerializer(data, many =True)
+    std_data = Std.objects.filter(std_id__in = std_access_list)
+    standard = stdSerializer(std_data, many = True)
+    batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
+    batch = BatchSerializer(batch_data, many = True)
+    stud_data = Students.objects.all()
+    student = StudentSerializer(stud_data, many = True)
+    subj_data = Subject.objects.all()
+    subject = subjectsSerializer(subj_data, many = True)
+
+    context ={
+        'title' : 'Report-Card',
+        'data' : attended.data,
+        'std_data' : standard.data,
+        'batch_data':batch.data,
+        'stud_data':student.data,
+        'sub_data':subject.data,
+    }
+    
+    if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:    
+            data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+            attended = AttendanceSerializer(data, many =True)
+            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            batch = BatchSerializer(batch_data, many = True)
+            stud_data = stud_data.filter(stud_std__std_id = get_std)
+            student = StudentSerializer(stud_data, many = True)
+            subj_data = subj_data.filter(sub_std__std_id = get_std)
+            subject = subjectsSerializer(subj_data, many = True)
+            get_std = Std.objects.get(std_id = get_std)
+            getting_std = stdSerializer(get_std)
+            context.update({'data':attended.data,'batch_data':batch.data,'get_std':getting_std.data,'stud_data':student.data,'sub_data':subject.data})
+            student_std = get_std.std_name
+        student_std = get_std.std_id
+        print(student_std) 
+    
+    
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            attended = AttendanceSerializer(data, many =True)
+            stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
+            student = StudentSerializer(stud_data, many = True)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            getting_batch = BatchSerializer(get_batch)
+            context.update({'data':attended.data,'get_batch':getting_batch.data,'stud_data':student.data}) 
+        student_batch = get_batch.batch_name      
+    
+    
+    if request.GET.get('get_student'):
+        get_student = int(request.GET['get_student'])
+        if get_student == 0:
+            pass
+        else:
+            data = data.filter(atten_student__stud_id = get_student)
+            attended = AttendanceSerializer(data, many =True)
+            get_student = Students.objects.get(stud_id = get_student)
+            getting_student = StudentSerializer(get_student)
+            my_package = Packs.objects.prefetch_related('pack_subjects').get(pack_id = get_student.stud_pack.pack_id)
+            pack_subject_list = []
+            for subject in my_package.pack_subjects.all():
+                pack_subject_list.append(subject.sub_id)
+                print(subject.sub_id)
+            print(pack_subject_list)
+            context.update({'data':attended.data,'get_student':getting_student.data})
+
+        student_id = get_student.stud_id
+
+    if ((request.GET.get('get_std')) and (request.GET.get('get_batch')) and (request.GET.get('get_student'))):    
+        # ===============Overall Attendance==================
+
+        # student_data = Students.objects.filter(stud_std__std_id = student_std)
+        # print(student_data)
+        total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
+        
+        present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
+
+        absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
+        
+        if total_attendence > 0:
+            overall_attendence = (present_attendence/total_attendence)*100
+        else:
+            overall_attendence = 0
+
+
+
+        # ==================Test Report and Attendance Report============
+        students_li = Students.objects.filter(stud_std__std_id = student_std)
+        overall_attendance_li = []
+        for x in students_li:
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+            # print("==============================================",total_attendence_studentwise)
+            if total_attendence_studentwise > 0:
+                overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+            else:
+                overall_attendence_studentwise = 0
+            
+
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            
+            
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            
+
+            if total_marks == 0:
+                overall_result = 0
+            else:
+                overall_result = round((obtained_marks/total_marks)*100,2)
+            if student_id == x.stud_id: 
+                current_student_overall_test_result = overall_result
+                context.update({'current_student_overall_test_result':current_student_overall_test_result})
+
+            overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+        overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+        overall_attendance_li = overall_attendance_li[:5]
+        
+        # ===================SubjectsWise Attendance============================
+        subjects_li = Subject.objects.filter(sub_std__std_id = student_std, sub_id__in = pack_subject_list).values('sub_name').distinct()
+        print(subjects_li)
+        overall_attendance_subwise = []
+        for x in subjects_li:
+            x = x['sub_name']
+            total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
+
+            present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
+
+            if total_attendence_subwise > 0:
+                attendance_subwise = (present_attendence_subwise/total_attendence_subwise)*100
+            else:
+                attendance_subwise = 0
+            overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
+
+        # ======================SubjectWise TestResult==============================
+        subjects_data = Subject.objects.filter(sub_std=student_std, sub_id__in = pack_subject_list )
+        final_average_marks_subwise = []
+        for x in subjects_data:
+            total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+        
+
+            obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+            
+            
+            if total_marks_subwise == 0:
+                average_marks_subwise = 0
+            else:
+                average_marks_subwise = round((obtained_marks_subwise/total_marks_subwise)*100,2)
+            
+            final_average_marks_subwise.append({'subject_name':x.sub_name, 'average_marks_subwise':average_marks_subwise})
+
+        # ====================Average Test Result=================================
+        overall_results = [i['overall_result'] for i in overall_attendance_li]
+        if overall_results:
+            class_average_result = round(statistics.mean(overall_results),2)
+        else:
+            class_average_result = 0
+
+        total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+
+        absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0).count()
+
+
+        # =============Doubts and Solution Counts================================
+
+        doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).count()
+
+        solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).annotate(verified_solution=Count(
+            Case(
+                When(doubt_solution__solution_verified=True, then=1),
+                output_field=IntegerField(),
+            )))
+        solution = DoubtSerializer(solutions_gives, many = True)
+        
+        my_solve_doubts = 0
+        for x in solutions_gives:
+            if x.verified_solution > 0:
+                my_solve_doubts += 1
+            else:
+                print("no verified")
+
+        doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
+        # print(student_data)
+        context.update({
+            'title': 'Report-Card',
+            'overall_attendence':overall_attendence,
+            'overall_attendance_li':overall_attendance_li,
+            'overall_attendance_subwise':overall_attendance_subwise,
+            'total_attendence':total_attendence,
+            'absent_attendence':absent_attendence,
+            'class_average_result':class_average_result,
+            'final_average_marks_subwise':final_average_marks_subwise,
+            'doubt_asked':doubt_asked,
+            'solutions_gives':solution.data,
+            'doubt_solved_byme':doubt_solved_byme,
+            'my_solve_doubts':my_solve_doubts,
+            'total_test_conducted':total_test_conducted,
+            'absent_in_test':absent_in_test,
+        })
+    else:
+        noreport_card = 1       
+        nobody = ('Please Select Student!')
+        context.update({'nobody':nobody, 'noreport_card':noreport_card})
+    return Response(context)
+
+
+@api_view(['GET'])
+def api_today_learning(request):
+    fac_id = request.GET.get('fac_id')
+    fac_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+
+    if not fac_id:
+        return Response({'Status': False, 'Message': 'Select fac_id first'})
+
+    std_access = []
+    batch_access = []
+    for x in fac_data:
+        std_access.append(x.fa_batch.batch_std.std_id)
+        batch_access.append(x.fa_batch.batch_id)
+    
+    standard_access_data = Std.objects.filter(std_id__in = std_access)
+    standard_access = stdSerializer(standard_access_data, many = True)
+    batch_access_data = Batches.objects.filter(batch_id__in = batch_access)
+    batch_data = BatchSerializer(batch_access_data, many = True)
+
+    today_learn_data = Today_Teaching.objects.filter(today_teaching_batches_id__batch_id__in = batch_access, today_teaching_batches_id__batch_std__std_id__in = std_access)
+    today_learning = Today_Teaching_Serializer(today_learn_data, many =True)
+
+    context = {
+        'title': 'Class-Overview',
+        'today_learn_data': today_learning.data,
+        'standard_access_data':standard_access.data,
+        'batch_access_data':batch_data.data,
+    }
+
+    if request.GET.get('get_std'):
+        get_std = request.GET['get_std']
+        if get_std == 0:
+            pass
+        else:
+            today_learn_data = today_learn_data.filter(today_teaching_batches_id__batch_std__std_id = get_std)
+            today_learning = Today_Teaching_Serializer(today_learn_data, many =True)
+            batch_access_data = batch_access_data.filter(batch_std__std_id = get_std)
+            batch_data = BatchSerializer(batch_access_data, many = True)
+            get_std = Std.objects.get(std_id = get_std)
+            getting_std = stdSerializer(get_std)
+            context.update({'today_learn_data':today_learning.data,'batch_access_data':batch_data.data,'get_std':getting_std.data})
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            today_learn_data = today_learn_data.filter(today_teaching_batches_id__batch_id = get_batch)
+            today_learning = Today_Teaching_Serializer(today_learn_data, many =True)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            getting_batch = BatchSerializer(get_batch)
+            context.update({'today_learn_data':today_learning.data,'get_batch':getting_batch.data}) 
+
+    return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def api_today_learning_update(request):
+    fac_id = request.GET.get('fac_id')
+    fac_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+
+    if not fac_id:
+        return Response({'Status': False, 'Message': 'Select fac_id first'})
+
+    std_access = []
+    batch_access = []
+    for x in fac_data:
+        std_access.append(x.fa_batch.batch_std.std_id)
+        batch_access.append(x.fa_batch.batch_id)
+    
+    standard_access_data = Std.objects.filter(std_id__in = std_access)
+    standard_access = stdSerializer(standard_access_data, many = True)
+    batch_access_data = Batches.objects.filter(batch_id__in = batch_access)
+    batch_data = BatchSerializer(batch_access_data, many = True)
+    today_learning_data = Today_Teaching.objects.filter(today_teaching_batches_id__batch_id__in = batch_access)
+    today_learning = Today_Teaching_Serializer(today_learning_data, many =True)
+
+    context = {
+        'today_learn_data': today_learning.data,
+        'standard_access_data':standard_access.data,
+        'batch_access_data':batch_data.data,
+    }
+    
+    if request.GET.get('get_std'):
+        get_std = request.GET['get_std']
+        if get_std == 0:
+            pass
+        else:
+            batch_access_data = batch_access_data.filter(batch_std__std_id = get_std)
+            batch_data = BatchSerializer(batch_access_data, many = True)
+            get_std = Std.objects.get(std_id = get_std)
+            getting_std = stdSerializer(get_std)
+            context.update({'batch_access_data':batch_data.data,'get_std':getting_std.data})
+
+    if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            get_batch = Batches.objects.get(batch_id = get_batch) 
+            getting_batch = BatchSerializer(get_batch)
+            context.update({'get_batch':getting_batch.data}) 
+
+    if request.method == 'POST':
+        # ================update Logic============================
+        if request.GET.get('pk'):
+            instance = get_object_or_404(Today_Teaching, pk=request.GET['pk'])
+            data = request.data
+            form = Today_Teaching_Serializer(data = data, instance=instance, partial = True)
+            if form.is_valid():
+                form.save()
+                context.update({'Status': True, 'Message': 'Updated successfully'})
+            else:
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
+
+        # ===================insert_logic===========================
+        data = request.data
+        form = Today_Teaching_Serializer(data = data)
+        if form.is_valid():
+            form.save()
+            context.update({'Status': True, 'Message': 'Add successfully'})
+        else:
+            filled_data = form.data
+            context.update({'filled_data ':filled_data,'errors':form.errors})
+
+    if request.GET.get('pk'):
+        update_data = Today_Teaching.objects.get(today_teaching_id = request.GET['pk'])
+        updated = Today_Teaching_Serializer(update_data)
+        context.update({'update_data':updated.data})
+    
+
+    return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def api_today_learning_delete(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Today_Teaching.objects.filter(today_teaching_id__in=selected_ids).delete()
+                return Response({
+                    'status': True,
+                    'Message': 'Deleted successfully'
+                })
+            except Exception as e:
+                return Response({
+                    'status': False,
+                    'message': "Can't delete {}".format(e)  
+                })
+    return Response({
+        'status': False,
+        'message': 'Something is wrong'
+    })

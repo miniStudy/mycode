@@ -121,5 +121,10 @@ urlpatterns = [
 
     path('api_teacher_profile/', apiviews.api_teacher_profile, name='api_teacher_profile'), 
     path('api_teacher_profile_update/', apiviews.api_teacher_profile_update, name='api_teacher_profile_update'), 
+    path('api_teacher_report_card/', apiviews.api_teacher_report_card, name='api_teacher_report_card'), 
+
+    path('api_today_learning/', apiviews.api_today_learning, name='api_today_learning'), 
+    path('api_today_learning_update/', apiviews.api_today_learning_update, name='api_today_learning_update'), 
+    path('api_today_learning_delete/', apiviews.api_today_learning_delete, name='api_today_learning_delete'), 
 
 ]
