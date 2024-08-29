@@ -39,6 +39,7 @@
                     <th>Fees Paid</th>
                     <th>Fees Mode</th>
                     <th>Fees Date</th>
+                    <th>Edit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -48,6 +49,7 @@
                     <td>{{x.fees_paid}}</td>
                     <td>{{x.fees_mode}}</td>
                     <td>{{x.fees_date}}</td>
+                    <td><a href="{% url 'add_fees_collection_admin' %}?pk={{x.fees_id}}">EDIT</a></td>
                   </tr>
                   {% endfor %}
                 </tbody>

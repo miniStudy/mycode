@@ -1,0 +1,87 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Add Fees Collection</h4></div> 
+   
+  <div class="erroes">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+    <li>{{field}}</li>
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+  </div>
+  <!-- Modal to add new record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %} Update Record {% else %} New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+         
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_fees_collection_admin' %}{% if update_data %}?pk={{update_data.fees_id}}{% endif %}">
+        {% csrf_token %} 
+
+        <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+          <label for="defaultSelect" class="form-label">Student</label>
+          <select id="defaultSelect" class="form-select" name="fees_stud_id">
+            <option value="">--</option>
+            {% for x in students %}
+            
+              <option value="{{x.stud_id}}"  {% if filled_data.fees_stud_id.stud_id == x.stud_id %} selected {% endif %} {% if x.stud_id == update_data.fees_stud_id.stud_id %} selected {% endif %} >{{x.stud_name}} {{x.stud_lastname}}</option>
+            
+              {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Amount</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="fees_paid" placeholder="0" {% if update_data %} value="{{update_data.fees_paid}}" {% endif %}{% if filled_data %} value="{{filled_data.fees_paid}}" {% endif %}/>
+          </div>
+        </div>
+
+
+          <div class="col-sm-12" {% if update_data %} style="display: none;"{% endif %}>
+            <label class="form-label mb-2">Date</label>
+            <div class="input-group input-group-merge">
+                <input type="date" class="form-control" name="fees_date"
+                       {% if update_data %} 
+                           value="{{ update_data.fees_date|date:'c'}}" 
+                       {% elif filled_data %} 
+                           value="{{ filled_data.fees_date|date:'c'}}" 
+                       {% endif %}/>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <label for="defaultSelect" class="form-label">Payment Mode</label>
+            <select id="defaultSelect" class="form-select" name="fees_mode">
+              <option value="">--</option>
+              
+                <option value="UPI"  {% if filled_data.fees_mode == 'UPI' %} selected {% endif %} {% if 'UPI' == update_data.fees_mode %} selected {% endif %} >UPI</option>
+                <option value="CASH"  {% if filled_data.fees_mode == 'CASH' %} selected {% endif %} {% if 'CASH' == update_data.fees_mode %} selected {% endif %} >CASH</option>
+                <option value="DEBIT"  {% if filled_data.fees_mode == 'DEBIT' %} selected {% endif %} {% if 'DEBIT' == update_data.fees_mode %} selected {% endif %} >DEBIT CARD</option>
+                <option value="CREDIT"  {% if filled_data.fees_mode == 'CREDIT' %} selected {% endif %} {% if 'CREDIT' == update_data.fees_mode %} selected {% endif %} >CREDIT CARD</option>
+            
+            </select>
+          </div>
+        
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+          {% if update_data %}
+            <a href="{% url 'admin_fees_collection_delete' %}?delete_payment={{update_data.fees_id}}"><span class="btn btn-danger data-submit me-sm-3 me-1 mt-2">Delete</span></a>
+        {% endif %}
+        </div>
+
+        
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

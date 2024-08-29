@@ -37,7 +37,7 @@
                         <tr>                         
                             <th>SN</th>
                             <th>Student's Name</th>
-                            <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
+                            <th><input type="checkbox" class="form-check-input" name="selectionall_attendance" /></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,33 +45,33 @@
                         <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>{{x.stud_name}} {{x.stud_lastname}}</td> 
-                        <td><input type="checkbox" class="form-check-input" value="{{x.stud_id}}" name="selection" /> </td>
+                        <td><input type="checkbox" class="form-check-input" value="{{x.stud_id}}" name="selection_attendance" /> </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
+            <button type="button" class="btn btn-primary mt-4" id="selected_attendance"
+                 name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel">Submit</button>
             <!-- Modal -->
             <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
                 <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="confirmdeletemodelLabel"><i class="fa-solid fa-trash me-2"></i> Confirm submit</h5>
+                    <h5 class="modal-title" id="confirmdeletemodelLabel">Confirm submit</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    Are you sure you want to delete this data ..?<br>
+                    Are you sure you want to Submit this data ..?<br>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-trash me-2"></i> Submit</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
                     </div>
                 </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;"
-                id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i
-                    class="fa-solid fa-trash me-2"></i> Submit</button>
+            
             
         </form>
 
