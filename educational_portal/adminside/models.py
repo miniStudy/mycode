@@ -59,7 +59,7 @@ class Chepter(models.Model):
     chep_std = models.ForeignKey(Std,on_delete=models.CASCADE)
     chep_icon = models.ImageField(upload_to='uploads/')
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.chep_name} - {self.chep_sem} {self.chep_std}"
     
     class Meta:
@@ -72,7 +72,7 @@ class Chepterwise_material(models.Model):
     cm_file = models.FileField(upload_to ='uploads/')
     cm_file_icon = models.ImageField(upload_to='file_icons/', null=True,blank=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.cm_filename} - {self.cm_chepter}"
         
     class Meta:
@@ -201,7 +201,7 @@ class Timetable(models.Model):
     tt_time1 = models.TimeField()
     tt_tutor1 = models.ForeignKey('Faculties', on_delete=models.CASCADE)
     
-    def _str_(self):
+    def __str__(self):
         return f"{self.tt_batch} - {self.tt_day} | {self.tt_time1}"
     
     class Meta:
@@ -214,7 +214,7 @@ class Attendance(models.Model):
     atten_date = models.DateTimeField(auto_now_add=True)
     atten_present = models.BooleanField(default=0)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.atten_student} - {self.atten_timetable}"
     
     class Meta:
@@ -255,7 +255,7 @@ class Chepterwise_test(models.Model):
     test_sem = models.CharField(choices=sem_choices, max_length=50)
     test_time = models.CharField(null=True,blank=True,max_length=200)
 
-    def _str_(self):
+    def __str__(self):
         return f"Name : {self.test_name}  Time : {self.test_time}"
     
     class Meta:
@@ -280,7 +280,7 @@ class Test_questions_answer(models.Model):
     tq_optionc = models.CharField(max_length=200,blank=True,null=True)
     tq_optiond = models.CharField(max_length=200,blank=True,null=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.tq_q_type} - {self.tq_name}"
     
     class Meta:
@@ -297,7 +297,7 @@ class Test_attempted_users(models.Model):
     tau_total_marks = models.FloatField()
     tau_obtained_marks = models.FloatField(null=True,blank=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.tau_test_id} - {self.tau_completion_time}"
     
     class Meta:
@@ -311,7 +311,7 @@ class Test_submission(models.Model):
     ts_ans = models.TextField()
     ts_attempted = models.BooleanField(default=0)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.ts_que_id} - {self.ts_ans} {self.ts_stud_id}"
     
     class Meta:

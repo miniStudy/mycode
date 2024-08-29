@@ -922,9 +922,6 @@ def teacher_insert_update_materials(request):
         chepter_data = chepter_data.filter(chep_sub__sub_id = get_subject)
         context.update({'get_subject':get_subject,'chepter_data':chepter_data})     
 
-
-   
-    print(chepter_data)
  # ================update Logic============================
     if request.GET.get('pk'):
         if request.method == 'POST':
@@ -935,8 +932,10 @@ def teacher_insert_update_materials(request):
                 messages.error(request,'{} is already Exists'.format(form.data['cm_filename']))
             else:
                 if form.is_valid():
+                    chap_obj = form.cleaned_data['cm_chepter']    
                     form.save()
-                    return redirect('teacher_materials')
+                    url='/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(chap_obj.chep_sub.sub_std.std_id,chap_obj.chep_sub.sub_id)
+                    return redirect(url)
                 else:
                     filled_data = form.data
                     context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -948,12 +947,14 @@ def teacher_insert_update_materials(request):
         if request.method == 'POST':
             form = teacher_materials_form(request.POST, request.FILES)
             if form.is_valid():
+                url='/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(chap_obj.chep_sub.sub_std.std_id,chap_obj.chep_sub.sub_id)
+                    
                 check = Chepterwise_material.objects.filter(cm_filename = form.data['cm_filename'], cm_chepter__chep_name = form.data['cm_chepter']).count()
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['cm_filename']))
                 else:    
                     form.save()
-                    return redirect('teacher_materials')
+                    return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data ':filled_data,'errors':form.errors})
