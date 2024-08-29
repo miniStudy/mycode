@@ -16,3 +16,76 @@ INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep
 ('Surface Areas And Volumes','1','','13','5'),
 ('Statistics','1','','13','5'),
 ('Probability','1','','13','5'),;
+
+
+
+
+
+Insert math's chapter name for standard 8
+INSERT INTO `chepter` (`chep_name`, `chep_sem`, `chep_std_id`, `chep_sub_id`, `chep_icon`) 
+VALUES 
+('Rational Numbers', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Linear Equations in One Variable', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Understanding Quadrilaterals', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Data Handling', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Square and Square Roots', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Cube and Cube Roots', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Comparing Quantities', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Algebraic Expressions and Identities', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Mensuration', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Exponents and Power', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Direct and Inverse Proportions', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Factorisation', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Introduction to Graphs', 'sem1', '11', '33', '/uploads/default_chep_icon.png');
+
+
+
+
+
+Insert science chapter name for standard 8
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) 
+VALUES 
+('Crop Production and Management', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Microorganisms: Friend and Foe', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Coal and Petroleum', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Combustion and Flame', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Conservation of Plants and Animals', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Reproduction in Animals', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Reaching the Age of Adolescence', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Force and Pressure', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Friction', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Sound', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Chemical Effects of Electric Current', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Some Natural Phenomena', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Light', 'sem1', '/uploads/default_chep_icon.png', '11', '34');
+
+
+
+
+Insert social science chapter name for standard 8
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) 
+VALUES 
+('How, When and Where - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('From Trade to Territory - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('Ruling the Countryside - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('Tribals, Dikus and the Vision of a Golden Age - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('When People Rebel - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('Civilising the “Native”, Educating the Nation - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('Women, Caste and Reform - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('The Making of the National Movement: 1870s – 1947 - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+
+('Resources - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+('Land, Soil, Water, Natural Vegetation and Wildlife Resources - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+('Agriculture - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+('Industries - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+('Human Resources - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+
+('The Indian Constitution - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Understanding Secularism - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Parliament and the Making of Laws - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Judiciary - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Understanding Marginalisation - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Confronting Marginalisation - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Public Facilities - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Law and Social Justice - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37');
+
