@@ -732,7 +732,9 @@ def insert_update_test_questions_teacher(request):
     if request.GET.get('test_id'):
         test_id = request.GET['test_id']
         print(test_id)
-        context.update({'test_id': test_id})
+        test_data = Chepterwise_test.objects.get(test_id = test_id)
+        chep_data = chep_data.filter(chep_sub__sub_id = test_data.test_sub.sub_id)
+        context.update({'test_id': test_id,'chep_data':chep_data})
 
     if request.method == 'POST':
         form = TestQuestionsAnswerForm(request.POST, request.FILES)
