@@ -11,33 +11,31 @@
 {% endfor %}
 <!-- DataTable with Buttons -->
 
-
-<div class="row">
-    {% for data in standard_data %}
-    <div class="col-md-2 mb-2">
-        <div class="card border border-primary {% if data.std_id == std %}bg-dark{% endif %}">
-            <div class="card-body">
-                <a href="{% url 'admin_materials' %}?std_id={{data.std_id}}" class="btn">{{data}}</a>
-            </div>
-        </div>  
-    </div>
-    {% endfor %}
-</div>
-<hr>
-
 <div class="card">
     <div class="card-body">
         <div class="btn-group">
             <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">{% if selected_sub %}{{selected_sub.sub_name}}{% else %}Subjects{% endif %}</button>
+                aria-expanded="false">{% if selected_std %}{{selected_std}}{% else %}Standard{% endif %}</button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{% url 'admin_materials' %}">ALL</a></li>
-                {% for data in subjects_data %}
+                {% for data in standard_data %}
                 <li><a class="dropdown-item"
-                        href="{% url 'admin_materials' %}?std_id={{data.sub_std.std_id}}&sub_id={{data.sub_id}}">{{data.sub_name}}</a>
+                        href="{% url 'admin_materials' %}?std_id={{data.std_id}}">{{data}}</a>
                 </li>
                 {% endfor %}
             </ul>
+
+            <button class="btn btn-primary btn-sm dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">{% if selected_sub %}{{selected_sub.sub_name}}{% else %}Subjects{% endif %}</button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'admin_materials' %}?std_id={{selected_std.std_id}}">ALL</a></li>
+                {% for data in subjects_data %}
+                <li><a class="dropdown-item"
+                        href="{% url 'admin_materials' %}?std_id={{data.sub_std.std_id}}&sub_id={{data.sub_id}}">{{data}}</a>
+                </li>
+                {% endfor %}
+            </ul>
+
         </div>
 
     </div>
@@ -52,7 +50,7 @@
             <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
                 data-bs-target="#abcd{{selected_sub.sub_id}}" aria-expanded="false"
                 aria-controls="abcd{{selected_sub.sub_id}}">
-                {{selected_sub.sub_name}}
+                {{selected_sub}}
             </button>
         </h2>
         <div id="abcd{{selected_sub.sub_id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">

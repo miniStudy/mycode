@@ -1474,7 +1474,8 @@ def show_admin_materials(request):
         std_id = int(request.GET.get('std_id'))
         subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
         materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id)
-        context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_id})
+        selected_std = Std.objects.get(std_id=std_id)
+        context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_id,'selected_std':selected_std})
 
     if request.GET.get('sub_id'):
         sub_id = request.GET.get('sub_id')
