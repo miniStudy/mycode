@@ -947,6 +947,7 @@ def teacher_insert_update_materials(request):
         if request.method == 'POST':
             form = teacher_materials_form(request.POST, request.FILES)
             if form.is_valid():
+                chap_obj = form.cleaned_data['cm_chepter']
                 url='/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(chap_obj.chep_sub.sub_std.std_id,chap_obj.chep_sub.sub_id)
                     
                 check = Chepterwise_material.objects.filter(cm_filename = form.data['cm_filename'], cm_chepter__chep_name = form.data['cm_chepter']).count()
