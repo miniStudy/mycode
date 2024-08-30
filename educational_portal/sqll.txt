@@ -247,3 +247,51 @@ INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep
 ('ग्राम श्री','sem 1','/uploads/default_chep_icon.png','12','21'),
 ('मेघ आए','sem 1','/uploads/default_chep_icon.png','12','21'),
 ('बच्चे काम पर जा रहे हैंरी','sem 1','/uploads/default_chep_icon.png','12','21');
+
+# Insert Chepters of Economics std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('DEVELOPMENT','sem 1','/uploads/default_chep_icon.png','13','10'),
+('SECTORS OF THE INDIAN ECONOMY','sem 1','/uploads/default_chep_icon.png','13','10'),
+('MONEY AND CREDIT','sem 1','/uploads/default_chep_icon.png','13','10'),
+('GLOBALISATION AND THE INDIAN ECONOMY','sem 1','/uploads/default_chep_icon.png','13','10'),
+('CONSUMER RIGHTS','sem 1','/uploads/default_chep_icon.png','13','10');
+
+# Insert Chepters of Political Science std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1: Power-sharing','sem 1','/uploads/default_chep_icon.png','13','11'),
+('2: Federalism','sem 1','/uploads/default_chep_icon.png','13','11'),
+('3: Gender, Religion and Caste','sem 1','/uploads/default_chep_icon.png','13','11'),
+('4: Political Parties','sem 1','/uploads/default_chep_icon.png','13','11'),
+('5: Outcomes of Democracy','sem 1','/uploads/default_chep_icon.png','13','11');
+
+# Insert Chepters of History std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1: The French Revolution','sem 1','/uploads/default_chep_icon.png','12','22'),
+('2: Socialism in Europe and the Russian Revolution','sem 1','/uploads/default_chep_icon.png','12','22'),
+('3: Nazism and the Rise of Hitler','sem 1','/uploads/default_chep_icon.png','12','22'),
+('4: Forest Society and Colonialism','sem 1','/uploads/default_chep_icon.png','12','22'),
+('5: Pastoralists in the Modern World','sem 1','/uploads/default_chep_icon.png','12','22');
+
+# Insert Chepters of Political Science std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1 - What is Democracy? Why Democracy?','sem 1','/uploads/default_chep_icon.png','12','25'),
+('2 - Constitutional Design','sem 1','/uploads/default_chep_icon.png','12','25'),
+('3 - Electoral Politics','sem 1','/uploads/default_chep_icon.png','12','25'),
+('4 - Working of Institutions','sem 1','/uploads/default_chep_icon.png','12','25'),
+('5 - Democratic Rights','sem 1','/uploads/default_chep_icon.png','12','25');
+
+# Insert Chepters of Geography std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1: India - Size and Location','sem 1','/uploads/default_chep_icon.png','12','23'),
+('2: Physical Features of India','sem 1','/uploads/default_chep_icon.png','12','23'),
+('3: Drainage','sem 1','/uploads/default_chep_icon.png','12','23'),
+('4: Climate','sem 1','/uploads/default_chep_icon.png','12','23'),
+('5: Natural Vegetation and Wildlife','sem 1','/uploads/default_chep_icon.png','12','23'),
+('6: Population','sem 1','/uploads/default_chep_icon.png','12','23');
+
+# Insert Chepters of Economics std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1 - The Story of Village Palampur','sem 1','/uploads/default_chep_icon.png','12','24'),
+('2 - People as Resource','sem 1','/uploads/default_chep_icon.png','12','24'),
+('3 - Poverty as a Challenge','sem 1','/uploads/default_chep_icon.png','12','24'),
+('4 - Food Security in India','sem 1','/uploads/default_chep_icon.png','12','24');
