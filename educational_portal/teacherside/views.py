@@ -19,6 +19,12 @@ from adminside.form import *
 from teacherside.forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 
+import fitz  # PyMuPDF
+from PIL import Image
+import io
+from django.core.files.base import ContentFile
+
+
 # mail integration 
 from django.core.mail import send_mail
 from django.template.loader import get_template
@@ -26,6 +32,25 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 
 from teacherside.decorators import *
+
+def generate_pdf_icon(pdf_file):
+    # Read the file content into memory
+    pdf_data = pdf_file.read()
+    # Open the PDF from the memory
+    doc = fitz.open(stream=pdf_data, filetype="pdf")
+    # Select the first page
+    page = doc.load_page(0)
+    # Render the page to an image
+    pix = page.get_pixmap()
+    
+    # Convert to PIL Image
+    image = Image.open(io.BytesIO(pix.tobytes("png")))
+    # Save image to BytesIO object
+    image_io = io.BytesIO()
+    image.save(image_io, format="PNG")
+    
+    # Return a ContentFile that can be saved in the ImageField
+    return ContentFile(image_io.getvalue(), name=f"{pdf_file.name.split('.')[0]}_icon.png")
 
 
 @teacher_login_required
@@ -903,64 +928,96 @@ def teacher_materials(request):
 
     return render(request, 'teacherpanel/show_materials.html', context)
 
-
 @teacher_login_required
 def teacher_insert_update_materials(request):
     chepter_data = Chepter.objects.all()
     context = {
-        'title' : 'Insert Materials',
-        'chepter_data':chepter_data,
+        'title': 'Insert Materials',
+        'chepter_data': chepter_data,
     }
 
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
-        chepter_data = chepter_data.filter(chep_std__std_id = get_std)
-        context.update({'get_std ':get_std,'chepter_data':chepter_data})
+        chepter_data = chepter_data.filter(chep_std__std_id=get_std)
+        context.update({'get_std': get_std, 'chepter_data': chepter_data})
 
     if request.GET.get('get_subject'):
         get_subject = int(request.GET['get_subject'])
-        chepter_data = chepter_data.filter(chep_sub__sub_id = get_subject)
-        context.update({'get_subject':get_subject,'chepter_data':chepter_data})     
+        chepter_data = chepter_data.filter(chep_sub__sub_id=get_subject)
+        context.update({'get_subject': get_subject, 'chepter_data': chepter_data})
 
- # ================update Logic============================
+    # ================Update Logic============================
     if request.GET.get('pk'):
         if request.method == 'POST':
             instance = get_object_or_404(Chepterwise_material, pk=request.GET['pk'])
-            form = teacher_materials_form(request.POST,request.FILES, instance=instance)
-            check = Chepterwise_material.objects.filter(cm_filename = form.data['cm_filename'], cm_chepter__chep_name = form.data['cm_chepter']).count()
+            form = teacher_materials_form(request.POST, request.FILES, instance=instance)
+            check = Chepterwise_material.objects.filter(
+                cm_filename=form.data['cm_filename'],
+                cm_chepter__chep_name=form.data['cm_chepter']
+            ).exclude(pk=request.GET['pk']).count()
+
             if check >= 1:
-                messages.error(request,'{} is already Exists'.format(form.data['cm_filename']))
+                messages.error(request, '{} is already Exists'.format(form.data['cm_filename']))
             else:
                 if form.is_valid():
-                    chap_obj = form.cleaned_data['cm_chepter']    
-                    form.save()
-                    url='/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(chap_obj.chep_sub.sub_std.std_id,chap_obj.chep_sub.sub_id)
+                    material = form.save(commit=False)
+                    pdf_file = form.cleaned_data['cm_file']
+                    
+                    # Generate icon for the PDF file
+                    material.cm_file_icon.save(
+                        pdf_file.name.replace('.pdf', '_icon.png'),
+                        generate_pdf_icon(pdf_file),
+                        save=False
+                    )
+                    material.save()
+                    
+                    chap_obj = form.cleaned_data['cm_chepter']
+                    url = '/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(
+                        chap_obj.chep_sub.sub_std.std_id,
+                        chap_obj.chep_sub.sub_id
+                    )
                     return redirect(url)
                 else:
                     filled_data = form.data
-                    context.update({'filled_data ':filled_data,'errors':form.errors})
-        
-        update_data = Chepterwise_material.objects.get(cm_id = request.GET['pk'])
-        context.update({'update_data':update_data})  
+                    context.update({'filled_data': filled_data, 'errors': form.errors})
+
+        update_data = Chepterwise_material.objects.get(cm_id=request.GET['pk'])
+        context.update({'update_data': update_data})
     else:
-        # ===================insert_logic===========================
+        # ===================Insert Logic===========================
         if request.method == 'POST':
             form = teacher_materials_form(request.POST, request.FILES)
             if form.is_valid():
-                url='/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(chap_obj.chep_sub.sub_std.std_id,chap_obj.chep_sub.sub_id)
-                    
-                check = Chepterwise_material.objects.filter(cm_filename = form.data['cm_filename'], cm_chepter__chep_name = form.data['cm_chepter']).count()
+                pdf_file = form.cleaned_data['cm_file']
+                chap_obj = form.cleaned_data['cm_chepter']
+                url = '/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(
+                    chap_obj.chep_sub.sub_std.std_id,
+                    chap_obj.chep_sub.sub_id
+                )
+
+                check = Chepterwise_material.objects.filter(
+                    cm_filename=form.data['cm_filename'],
+                    cm_chepter__chep_name=form.data['cm_chepter']
+                ).count()
+
                 if check >= 1:
-                    messages.error(request,'{} is already Exists'.format(form.data['cm_filename']))
-                else:    
-                    form.save()
+                    messages.error(request, '{} is already Exists'.format(form.data['cm_filename']))
+                else:
+                    material = form.save(commit=False)
+                    # Generate icon for the PDF file
+                    material.cm_file_icon.save(
+                        pdf_file.name.replace('.pdf', '_icon.png'),
+                        generate_pdf_icon(pdf_file),
+                        save=False
+                    )
+                    material.save()
                     return redirect(url)
             else:
                 filled_data = form.data
-                context.update({'filled_data ':filled_data,'errors':form.errors})
-                return render(request, 'teacherpanel/insert_update_materials_teacher.html', context) 
-        
-    return render(request, 'teacherpanel/insert_update_materials_teacher.html',context)                
+                context.update({'filled_data': filled_data, 'errors': form.errors})
+                return render(request, 'teacherpanel/insert_update_materials_teacher.html', context)
+
+    return render(request, 'teacherpanel/insert_update_materials_teacher.html', context)
 
 
 @teacher_login_required
