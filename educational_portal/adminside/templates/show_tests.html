@@ -61,8 +61,8 @@
                 <tr>
                     <td><input type="checkbox" class="form-check-input" value="{{x.test_id}}" name="selection" /></td>
                     <td><a href="{% url 'show_test_questions_admin' %}?test_id={{x.test_id}}">{{x.test_name}}</a></td>
-                    <td>{{x.test_sub.sub_name}}</td>
-                    <td>{{x.test_std}}</td>
+                    <td>{{x.test_sub__sub_name}}</td>
+                    <td>{{x.test_std__std_name}} {{x.test_std__std_board__brd_name}}</td>
                     <td>{{x.num_questions}}</td>
                     <td>{{x.total_marks}}</td>
                     <!-- <td><a href="{% url 'insert_update_tests' %}?update_id={{x.test_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td> -->

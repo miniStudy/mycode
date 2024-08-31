@@ -54,7 +54,7 @@
                 <tr>
                     <td><input type="checkbox" class="form-check-input" value="{{x.sub_id}}" name="selection" /></td>
                     <td>{{x.sub_name}}</td>
-                    <td>{{x.sub_std.std_name}} {{x.sub_std.std_board}}</td>
+                    <td>{{x.sub_std__std_name}} {{x.sub_std__std_board__brd_name}}</td>
                     <td><a href="{% url 'insert_update_subjects' %}?pk={{x.sub_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>
                 {% endfor %}
