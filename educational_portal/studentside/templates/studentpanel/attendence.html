@@ -35,8 +35,8 @@
           {% for data in attendence_data %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ data.atten_timetable.tt_day }}</td>
-            <td>{{ data.atten_timetable.tt_subject1.sub_name }}</td>
+            <td>{{ data.atten_timetable__tt_day }}</td>
+            <td>{{ data.atten_timetable__tt_subject1__sub_name }}</td>
             <td>{{ data.atten_date }}</td>
             <td>{% if data.atten_present %}Present{% else %}Absent{% endif %}</td>
           </tr>

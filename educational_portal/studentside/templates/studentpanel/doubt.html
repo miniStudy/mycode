@@ -28,7 +28,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <p class="fw-medium">{{data.doubt_doubt|safe}}</p>
-      <span class="fst-italic" style="font-size:12px">Subject: {{data.doubt_subject.sub_name}}</span> <br>
+      <span class="fst-italic" style="font-size:12px">Subject: {{data.doubt_subject__sub_name}}</span> <br>
       <span class="fst-italic" style="font-size:12px">Date: {{data.doubt_date}}</span> <br>
       <a href="{% url 'Student_Doubt_Solution' %}?doubt_id={{data.doubt_id}}" class="btn border border-warning my-2"><i class="fa-solid fa-plus me-1"></i> Add
         Solution</a>
@@ -36,7 +36,7 @@
         Solution</a>
         <br>{% if data.verified_solution != 0 %}<span><img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 22px;">{{data.verified_solution}} Solution verified</span>{% endif %}
       <hr>
-      <span>{{data.doubt_stud_id.stud_name}} {{data.doubt_stud_id.stud_lastname}}</span>
+      <span>{{data.doubt_stud_id__stud_name}} {{data.doubt_stud_id__stud_lastname}}</span>
     </div>
   </div>
   {% endfor %}

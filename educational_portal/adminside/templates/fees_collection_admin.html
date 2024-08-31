@@ -101,21 +101,12 @@
               <tbody>
                 {% for x in students_data %}
                   <tr>
-                        <td>{{x.stud_std}}</td>
+                        <td>{{x.stud_std__std_name}} {{x.stud_std__std_board__brd_name}}</td>
                         <td>{{x.stud_name}} {{x.stud_lastname}}</td>
-                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {{x.stud_pack.pack_fees}}</td>
+                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {{x.stud_pack__pack_fees}}</td>
                         <td><i class="fa-solid fa-indian-rupee-sign"></i> {% if x.discountt %}{{x.discountt}}{% else %}0{% endif %}</td>
                         <td><i class="fa-solid fa-indian-rupee-sign"></i> {% if x.amount_paid %}{{x.amount_paid}}{% else %}0{% endif %}</td>
-                        <td id="abcd{{x.stud_id}}"><script>   var packFees = {{ x.stud_pack.pack_fees|default:0|escapejs }};
-                            var discount = {{ x.discountt|default:0|escapejs }};
-                            var amountPaid = {{ x.amount_paid|default:0|escapejs }};
-                            
-                            // Perform the calculation
-                            var remaining = packFees - discount - amountPaid;
-                            
-                            document.getElementById('abcd{{x.stud_id}}').innerHTML = '<i class="fa-solid fa-indian-rupee-sign"></i> '+ remaining;
-                           </script></td>
-                           <!-- <td><a href="{% url 'delete_cheques_admin' %}?delete_fees_collection={{x.fees_id}}"><span class="btn btn-small btn-danger me-sm-3 me-1">Delete</span></a></td> -->
+                        <td id="remaining{{ x.stud_id }}"></td>       
                   </tr>
                 {% endfor %}
               </tbody>
@@ -177,4 +168,26 @@
 </div>
 
 <!--/ DataTable with Buttons -->
+
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      {% for x in students_data %}
+      // Retrieve values from the template
+      var packFees = parseFloat('{{ x.stud_pack__pack_fees|default:0|escapejs }}');
+      var discount = parseFloat('{{ x.discountt|default:0|escapejs }}');
+      var amountPaid = parseFloat('{{ x.amount_paid|default:0|escapejs }}');
+
+      // Calculate remaining amount
+      var remaining = packFees - discount - amountPaid;
+
+      // Update the corresponding table cell
+      document.getElementById('remaining{{ x.stud_id }}').innerHTML = '<i class="fa-solid fa-indian-rupee-sign"></i> ' + remaining.toFixed(2);
+      {% endfor %}
+  });
+</script>
+
+
 {% endblock %}
