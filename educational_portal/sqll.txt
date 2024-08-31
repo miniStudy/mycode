@@ -295,3 +295,42 @@ INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep
 ('2 - People as Resource','sem 1','/uploads/default_chep_icon.png','12','24'),
 ('3 - Poverty as a Challenge','sem 1','/uploads/default_chep_icon.png','12','24'),
 ('4 - Food Security in India','sem 1','/uploads/default_chep_icon.png','12','24');
+
+# Insert Chepters of English std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('A Letter to God','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Nelson Mandela: Long Walk to Freedom','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Two Stories about Flying','sem 1','/uploads/default_chep_icon.png','13','39'),
+('From the Diary of Anne Frank','sem 1','/uploads/default_chep_icon.png','13','39'),
+('The Hundred Dresses – I','sem 1','/uploads/default_chep_icon.png','13','39'),
+('The Hundred Dresses – II','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Glimpses of India','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Mijbil the Otter','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Madam Rides the Bus','sem 1','/uploads/default_chep_icon.png','13','39'),
+('The Sermon at Benares','sem 1','/uploads/default_chep_icon.png','13','39'),
+('The Proposal','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - A Triumph of Surgery','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Thief’s Story','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Midnight Visitor','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - A Question of Trust','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - Footprints without Feet','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Making of a Scientist','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Necklace','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Hack Driver','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - Bholi','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Book that Saved the Earth','sem 1','/uploads/default_chep_icon.png','13','39');
+
+# Insert Chepters of Hindi std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('पद','sem 1','/uploads/default_chep_icon.png','13','40'),
+('राम-लक्ष्मण-परशुराम संवाद','sem 1','/uploads/default_chep_icon.png','13','40'),
+('आत्मकथ्य','sem 1','/uploads/default_chep_icon.png','13','40'),
+('उत्साह और अट नहीं रही','sem 1','/uploads/default_chep_icon.png','13','40'),
+('यह दंतुरहित मुस्कान और फसल','sem 1','/uploads/default_chep_icon.png','13','40'),
+('संगतकार','sem 1','/uploads/default_chep_icon.png','13','40'),
+('नेताजी का चश्मा','sem 1','/uploads/default_chep_icon.png','13','40'),
+('बालगोबिन भगत','sem 1','/uploads/default_chep_icon.png','13','40'),
+('लखनवी अंदाज़','sem 1','/uploads/default_chep_icon.png','13','40'),
+('एक कहानी यह भी','sem 1','/uploads/default_chep_icon.png','13','40'),
+('नौबतखाने में इबादत','sem 1','/uploads/default_chep_icon.png','13','40'),
+('संस्कृति','sem 1','/uploads/default_chep_icon.png','13','40');
