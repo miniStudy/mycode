@@ -253,8 +253,9 @@
                       </div>
                     </div>
                     <div class="flex-grow-1">
-                      <span class="fw-medium d-block lh-1">John Doe</span>
-                      <small>Admin</small>
+                      {% if request.session.fac_id %}
+                      <span class="fw-medium d-block lh-1"l>{{request.session.fac_name}}</span>
+                      {% endif %}
                     </div>
                   </div>
                 </a>

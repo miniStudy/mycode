@@ -40,7 +40,7 @@
                             </thead>
                             <tbody>
                                 {% for chepter in chepters %}
-                                    {% if chepter.chep_sub.sub_id == subject.sub_id %}
+                                    {% if chepter.chep_sub__sub_id == subject.sub_id %}
                                 <tr>
                                     <td>{{chepter.chep_name}}</td>
                                     <td>10%</td>

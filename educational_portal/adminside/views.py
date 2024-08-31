@@ -580,9 +580,9 @@ def delete_subjects(request):
 
 @admin_login_required
 def show_chepters(request):
-    data = Chepter.objects.all()
+    data = Chepter.objects.all().values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
     std_data = Std.objects.all()
-    subject_data = Subject.objects.all()
+    subject_data = Subject.objects.all().values('sub_id','sub_name')
     context ={
         'data' : data,
         'title' : 'Chepters',
@@ -1466,7 +1466,8 @@ def delete_admin_batches(request):
 def show_admin_materials(request):
     standard_data = Std.objects.all()
     subjects_data = Subject.objects.all()
-    materials = Chepterwise_material.objects.all()
+    materials = Chepterwise_material.objects.all().values('cm_id','cm_filename','cm_chepter__chep_sub__sub_id','cm_file','cm_file_icon')
+    print(materials)
     selected_sub=None
 
     context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, 'title' : 'Materials',}
