@@ -240,7 +240,7 @@ def student_announcement(request):
     Q(announce_std=None, announce_batch=None) |
     Q(announce_std__std_id=request.session.get('stud_std'), announce_batch=None) |
     Q(announce_std__std_id=request.session.get('stud_std'), announce_batch__batch_id=request.session.get('stud_batch'))
-).order_by('-pk')[:50]
+).values('announce_title', 'announce_id', 'announce_msg', 'announce_date').order_by('-pk')[:50]
 
     return render(request, 'studentpanel/announcements.html', {"announcements_data":announcements_data, 'title':title})
 
@@ -267,7 +267,7 @@ def show_materials(request):
     title = 'Materials'
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
-    materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std)
+    materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name')
     selected_sub=None
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']
@@ -291,7 +291,7 @@ def show_attendence(request):
     student_name = request.session['stud_name']
     student_std = request.session['stud_std']
 
-    attendence_data = Attendance.objects.filter(atten_student__stud_id = student_id)
+    attendence_data = Attendance.objects.filter(atten_student__stud_id = student_id).values('atten_timetable__tt_day', 'atten_timetable__tt_subject1__sub_name', 'atten_date', 'atten_present')
 
     total_days = Attendance.objects.filter(atten_student__stud_id = student_id).count()
     present_days = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
@@ -320,8 +320,8 @@ def show_attendence(request):
 
 @student_login_required
 def show_event(request):
-    event_data = Event.objects.all()
-    event_imgs = Event_Image.objects.all()
+    event_data = Event.objects.all().values('event_id', 'event_name')
+    event_imgs = Event_Image.objects.all().values('event__event_id', 'event_img')
     selected_events = Event.objects.all()[:1]
     context={
         'event_data':event_data,
@@ -446,16 +446,14 @@ def Student_Test_Submission(request):
         test_id = request.POST['test_id'] 
         student_id = request.POST['student_id'] 
         total_attemped_que = Test_submission.objects.filter(ts_que_id__tq_name__test_id = test_id, ts_stud_id__stud_id = student_id, ts_attempted=1).count()
-        print("----",total_attemped_que)
         total_test_marks = Chepterwise_test.objects.filter(test_id = test_id).annotate(totaltest_marks = Sum('test_questions_answer__tq_weightage'))
-        print(total_test_marks[0].totaltest_marks)
     return redirect('Student_Test')
         
 @student_login_required
 def show_syllabus(request):
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
-    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std)
+    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std).values('chep_sub__sub_id', 'chep_name')
 
     context = {
         'subjects':subjects,
@@ -468,11 +466,11 @@ def student_inquiries_data(request):
     standard_data = Std.objects.all()
     if request.method == 'POST':
         form = student_inquiries(request.POST)
-        print(form)
         if form.is_valid():
             form.save()
         else:
-            print("Form is not valid")
+            messages.error(request, "Form is not valid!")
+            return redirect('Student_Inquiries')
     else:
         form = student_inquiries()
     return render(request, 'studentpanel/inquiries.html', {'form':form, 'standard_data':standard_data})
@@ -493,7 +491,7 @@ def Student_doubt_section(request):
         Case(
             When(doubt_solution__solution_verified=True, then=1),
             output_field=IntegerField(),
-        ))).order_by('-pk')[:30]
+        ))).values('doubt_id', 'doubt_date', 'doubt_doubt', 'doubt_subject__sub_name', 'doubt_stud_id__stud_name', 'doubt_stud_id__stud_lastname', 'verified_solution', 'count_solution')   .order_by('-pk')[:30]
     
     context = {
         'doubt_data':doubt_data,
@@ -516,7 +514,6 @@ def Student_add_doubts(request):
 
     if request.method == 'POST':
         form = doubts_form(request.POST)
-        print(form)
         if form.is_valid():
             form.save()
             return redirect('Student_Doubt') 
@@ -573,7 +570,6 @@ def Student_edit_solution(request,id):
     solution_id = Doubt_solution.objects.get(solution_id=id)
     if request.POST.get('solution'):
         form = solution_form(request.POST, instance=solution_id)
-        print(form)
         if form.is_valid():
             form.save()
             return redirect('Student_Doubt')
