@@ -70,7 +70,7 @@ def teacher_home(request):
         get_std = request.GET.get('get_std')
 
         get_std = Std.objects.get(std_id = get_std)
-        students_li = Students.objects.filter(stud_std = get_std)
+        students_li = Students.objects.filter(stud_std = get_std).values('stud_id','stud_name','stud_lastname')
         overall_attendance_li = []
         for x in students_li:
             total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
