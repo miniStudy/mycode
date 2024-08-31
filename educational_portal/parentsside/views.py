@@ -186,8 +186,8 @@ def parent_logout_page(request):
 
 @parent_login_required
 def show_parent_events(request):
-    event_data = Event.objects.all()
-    event_imgs = Event_Image.objects.all()
+    event_data = Event.objects.all().values('event_id','event_name')
+    event_imgs = Event_Image.objects.all().values('event_id','event_img')
     selected_events = Event.objects.all()[:1]
     context={
         'event_data':event_data,
@@ -408,7 +408,7 @@ def show_parentside_announcement(request):
     Q(announce_std=None, announce_batch=None) |
     Q(announce_std__std_id=student.stud_std.std_id, announce_batch=None) |
     Q(announce_std__std_id=student.stud_std.std_id, announce_batch__batch_id=student.stud_batch.batch_id)
-).order_by('-pk')[:50]
+).order_by('-pk')[:50].values('announce_title','announce_id','announce_msg','announce_date')
 
     return render(request, 'parentpanel/announcement.html', {"announcements_data":announcements_data, 'title':title})
 
@@ -417,5 +417,5 @@ def show_parentside_timetable(request):
     student_id = request.session['parent_id']
     student = Students.objects.get(stud_id = student_id)
     title = 'Timetable'
-    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student.stud_batch.batch_id)
+    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student.stud_batch.batch_id).values('tt_day','tt_subject1','tt_time1','tt_tutor1__fac_name')
     return render(request, 'parentpanel/timetable.html', {'timetable_data':timetable_data, 'title':title})

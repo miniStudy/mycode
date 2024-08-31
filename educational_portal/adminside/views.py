@@ -21,6 +21,8 @@ from django.core.mail import EmailMultiAlternatives
 from adminside.decorators import admin_login_required
 from django.db.models import Count, Q
 from django.http import Http404
+from django.db.models.functions import Coalesce
+
 
 import requests
 
@@ -493,7 +495,7 @@ def delete_announcements(request):
 
 @admin_login_required
 def show_subjects(request):
-    data = Subject.objects.all()
+    data = Subject.objects.all().values('sub_id','sub_name','sub_std__std_name','sub_std__std_board__brd_name')
     std_data = Std.objects.all()
    
     context ={
@@ -870,7 +872,7 @@ def delete_timetable(request):
 
 @admin_login_required
 def show_attendance(request):
-    data = Attendance.objects.all()
+    data = Attendance.objects.all().values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
     std_data = Std.objects.all()
     batch_data = Batches.objects.all()
     stud_data = Students.objects.all()
@@ -982,7 +984,7 @@ def insert_events(request):
 
 @admin_login_required
 def show_tests(request):
-    data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+    data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
     std_data = Std.objects.all()
     subject_data = Subject.objects.all()
     context ={
@@ -1729,12 +1731,11 @@ def fees_collection_admin(request):
     Context = {'std_data':std_data}
              
     students_data = Students.objects.annotate(
-    amount_paid=Sum('fees_collection__fees_paid'),
+    amount_paid=Coalesce(Sum('fees_collection__fees_paid'), Value(0)),
     discountt=Case(
         When(discount__discount_amount=None, then=Value(0)),
         default=F('discount__discount_amount'),output_field=IntegerField()
-    ))
-
+    )).values('stud_id','amount_paid','discountt','stud_std__std_name','stud_std__std_board__brd_name','stud_name','stud_lastname','stud_pack__pack_fees')
     # -------------filter--------------------------------------------
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
@@ -1781,6 +1782,7 @@ def fees_collection_admin(request):
         'total_fees_amount_after_discount':total_fees_amount_after_discount,
         'total_pending_fees':total_pending_fees,
         'students_data':students_data,
+   
     })
     return render(request, 'fees_collection_admin.html', Context)
 

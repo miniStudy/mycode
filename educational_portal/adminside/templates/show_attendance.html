@@ -57,12 +57,12 @@
         <tbody>
             {% for x in data %}
             <tr>
-                <td>{{ x.atten_timetable.tt_day }}</td>
-                <td>{{ x.atten_timetable.tt_time1 }}  {{x.atten_date|date:"d-m-Y"}}</td>
-                <td>{{ x.atten_timetable.tt_subject1 }}</td>
-                <td>{{ x.atten_timetable.tt_tutor1.fac_name }}</td>
+                <td>{{ x.atten_timetable__tt_day }}</td>
+                <td>{{ x.atten_timetable__tt_time1 }}  {{x.atten_date|date:"d-m-Y"}}</td>
+                <td>{{ x.atten_timetable__tt_subject1 }}</td>
+                <td>{{ x.atten_timetable__tt_tutor1__fac_name }}</td>
                 <td>{% if x.atten_present %}Present{% else %}Absent{% endif %}</td>
-                <td>{{ x.atten_student.stud_name }} {{ x.atten_student.stud_lastname }}</td>
+                <td>{{ x.atten_student__stud_name }} {{ x.atten_student__stud_lastname }}</td>
             </tr>
             {% endfor %}
         </tbody>
