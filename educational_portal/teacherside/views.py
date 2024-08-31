@@ -70,7 +70,7 @@ def teacher_home(request):
         get_std = request.GET.get('get_std')
 
         get_std = Std.objects.get(std_id = get_std)
-        students_li = Students.objects.filter(stud_std = get_std)
+        students_li = Students.objects.filter(stud_std = get_std).values('stud_id','stud_name','stud_lastname')
         overall_attendance_li = []
         for x in students_li:
             total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
@@ -141,6 +141,7 @@ def teacher_login_handle(request):
             Data = Faculties.objects.filter(fac_email=email,fac_password=password)
             for item in Data:
                request.session['fac_id'] = item.fac_id
+               request.session['fac_name'] = item.fac_name
                request.session['fac_logged_in'] = 'yes'
 
             if request.POST.get("remember"):
@@ -251,7 +252,7 @@ def teacher_attendance(request):
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
-     data = Attendance.objects.all()
+     data = Attendance.objects.all().values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
      std_data = Std.objects.filter(std_id__in = std_access_list)   
      batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
      stud_data = Students.objects.all()
@@ -462,7 +463,7 @@ def teacher_syllabus(request):
         subjects_list.append(x.fa_subject.sub_id)
     
     subjects = Subject.objects.filter(sub_id__in = subjects_list)
-    chepters = Chepter.objects.filter().annotate(status=F('syllabus__syllabus_status'))
+    chepters = Chepter.objects.filter().annotate(status=F('syllabus__syllabus_status')).values('chep_sub__sub_id', 'chep_name','chep_id', 'status')
 
 
     context = {
@@ -514,8 +515,8 @@ def show_teacher_solution_verified(request):
 
 @teacher_login_required
 def teacher_events(request):
-    event_data = Event.objects.all()
-    event_imgs = Event_Image.objects.all()
+    event_data = Event.objects.all().values('event_id','event_name')
+    event_imgs = Event_Image.objects.all().values('event_id','event_img')
     selected_events = Event.objects.all()[:1]
     context={
         'event_data':event_data,
@@ -784,7 +785,7 @@ def teacher_announcement(request):
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
-    data = Announcements.objects.all()
+    data = Announcements.objects.all().values('announce_id','announce_title','announce_msg','announce_date')
     std_data = Std.objects.filter(std_id__in = std_access_list)
     batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
    
@@ -909,7 +910,7 @@ def teacher_materials(request):
 
     standard_data = Std.objects.filter(std_id__in = std_access_list)
     subjects_data = Subject.objects.filter(sub_id__in = subject_access_list)
-    materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id__in = subject_access_list)
+    materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id__in = subject_access_list).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
     selected_sub=None
 
     context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, "title":'Materials'}
@@ -1088,7 +1089,7 @@ def report_card_show(request):
     data = Attendance.objects.all()
     std_data = Std.objects.filter(std_id__in = std_access_list)
     batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
-    stud_data = Students.objects.all()
+    stud_data = Students.objects.all().values('stud_std__std_id', 'stud_batch__batch_id', 'stud_id', 'stud_name', 'stud_lastname')
     subj_data = Subject.objects.all()
 
     context ={
