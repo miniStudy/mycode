@@ -76,15 +76,15 @@ def student_home(request):
     overall_attendance_li = overall_attendance_li[:5]
 
     #=============== Test Result Dashboard ===============================================================
-    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).order_by('-pk')
+    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).values('tau_test_id__test_name', 'tau_obtained_marks').order_by('-pk')
 
     test_counts = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
 
     test_result_list = []
     test_name_list = []
     for x in test_result_analysis:
-        test_name_list.append(x.tau_test_id.test_name)
-        test_result_list.append(x.tau_obtained_marks)
+        test_name_list.append(x['tau_test_id__test_name'])
+        test_result_list.append(x['tau_obtained_marks'])
     
     context = {
         'title':'Home',
@@ -584,7 +584,6 @@ def student_analysis_view(request):
 
     # ===============Overall Attendance==================
     student = Students.objects.get(stud_id = student_id)
-    student_data = Students.objects.filter(stud_std__std_id = student_std)
 
     total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
     
@@ -600,31 +599,31 @@ def student_analysis_view(request):
 
 
     # ==================Test Report and Attendance Report============
-    students_li = Students.objects.filter(stud_std__std_id = student_std)
+    students_li = Students.objects.filter(stud_std__std_id = student_std).values('stud_id', 'stud_name')
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
         else:
             overall_attendence_studentwise = 0
         
 
-        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
         
         
-        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
         
 
         if total_marks == 0:
             overall_result = 0
         else:
             overall_result = round((obtained_marks/total_marks)*100,2)
-        if student_id == x.stud_id: 
+        if student_id == x['stud_id']: 
             current_student_overall_test_result = overall_result
 
-        overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+        overall_attendance_li.append({'stud_name':x['stud_name'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
 
     
    
@@ -652,14 +651,14 @@ def student_analysis_view(request):
     
     # ======================SubjectWise TestResult==============================
 
-    subjects_data = Subject.objects.filter(sub_std=student_std)
+    subjects_data = Subject.objects.filter(sub_std=student_std).values('sub_name')
     final_average_marks_subwise = []
 
     for x in subjects_data:
-        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x['sub_name'], tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
        
 
-        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x['sub_name'], tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
         
         
         if total_marks_subwise == 0:
@@ -667,7 +666,7 @@ def student_analysis_view(request):
         else:
             average_marks_subwise = round((obtained_marks_subwise/total_marks_subwise)*100,2)
         
-        final_average_marks_subwise.append({'subject_name':x.sub_name, 'average_marks_subwise':average_marks_subwise})
+        final_average_marks_subwise.append({'subject_name':x['sub_name'], 'average_marks_subwise':average_marks_subwise})
 
     # ====================Average Test Result=================================
     overall_results = [i['overall_result'] for i in overall_attendance_li]
@@ -687,11 +686,11 @@ def student_analysis_view(request):
         Case(
             When(doubt_solution__solution_verified=True, then=1),
             output_field=IntegerField(),
-        )))
+        ))).values('verified_solution')
     
     my_solve_doubts = 0
     for x in solutions_gives:
-        if x.verified_solution > 0:
+        if x['verified_solution'] > 0:
             my_solve_doubts += 1
         else:
             print("no verified")
@@ -704,7 +703,6 @@ def student_analysis_view(request):
         'title': 'Report-Card',
         'logo_url': 'https://metrofoods.co.nz/1nobg.png',
         'student':student,
-        'student_data':student_data,
         'overall_attendence':overall_attendence,
         'overall_attendance_li':overall_attendance_li,
         'overall_attendance_subwise':overall_attendance_subwise,
