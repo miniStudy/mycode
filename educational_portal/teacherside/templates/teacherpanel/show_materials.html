@@ -58,7 +58,7 @@
                 <div class="row">
                     {% if materials %}
                     {% for mat in materials %}
-                    {% if selected_sub.sub_name == mat.cm_chepter.chep_sub.sub_name %}
+                    {% if selected_sub.sub_id == mat.cm_chepter__chep_sub__sub_id %}
 
                     <div class="col-md-2 mb-3">
                         
@@ -74,7 +74,7 @@
                             {% endif %}
                         </div>
                         
-                        <div class="w-100 text-white p-2" style="height: 65px;overflow: hidden;border:1px solid #88a9e6;"><a href="/media/{{mat.cm_file}}" style="color: white;">{{mat.cm_filename}} - {{mat.cm_chepter.chep_sub.sub_name}}</a></div>
+                        <div class="w-100 text-white p-2" style="height: 65px;overflow: hidden;border:1px solid #88a9e6;"><a href="/media/{{mat.cm_file}}" style="color: white;">{{mat.cm_filename}} - {{mat.cm_chepter__chep_sub__sub_name}}</a></div>
                     
                 </div>
                     {% endif %}
@@ -105,7 +105,7 @@
                     
                     {% for mat in materials %}
                     
-                    {% if data.sub_id == mat.cm_chepter.chep_sub.sub_id %}
+                    {% if data.sub_id == mat.cm_chepter__chep_sub__sub_id %}
                     <div class="col-md-2 mb-3">
                         
                         
@@ -120,7 +120,7 @@
                         {% endif %}
                     </div>
                     
-                    <div class="w-100 text-white p-2" style="height: 65px;overflow: hidden;border:1px solid #88a9e6;"><a href="/media/{{mat.cm_file}}" style="color: white;">{{mat.cm_filename}} - {{mat.cm_chepter.chep_sub.sub_name}}</a></div>
+                    <div class="w-100 text-white p-2" style="height: 65px;overflow: hidden;border:1px solid #88a9e6;"><a href="/media/{{mat.cm_file}}" style="color: white;">{{mat.cm_filename}} - {{mat.cm_chepter__chep_sub__sub_name}}</a></div>
                 
                     </div>
                     {% endif %}

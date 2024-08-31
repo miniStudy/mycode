@@ -49,7 +49,7 @@
         <li><a class="dropdown-item" href="{% url 'report_card' %}?get_std={{get_std.std_id}}">ALL</a></li>
         {% for x in stud_data %}
         <li><a class="dropdown-item"
-            href="{% url 'report_card' %}?get_std={{x.stud_std.std_id}}&get_batch={{x.stud_batch.batch_id}}&get_student={{x.stud_id}}">{{x.stud_name}}
+            href="{% url 'report_card' %}?get_std={{x.stud_std__std_id}}&get_batch={{x.stud_batch__batch_id}}&get_student={{x.stud_id}}">{{x.stud_name}}
             {{x.stud_lastname}}</a></li>
         {% endfor %}
       </ul>
