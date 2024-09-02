@@ -19,10 +19,22 @@
             </a>
         </div>
         <br>
+
+        <div class="row">
+            <div class="col-md-2">
+                <div class="input-group mt-2 mb-2">
+                    <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+                    <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
+                </div>
+            </div>
+        </div>
+        
+
         <form action="{% url 'delete_faculties' %}" method="POST"> 
             {% csrf_token %}        
             <div class="card-datatable table-responsive pt-0">
-                <table id="example" class="display table table-bordered" style="width:100%">
+                <table id="data-table" class="display table table-bordered" style="width:100%">
                     <thead>
                         <tr>
                             <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
@@ -48,8 +60,12 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                 <!-- Pagination -->
+                        {% for x in faculties.paginator.page_range %}
+                        <a href="?page={{x}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>
+                        {% endfor %}
+                </div>
             </div>  
-
             <!-- Modal -->
             <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
                 <div class="modal-dialog">

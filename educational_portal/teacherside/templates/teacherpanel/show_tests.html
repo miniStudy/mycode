@@ -24,7 +24,7 @@
     <br>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">
-        <button class="btn btn-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown"
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown"
         aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
       <ul class="dropdown-menu">
         <li><a class="dropdown-item" href="{% url 'teacher_tests' %}">ALL</a></li>
@@ -34,7 +34,7 @@
         {% endfor %}
       </ul>
 
-      <button class="btn btn-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown"
+      <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown"
         aria-expanded="false">{% if get_subject %}{{get_subject.sub_name}}{% else %}Subjects{% endif %}</button>
       <ul class="dropdown-menu">
         <li><a class="dropdown-item" href="{% url 'teacher_tests' %}?get_std={{get_std.std_id}}">ALL</a></li>
@@ -43,6 +43,7 @@
             href="{% url 'teacher_tests' %}?get_std={{x.sub_std.std_id}}&get_subject={{x.sub_id}}">{{x}}</a></li>
         {% endfor %}
       </ul>
+      <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&get_sub={{ get_subject.sub_id }}?model_name=chepterwise_material"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
       </div>
       <div class="input-group mt-2">
         <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
@@ -89,7 +90,7 @@
         </table>
       <!-- Pagination -->
       {% for x in data.paginator.page_range %}
-      <a href="?page={{x}}&get_std={{get_std.std_id}}&get_subject={{get_subject.sub_id}}" class="btn btn-sm btn-secondary {% if data.number == x %} btn-primary {% endif %} mt-3">{{ x }}</a>
+      <a href="?page={{x}}&get_std={{get_std.std_id}}&get_subject={{get_subject.sub_id}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>
       {% endfor %}
 
       </div>

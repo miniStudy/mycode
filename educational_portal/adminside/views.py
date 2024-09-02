@@ -702,6 +702,7 @@ def delete_chepters(request):
 @admin_login_required
 def show_faculties(request):
     faculties = Faculties.objects.all()
+    faculties = paginatoorrr(faculties,request)
     context = {
         'faculties': faculties,
         'title': 'Faculties',
