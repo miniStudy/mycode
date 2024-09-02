@@ -22,9 +22,15 @@ from adminside.decorators import admin_login_required
 from django.db.models import Count, Q
 from django.http import Http404
 from django.db.models.functions import Coalesce
-
-
+from django.core.paginator import Paginator
+from django.views.decorators.http import require_GET
 import requests
+
+def paginatoorrr(queryset,request):
+        paginator = Paginator(queryset, 20)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        return page_obj
 
 
 def send_report_card(request):
@@ -1251,39 +1257,74 @@ def delete_admin_package(request):
     return redirect('admin_packages')
 
 @admin_login_required
+@require_GET  # Ensure that only GET requests are allowed
 def show_students(request):
-    data = Students.objects.all()
+    context = {'title': 'Students'}
     std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
-   
-    context ={
-        'data' : data,
-        'title' : 'Students',
-        'std_data' : std_data,
-        'batch_data':batch_data,
-    }
-    if request.GET.get('get_std'):
-        get_std = int(request.GET['get_std'])
-        if get_std == 0:
-            pass
-        else:    
-            data = data.filter(stud_std__std_id = get_std)
-            batch_data = batch_data.filter(batch_std__std_id = get_std)
-            get_std = Std.objects.get(std_id = get_std)
-            context.update({'data':data,'batch_data':batch_data,'get_std':get_std})
-            
+    get_std_id = request.GET.get('get_std')
+    get_batch_id = request.GET.get('get_batch')
 
-    if request.GET.get('get_batch'):
-        get_batch = int(request.GET['get_batch'])
-        if get_batch == 0:
-            pass
-        else:
-            data = data.filter(stud_batch__batch_id = get_batch)
-            get_batch = Batches.objects.get(batch_id = get_batch)
-            context.update({'data':data,'get_batch':get_batch})        
-            
-    return render(request, 'show_students.html',context)
+    if get_std_id and get_batch_id:
+        data = Students.objects.filter(stud_batch__batch_id=get_batch_id).values(
+            'stud_id', 'stud_name', 'stud_lastname', 'stud_username', 'stud_contact', 
+            'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
+            'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
+            'stud_pack__pack_name', 'stud_guardian_email', 'stud_guardian_name', 
+            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
+        )
 
+        batch_data = Batches.objects.filter(batch_std__std_id=get_std_id)
+        get_batch = Batches.objects.get(batch_id=get_batch_id)
+        get_std = Std.objects.get(std_id=get_std_id)
+
+        data = paginatoorrr(data,request)
+        context.update({
+            'data': data,
+            'std_data': std_data,
+            'batch_data': batch_data,
+            'get_batch': get_batch,
+            'get_std': get_std,
+        })
+
+    elif get_std_id:
+        data = Students.objects.filter(stud_std__std_id=get_std_id).values(
+            'stud_id', 'stud_name', 'stud_lastname', 'stud_username', 'stud_contact', 
+            'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
+            'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
+            'stud_pack__pack_name', 'stud_guardian_email', 'stud_guardian_name', 
+            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
+        )
+
+        batch_data = Batches.objects.filter(batch_std__std_id=get_std_id)
+        get_std = Std.objects.get(std_id=get_std_id)
+
+        data = paginatoorrr(data,request)
+        context.update({
+            'data': data,
+            'std_data': std_data,
+            'batch_data': batch_data,
+            'get_std': get_std,
+        })
+
+    else:
+        data = Students.objects.values(
+            'stud_id', 'stud_name', 'stud_lastname', 'stud_username', 'stud_contact', 
+            'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
+            'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
+            'stud_pack__pack_name', 'stud_guardian_email', 'stud_guardian_name', 
+            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
+        )
+        
+        batch_data = Batches.objects.all()
+        data = paginatoorrr(data,request)
+        
+        context.update({
+            'data': data,
+            'std_data': std_data,
+            'batch_data': batch_data,
+        })
+
+    return render(request, 'show_students.html', context)
 
 
 
@@ -1468,15 +1509,14 @@ def delete_admin_batches(request):
 def show_admin_materials(request):
     standard_data = Std.objects.all()
     subjects_data = Subject.objects.all()
-    materials = Chepterwise_material.objects.all().values('cm_id','cm_filename','cm_chepter__chep_sub__sub_id','cm_file','cm_file_icon')
-    print(materials)
+    materials = Chepterwise_material.objects.all().values('cm_id','cm_filename','cm_chepter__chep_sub__sub_id','cm_file','cm_file_icon','cm_chepter__chep_sub__sub_std__std_id')
     selected_sub=None
 
     context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, 'title' : 'Materials',}
     if request.GET.get('std_id'):
         std_id = int(request.GET.get('std_id'))
         subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id)
+        materials = [material for material in materials if material['cm_chepter__chep_sub__sub_std__std_id'] == std_id]
         selected_std = Std.objects.get(std_id=std_id)
         context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_id,'selected_std':selected_std})
 
@@ -1941,3 +1981,8 @@ def faculty_access_show(request):
         form = faculty_access_form()
         context.update({'form':form})
     return render(request, 'faculty_access.html', context)
+
+
+
+def export_data(request):
+    return render(request, 'exportdata.html')

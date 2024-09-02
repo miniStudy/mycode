@@ -18,6 +18,7 @@ from studentside.forms import *
 from adminside.form import *
 from teacherside.forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
+from django.core.paginator import Paginator
 
 import fitz  # PyMuPDF
 from PIL import Image
@@ -32,6 +33,13 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 
 from teacherside.decorators import *
+
+def paginatoorrr(queryset,request):
+    paginator = Paginator(queryset, 5)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    return page_obj
+
 
 def generate_pdf_icon(pdf_file):
     # Read the file content into memory
@@ -547,6 +555,8 @@ def teacher_test(request):
 
 
     data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+    data = paginatoorrr(data,request)
+
     std_data = Std.objects.filter(std_id__in = std_list)
     subject_data = Subject.objects.filter(sub_id__in = subjects_list)
     context ={
@@ -560,7 +570,8 @@ def teacher_test(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(test_sub__sub_std__std_id = get_std)
+            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std)
+            data = paginatoorrr(data,request)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'get_std':get_std, 'subject_data':subject_data, 'std_data':std_data}) 
@@ -571,7 +582,8 @@ def teacher_test(request):
         if get_subject == 0:
             pass
         else:    
-            data = data.filter(test_sub__sub_id = get_subject)
+            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject)
+            data = paginatoorrr(data,request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
 

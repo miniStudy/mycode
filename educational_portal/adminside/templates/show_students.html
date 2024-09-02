@@ -1,140 +1,295 @@
 {% extends 'master.html' %}
- 
+
 {% block contentsection %}
-  <div class="mb-4"><h4>Students</h4></div> 
-  
+<div class="mb-4"><h4>Students</h4></div>
 
 {% for message in messages %}
- {{message|safe}}
+{{ message|safe }}
 {% endfor %}
+
 <!-- DataTable with Buttons -->
 <div class="card">
-    
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="myheadfont">{{title}} Data</div>
-        <div>
-          <div class="d-inline-block" id="exportbtns"></div>
-
-        <a href="{% url 'insert_update_students' %}?get_std={{get_std.std_id}}">
-            <button class="btn btn-primary">
-                <i class="fa-solid fa-plus me-2"></i> ADD
-            </button>
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="myheadfont">{{ title }} Data</div>
+      <div>
+        <div class="d-inline-block" id="exportbtns"></div>
+        <a href="{% url 'insert_update_students' %}?get_std={{ get_std.std_id }}">
+          <button class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i> ADD
+          </button>
         </a>
       </div>
-        
+    </div>
+
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group me-2" role="group" aria-label="First group">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {% if get_std %}{{ get_std.std_name }} {{ get_std.std_board }}{% else %}Std{% endif %}
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}">ALL</a></li>
+          {% for x in std_data %}
+          <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{ x.std_id }}">{{ x.std_name }} {{ x.std_board }}</a></li>
+          {% endfor %}
+        </ul>
+
+
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle ms-2 mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {% if get_batch %}{{ get_batch.batch_name }}{% else %}Batchs{% endif %}
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{ get_std.std_id }}">ALL</a></li>
+          {% for x in batch_data %}
+          <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{ x.batch_std.std_id }}&get_batch={{ x.batch_id }}">{{ x.batch_name }}</a></li>
+          {% endfor %}
+        </ul>
+        <a href="{% url 'export_data' %}?get_std={{ x.batch_std.std_id }}&get_batch={{ x.batch_id }}?model_name=students"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
+      </div>
+      <div class="input-group mt-2">
+        <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+        <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
+      </div>
+    </div>
+    
+
+    <form action="{% url 'delete_boards' %}" method="POST">
+      {% csrf_token %}
+      <div class="card-datatable table-responsive pt-0">
+        <table id="data-table" class="display table table-bordered" style="width:100%">
+          <thead>
+            <tr>
+              <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Contact</th>
+              <th>Email</th>
+              <th>DOB</th>
+              <th>Gender</th>
+              <th>Standard</th>
+              <th>Batch</th>
+              <th>Pack</th>
+              <th>Guardian Name</th>
+              <th>Guardian Number</th>
+              <th>Guardian Email</th>
+              <th>Guardian Profession</th>
+              <th>Address</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in data %}
+            <tr>
+              <td><input type="checkbox" class="form-check-input" value="{{ data.stud_id }}" name="selection" /></td>
+              <td>{{ data.stud_name }} {{ data.stud_lastname }}</td>
+              <td>{{ data.stud_username }}</td>
+              <td>{{ data.stud_contact }}</td>
+              <td>{{ data.stud_email }}</td>
+              <td>{{ data.stud_dob }}</td>
+              <td>{{ data.stud_gender }}</td>
+              <td>{{ data.stud_std__std_name }} {{ data.stud_std__std_board__brd_name }}</td>
+              <td>{{ data.stud_batch__batch_name }}</td>
+              <td>{{ data.stud_pack__pack_name }}</td>
+              <td>{{ data.stud_guardian_name }}</td>
+              <td>{{ data.stud_guardian_number }}</td>
+              <td>{{ data.stud_guardian_email }}</td>
+              <td>{{ data.stud_guardian_profession }}</td>
+              <td>{{ data.stud_address }}</td>
+              <td><a href="{% url 'insert_update_students' %}?pk={{ data.stud_id }}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      
+  
+      
+      <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group" aria-label="First group">
+          {% for x in data.paginator.page_range %}
+          <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Confirm Delete Modal -->
+      <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmdeletemodelLabel"><i class="fa-solid fa-trash me-2"></i> Confirm Delete</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this data ..?<br>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+    </form>
+  </div>
 </div>
 
 
-<br>
-          <div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}">ALL</a></li>
-              {% for x in std_data %}
-              <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
-
-          <div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{get_std.std_id}}">ALL</a></li>
-              {% for x in batch_data %}
-              <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x.batch_name}}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
-
-<br><br>
 
 
+<!-- Include jsPDF and jsPDF AutoTable libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
-    <form action="{% url 'delete_boards' %}" method="POST"> 
-    {% csrf_token %}        
-    <div class="card-datatable table-responsive pt-0">
-        <table id="example" class="display table table-bordered" style="width:100%">
-            <thead>
-                <tr>
-                    <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
-                    <th>Name</th>
-                    <th>Username</th>                    
-                    <th>Conatct</th>                    
-                    <th>Email</th>
-                    <th>DOB</th>
-                    <th>Gender</th>
-                    <th>Standard</th>
-                    <th>Batch</th>
-                    <th>Pack</th>
-                    <th>Guardian Name</th>
-                    <th>Guardian Number</th>
-                    <th>Guardian Email</th>
-                    <th>Guardian Profession</th>
-                    <th>Address</th>
-                    <th>Edit</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for data in data %}
-                <tr>
-                    <td><input type="checkbox" class="form-check-input" value="{{data.stud_id}}" name="selection" /></td>
-                    <td>{{data.stud_name}} {{data.stud_lastname}}</td>
-                    <td>{{data.stud_username}}</td>
-                    <td>{{data.stud_contact}}</td>
-                    <td>{{data.stud_email}}</td>
-                    <td>{{data.stud_dob}}</td>
-                    <td>{{data.stud_gender}}</td>
-                    <td>{{data.stud_std}}</td>
-                    <td>{{data.stud_batch}}</td>
-                    <td>{{data.stud_pack}}</td>
-                    <td>{{data.stud_guardian_name}}</td>
-                    <td>{{data.stud_guardian_number}}</td>
-                    <td>{{data.stud_guardian_email}}</td>
-                    <td>{{data.stud_guardian_profession}}</td>
-                    <td>{{data.stud_address}}</td>
-                    <td><a href="{% url 'insert_update_students' %}?pk={{data.stud_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
-                    
 
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>  
-  <!-- Modal -->
-  <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="confirmdeletemodelLabel"><i class="fa-solid fa-trash me-2"></i> Confirm Delete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to delete this data ..?<br>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash me-2"></i> Delete</button>
-        </div>
-      </div>
-    </div>
-  </div>
-    
-   
-  <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+<!-- JavaScript Libraries and Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+  function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("#data-table tr");
 
-    </form>
-    </div>
-    </div>
+    for (var i = 0; i < rows.length; i++) {
+      var row = [],
+        cols = rows[i].querySelectorAll("td, th");
 
-  <!--/ DataTable with Buttons -->
+      for (var j = 0; j < cols.length; j++) {
+        row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"'); // Escape quotes
+      }
+
+      csv.push(row.join(","));
+    }
+
+    // Download CSV
+    downloadCSV(csv.join("\n"), filename);
+  }
+
+  function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // Create a CSV file
+    csvFile = new Blob([csv], { type: "text/csv" });
+
+    // Create a download link
+    downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Hide download link
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+
+    // Click the download link
+    downloadLink.click();
+  }
+
+  function exportTableToExcel(filename) {
+    var table = document.getElementById('data-table');
+    var workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+    XLSX.writeFile(workbook, filename);
+  }
+
+  function exportTableToExcel(filename) {
+        var table = document.getElementById('data-table');
+        var workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        XLSX.writeFile(workbook, filename);
+      }
+
+      async function exportTableToPDF(filename) {
+  const { jsPDF } = window.jspdf;  // Access jsPDF from the window object
+  const doc = new jsPDF('landscape', 'pt', 'a4');  // Create a new jsPDF document in landscape mode
+
+  const table = document.getElementById("data-table");
+
+  // Extract Table Data
+  var rows = table.querySelectorAll("tr");
+  var data = [];
+
+  rows.forEach((row) => {
+    var cols = row.querySelectorAll("td, th");
+    var rowData = [];
+    cols.forEach(col => {
+      rowData.push(col.innerText.trim());
+    });
+    data.push(rowData);
+  });
+
+  // Calculate equal width for each column
+  const totalColumns = data[0].length;  // Assuming the first row contains the header
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 40;  // Left and right margin combined
+  const usableWidth = pageWidth - margin;
+  const equalColumnWidth = usableWidth / totalColumns;
+
+  // Setup autoTable with equal column widths
+  doc.autoTable({
+    head: [data[0]],  // Header row
+    body: data.slice(1),  // Body rows
+    startY: 20,
+    theme: 'striped',  // Table theme: striped, grid, plain
+    headStyles: { fillColor: [22, 160, 133], textColor: 255 },  // Header styling
+    bodyStyles: { fillColor: [242, 242, 242] },  // Body styling
+    alternateRowStyles: { fillColor: [255, 255, 255] },  // Alternating row styles
+    styles: {
+      fontSize: 8,  // Font size
+      overflow: 'linebreak',  // Handling overflow content
+      cellPadding: 3,  // Cell padding
+      valign: 'middle',  // Vertical alignment
+      halign: 'center',  // Horizontal alignment
+      minCellHeight: 20  // Minimum cell height
+    },
+    columnStyles: {
+      0: { cellWidth: equalColumnWidth },  // Set equal width for each column
+      1: { cellWidth: equalColumnWidth },
+      2: { cellWidth: equalColumnWidth },
+      // Repeat for all columns
+      // or use dynamic mapping for multiple columns:
+      ...Array.from({ length: totalColumns }, (_, i) => ({ [i]: { cellWidth: equalColumnWidth } })).reduce((a, b) => Object.assign(a, b), {})
+    },
+    didDrawPage: function (data) {
+      // Optional: Draw header/footer on each page
+      doc.text('Student Data Export', data.settings.margin.left, 10);
+    },
+  });
+
+  // Save the PDF
+  doc.save(filename);
+}
+
+function printTable() {
+  // Extract the table HTML
+  var table = document.getElementById("data-table");
+  var tableHTML = table.outerHTML;
+
+  // Create a new window for printing
+  var printWindow = window.open('', '', 'height=800,width=1200');
+
+  // Write the table HTML to the new window
+  printWindow.document.write('<html><head><title>Print Table</title>');
+  printWindow.document.write('<style>');  // Add styles for the print layout
+  printWindow.document.write('table { width: 100%; border-collapse: collapse; }');
+  printWindow.document.write('th, td { border: 1px solid black; padding: 8px; text-align: left; }');
+  printWindow.document.write('th { background-color: #f2f2f2; }');
+  printWindow.document.write('@media print { table { page-break-inside: auto; } tr { page-break-inside: avoid; page-break-after: auto; } }');
+  printWindow.document.write('</style>');
+  printWindow.document.write('</head><body>');
+  printWindow.document.write('<h1>Student Data</h1>');  // Optional title
+  printWindow.document.write(tableHTML);  // Insert the table HTML
+  printWindow.document.write('</body></html>');
+
+  // Close the document and trigger print dialog
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+}
+
+
+</script>
+
 {% endblock %}
-
-
-
-
-
- 
-
-
-          
