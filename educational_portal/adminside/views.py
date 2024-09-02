@@ -7,6 +7,7 @@ from django.conf import settings
 import math
 import statistics
 import random
+from django.apps import apps
 from django.http import Http404,JsonResponse
 from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
 from django.core.files.storage import FileSystemStorage
@@ -27,7 +28,11 @@ from django.views.decorators.http import require_GET
 import requests
 
 def paginatoorrr(queryset,request):
+<<<<<<< HEAD
         paginator = Paginator(queryset, 10)
+=======
+        paginator = Paginator(queryset, 3)
+>>>>>>> 67723a2d1a36b44df4d93cbb509485cc3668266c
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         return page_obj
@@ -2008,4 +2013,22 @@ def faculty_access_show(request):
 
 
 def export_data(request):
-    return render(request, 'exportdata.html')
+    context = {}
+    # model_name = request.GET.get('model_name')  # Get the model name from the request
+
+    # # Dynamically retrieve model class from model_name
+    # try:
+    #     model = apps.get_model(app_label='adminside', model_name=model_name)
+    #     data = model.objects.all()  # Fetch all records from the model
+
+    #     # Get field names dynamically
+    #     field_names = [field.name for field in model._meta.fields]
+
+    #     context.update({
+    #         'field_names': field_names,
+    #         'data': data,
+    #     })
+    # except LookupError:
+    #     context['error'] = f'Model "{model_name}" not found.'
+
+    return render(request, 'export_data.html', context)
