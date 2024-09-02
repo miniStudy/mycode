@@ -286,28 +286,6 @@ function printTable() {
 }
 
 
-
-  document.getElementById('searchButton').addEventListener('click', function() {
-    // Get the search input value
-    var input = document.getElementById('searchInput').value.toLowerCase();
-    
-    // Get all rows of the table
-    var rows = document.querySelectorAll('#data-table tbody tr');
-    
-    // Loop through rows and hide those that don't match the search query
-    rows.forEach(function(row) {
-      var text = row.innerText.toLowerCase();
-      row.style.display = text.includes(input) ? '' : 'none';
-    });
-  });
-
-  // Alternatively, you can also add an "input" event listener to filter dynamically
-  document.getElementById('searchInput').addEventListener('input', function() {
-    document.getElementById('searchButton').click();
-  });
-
-
-
 </script>
 
 {% endblock %}
