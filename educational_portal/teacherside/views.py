@@ -18,6 +18,7 @@ from studentside.forms import *
 from adminside.form import *
 from teacherside.forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
+from django.core.paginator import Paginator
 
 import fitz  # PyMuPDF
 from PIL import Image
@@ -32,6 +33,13 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 
 from teacherside.decorators import *
+
+def paginatoorrr(queryset,request):
+    paginator = Paginator(queryset, 5)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    return page_obj
+
 
 def generate_pdf_icon(pdf_file):
     # Read the file content into memory
@@ -547,6 +555,8 @@ def teacher_test(request):
 
 
     data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+    data = paginatoorrr(data,request)
+
     std_data = Std.objects.filter(std_id__in = std_list)
     subject_data = Subject.objects.filter(sub_id__in = subjects_list)
     context ={
@@ -560,7 +570,8 @@ def teacher_test(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(test_sub__sub_std__std_id = get_std)
+            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std)
+            data = paginatoorrr(data,request)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'get_std':get_std, 'subject_data':subject_data, 'std_data':std_data}) 
@@ -571,7 +582,8 @@ def teacher_test(request):
         if get_subject == 0:
             pass
         else:    
-            data = data.filter(test_sub__sub_id = get_subject)
+            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject)
+            data = paginatoorrr(data,request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
 
@@ -1165,11 +1177,11 @@ def report_card_show(request):
 
 
         # ==================Test Report and Attendance Report============
-        students_li = Students.objects.filter(stud_std__std_id = student_std)
+        students_li = Students.objects.filter(stud_std__std_id = student_std).values('stud_id', 'stud_name','stud_lastname')
         overall_attendance_li = []
         for x in students_li:
-            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
-            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
             # print("==============================================",total_attendence_studentwise)
             if total_attendence_studentwise > 0:
                 overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
@@ -1177,21 +1189,21 @@ def report_card_show(request):
                 overall_attendence_studentwise = 0
             
 
-            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
             
             
-            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
             
 
             if total_marks == 0:
                 overall_result = 0
             else:
                 overall_result = round((obtained_marks/total_marks)*100,2)
-            if student_id == x.stud_id: 
+            if student_id == x['stud_id']: 
                 current_student_overall_test_result = overall_result
                 context.update({'current_student_overall_test_result':current_student_overall_test_result})
 
-            overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+            overall_attendance_li.append({'stud_name':x['stud_name'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
         overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
         overall_attendance_li = overall_attendance_li[:5]
         
