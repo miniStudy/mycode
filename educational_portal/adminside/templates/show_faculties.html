@@ -30,12 +30,13 @@
                             <th>Number</th>
                             <th>Email</th>
                             <th>Address</th>
-                            <th>Subjects</th>
+                            <th>Subject</th>
+                            <th>Access</th>
                             <th>Edit</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for x in faculties %}
+                        {% for x in faculty_data %}
                         <tr>
                             <td><input type="checkbox" class="form-check-input" value="{{ x.fac_id }}" name="selection" /></td>
                             <td>{{ x.fac_name }}</td>
@@ -43,6 +44,12 @@
                             <td>{{ x.fac_email }}</td>
                             <td>{{ x.fac_address }}</td>
                             <td>{{ x.Subjects }}</td>
+                            <td>{% for y in faculty_access_data %}
+                                {% if x.fac_id == y.fa_faculty.fac_id %}
+                                -> {{y.fa_batch}}
+                                {{y.fa_subject.sub_name}}<br>
+                                {% endif %}
+                                {% endfor %}</td>
                             <td><a href="{% url 'insert_update_faculties' %}?pk={{ x.fac_id }}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                         </tr>
                         {% endfor %}

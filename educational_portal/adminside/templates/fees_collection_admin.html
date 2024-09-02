@@ -111,12 +111,26 @@
                 {% endfor %}
               </tbody>
             </table>
+
+          <!-- Pagination -->
+
+          <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2" role="group" aria-label="First group">
+              {% for x in students_data.paginator.page_range %}
+              <a href="?page={{x}}&get_std={{get_std.std_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if students_data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+              {% endfor %}
+            </div>
+          </div>
+
+
             <a href="{% url 'payments_history_admin' %}" class='btn btn-primary mt-3'>View Payments</a>
           </div>
       </div>
     </div>
   </div>
 </div>
+
+
 <div class="row">
   <div class="col-md-12">
     <div class="card">

@@ -27,7 +27,7 @@ from django.views.decorators.http import require_GET
 import requests
 
 def paginatoorrr(queryset,request):
-        paginator = Paginator(queryset, 20)
+        paginator = Paginator(queryset, 10)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         return page_obj
@@ -588,9 +588,11 @@ def delete_subjects(request):
 
 @admin_login_required
 def show_chepters(request):
-    data = Chepter.objects.all().values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
+    data = Chepter.objects.all().values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
     std_data = Std.objects.all()
-    subject_data = Subject.objects.all().values('sub_id','sub_name')
+    subject_data = Subject.objects.all()
+
+    data = paginatoorrr(data, request)
     context ={
         'data' : data,
         'title' : 'Chepters',
@@ -602,7 +604,8 @@ def show_chepters(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(chep_sub__sub_std__std_id = get_std)
+            data = Chepter.objects.filter(chep_sub__sub_std__std_id = get_std).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
+            data = paginatoorrr(data, request)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'get_std':get_std,'std_data':std_data,'subject_data':subject_data}) 
@@ -613,7 +616,8 @@ def show_chepters(request):
         if get_subject == 0:
             pass
         else:    
-            data = data.filter(chep_sub__sub_id = get_subject)
+            data =  Chepter.objects.filter(chep_sub__sub_id = get_subject).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
+            data = paginatoorrr(data, request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
 
@@ -701,10 +705,12 @@ def delete_chepters(request):
 
 @admin_login_required
 def show_faculties(request):
-    faculties = Faculties.objects.all()
+    faculty_data = Faculties.objects.all()
+    faculty_access_data = Faculty_Access.objects.all()
     context = {
-        'faculties': faculties,
-        'title': 'Faculties',
+        'faculty_data':faculty_data,
+        'faculty_access_data':faculty_access_data,
+        'title': 'Faculties'
     }
 
     return render(request, 'show_faculties.html', context)
@@ -884,7 +890,7 @@ def show_attendance(request):
     stud_data = Students.objects.all()
     subj_data = Subject.objects.all()
     
-
+    data = paginatoorrr(data, request)
     context ={
         'data' : data,
         'title' : 'Attendance',
@@ -899,7 +905,8 @@ def show_attendance(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = paginatoorrr(data, request)
             batch_data = batch_data.filter(batch_std__std_id = get_std)
             stud_data = stud_data.filter(stud_std__std_id = get_std)
             subj_data = subj_data.filter(sub_std__std_id = get_std)
@@ -912,7 +919,8 @@ def show_attendance(request):
         if get_batch == 0:
             pass
         else:
-            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = paginatoorrr(data, request)
             stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
             get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'data':data,'get_batch':get_batch,'stud_data':stud_data}) 
@@ -922,13 +930,14 @@ def show_attendance(request):
         if get_student == 0:
             pass
         else:
-            data = data.filter(atten_student__stud_id = get_student)
+            data = Attendance.objects.filter(atten_student__stud_id = get_student).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = paginatoorrr(data, request)
             get_student = Students.objects.get(stud_id = get_student)
             context.update({'data':data,'get_student':get_student})                     
 
 
-    attendance_present = data.filter(atten_present = True).count()
-    attendance_all = data.all().count()
+    attendance_present = Attendance.objects.filter(atten_present = True).count()
+    attendance_all = Attendance.objects.all().count()
     if attendance_all>0:
         overall_attendance = round((attendance_present/attendance_all) * 100,2)
         context.update({'overall_attendance':overall_attendance})
@@ -938,8 +947,8 @@ def show_attendance(request):
     subjects = []
     for x in sub_list:
         sub_name = x['sub_name']
-        sub_one = data.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
-        sub_all = data.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
+        sub_one = Attendance.objects.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
+        sub_all = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
         if sub_all>0:
             sub_attendance = round((sub_one/sub_all) * 100, 2)
             subject_wise_attendance.append(sub_attendance)
@@ -993,6 +1002,7 @@ def show_tests(request):
     data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
     std_data = Std.objects.all()
     subject_data = Subject.objects.all()
+    data = paginatoorrr(data, request)
     context ={
         'data' : data,
         'title' : 'Tests',
@@ -1004,7 +1014,8 @@ def show_tests(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(test_sub__sub_std__std_id = get_std)
+            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
+            data = paginatoorrr(data, request)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'get_std':get_std,'std_data':std_data,'subject_data':subject_data}) 
@@ -1015,7 +1026,8 @@ def show_tests(request):
         if get_subject == 0:
             pass
         else:    
-            data = data.filter(test_sub__sub_id = get_subject)
+            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
+            data = paginatoorrr(data, request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
 
@@ -1165,6 +1177,7 @@ def insert_update_test_questions(request):
 def show_packages(request):
     data = Packs.objects.prefetch_related('pack_subjects').all()
     std_data = Std.objects.all()
+    data = paginatoorrr(data, request)
 
     context ={
         'data' : data,
@@ -1177,7 +1190,8 @@ def show_packages(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(pack_std__std_id = get_std)
+            data = Packs.objects.prefetch_related('pack_subjects').filter(pack_std__std_id = get_std)
+            data = paginatoorrr(data, request)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'get_std':get_std})     
     return render(request, 'show_packages.html',context)
@@ -1417,7 +1431,7 @@ def show_inquiries(request):
 def show_batches(request):
     data = Batches.objects.all()
     std_data = Std.objects.all()
-   
+    data = paginatoorrr(data, request)
     context ={
         'data' : data,
         'title' : 'Batches',
@@ -1428,7 +1442,8 @@ def show_batches(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(batch_std__std_id = get_std)
+            data = Batches.objects.filter(batch_std__std_id = get_std)
+            data = paginatoorrr(data, request)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'get_std':get_std})     
     return render(request, 'show_batches.html',context)
@@ -1776,13 +1791,21 @@ def fees_collection_admin(request):
         When(discount__discount_amount=None, then=Value(0)),
         default=F('discount__discount_amount'),output_field=IntegerField()
     )).values('stud_id','amount_paid','discountt','stud_std__std_name','stud_std__std_board__brd_name','stud_name','stud_lastname','stud_pack__pack_fees')
+
+    students_data = paginatoorrr(students_data, request)
     # -------------filter--------------------------------------------
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std == 0:
             pass
         else:    
-            students_data = students_data.filter(stud_std__std_id = get_std)
+            students_data = Students.objects.filter(stud_std__std_id = get_std).annotate(
+            amount_paid=Coalesce(Sum('fees_collection__fees_paid'), Value(0)),
+            discountt=Case(
+                When(discount__discount_amount=None, then=Value(0)),
+                default=F('discount__discount_amount'),output_field=IntegerField()
+            )).values('stud_id','amount_paid','discountt','stud_std__std_name','stud_std__std_board__brd_name','stud_name','stud_lastname','stud_pack__pack_fees')
+            students_data = paginatoorrr(students_data, request)
             get_std = Std.objects.get(std_id = get_std)
             Context.update({'get_std':get_std,'students_data':students_data}) 
     # ------------------end filter-------------------------------------

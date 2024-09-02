@@ -929,13 +929,13 @@ def teacher_materials(request):
     if request.GET.get('std_id'):
         std_id = int(request.GET.get('std_id'))
         subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id)
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
         std_data = Std.objects.get(std_id = std_id)
         context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_data})
 
     if request.GET.get('sub_id'):
         sub_id = request.GET.get('sub_id')
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id)
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
         selected_sub = Subject.objects.get(sub_id=sub_id)
         context.update({'materials': materials, 'selected_sub':selected_sub})
 
