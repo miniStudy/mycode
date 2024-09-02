@@ -24,31 +24,31 @@ def parent_home(request):
     student_id = request.session['parent_id']
     student = Students.objects.get(stud_id = student_id)
     student_std = student.stud_std.std_id
-    students_li = Students.objects.filter(stud_std__std_id = student_std)
+    students_li = Students.objects.filter(stud_std__std_id = student_std).values('stud_id', 'stud_name', 'stud_lastname')
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
         else:
             overall_attendence_studentwise = 0
         
 
-        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
         
         
-        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
         
 
         if total_marks == 0:
             overall_result = 0
         else:
             overall_result = round((obtained_marks/total_marks)*100,2)
-        if student_id == x.stud_id: 
+        if student_id == x['stud_id']: 
             current_student_overall_test_result = overall_result
 
-        overall_attendance_li.append({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+        overall_attendance_li.append({'stud_name':x['stud_name'], 'stud_lastname':x['stud_lastname'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
 
 
     overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
@@ -56,15 +56,15 @@ def parent_home(request):
 
 
         #=============== Test Result Dashboard ===============================================================
-    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).order_by('-pk')
+    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).values('tau_obtained_marks', 'tau_test_id__test_name').order_by('-pk')
 
     test_counts = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
 
     test_result_list = []
     test_name_list = []
     for x in test_result_analysis:
-        test_name_list.append(x.tau_test_id.test_name)
-        test_result_list.append(x.tau_obtained_marks)
+        test_name_list.append(x['tau_test_id__test_name'])
+        test_result_list.append(x['tau_obtained_marks'])
 
     context = {
         'title': 'Home',
@@ -73,8 +73,6 @@ def parent_home(request):
         'test_name_list': test_name_list,
     }
     return render(request, 'parentpanel/index.html', context)
-
-
 
 def parent_login_page(request):
     title = 'Login' 
@@ -188,8 +186,8 @@ def parent_logout_page(request):
 
 @parent_login_required
 def show_parent_events(request):
-    event_data = Event.objects.all()
-    event_imgs = Event_Image.objects.all()
+    event_data = Event.objects.all().values('event_id','event_name')
+    event_imgs = Event_Image.objects.all().values('event_id','event_img')
     selected_events = Event.objects.all()[:1]
     context={
         'event_data':event_data,
@@ -223,7 +221,6 @@ def show_parentside_report_card(request):
     # ===============Overall Attendance==================
     student = Students.objects.get(stud_id = student_id)
     student_std = student.stud_std.std_id
-    student_data = Students.objects.filter(stud_std__std_id = student_std)
 
     total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
     
@@ -239,35 +236,33 @@ def show_parentside_report_card(request):
 
 
     # ==================Test Report and Attendance Report============
-    students_li = Students.objects.filter(stud_std__std_id = student_std)
+    students_li = Students.objects.filter(stud_std__std_id = student_std).values('stud_id', 'stud_name')
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
         else:
             overall_attendence_studentwise = 0
         
 
-        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
         
         
-        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
         
 
         if total_marks == 0:
             overall_result = 0
         else:
             overall_result = round((obtained_marks/total_marks)*100,2)
-        if student_id == x.stud_id: 
+        if student_id == x['stud_id']: 
             current_student_overall_test_result = overall_result
 
-        overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+        overall_attendance_li.append({'stud_name':x['stud_name'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
 
     
-   
-
     overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
     overall_attendance_li = overall_attendance_li[:5]
     
@@ -343,7 +338,6 @@ def show_parentside_report_card(request):
         'title': 'Report-Card',
         'logo_url': 'https://metrofoods.co.nz/1nobg.png',
         'student':student,
-        'student_data':student_data,
         'overall_attendence':overall_attendence,
         'overall_attendance_li':overall_attendance_li,
         'overall_attendance_subwise':overall_attendance_subwise,
@@ -377,7 +371,7 @@ def show_parentside_payment(request):
 
     # ===========================Paid Fees========================================
 
-    fees_collection = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id)
+    fees_collection = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).values('fees_stud_id__stud_name', 'fees_stud_id__stud_lastname', 'fees_paid', 'fees_date', 'fees_mode')
     if fees_collection:
         paid_fees = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).aggregate(tol_amount=Sum('fees_paid'))
         paid_fees = int(paid_fees['tol_amount'])
@@ -390,7 +384,7 @@ def show_parentside_payment(request):
    
     # ===========================Cheque Fees======================================
 
-    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid = False)
+    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid = False).values('cheque_paid', 'cheque_amount', 'cheque_date', 'cheque_expiry', 'cheque_paid', 'cheque_bounce')
 
     context = {
         'title': 'Payments',
@@ -414,7 +408,7 @@ def show_parentside_announcement(request):
     Q(announce_std=None, announce_batch=None) |
     Q(announce_std__std_id=student.stud_std.std_id, announce_batch=None) |
     Q(announce_std__std_id=student.stud_std.std_id, announce_batch__batch_id=student.stud_batch.batch_id)
-).order_by('-pk')[:50]
+).order_by('-pk')[:50].values('announce_title','announce_id','announce_msg','announce_date')
 
     return render(request, 'parentpanel/announcement.html', {"announcements_data":announcements_data, 'title':title})
 
@@ -423,5 +417,5 @@ def show_parentside_timetable(request):
     student_id = request.session['parent_id']
     student = Students.objects.get(stud_id = student_id)
     title = 'Timetable'
-    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student.stud_batch.batch_id)
+    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student.stud_batch.batch_id).values('tt_day','tt_subject1','tt_time1','tt_tutor1__fac_name')
     return render(request, 'parentpanel/timetable.html', {'timetable_data':timetable_data, 'title':title})
