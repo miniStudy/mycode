@@ -1165,11 +1165,11 @@ def report_card_show(request):
 
 
         # ==================Test Report and Attendance Report============
-        students_li = Students.objects.filter(stud_std__std_id = student_std)
+        students_li = Students.objects.filter(stud_std__std_id = student_std).values('stud_id', 'stud_name','stud_lastname')
         overall_attendance_li = []
         for x in students_li:
-            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
-            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
             # print("==============================================",total_attendence_studentwise)
             if total_attendence_studentwise > 0:
                 overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
@@ -1177,21 +1177,21 @@ def report_card_show(request):
                 overall_attendence_studentwise = 0
             
 
-            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
             
             
-            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
             
 
             if total_marks == 0:
                 overall_result = 0
             else:
                 overall_result = round((obtained_marks/total_marks)*100,2)
-            if student_id == x.stud_id: 
+            if student_id == x['stud_id']: 
                 current_student_overall_test_result = overall_result
                 context.update({'current_student_overall_test_result':current_student_overall_test_result})
 
-            overall_attendance_li.append({'stud_name':x.stud_name, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+            overall_attendance_li.append({'stud_name':x['stud_name'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
         overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
         overall_attendance_li = overall_attendance_li[:5]
         
