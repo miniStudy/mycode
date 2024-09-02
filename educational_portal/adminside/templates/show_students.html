@@ -24,7 +24,7 @@
 
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">
-        <button class="btn btn-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           {% if get_std %}{{ get_std.std_name }} {{ get_std.std_board }}{% else %}Std{% endif %}
         </button>
         <ul class="dropdown-menu">
@@ -35,7 +35,7 @@
         </ul>
 
 
-        <button class="btn btn-primary btn-sm dropdown-toggle ms-2 mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle ms-2 mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           {% if get_batch %}{{ get_batch.batch_name }}{% else %}Batchs{% endif %}
         </button>
         <ul class="dropdown-menu">
@@ -44,6 +44,7 @@
           <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{ x.batch_std.std_id }}&get_batch={{ x.batch_id }}">{{ x.batch_name }}</a></li>
           {% endfor %}
         </ul>
+        <a href="{% url 'export_data' %}?get_std={{ x.batch_std.std_id }}&get_batch={{ x.batch_id }}"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
       </div>
       <div class="input-group mt-2">
         <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
@@ -103,9 +104,16 @@
       </div>
 
       <!-- Pagination -->
-      {% for x in data.paginator.page_range %}
-      <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}" class="btn btn-sm btn-secondary {% if data.number == x %} btn-primary {% endif %} mt-3">{{ x }}</a>
-      {% endfor %}
+      
+  
+      
+      <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group" aria-label="First group">
+          {% for x in data.paginator.page_range %}
+          <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+          {% endfor %}
+        </div>
+      </div>
 
       <!-- Confirm Delete Modal -->
       <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
