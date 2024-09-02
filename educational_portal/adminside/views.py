@@ -27,7 +27,7 @@ from django.views.decorators.http import require_GET
 import requests
 
 def paginatoorrr(queryset,request):
-        paginator = Paginator(queryset, 5)
+        paginator = Paginator(queryset, 20)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         return page_obj
@@ -1981,3 +1981,8 @@ def faculty_access_show(request):
         form = faculty_access_form()
         context.update({'form':form})
     return render(request, 'faculty_access.html', context)
+
+
+
+def export_data(request):
+    return render(request, 'exportdata.html')
