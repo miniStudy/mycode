@@ -2010,18 +2010,47 @@ def faculty_access_show(request):
 
 
 def export_data(request):
-    
     model_name = request.GET.get('model_name')
     Context={'title':model_name}
-    
+    get_std = request.GET.get('get_std')
+    get_batch = request.GET.get('get_batch')
+    get_subject = request.GET.get('get_subject')
+
     if model_name == 'Students':
         student_data = []
-        data = Students.objects.all()
+        if get_std:
+            data = Students.objects.filter(stud_std__std_id=get_std)
+        elif get_batch:
+            data = Students.objects.filter(stud_batch__batch_id=get_batch)
+        else:
+            data = Students.objects.all()
+
         field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
         for x in data:
             temp_data = {}
             temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
             student_data.append(temp_data)
         Context.update({'data':student_data,'field_names':field_names})
-        print(student_data)
+
+
+
+    if model_name == 'Students':
+        student_data = []
+        if get_std:
+            data = Students.objects.filter(stud_std__std_id=get_std)
+        elif get_batch:
+            data = Students.objects.filter(stud_batch__batch_id=get_batch)
+        else:
+            data = Students.objects.all()
+
+        field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
+            student_data.append(temp_data)
+        Context.update({'data':student_data,'field_names':field_names})
+
+        
+            
+        
     return render(request, 'export_data.html',Context)
