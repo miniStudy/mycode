@@ -21,18 +21,16 @@
         </div>
     
           <br>
-          <div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+          <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2" role="group" aria-label="First group">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'teacher_announcement' %}">ALL</a></li>
               {% for x in std_data %}
               <li><a class="dropdown-item" href="{% url 'teacher_announcement' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
               {% endfor %}
             </ul>
-          </div>
-
-          <div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'teacher_announcement' %}?get_std={{get_std.std_id}}">ALL</a></li>
               {% for x in batch_data %}
@@ -40,11 +38,9 @@
               {% endfor %}
             </ul>
           </div>
-         
-
+        </div>
     </div>
 </div>
-
 <form action="{% url 'announcements_delete_teacher' %}" method="POST"> 
   {% csrf_token %}
 
@@ -75,8 +71,10 @@
     </div>
     {% endfor %}
 
-  
-
+   <!-- Pagination -->
+   {% for x in data.paginator.page_range %}
+   <a href="?page={{x}}&get_std={{get_std.std_id}}&get_subject={{get_subject.sub_id}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>
+   {% endfor %}
 
 <!-- Modal -->
 <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">

@@ -386,7 +386,7 @@ class Faculty_Access(models.Model):
     fa_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.fa_faculty.fac_name, self.fa_batch.batch_name, self.fa_subject.sub_name}"
+        return f"{self.fa_batch.batch_std, self.fa_batch.batch_name, self.fa_subject.sub_name}"
     
     class Meta:
         db_table = 'Faculty_Access'

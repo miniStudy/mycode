@@ -261,6 +261,7 @@ def teacher_attendance(request):
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
      data = Attendance.objects.all().values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+     data = paginatoorrr(data,request)
      std_data = Std.objects.filter(std_id__in = std_access_list)   
      batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
      stud_data = Students.objects.all()
@@ -274,10 +275,7 @@ def teacher_attendance(request):
      
      
      distinct_data = today_records.annotate(date=TruncDate('atten_date'),
-                                            hour=TruncHour('atten_date'),
-                                            minute=TruncMinute('atten_date'),
-                                            ).values('date', 'hour', 'minute','atten_timetable').distinct()
-     print(distinct_data)
+        hour=TruncHour('atten_date'), minute=TruncMinute('atten_date')).values('date', 'hour', 'minute','atten_timetable').distinct()
      li = []
      for x in distinct_data:
         date_hour = x['hour'].hour
@@ -304,19 +302,21 @@ def teacher_attendance(request):
           if get_std == 0:
                pass
           else:    
-               data = data.filter(atten_timetable__tt_batch__batch_std__std_id = get_std)
+               data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+               data = paginatoorrr(data,request)
                batch_data = batch_data.filter(batch_std__std_id = get_std)
                stud_data = stud_data.filter(stud_std__std_id = get_std)
                subj_data = subj_data.filter(sub_std__std_id = get_std)
                get_std = Std.objects.get(std_id = get_std)
-               context.update({'attendance_data':data,'batch_data':batch_data,'get_std':get_std, 'stud_data':stud_data,'sub_data':subj_data})
+               context.update({'data':data,'batch_data':batch_data,'get_std':get_std, 'stud_data':stud_data,'sub_data':subj_data})
      
      if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         if get_batch == 0:
             pass
         else:
-            data = data.filter(atten_timetable__tt_batch__batch_id = get_batch)
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+            data = paginatoorrr(data,request)
             stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
             get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'data':data,'get_batch':get_batch,'stud_data':stud_data}) 
@@ -331,8 +331,8 @@ def teacher_attendance(request):
             context.update({'data':data,'get_student':get_student})                     
 
 
-     attendance_present = data.filter(atten_present = True).count()
-     attendance_all = data.all().count()
+     attendance_present = Attendance.objects.filter(atten_present = True).count()
+     attendance_all = Attendance.objects.all().count()
      if attendance_all>0:
         overall_attendance = round((attendance_present/attendance_all) * 100,2)
         context.update({'overall_attendance':overall_attendance})
@@ -342,8 +342,8 @@ def teacher_attendance(request):
      subjects = []
      for x in sub_list:
         sub_name = x['sub_name']
-        sub_one = data.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
-        sub_all = data.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
+        sub_one = Attendance.objects.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
+        sub_all = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
         if sub_all>0:
             sub_attendance = round((sub_one/sub_all) * 100,2)
             subject_wise_attendance.append(sub_attendance)
@@ -798,6 +798,7 @@ def teacher_announcement(request):
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
     data = Announcements.objects.all().values('announce_id','announce_title','announce_msg','announce_date')
+    data = paginatoorrr(data,request)
     std_data = Std.objects.filter(std_id__in = std_access_list)
     batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
    
@@ -812,7 +813,8 @@ def teacher_announcement(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(announce_std__std_id = get_std)
+            data = Announcements.objects.filter(announce_std__std_id = get_std).values('announce_id','announce_title','announce_msg','announce_date')
+            data = paginatoorrr(data,request)
             batch_data = batch_data.filter(batch_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'batch_data':batch_data,'get_std':get_std})
@@ -823,7 +825,8 @@ def teacher_announcement(request):
         if get_batch == 0:
             pass
         else:
-            data = data.filter(announce_batch__batch_id = get_batch)
+            data = Announcements.objects.filter(announce_batch__batch_id = get_batch).values('announce_id','announce_title','announce_msg','announce_date')
+            data = paginatoorrr(data,request)
             get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'data':data,'get_batch':get_batch})        
             
@@ -929,13 +932,13 @@ def teacher_materials(request):
     if request.GET.get('std_id'):
         std_id = int(request.GET.get('std_id'))
         subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id)
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
         std_data = Std.objects.get(std_id = std_id)
         context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_data})
 
     if request.GET.get('sub_id'):
         sub_id = request.GET.get('sub_id')
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id)
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
         selected_sub = Subject.objects.get(sub_id=sub_id)
         context.update({'materials': materials, 'selected_sub':selected_sub})
 

@@ -8,8 +8,9 @@
  {{message|safe}}
 {% endfor %}
 
-    <div class="btn-group">
-      <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group me-2" role="group" aria-label="First group">
+      <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         {% if selected_standard %}
           {{ selected_standard }}
         {% else %}
@@ -22,11 +23,8 @@
         {% endfor %}
       </ul>
     </div>
-
-    
-    <br>
-    <hr>
-
+</div>    
+<hr>
     <form action="{% url 'faculty_access' %}"  method="POST">
         {% csrf_token %}
         
