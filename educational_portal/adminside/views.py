@@ -27,11 +27,7 @@ from django.views.decorators.http import require_GET
 import requests
 
 def paginatoorrr(queryset,request):
-<<<<<<< HEAD
         paginator = Paginator(queryset, 20)
-=======
-        paginator = Paginator(queryset, 10)
->>>>>>> 913303a68535c986d55659565f7e5c7a9dde92c2
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         return page_obj
