@@ -29,16 +29,23 @@
 
 <!-- =========================filter option============================= -->
 <br>
-          <div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group me-2" role="group" aria-label="First group">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'admin_packages' %}">ALL</a></li>
               {% for x in std_data %}
               <li><a class="dropdown-item" href="{% url 'admin_packages' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
               {% endfor %}
             </ul>
+            <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&model_name=packs"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
           </div>
-<br><br>
+          <div class="input-group mt-2">
+            <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+            <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
+          </div>
+        </div>
 <!-- =========================filter option end=================================== -->
 
 

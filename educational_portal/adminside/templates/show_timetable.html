@@ -21,8 +21,9 @@
 
       <!-- Filter Options -->
       <br>
-      <div class="btn-group">
-        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group" aria-label="First group">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           {% if get_std %}{{ get_std.std_name }} {{ get_std.std_board }}{% else %}Std{% endif %}
         </button>
         <ul class="dropdown-menu">
@@ -31,10 +32,7 @@
           <li><a class="dropdown-item" href="{% url 'admin_timetable' %}?get_std={{ std.std_id }}{% if get_batch %}&get_batch={{ get_batch.batch_id }}{% endif %}">{{ std.std_name }} {{ std.std_board }}</a></li>
           {% endfor %}
         </ul>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           {% if get_batch %}{{ get_batch.batch_name }}{% else %}Batch{% endif %}
         </button>
         <ul class="dropdown-menu">
@@ -44,8 +42,8 @@
           {% endfor %}
         </ul>
       </div>
+    </div>
 
-      <br><br>
       <!-- Filter Options End -->
 
       <form action="{% url 'delete_timetable' %}" method="POST"> 

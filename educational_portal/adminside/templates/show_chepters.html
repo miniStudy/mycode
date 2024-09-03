@@ -24,26 +24,24 @@
 
 <!-- =========================filter option============================= -->
 <br>
-          <div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group me-2" role="group" aria-label="First group">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'admin_chepters' %}">ALL</a></li>
-              {% for x in std_data %}
-              <li><a class="dropdown-item" href="{% url 'admin_chepters' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
-
-          <div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_subject %}{{get_subject.sub_name}}{% else %}Subjects{% endif %}</button>
+            <li><a class="dropdown-item" href="{% url 'admin_chepters' %}">ALL</a></li>
+            {% for x in std_data %}
+            <li><a class="dropdown-item" href="{% url 'admin_chepters' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+          {% endfor %}
+    </ul>
+    <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_subject %}{{get_subject.sub_name}}{% else %}Subjects{% endif %}</button>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'admin_chepters' %}?get_std={{get_std.std_id}}">ALL</a></li>
               {% for x in subject_data %}
               <li><a class="dropdown-item" href="{% url 'admin_chepters' %}?get_std={{x.sub_std.std_id}}&get_subject={{x.sub_id}}">{{x.sub_name}}</a></li>
               {% endfor %}
-            </ul>
-          </div>
-<br><br>
+    </ul>
+  </div>
+</div>
 <!-- =========================filter option end=================================== -->
 
 
