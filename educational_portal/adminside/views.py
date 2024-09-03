@@ -1776,7 +1776,7 @@ def adminside_report_card(request):
         })
     else:
         noreport_card = 1       
-        nobody = messages.error(request, 'Please Select Student!')
+        nobody = 0
         context.update({'nobody':nobody, 'noreport_card':noreport_card})
     return render(request, 'show_report_card_admin.html', context)
 
@@ -2050,7 +2050,20 @@ def export_data(request):
             student_data.append(temp_data)
         Context.update({'data':student_data,'field_names':field_names})
 
-        
-            
+    if model_name == 'attendance':
+        all_data = []
+        if get_std:
+            data = Attendance.objects.filter(atten_student__stud_std__std_id=get_std)
+        elif get_batch:
+            data = Attendance.objects.filter(atten_student__stud_batch__batch_id=get_batch)
+        else:
+            data = Attendance.objects.all()
+
+        field_names = ['Date','Student Roll No','Student Name','Subject','Time','Tutor','Attendance','Batch','Std','Board']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'Date':x.atten_date,'student_roll_no':x.stud_lastname,'Student_name':x.stud_contact,'subject':x.stud_contact,'time':x.stud_dob,'tutor':x.stud_gender,'Attendance':x.stud_admission_no,'Batch':x.stud_roll_no,'Std':x.stud_enrollment_no,'Board':x.stud_guardian_name})
+            student_data.append(temp_data)
+        Context.update({'data':student_data,'field_names':field_names})   
         
     return render(request, 'export_data.html',Context)
