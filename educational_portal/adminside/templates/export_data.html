@@ -1,81 +1,172 @@
+{% extends 'master.html' %}
+{% block contentsection %}
 <script>
-    function exportTableToCSV(filename) {
-      var csv = [];
-      var rows = document.querySelectorAll("#data-table tr");
+  function toggleColumnVisibility() {
+      const checkboxes = document.querySelectorAll('input[name="selected_fields"]');
+      const table = document.getElementById('data-table');
+      const headers = table.querySelectorAll('thead th');
+      const rows = table.querySelectorAll('tbody tr');
+
+      checkboxes.forEach((checkbox, index) => {
+          const isChecked = checkbox.checked;
+
+          // Toggle header visibility
+          headers[index].style.display = isChecked ? '' : 'none';
+
+          // Toggle each row's cell visibility
+          rows.forEach(row => {
+              row.cells[index].style.display = isChecked ? '' : 'none';
+          });
+      });
+  }
+
+  // Call toggleColumnVisibility on page load
+  window.onload = toggleColumnVisibility;
+</script>
+
+
+
+<div class="mb-4"><h4>Students</h4></div>
+
+<style>
+  table,td,th{padding: 5px !important;}
+  td,th{ width: 150px;
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 8px;
+    word-wrap: break-word;}
+</style>
+<div class="card-datatable table-responsive pt-0">
   
-      for (var i = 0; i < rows.length; i++) {
-        var row = [],
-          cols = rows[i].querySelectorAll("td, th");
+    <!-- Export Buttons -->
+
+
+
+    <form>
+        {% for field_name in field_names %}
+           <span style="display: inline-block;padding: 10px;"><input type="checkbox" name="selected_fields" id="label{{forloop.counter}}" value="{{ field_name }}" checked onchange="toggleColumnVisibility()"> <label for="label{{forloop.counter}}">{{ field_name }}</label>  </span> 
+        {% endfor %}
+    </form>
+
+
+
+  <hr>
   
-        for (var j = 0; j < cols.length; j++) {
+<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group me-2" role="group" aria-label="First group">
+    <button onclick="exportTableToCSV('table-data.csv')" class="btn btn-outline-secondary">Export to CSV</button>
+<button onclick="exportTableToExcel('table-data.xlsx')" class="btn btn-outline-secondary">Export to Excel</button>
+<button onclick="exportTableToPDF('table-data.pdf')" class="btn btn-outline-secondary">Export to PDF</button> <!-- New PDF Export Button -->
+<button onclick="printTable()" class="btn btn-outline-secondary">Print Table</button>
+  </div>
+
+</div>
+  <hr>  
+  {% if data %}
+  <table id="data-table" class="table table-bordered" style="width:100%">
+      <thead>
+          <tr>
+              {% for field_name in field_names %}
+                  <th>{{ field_name }}</th>
+              {% endfor %}
+          </tr>
+      </thead>
+      <tbody>
+          {% for student_value in data %}
+          <tr>
+              <td>{{ student_value.student_Name }}</td>
+              <td>{{ student_value.student_lastname }}</td>
+              <td>{{ student_value.contact }}</td>
+              <td>{{ student_value.Email }}</td>
+              <td>{{ student_value.DOB }}</td>
+              <td>{{ student_value.gender }}</td>
+              <td>{{ student_value.admission_no }}</td>
+              <td>{{ student_value.roll_no }}</td>
+              <td>{{ student_value.enrollment_no }}</td>
+              <td>{{ student_value.Guardian_Name }}</td>
+              <td>{{ student_value.Guardian_Email }}</td>
+              <td>{{ student_value.Guardian_Number }}</td>
+              <td>{{ student_value.Address }}</td>
+              <td>{{ student_value.Std }}</td>
+              <td>{{ student_value.Batch }}</td>
+              <td>{{ student_value.Package }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  {% else %}
+      <p>No data available for {{ title }}</p>
+  {% endif %}
+</div>
+
+
+<script>
+  function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("#data-table tr");
+
+    for (var i = 0; i < rows.length; i++) {
+      var row = [],
+        cols = rows[i].querySelectorAll("td, th");
+
+      for (var j = 0; j < cols.length; j++) {
+        if (cols[j].style.display !== 'none') { // Check if the column is hidden
           row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"'); // Escape quotes
         }
-  
-        csv.push(row.join(","));
       }
-  
-      // Download CSV
-      downloadCSV(csv.join("\n"), filename);
+
+      csv.push(row.join(","));
     }
-  
-    function downloadCSV(csv, filename) {
-      var csvFile;
-      var downloadLink;
-  
-      // Create a CSV file
-      csvFile = new Blob([csv], { type: "text/csv" });
-  
-      // Create a download link
-      downloadLink = document.createElement("a");
-      downloadLink.download = filename;
-      downloadLink.href = window.URL.createObjectURL(csvFile);
-  
-      // Hide download link
-      downloadLink.style.display = "none";
-      document.body.appendChild(downloadLink);
-  
-      // Click the download link
-      downloadLink.click();
-    }
-  
-    function exportTableToExcel(filename) {
-      var table = document.getElementById('data-table');
-      var workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
-      XLSX.writeFile(workbook, filename);
-    }
-  
-    function exportTableToExcel(filename) {
-          var table = document.getElementById('data-table');
-          var workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
-          XLSX.writeFile(workbook, filename);
+
+    // Download CSV
+    downloadCSV(csv.join("\n"), filename);
+  }
+
+  function exportTableToExcel(filename) {
+    var table = document.getElementById('data-table');
+    var clonedTable = table.cloneNode(true); // Clone the table to avoid modifying the original
+
+    // Remove hidden columns from the cloned table
+    Array.from(clonedTable.rows).forEach(row => {
+      Array.from(row.cells).forEach(cell => {
+        if (cell.style.display === 'none') {
+          row.removeChild(cell);
         }
-  
-        async function exportTableToPDF(filename) {
+      });
+    });
+
+    var workbook = XLSX.utils.table_to_book(clonedTable, { sheet: "Sheet1" });
+    XLSX.writeFile(workbook, filename);
+  }
+
+  async function exportTableToPDF(filename) {
     const { jsPDF } = window.jspdf;  // Access jsPDF from the window object
     const doc = new jsPDF('landscape', 'pt', 'a4');  // Create a new jsPDF document in landscape mode
-  
+
     const table = document.getElementById("data-table");
-  
+
     // Extract Table Data
     var rows = table.querySelectorAll("tr");
     var data = [];
-  
+
     rows.forEach((row) => {
       var cols = row.querySelectorAll("td, th");
       var rowData = [];
       cols.forEach(col => {
-        rowData.push(col.innerText.trim());
+        if (col.style.display !== 'none') { // Check if the column is hidden
+          rowData.push(col.innerText.trim());
+        }
       });
       data.push(rowData);
     });
-  
+
     // Calculate equal width for each column
     const totalColumns = data[0].length;  // Assuming the first row contains the header
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 40;  // Left and right margin combined
     const usableWidth = pageWidth - margin;
     const equalColumnWidth = usableWidth / totalColumns;
-  
+
     // Setup autoTable with equal column widths
     doc.autoTable({
       head: [data[0]],  // Header row
@@ -106,19 +197,19 @@
         doc.text('Student Data Export', data.settings.margin.left, 10);
       },
     });
-  
+
     // Save the PDF
     doc.save(filename);
   }
-  
+
   function printTable() {
     // Extract the table HTML
     var table = document.getElementById("data-table");
     var tableHTML = table.outerHTML;
-  
+
     // Create a new window for printing
     var printWindow = window.open('', '', 'height=800,width=1200');
-  
+
     // Write the table HTML to the new window
     printWindow.document.write('<html><head><title>Print Table</title>');
     printWindow.document.write('<style>');  // Add styles for the print layout
@@ -131,23 +222,15 @@
     printWindow.document.write('<h1>Student Data</h1>');  // Optional title
     printWindow.document.write(tableHTML);  // Insert the table HTML
     printWindow.document.write('</body></html>');
-  
+
     // Close the document and trigger print dialog
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
   }
-  
-  
-  
-  
-  </script>
-  
-  <!-- Export Buttons -->
-<button onclick="exportTableToCSV('table-data.csv')">Export to CSV</button>
-<button onclick="exportTableToExcel('table-data.xlsx')">Export to Excel</button>
-<button onclick="exportTableToPDF('table-data.pdf')">Export to PDF</button> <!-- New PDF Export Button -->
-<button onclick="printTable()">Print Table</button>
+</script>
+
+
 
 
 <!-- Include jsPDF and jsPDF AutoTable libraries -->
@@ -157,3 +240,6 @@
 
 <!-- JavaScript Libraries and Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+
+{% endblock %}

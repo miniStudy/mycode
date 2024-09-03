@@ -7,7 +7,6 @@ from django.conf import settings
 import math
 import statistics
 import random
-from django.apps import apps
 from django.http import Http404,JsonResponse
 from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
 from django.core.files.storage import FileSystemStorage
@@ -28,7 +27,7 @@ from django.views.decorators.http import require_GET
 import requests
 
 def paginatoorrr(queryset,request):
-        paginator = Paginator(queryset, 3)
+        paginator = Paginator(queryset, 20)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         return page_obj
@@ -1986,22 +1985,18 @@ def faculty_access_show(request):
 
 
 def export_data(request):
-    context = {}
-    # model_name = request.GET.get('model_name')  # Get the model name from the request
-
-    # # Dynamically retrieve model class from model_name
-    # try:
-    #     model = apps.get_model(app_label='adminside', model_name=model_name)
-    #     data = model.objects.all()  # Fetch all records from the model
-
-    #     # Get field names dynamically
-    #     field_names = [field.name for field in model._meta.fields]
-
-    #     context.update({
-    #         'field_names': field_names,
-    #         'data': data,
-    #     })
-    # except LookupError:
-    #     context['error'] = f'Model "{model_name}" not found.'
-
-    return render(request, 'export_data.html', context)
+    
+    model_name = request.GET.get('model_name')
+    Context={'title':model_name}
+    
+    if model_name == 'Students':
+        student_data = []
+        data = Students.objects.all()
+        field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
+            student_data.append(temp_data)
+        Context.update({'data':student_data,'field_names':field_names})
+        print(student_data)
+    return render(request, 'export_data.html',Context)
