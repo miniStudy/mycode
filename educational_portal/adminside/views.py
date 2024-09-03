@@ -966,7 +966,8 @@ def show_attendance(request):
 def show_events(request):
     events = Event.objects.all()
     events_imgs = Event_Image.objects.all()
-    selected_events = Event.objects.all()[:1]
+    selected_events = Event.objects.first()
+    print(selected_events)
     context = {
         'events':events,
         'events_imgs':events_imgs,
@@ -975,7 +976,7 @@ def show_events(request):
     }
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
-        selected_events = Event.objects.filter(event_id = event_id)
+        selected_events = Event.objects.get(event_id = event_id)
         events_imgs = Event_Image.objects.filter(event__event_id = event_id)
         context.update({'selected_events':selected_events,'events_imgs':events_imgs})
     return render(request, 'show_events.html',context)
@@ -991,11 +992,12 @@ def insert_events(request):
         print(event_images)
         event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
         event.save()
-
+        
         fs = FileSystemStorage(location='media/uploads/events/')
         for image in event_images:
             filename = fs.save(image.name, image)
             Event_Image.objects.create(event=event, event_img=filename)
+        return redirect('show_events')
     return render(request, 'insert_update/events_insert_admin.html', {'title':title})
 
 
