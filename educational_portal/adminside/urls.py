@@ -131,4 +131,6 @@ urlpatterns = [
     # ========================================Faculty Access======================================================
     path('faculty_access/', adminview.faculty_access_show, name="faculty_access"),
     path('export_data',adminview.export_data, name='export_data'),
+
+    path('bulk_upload_test_questions/', adminview.bulk_upload_questions, name='bulk_upload_test_questions')
 ]

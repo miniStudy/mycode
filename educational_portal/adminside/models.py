@@ -493,3 +493,30 @@ class Today_Teaching(models.Model):
     class Meta:
         db_table = 'Today_Teaching'
 
+
+
+
+
+class question_bank(models.Model):
+    class que_type(models.TextChoices):
+        Question_Answer = 'Question_Answer', 'Question_Answer'
+        MCQ = 'MCQ', 'MCQ'
+        Filling_Blanks = 'Filling_Blanks','Filling_Blanks'
+        True_False = 'True_False','True_False'
+    qb_id = models.BigAutoField(primary_key=True)
+    qb_chepter = models.ForeignKey(Chepter,on_delete=models.CASCADE)
+    qb_q_type = models.CharField(choices=que_type.choices,max_length=50)
+    qb_question = models.TextField(blank=True,null=True)
+    qb_answer = models.TextField(blank=True,null=True)
+    qb_weightage = models.IntegerField()
+    qb_hint = models.TextField(blank=True,null=True)
+    qb_optiona = models.CharField(max_length=200,blank=True,null=True)
+    qb_optionb = models.CharField(max_length=200,blank=True,null=True)
+    qb_optionc = models.CharField(max_length=200,blank=True,null=True)
+    qb_optiond = models.CharField(max_length=200,blank=True,null=True)
+
+    def __str__(self):
+        return f"{self.qb_q_type} - {self.qb_chepter}"
+    
+    class Meta:
+        db_table = 'question_bank'

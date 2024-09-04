@@ -2069,3 +2069,41 @@ def export_data(request):
         Context.update({'data':student_data,'field_names':field_names})   
         
     return render(request, 'export_data.html',Context)
+
+
+
+
+def bulk_upload_questions(request):
+    if request.method == 'POST':
+        qb_chapter_id = request.POST.get('tq_chapter')  # Corrected variable name
+        qb_chapter = Chepter.objects.get(chep_id=qb_chapter_id)
+
+        # Extract all question entries
+        questions_data = request.POST.getlist('question[]')
+        q_types = request.POST.getlist('q_type[]')
+        answers = request.POST.getlist('answer[]')
+        weightages = request.POST.getlist('weightage[]')
+        options_a = request.POST.getlist('option_a[]')
+        options_b = request.POST.getlist('option_b[]')
+        options_c = request.POST.getlist('option_c[]')
+        options_d = request.POST.getlist('option_d[]')
+
+        # Save each question entry
+        for i in range(len(questions_data)):
+            question_bank.objects.create(
+                qb_chepter=qb_chapter,
+                qb_q_type=q_types[i],
+                qb_question=questions_data[i],
+                qb_answer=answers[i],
+                qb_weightage=weightages[i],
+                qb_optiona=options_a[i] if q_types[i] == 'MCQ' else None,
+                qb_optionb=options_b[i] if q_types[i] == 'MCQ' else None,
+                qb_optionc=options_c[i] if q_types[i] == 'MCQ' else None,
+                qb_optiond=options_d[i] if q_types[i] == 'MCQ' else None,
+            )
+
+        return redirect('/admin/adminside/question_bank/')  # Redirect to the same page after submission
+    chap_data = Chepter.objects.filter(chep_std__std_id = 13)
+    que_type_choices = question_bank.que_type.choices
+    Context={'chap_data':chap_data,'que_type_choices':que_type_choices}
+    return render(request, 'insert_update/bulk_upload_test_questions.html',Context)
