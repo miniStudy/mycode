@@ -132,5 +132,10 @@ urlpatterns = [
     path('faculty_access/', adminview.faculty_access_show, name="faculty_access"),
     path('export_data',adminview.export_data, name='export_data'),
 
-    path('bulk_upload_test_questions/', adminview.bulk_upload_questions, name='bulk_upload_test_questions')
+    path('bulk_upload_test_questions/', adminview.bulk_upload_questions, name='bulk_upload_test_questions'),
+    path('show_question_bank/', adminview.show_question_bank, name="show_question_bank"),
+    path('edit_question_bankk/', adminview.edit_question_bankk, name="edit_question_bankk"),
+    path('delete_question_bank/', adminview.delete_question_bank, name="delete_question_bank"),
+
+
 ]

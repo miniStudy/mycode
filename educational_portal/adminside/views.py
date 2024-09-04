@@ -2102,8 +2102,69 @@ def bulk_upload_questions(request):
                 qb_optiond=options_d[i] if q_types[i] == 'MCQ' else None,
             )
 
-        return redirect('/admin/adminside/question_bank/')  # Redirect to the same page after submission
+        return redirect('show_question_bank')  # Redirect to the same page after submission
     chap_data = Chepter.objects.filter(chep_std__std_id = 13)
     que_type_choices = question_bank.que_type.choices
     Context={'chap_data':chap_data,'que_type_choices':que_type_choices}
     return render(request, 'insert_update/bulk_upload_test_questions.html',Context)
+
+
+
+
+
+def show_question_bank(request):
+    # Fetch all questions from the question_bank model
+    questions = question_bank.objects.all()
+    return render(request, 'show_question_bank.html', {'questions': questions})
+
+
+def edit_question_bankk(request):
+    # Fetch the specific question to edit
+    updateid = request.GET.get('updateid')
+    question = get_object_or_404(question_bank, qb_id=updateid)
+    
+    if request.method == 'POST':
+        # Update the question details from form data
+        question.qb_chepter = Chepter.objects.get(chep_id=request.POST.get('qb_chepter'))
+        question.qb_q_type = request.POST.get('qb_q_type')
+        question.qb_question = request.POST.get('qb_question')
+        question.qb_answer = request.POST.get('qb_answer')
+        question.qb_weightage = request.POST.get('qb_weightage')
+        
+        # Update options based on question type
+        if question.qb_q_type == 'MCQ':
+            question.qb_optiona = request.POST.get('qb_optiona')
+            question.qb_optionb = request.POST.get('qb_optionb')
+            question.qb_optionc = request.POST.get('qb_optionc')
+            question.qb_optiond = request.POST.get('qb_optiond')
+        else:
+            # Clear options if not MCQ
+            question.qb_optiona = None
+            question.qb_optionb = None
+            question.qb_optionc = None
+            question.qb_optiond = None
+        
+        # Save the updated question to the database
+        question.save()
+        return redirect('show_question_bank')  # Redirect back to the question list page
+
+    # Render edit form with existing question data
+    chap_data = Chepter.objects.filter(chep_sub__sub_std__std_id = 13).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name')
+    que_type_choices = question_bank.que_type.choices
+    context = {
+        'question': question,
+        'chap_data': chap_data,
+        'que_type_choices': que_type_choices,
+    }
+    return render(request, 'insert_update/edit_question_bank.html', context)
+
+
+
+def delete_question_bank(request):
+    qb_id = request.GET.get('qb_id')
+    if qb_id:
+        question = get_object_or_404(question_bank, qb_id=qb_id)
+        question.delete()
+
+    # Redirect back to the list of questions
+    return redirect('show_question_bank')

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Question</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script>
+        // JavaScript to toggle options for MCQ questions
+        function toggleOptions() {
+            const qType = document.getElementById('qb_q_type').value;
+            const optionsFields = document.querySelectorAll('.option-field');
+            if (qType === 'MCQ') {
+                optionsFields.forEach(field => field.style.display = 'block');
+            } else {
+                optionsFields.forEach(field => field.style.display = 'none');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleOptions();  // Initial toggle based on existing data
+            document.getElementById('qb_q_type').addEventListener('change', toggleOptions);
+        });
+    </script>
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Edit Question</h2>
+    <form method="POST" action="{% url 'edit_question_bankk' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="qb_chepter">Chapter:</label>
+            <select name="qb_chepter" id="qb_chepter" class="form-control" required>
+                {% for chapter in chap_data %}
+                    <option value="{{ chapter.chep_id }}" {% if chapter.chep_id == question.qb_chepter.chep_id %}selected{% endif %}>{{ chapter.chep_name }} - {{chapter.chep_sub__sub_name}} - std:{{chapter.chep_sub__sub_std__std_name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="qb_q_type">Question Type:</label>
+            <select name="qb_q_type" id="qb_q_type" class="form-control">
+                {% for value, display in que_type_choices %}
+                    <option value="{{ value }}" {% if value == question.qb_q_type %}selected{% endif %}>{{ display }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="qb_question">Question:</label>
+            <textarea name="qb_question" id="qb_question" class="form-control" required>{{ question.qb_question }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="qb_answer">Answer:</label>
+            <textarea name="qb_answer" id="qb_answer" class="form-control" required>{{ question.qb_answer }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="qb_weightage">Weightage:</label>
+            <input type="number" name="qb_weightage" id="qb_weightage" class="form-control" value="{{ question.qb_weightage }}" required>
+        </div>
+
+        <!-- Options for MCQ -->
+        <div class="form-group option-field">
+            <label for="qb_optiona">Option A:</label>
+            <input type="text" name="qb_optiona" id="qb_optiona" class="form-control" value="{{ question.qb_optiona }}">
+        </div>
+
+        <div class="form-group option-field">
+            <label for="qb_optionb">Option B:</label>
+            <input type="text" name="qb_optionb" id="qb_optionb" class="form-control" value="{{ question.qb_optionb }}">
+        </div>
+
+        <div class="form-group option-field">
+            <label for="qb_optionc">Option C:</label>
+            <input type="text" name="qb_optionc" id="qb_optionc" class="form-control" value="{{ question.qb_optionc }}">
+        </div>
+
+        <div class="form-group option-field">
+            <label for="qb_optiond">Option D:</label>
+            <input type="text" name="qb_optiond" id="qb_optiond" class="form-control" value="{{ question.qb_optiond }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Question</button>
+        <a href="{% url 'show_question_bank' %}" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

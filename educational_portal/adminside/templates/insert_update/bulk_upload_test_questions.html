@@ -42,13 +42,16 @@
             addNewQuestion();  // Add the first question on page load
         });
     </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 </head>
 <body>
+    <div class="container mt-2">
     <h2>Bulk Upload Questions</h2>
     <form method="POST">
         {% csrf_token %}
         <label for="tq_chapter">Chapter:</label>
-        <select name="tq_chapter" required>
+        <select name="tq_chapter" class="form-control" required>
             {% for chapter in chap_data %}
                 <option value="{{ chapter.chep_id }}">{{ chapter }}</option>
             {% endfor %}
@@ -56,46 +59,57 @@
 
         <div id="questions-container"></div>
 
-        <button type="button" id="add-question-btn">Add Another Question</button><br><br>
-        <button type="submit">Submit All Questions</button>
+        <button type="button" class="btn btn-warning mt-3" id="add-question-btn">Add Another Question</button><br><br>
+        <button type="submit" class="btn btn-success mt-3">Submit All Questions</button>
     </form>
 
     <!-- Template for Question Entry -->
     <div class="question-template" style="display: none; margin-top: 20px; border: 1px solid #ccc; padding: 10px;">
         <hr>
-        <label>Question Type:</label>
-        <select name="q_type[]" class="q_type">
+
+        <div class="row">
+            <div class="col">
+                <label>Question Type:</label>
+        <select name="q_type[]" class="q_type" class="form-control">
             {% for value, label in que_type_choices %}
                 <option value="{{ value }}">{{ label }}</option>
             {% endfor %}
-        </select>
+        </select><br>
 
-        <label>Question:</label>
-        <textarea name="question[]" cols="70" rows="25" style="padding: 10px;" required></textarea>
-
-        <label>Answer:</label>
-        <textarea name="answer[]" cols="70" rows="25" style="padding: 10px;" required></textarea>
-
-        <label>Weightage:</label>
-        <input type="number" name="weightage[]" required>
-
-        <!-- Options for MCQ -->
         <div class="option-field">
-            <label>Option A:</label>
-            <input type="text" name="option_a[]"><br>
-
+            <label>Option A:</label><input type="text" name="option_a[]" class="form-control"><br>
+            
             <label>Option B:</label>
-            <input type="text" name="option_b[]"><br>
+            <input type="text" name="option_b[]" class="form-control"><br>
 
             <label>Option C:</label>
-            <input type="text" name="option_c[]"><br>
+            <input type="text" name="option_c[]" class="form-control"><br>
 
             <label>Option D:</label>
-            <input type="text" name="option_d[]"><br>
+            <input type="text" name="option_d[]" class="form-control"><br>
         </div>
 
-        <button type="button" class="remove-question-btn">Remove This Question</button>
+        <label>Weightage:</label>
+        <input type="number" name="weightage[]" class="form-control" required>
+            </div>
+
+            <div class="col">
+                <label>Question:</label>
+        <textarea name="question[]" cols="70" rows="10" style="padding: 10px;" class="form-control"  required></textarea>
+            </div>
+
+            <div class="col">
+                <label>Answer:</label>
+                <textarea name="answer[]" cols="70" rows="10" style="padding: 10px;" class="form-control" required></textarea>        
+            </div>
+        </div>
         <hr>
+        <div class="text-right"><button type="button" class="remove-question-btn btn btn-danger">Remove This Question</button></div>
     </div>
+</div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
