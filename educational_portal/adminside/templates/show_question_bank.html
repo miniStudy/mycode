@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uploaded Questions</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">List of Uploaded Questions</h2>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Chapter</th>
+                <th>Question Type</th>
+                <th>Question</th>
+                <th>Answer</th>
+                <th>Weightage</th>
+                <th>Option A</th>
+                <th>Option B</th>
+                <th>Option C</th>
+                <th>Option D</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for question in questions %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ question.qb_chepter }}</td>
+                <td>{{ question.qb_q_type }}</td>
+                <td>{{ question.qb_question|safe }}</td>
+                <td>{{ question.qb_answer|safe }}</td>
+                <td>{{ question.qb_weightage }}</td>
+                <td>{{ question.qb_optiona }}</td>
+                <td>{{ question.qb_optionb }}</td>
+                <td>{{ question.qb_optionc }}</td>
+                <td>{{ question.qb_optiond }}</td>
+                <td>
+                    <!-- Add buttons or links for editing/deleting if needed -->
+                    <a href="{% url 'edit_question_bankk' %}?updateid={{question.qb_id}}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'delete_question_bank' %}?qb_id={{ question.qb_id }}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'bulk_upload_test_questions' %}" class="btn btn-primary">Upload More Questions</a>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

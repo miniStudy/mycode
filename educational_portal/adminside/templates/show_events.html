@@ -19,23 +19,12 @@
                     </button>
                 </a>
         </div>
+            <div class="text-center">
+              {% for x in events %}
+            <a href="{% url 'show_events' %}?event_id={{x.event_id}}"><button type="button" class="btn btn-outline-primary me-2 mt-2 btn-sm {% if x.event_id == selected_events.event_id %} active {% endif %}">{{x.event_name}}</button></a>
+            {% endfor %}
+            </div>     
     </div>
-</div>
-
-
-<div class="row mt-3">
-  {% for x in events %}
-  
-  <div class="col-md-2">
-    <a href="{% url 'show_events' %}?event_id={{x.event_id}}">
-    <div class="card">
-      <div class="card-body">
-          {{x.event_name}}
-      </div>
-    </div>
-    </a>
-  </div>
-  {% endfor %}
 </div>
 
 
@@ -44,20 +33,20 @@
 <form action="{% url 'delete_announcements' %}" method="POST"> 
   {% csrf_token %}
 
-    {% for x in selected_events %}
+    
     <div class="card p-4 mt-3">
       
       <!-- <h5 class="d-flex align-items-center">
         <input type="checkbox" class="form-check-input me-3" value="{{x.announce_id}}" name="selection" id="item{{x.announce_id}}"/><label for="item{{x.announce_id}}"><a href="{% url 'insert_update_announcements' %}?pk={{x.announce_id}}">{{x.announce_title}}</a></label>
       </h5> -->
-          
-          <b style="font-size: 18px;" class="mb-2">{{x.event_name}}</b>
-          <div class="mb-2">{{x.event_desc}}</div>
-          <small>{{x.event_date}}</small>
+          {{selected_events}}
+          <b style="font-size: 18px;" class="mb-2">{{selected_events.event_name}}</b>
+          <div class="mb-2">{{selected_events.event_desc}}</div>
+          <small>{{selected_events.event_date}}</small>
           <hr/>
           <div class="row">
           {% for imgs in events_imgs %}
-            {% if imgs.event.event_id == x.event_id  %}
+            {% if imgs.event.event_id == selected_events.event_id  %}
             <div class="col-md-2 mt-4" >
             <a href="/media/uploads/events/{{imgs.event_img}}"><img src="/media/uploads/events/{{imgs.event_img}}" style="width: 100%;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;"/></a>
             </div>
@@ -65,7 +54,7 @@
           {% endfor %}
         </div>
     </div>
-    {% endfor %}
+
 
   
 

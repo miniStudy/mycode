@@ -5,6 +5,9 @@ from django_summernote.admin import SummernoteModelAdmin
 class Test_questions_answer_admin(SummernoteModelAdmin):
     summernote_fields = ('tq_question','tq_answer')
 
+class question_bankkk(SummernoteModelAdmin):
+    summernote_fields = ('qb_question','qb_answer')
+
 class Doubt_section_admin(SummernoteModelAdmin):
     summernote_fields = ('doubt_doubt')
 
@@ -43,3 +46,4 @@ admin.site.register(Credits)
 admin.site.register(Transactions)
 admin.site.register(Today_Teaching)
 admin.site.register(Syllabus)
+admin.site.register(question_bank)

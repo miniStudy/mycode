@@ -21,13 +21,22 @@
                 <i class="fa-solid fa-plus me-2"></i> ADD
             </button>
         </a>
-      </div>
-        
+      </div>   
+</div>
+<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+<div class="btn-group me-2" role="group" aria-label="First group">
+  <a href="{% url 'export_data' %}?model_name=inquiries"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
+<div class="input-group mt-2 ms-2">
+  <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
+  <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+  <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
+</div>
+</div>
 </div>
     <form action="{% url 'delete_boards' %}" method="POST"> 
     {% csrf_token %}        
-    <div class="card-datatable table-responsive pt-0">
-        <table id="example" class="display table table-bordered" style="width:100%">
+    <div class="card-datatable table-responsive pt-0 mt-3">
+        <table id="data-table" class="display table table-bordered" style="width:100%">
             <thead>
                 <tr>
                     <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>

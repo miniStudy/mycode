@@ -13,8 +13,9 @@
 
 <div class="card">
     <div class="card-body">
-        <div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+        <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2" role="group" aria-label="First group">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">{% if selected_std %}{{selected_std}}{% else %}Standard{% endif %}</button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{% url 'admin_materials' %}">ALL</a></li>
@@ -25,7 +26,7 @@
                 {% endfor %}
             </ul>
 
-            <button class="btn btn-primary btn-sm dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown"
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">{% if selected_sub %}{{selected_sub.sub_name}}{% else %}Subjects{% endif %}</button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{% url 'admin_materials' %}?std_id={{selected_std.std_id}}">ALL</a></li>
@@ -37,6 +38,7 @@
             </ul>
 
         </div>
+    </div>
 
     </div>
 </div>

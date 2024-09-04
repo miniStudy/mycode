@@ -7,7 +7,6 @@ from django.conf import settings
 import math
 import statistics
 import random
-from django.apps import apps
 from django.http import Http404,JsonResponse
 from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
 from django.core.files.storage import FileSystemStorage
@@ -28,7 +27,7 @@ from django.views.decorators.http import require_GET
 import requests
 
 def paginatoorrr(queryset,request):
-        paginator = Paginator(queryset, 10)
+        paginator = Paginator(queryset, 20)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         return page_obj
@@ -967,7 +966,8 @@ def show_attendance(request):
 def show_events(request):
     events = Event.objects.all()
     events_imgs = Event_Image.objects.all()
-    selected_events = Event.objects.all()[:1]
+    selected_events = Event.objects.first()
+    print(selected_events)
     context = {
         'events':events,
         'events_imgs':events_imgs,
@@ -976,7 +976,7 @@ def show_events(request):
     }
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
-        selected_events = Event.objects.filter(event_id = event_id)
+        selected_events = Event.objects.get(event_id = event_id)
         events_imgs = Event_Image.objects.filter(event__event_id = event_id)
         context.update({'selected_events':selected_events,'events_imgs':events_imgs})
     return render(request, 'show_events.html',context)
@@ -992,11 +992,12 @@ def insert_events(request):
         print(event_images)
         event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
         event.save()
-
+        
         fs = FileSystemStorage(location='media/uploads/events/')
         for image in event_images:
             filename = fs.save(image.name, image)
             Event_Image.objects.create(event=event, event_img=filename)
+        return redirect('show_events')
     return render(request, 'insert_update/events_insert_admin.html', {'title':title})
 
 
@@ -1777,7 +1778,7 @@ def adminside_report_card(request):
         })
     else:
         noreport_card = 1       
-        nobody = messages.error(request, 'Please Select Student!')
+        nobody = 0
         context.update({'nobody':nobody, 'noreport_card':noreport_card})
     return render(request, 'show_report_card_admin.html', context)
 
@@ -2011,22 +2012,159 @@ def faculty_access_show(request):
 
 
 def export_data(request):
-    context = {}
-    # model_name = request.GET.get('model_name')  # Get the model name from the request
+    model_name = request.GET.get('model_name')
+    Context={'title':model_name}
+    get_std = request.GET.get('get_std')
+    get_batch = request.GET.get('get_batch')
+    get_subject = request.GET.get('get_subject')
 
-    # # Dynamically retrieve model class from model_name
-    # try:
-    #     model = apps.get_model(app_label='adminside', model_name=model_name)
-    #     data = model.objects.all()  # Fetch all records from the model
+    if model_name == 'Students':
+        student_data = []
+        if get_std:
+            data = Students.objects.filter(stud_std__std_id=get_std)
+        elif get_batch:
+            data = Students.objects.filter(stud_batch__batch_id=get_batch)
+        else:
+            data = Students.objects.all()
 
-    #     # Get field names dynamically
-    #     field_names = [field.name for field in model._meta.fields]
+        field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
+            student_data.append(temp_data)
+        Context.update({'data':student_data,'field_names':field_names})
 
-    #     context.update({
-    #         'field_names': field_names,
-    #         'data': data,
-    #     })
-    # except LookupError:
-    #     context['error'] = f'Model "{model_name}" not found.'
 
-    return render(request, 'export_data.html', context)
+
+    if model_name == 'Students':
+        student_data = []
+        if get_std:
+            data = Students.objects.filter(stud_std__std_id=get_std)
+        elif get_batch:
+            data = Students.objects.filter(stud_batch__batch_id=get_batch)
+        else:
+            data = Students.objects.all()
+
+        field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
+            student_data.append(temp_data)
+        Context.update({'data':student_data,'field_names':field_names})
+
+    if model_name == 'attendance':
+        all_data = []
+        if get_std:
+            data = Attendance.objects.filter(atten_student__stud_std__std_id=get_std)
+        elif get_batch:
+            data = Attendance.objects.filter(atten_student__stud_batch__batch_id=get_batch)
+        else:
+            data = Attendance.objects.all()
+
+        field_names = ['Date','Student Roll No','Student Name','Subject','Time','Tutor','Attendance','Batch','Std','Board']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'Date':x.atten_date,'student_roll_no':x.stud_lastname,'Student_name':x.stud_contact,'subject':x.stud_contact,'time':x.stud_dob,'tutor':x.stud_gender,'Attendance':x.stud_admission_no,'Batch':x.stud_roll_no,'Std':x.stud_enrollment_no,'Board':x.stud_guardian_name})
+            student_data.append(temp_data)
+        Context.update({'data':student_data,'field_names':field_names})   
+        
+    return render(request, 'export_data.html',Context)
+
+
+
+
+def bulk_upload_questions(request):
+    if request.method == 'POST':
+        qb_chapter_id = request.POST.get('tq_chapter')  # Corrected variable name
+        qb_chapter = Chepter.objects.get(chep_id=qb_chapter_id)
+
+        # Extract all question entries
+        questions_data = request.POST.getlist('question[]')
+        q_types = request.POST.getlist('q_type[]')
+        answers = request.POST.getlist('answer[]')
+        weightages = request.POST.getlist('weightage[]')
+        options_a = request.POST.getlist('option_a[]')
+        options_b = request.POST.getlist('option_b[]')
+        options_c = request.POST.getlist('option_c[]')
+        options_d = request.POST.getlist('option_d[]')
+
+        # Save each question entry
+        for i in range(len(questions_data)):
+            question_bank.objects.create(
+                qb_chepter=qb_chapter,
+                qb_q_type=q_types[i],
+                qb_question=questions_data[i],
+                qb_answer=answers[i],
+                qb_weightage=weightages[i],
+                qb_optiona=options_a[i] if q_types[i] == 'MCQ' else None,
+                qb_optionb=options_b[i] if q_types[i] == 'MCQ' else None,
+                qb_optionc=options_c[i] if q_types[i] == 'MCQ' else None,
+                qb_optiond=options_d[i] if q_types[i] == 'MCQ' else None,
+            )
+
+        return redirect('show_question_bank')  # Redirect to the same page after submission
+    chap_data = Chepter.objects.filter(chep_std__std_id = 13)
+    que_type_choices = question_bank.que_type.choices
+    Context={'chap_data':chap_data,'que_type_choices':que_type_choices}
+    return render(request, 'insert_update/bulk_upload_test_questions.html',Context)
+
+
+
+
+
+def show_question_bank(request):
+    # Fetch all questions from the question_bank model
+    questions = question_bank.objects.all()
+    return render(request, 'show_question_bank.html', {'questions': questions})
+
+
+def edit_question_bankk(request):
+    # Fetch the specific question to edit
+    updateid = request.GET.get('updateid')
+    question = get_object_or_404(question_bank, qb_id=updateid)
+    
+    if request.method == 'POST':
+        # Update the question details from form data
+        question.qb_chepter = Chepter.objects.get(chep_id=request.POST.get('qb_chepter'))
+        question.qb_q_type = request.POST.get('qb_q_type')
+        question.qb_question = request.POST.get('qb_question')
+        question.qb_answer = request.POST.get('qb_answer')
+        question.qb_weightage = request.POST.get('qb_weightage')
+        
+        # Update options based on question type
+        if question.qb_q_type == 'MCQ':
+            question.qb_optiona = request.POST.get('qb_optiona')
+            question.qb_optionb = request.POST.get('qb_optionb')
+            question.qb_optionc = request.POST.get('qb_optionc')
+            question.qb_optiond = request.POST.get('qb_optiond')
+        else:
+            # Clear options if not MCQ
+            question.qb_optiona = None
+            question.qb_optionb = None
+            question.qb_optionc = None
+            question.qb_optiond = None
+        
+        # Save the updated question to the database
+        question.save()
+        return redirect('show_question_bank')  # Redirect back to the question list page
+
+    # Render edit form with existing question data
+    chap_data = Chepter.objects.filter(chep_sub__sub_std__std_id = 13).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name')
+    que_type_choices = question_bank.que_type.choices
+    context = {
+        'question': question,
+        'chap_data': chap_data,
+        'que_type_choices': que_type_choices,
+    }
+    return render(request, 'insert_update/edit_question_bank.html', context)
+
+
+
+def delete_question_bank(request):
+    qb_id = request.GET.get('qb_id')
+    if qb_id:
+        question = get_object_or_404(question_bank, qb_id=qb_id)
+        question.delete()
+
+    # Redirect back to the list of questions
+    return redirect('show_question_bank')
