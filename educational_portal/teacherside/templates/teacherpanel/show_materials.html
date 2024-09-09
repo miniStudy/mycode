@@ -110,8 +110,7 @@
                     <div class="col-md-2 mb-3">
                         
                         
-                        <div class="card"
-                        style="height: 200px; border:1px solid #88a9e6; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;overflow: hidden;position: relative;">
+                        <div class="card material_card">
                         <a href="{% url 'materials_delete_teacher' %}?delete_material_id={{mat.cm_id}}"><div style="padding: 3px;border-radius: 5px;z-index: 100;position: absolute;top: 80%;left: 5%;"><i class="fa-solid fa-trash text-primary"></i></div></a>
                         <a href="{% url 'teacher_insert_update_materials' %}?pk={{mat.cm_id}}"><div style="padding: 3px;border-radius: 5px;z-index: 1;position: absolute;top: 80%;right: 5%;"><i class="fa-solid fa-pen-to-square"></i></div></a>
                         {% if mat.cm_file_icon %}
