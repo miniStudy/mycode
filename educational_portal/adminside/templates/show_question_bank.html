@@ -48,6 +48,16 @@
         </tbody>
     </table>
 
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group" aria-label="First group">
+          {% for x in question.paginator.page_range %}
+          <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if question.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <br>
+
     <a href="{% url 'bulk_upload_test_questions' %}" class="btn btn-primary">Upload More Questions</a>
 </div>
 

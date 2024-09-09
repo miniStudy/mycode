@@ -41,7 +41,7 @@
             <select id="test_sub" class="form-select" name="test_sub">
               <option value="">--</option>
               {% for x in subject_data %}
-                <option value="{{ x.sub_id }}" {% if filled_data and filled_data.test_sub == x.sub_id %} selected {% endif %} {% if update_data and x.sub_id == update_data.test_sub_id %} selected {% endif %}>{{ x.sub_name }}</option>
+                <option value="{{ x.sub_id }}" {% if filled_data and filled_data.test_sub == x.sub_id %} selected {% endif %} {% if update_data and x.sub_id == update_data.test_sub_id %} selected {% endif %}>{{ x }}</option>
               {% endfor %}
             </select>
           </div>
@@ -71,11 +71,69 @@
             </div>
           </div>
 
+          <!-- Checkbox for Auto Generate Test -->
+          <div class="col-sm-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="auto_generate_test" name="auto_generate_test">
+              <label class="form-check-label" for="auto_generate_test">Autogenerate Test Using AI?</label>
+            </div>
+          </div>
+
+          <!-- Input fields for question distribution, hidden by default -->
+          <div id="question_distribution" style="display:none;">
+
+            <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+              <label for="test_chap" class="form-label">Chapter Name</label>
+              <select id="test_chap" class="form-select" name="test_chap">
+                <option value="">--</option>
+                {% for x in chap_data %}
+                  <option value="{{ x.chep_id }}" {% if filled_data and filled_data.test_chap == x.chap_id %} selected {% endif %} {% if update_data and x.sub_id == update_data.test_sub_id %} selected {% endif %}>{{ x.chep_name }} {{x.chep_sub__sub_name}} {{x.chep_sub__sub_std__std_name}} {{x.chep_sub__sub_std__std_board__brd_name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-sm-12">
+              <label class="form-label mb-2">No of 1 Mark Questions</label>
+              <div class="input-group input-group-merge">
+                <input type="number" class="form-control" name="one_mark_questions" placeholder="Enter number of 1 mark questions">
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <label class="form-label mb-2">No of 2 Marks Questions</label>
+              <div class="input-group input-group-merge">
+                <input type="number" class="form-control" name="two_mark_questions" placeholder="Enter number of 2 marks questions">
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <label class="form-label mb-2">No of 3 Marks Questions</label>
+              <div class="input-group input-group-merge">
+                <input type="number" class="form-control" name="three_mark_questions" placeholder="Enter number of 3 marks questions">
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <label class="form-label mb-2">No of 4 Marks Questions</label>
+              <div class="input-group input-group-merge">
+                <input type="number" class="form-control" name="four_mark_questions" placeholder="Enter number of 4 marks questions">
+              </div>
+            </div>
+          </div>
+
         <div class="col-sm-12">
           <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
         </div>
       </form>
     </div>
   </div>
+
+  <script>
+    document.getElementById('auto_generate_test').addEventListener('change', function () {
+      var distributionFields = document.getElementById('question_distribution');
+      if (this.checked) {
+        distributionFields.style.display = 'block';
+      } else {
+        distributionFields.style.display = 'none';
+      }
+    });
+  </script>
 
 {% endblock %}
