@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 asgiref==3.8.1
 Django==5.0.6
 django-ckeditor==6.7.1
@@ -9,7 +8,6 @@ pillow==10.3.0
 sqlparse==0.5.0
 typing_extensions==4.12.2
 tzdata==2024.1
-=======
 arabic-reshaper==3.0.0
 asgiref==3.8.1
 asn1crypto==1.5.1
@@ -86,4 +84,3 @@ weasyprint==62.3
 webencodings==0.5.1
 xhtml2pdf==0.2.16
 zopfli==0.2.3
->>>>>>> 5328c9b285049905840a82d37b9a10369713da7c
