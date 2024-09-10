@@ -2194,7 +2194,7 @@ def bulk_upload_questions(request):
             )
 
         return redirect('show_question_bank')  # Redirect to the same page after submission
-    chap_data = Chepter.objects.filter(chep_std__std_id = 13)
+    chap_data = Chepter.objects.filter(chep_std__std_id = 13).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name')
     que_type_choices = question_bank.que_type.choices
     Context={'chap_data':chap_data,'que_type_choices':que_type_choices}
     return render(request, 'insert_update/bulk_upload_test_questions.html',Context)
@@ -2205,9 +2205,10 @@ def bulk_upload_questions(request):
 
 def show_question_bank(request):
     # Fetch all questions from the question_bank model
-    questions = question_bank.objects.all()
+    questions = question_bank.objects.all().values('qb_id','qb_chepter__chep_name','qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
+    total_questions = question_bank.objects.count()
     questions = paginatoorrr(questions,request)
-    return render(request, 'show_question_bank.html', {'questions': questions})
+    return render(request, 'show_question_bank.html', {'questions': questions, 'total_questions':total_questions})
 
 
 def edit_question_bankk(request):
