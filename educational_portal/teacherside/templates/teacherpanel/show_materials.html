@@ -22,7 +22,7 @@
                 <li><a class="dropdown-item" href="{% url 'teacher_materials' %}">ALL</a></li>
                 {% for data in standard_data %}
                 <li><a class="dropdown-item"
-                        href="{% url 'teacher_materials' %}?std_id={{data.std_id}}">{{data}}</a>
+                        href="{% url 'teacher_materials' %}?std_id={{data.std_id}}">{{data.std_name}} Std | {{data.std_board__brd_name}}</a>
                 </li>
                 {% endfor %}
             </ul>
@@ -33,7 +33,7 @@
                 <li><a class="dropdown-item" href="{% url 'teacher_materials' %}">ALL</a></li>
                 {% for data in subjects_data %}
                 <li><a class="dropdown-item"
-                        href="{% url 'teacher_materials' %}?std_id={{data.sub_std.std_id}}&sub_id={{data.sub_id}}">{{data}}</a>
+                        href="{% url 'teacher_materials' %}?std_id={{data.sub_std__std_id}}&sub_id={{data.sub_id}}">{{data.sub_name}} | {{data.sub_std__std_name}} Std | {{data.sub_std__std_board__brd_name}}</a>
                 </li>
                 {% endfor %}
             </ul>
@@ -97,7 +97,7 @@
         <h2 class="accordion-header">
             <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
                 data-bs-target="#abcd{{data.sub_id}}" aria-expanded="false" aria-controls="abcd{{data.sub_id}}">
-                {{data}}
+                {{data.sub_name}} | {{data.sub_std__std_name}} Std | {{data.sub_std__std_board__brd_name}}
             </button>
         </h2>
         <div id="abcd{{data.sub_id}}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -110,8 +110,7 @@
                     <div class="col-md-2 mb-3">
                         
                         
-                        <div class="card"
-                        style="height: 200px; border:1px solid #88a9e6; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;overflow: hidden;position: relative;">
+                        <div class="card material_card">
                         <a href="{% url 'materials_delete_teacher' %}?delete_material_id={{mat.cm_id}}"><div style="padding: 3px;border-radius: 5px;z-index: 100;position: absolute;top: 80%;left: 5%;"><i class="fa-solid fa-trash text-primary"></i></div></a>
                         <a href="{% url 'teacher_insert_update_materials' %}?pk={{mat.cm_id}}"><div style="padding: 3px;border-radius: 5px;z-index: 1;position: absolute;top: 80%;right: 5%;"><i class="fa-solid fa-pen-to-square"></i></div></a>
                         {% if mat.cm_file_icon %}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>PDFTron WebViewer</title>
+    <link rel="stylesheet" href="https://unpkg.com/@pdftron/webviewer@8.7.0/public/core.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+        #viewer {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="viewer"></div>
+
+    <script src="https://unpkg.com/@pdftron/webviewer@8.7.0/public/webviewer.min.js"></script>
+    <script>
+        WebViewer({
+            path: 'https://unpkg.com/@pdftron/webviewer@8.7.0/public/',
+            initialDoc: '{{ pdf_url }}' // Django template variable for the PDF URL
+        }, document.getElementById('viewer'))
+        .then(instance => {
+            // You can access the WebViewer instance here for further customization
+            const { docViewer, Annotations, UI } = instance;
+
+            // Example: Adding a custom button
+            const customButton = document.createElement('button');
+            customButton.innerHTML = 'Custom Button';
+            customButton.onclick = () => {
+                alert('Custom button clicked!');
+            };
+            document.querySelector('.toolbar').appendChild(customButton);
+
+            // Additional customization can be done here
+        });
+    </script>
+</body>
+</html>

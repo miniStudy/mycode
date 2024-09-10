@@ -41,3 +41,7 @@
 #example{font-size: 12px !important;}
 #example th{font-weight: 500;}
 .btn-primary{font-size: 12px;}
+
+.material_card{height: 200px; border:1px solid #88a9e6; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;overflow: hidden;position: relative;transition: 0.3s ease;}
+.material_card img{transition: 0.3s ease;}
+.material_card:hover img{transform: scale(1.2);}

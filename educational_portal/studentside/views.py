@@ -779,3 +779,6 @@ def today_study_page(request):
         'todays_study_data':todays_study_data
     }
     return render(request, 'studentpanel/today-study.html', context)
+
+
+
