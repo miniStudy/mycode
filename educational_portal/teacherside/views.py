@@ -81,18 +81,18 @@ def teacher_home(request):
         students_li = Students.objects.filter(stud_std = get_std).values('stud_id','stud_name','stud_lastname')
         overall_attendance_li = []
         for x in students_li:
-            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
-            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
             if total_attendence_studentwise > 0:
                 overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
             else:
                 overall_attendence_studentwise = 0
             
 
-            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
             
             
-            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
             
 
             if total_marks == 0:
@@ -100,7 +100,7 @@ def teacher_home(request):
             else:
                 overall_result = round((obtained_marks/total_marks)*100,2)
 
-            overall_attendance_li.append({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+            overall_attendance_li.append({'stud_name':x['stud_name'], 'stud_lastname':x['stud_lastname'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
 
 
         overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
@@ -136,9 +136,9 @@ def teacher_login_page(request):
     if request.COOKIES.get("fac_email"):
           cookie_email = request.COOKIES['fac_email']
           cookie_pass = request.COOKIES['fac_password']
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title': 'login'})
     else:
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login, 'title':'login'})
 
 def teacher_login_handle(request):
     if request.method == "POST":
@@ -163,7 +163,7 @@ def teacher_login_handle(request):
             return redirect('teacher_home')
         else:
             messages.error(request, "Invalid Username & Password.")
-            return redirect('Student_Login')
+            return redirect('teacher_login')
     else:
         return redirect('teacher_login')
 
@@ -171,9 +171,9 @@ def teacher_forget_password(request):
     login=2
     if request.COOKIES.get("fac_email"):
           cookie_email = request.COOKIES['fac_email']
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email, 'title':'Forget Password'})
     else:
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login, 'title':'Forget Password'})
     
 def teacher_handle_forget_password(request):
      if request.method == "POST":
@@ -200,7 +200,7 @@ def teacher_set_new_password(request):
     login=3      
     if request.GET.get('email'):
          foremail = request.GET['email']
-    return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'email':foremail})
+    return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'email':foremail, 'title':'New Password'})
 
 def teacher_handle_set_new_password(request):
      if request.method == "POST":
@@ -524,8 +524,8 @@ def show_teacher_solution_verified(request):
 @teacher_login_required
 def teacher_events(request):
     event_data = Event.objects.all().values('event_id','event_name')
-    event_imgs = Event_Image.objects.all().values('event_id','event_img')
-    selected_events = Event.objects.all()[:1]
+    event_imgs = Event_Image.objects.all()
+    selected_events = Event.objects.first()
     context={
         'event_data':event_data,
         'event_imgs':event_imgs,
@@ -535,11 +535,10 @@ def teacher_events(request):
 
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
-        selected_events = Event.objects.filter(event_id = event_id)
+        selected_events = Event.objects.get(event_id = event_id)
         event_imgs = Event_Image.objects.filter(event__event_id = event_id)
         
         context.update({'selected_events':selected_events, 'events_img':event_imgs})
-
     return render(request, 'teacherpanel/events.html', context)
 
 
@@ -554,7 +553,7 @@ def teacher_test(request):
         subjects_list.append(x.fa_subject.sub_id)
 
 
-    data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+    data = Chepterwise_test.objects.filter(test_std__std_id__in = std_list).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
     data = paginatoorrr(data,request)
 
     std_data = Std.objects.filter(std_id__in = std_list)
@@ -1294,8 +1293,7 @@ def report_card_show(request):
         })
     else:
         noreport_card = 1       
-        nobody = messages.error(request, 'Please Select Student!')
-        context.update({'nobody':nobody, 'noreport_card':noreport_card})
+        context.update({'noreport_card':noreport_card})
     return render(request, 'teacherpanel/report_card.html', context)
 
 

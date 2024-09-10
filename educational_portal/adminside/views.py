@@ -964,10 +964,9 @@ def show_attendance(request):
 
 @admin_login_required
 def show_events(request):
-    events = Event.objects.all()
+    events = Event.objects.all().values('event_id', 'event_name')
     events_imgs = Event_Image.objects.all()
     selected_events = Event.objects.first()
-    print(selected_events)
     context = {
         'events':events,
         'events_imgs':events_imgs,

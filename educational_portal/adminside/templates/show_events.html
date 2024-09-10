@@ -3,10 +3,7 @@
 {% block contentsection %}
   <div class="mb-4"><h4>Events</h4></div> 
   
-
-{% for message in messages %}
- {{message|safe}}
-{% endfor %}
+{% include 'message_show.html' %}
 <!-- DataTable with Buttons -->
 
 <div class="card">
@@ -39,7 +36,6 @@
       <!-- <h5 class="d-flex align-items-center">
         <input type="checkbox" class="form-check-input me-3" value="{{x.announce_id}}" name="selection" id="item{{x.announce_id}}"/><label for="item{{x.announce_id}}"><a href="{% url 'insert_update_announcements' %}?pk={{x.announce_id}}">{{x.announce_title}}</a></label>
       </h5> -->
-          {{selected_events}}
           <b style="font-size: 18px;" class="mb-2">{{selected_events.event_name}}</b>
           <div class="mb-2">{{selected_events.event_desc}}</div>
           <small>{{selected_events.event_date}}</small>

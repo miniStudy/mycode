@@ -125,7 +125,9 @@
   }
 </style>
 
-{% if noreport_card == 1 %} {% else %}
+{% if noreport_card == 1 %}<div class="mt-3 alert alert-warning alert-dismissible fade show" role="alert">
+    <strong><i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i></strong> Kindly request you to select Standard, Batch and Student for Report Card.
+  </div>{% else %}
 <div class="row d-flex justify-content-center mt-2">
   <div class="col-md-6">
       <div class="card">

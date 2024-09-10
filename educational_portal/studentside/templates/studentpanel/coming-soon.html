@@ -35,7 +35,12 @@
 {{message|safe}}
 {% endfor %}
 
-<span class="text">Coming Soon!</span>
-
+{% for data in test_analysis_data %}
+Test Name: {{data.tau_test_id.test_name}} - {{data.tau_test_id.test_sub}}
+Total Marks: {{data.tau_total_marks}}
+Obtained Marks: {{data.tau_obtained_marks}}
+Time Taken: {{data.tau_completion_time}}
+<hr>
+{% endfor %}
 
 {% endblock %}

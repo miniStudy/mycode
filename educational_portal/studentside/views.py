@@ -99,15 +99,14 @@ def student_home(request):
     }
     return render(request, 'studentpanel/index.html',context)
 
-def student_login_page(request):
-    title = 'Login'  
+def student_login_page(request): 
     login=1
     if request.COOKIES.get("stud_email"):
             cookie_email = request.COOKIES['stud_email']
             cookie_pass = request.COOKIES['stud_password']
-            return render(request, 'studentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':title})
+            return render(request, 'studentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':'login'})
     else:
-            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':title})
+            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':'login'})
 
 def student_login_handle(request):
     if request.method == "POST":
@@ -140,13 +139,12 @@ def student_login_handle(request):
         return redirect('Student_Login')
 
 def student_Forgot_Password(request): 
-    title = 'Forgot Password' 
     login=2
     if request.COOKIES.get("student_email"):
             cookie_email = request.COOKIES['stud_email']
-            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email, 'title':title})
+            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email, 'title':'Forgot Password'})
     else:
-            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':title})
+            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':'Forgot Password'})
     
 def student_handle_forgot_password(request):
      if request.method == "POST":
@@ -170,7 +168,7 @@ def student_handle_forgot_password(request):
         return redirect('Student_Forgot_Password')
     
 def student_Set_New_Password(request):
-    title = 'Set New Password'  
+    title = 'New Password'  
     login=3      
     if request.GET.get('email'):
          foremail = request.GET['email']
@@ -305,8 +303,8 @@ def show_attendence(request):
     subjects = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
     for subject in subjects:
         subject = subject['sub_name']
-        total_days_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = subject).count()
-        present_days_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = subject, atten_present=True).count()
+        total_days_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = subject, atten_student__stud_id = student_id).count()
+        present_days_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = subject, atten_student__stud_id = student_id, atten_present=True).count()
         if total_days_subwise > 0:
             attendence_prec_subwise = round((present_days_subwise / total_days_subwise) * 100, 2)
             subject_attendance.append({
@@ -321,20 +319,19 @@ def show_attendence(request):
 @student_login_required
 def show_event(request):
     event_data = Event.objects.all().values('event_id', 'event_name')
-    event_imgs = Event_Image.objects.all().values('event__event_id', 'event_img')
-    selected_events = Event.objects.all()[:1]
+    event_imgs = Event_Image.objects.all()
+    selected_events = Event.objects.first()
     context={
         'event_data':event_data,
         'event_imgs':event_imgs,
         'selected_events':selected_events,
         'title': 'Events'
     }
-
+    print(event_data)
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
-        selected_events = Event.objects.filter(event_id = event_id)
+        selected_events = Event.objects.get(event_id = event_id)
         event_imgs = Event_Image.objects.filter(event__event_id = event_id)
-        
         context.update({'selected_events':selected_events, 'events_img':event_imgs})
 
     return render(request, 'studentpanel/event.html', context)
@@ -509,7 +506,7 @@ def Student_add_doubts(request):
     context = {
     'student_id':student_id,
     'subjects':subjects,
-    'title': 'Add Doubts'
+    'title': 'Doubts'
     }
 
     if request.method == 'POST':
@@ -525,7 +522,7 @@ def Student_add_doubts(request):
 @student_login_required
 def Student_doubt_solution_section(request):
     student_id = request.session['stud_id']
-    context = {'student_id':student_id, 'title': 'Add Solution'}
+    context = {'student_id':student_id, 'title': 'Doubts'}
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
         doubt_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id)
@@ -555,7 +552,7 @@ def Student_doubt_solution_section(request):
 
 @student_login_required
 def Student_show_solution_section(request):
-    title = 'Show Solution'
+    title = 'Doubts'
     stud_id = request.session['stud_id']
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
@@ -566,7 +563,7 @@ def Student_show_solution_section(request):
 
 @student_login_required
 def Student_edit_solution(request,id):
-    title = 'Edit Solution'
+    title = 'Doubts'
     solution_id = Doubt_solution.objects.get(solution_id=id)
     if request.POST.get('solution'):
         form = solution_form(request.POST, instance=solution_id)
@@ -766,7 +763,10 @@ def student_fees_collection_view(request):
 
 # ============================coming soon function========================
 def comming_soon_page(request):
-    return render(request, 'studentpanel/coming-soon.html')
+    student_id = request.session['stud_id']
+    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id)
+    context = {'test_analysis_data':test_analysis_data}
+    return render(request, 'studentpanel/coming-soon.html', context)
 
 
 def today_study_page(request):

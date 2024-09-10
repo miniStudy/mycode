@@ -3,10 +3,8 @@
 {% block contentsection %}
   <div class="mb-4"><h4>Attendance</h4></div> 
   
+{% include 'message_show.html' %}
 
-{% for message in messages %}
- {{message|safe}}
-{% endfor %}
 <!-- DataTable with Buttons -->
 
 <div class="card">
