@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>PDF Viewer</title>
+    <!-- Include PDF.js styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css" integrity="sha512-5cOE2Zw/F4SlIUHR/xLTyFLSAR0ezXsra+8azx47gJyQCilATjazEE2hLQmMY7xeAv/RxxZhs8w8zEL7dTsvnA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #pdf-container {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="pdf-container">
+        <!-- PDF pages will be rendered here -->
+    </div>
+    <!-- Include the PDF.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js" integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var pdfUrl = '{{ pdf_file_path }}'; // PDF file URL from Django view
+        var pdfDoc = null;
+        var pageNum = 1;
+        var pageCount = 0;
+        var scale = 1.5;
+        var isLoading = false;
+        var container = document.getElementById('pdf-container');
+
+        // Set up PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
+
+        function renderPage(num) {
+            pdfDoc.getPage(num).then(function(page) {
+                var viewport = page.getViewport({ scale: scale });
+                var canvas = document.createElement('canvas');
+                var context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.style.display = 'block';
+                container.appendChild(canvas);
+
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        }
+
+        function loadNextPage() {
+            if (pageNum < pageCount && !isLoading) {
+                isLoading = true;
+                pageNum++;
+                renderPage(pageNum);
+                isLoading = false;
+            }
+        }
+
+        function loadInitialPages() {
+            // Load initial pages
+            for (let i = 1; i <= 10; i++) { // Initial pages
+                renderPage(i);
+            }
+        }
+
+        function checkScroll() {
+            var scrollTop = container.scrollTop;
+            var scrollHeight = container.scrollHeight;
+            var clientHeight = container.clientHeight;
+
+            // Load next page if user scrolls to the bottom
+            if (scrollTop + clientHeight >= scrollHeight - 100) { // Trigger when near bottom
+                loadNextPage();
+            }
+        }
+
+        // Fetch the PDF document
+        pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+            pdfDoc = pdf;
+            pageCount = pdf.numPages;
+            loadInitialPages(); // Load initial pages
+
+            // Set up scroll event listener
+            container.addEventListener('scroll', checkScroll);
+        }).catch(function(error) {
+            console.error('Error fetching or rendering PDF: ', error);
+        });
+    </script>
+</body>
+</html>
