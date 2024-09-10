@@ -778,4 +778,14 @@ def today_study_page(request):
         'title': 'Today-Learning',
         'todays_study_data':todays_study_data
     }
+<<<<<<< HEAD
     return render(request, 'studentpanel/today-study.html', context)
+=======
+    return render(request, 'studentpanel/today-study.html', context)
+
+
+
+def show_pdf(request):
+    pdf_file_path = 'http://127.0.0.1:8000/media/uploads/2_Acids_Bases_and_Salts.pdf'
+    return render(request, 'studentpanel/show_pdf.html', {'pdf_file_path': pdf_file_path})
+>>>>>>> 5328c9b285049905840a82d37b9a10369713da7c
