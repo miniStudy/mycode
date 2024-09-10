@@ -662,7 +662,7 @@ def view_attemp_students(request):
 @teacher_login_required
 def insert_update_tests(request):
     std_data = Std.objects.all()
-    subject_data = Subject.objects.all()
+    subject_data = Subject.objects.select_related().all()
     context = {
         'title' : 'Tests',
         'std_data':std_data,
@@ -916,22 +916,22 @@ def announcements_delete_teacher(request):
 @teacher_login_required
 def teacher_materials(request):
     fac_id = request.session['fac_id']
-    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id).values('fa_faculty__fac_id','fa_subject__sub_id','fa_batch__batch_std__std_id')
     subject_access_list = []
     std_access_list=[]
     for x in faculty_access:
-        subject_access_list.append(x.fa_subject.sub_id)
-        std_access_list.append(x.fa_batch.batch_std.std_id)
+        subject_access_list.append(x['fa_subject__sub_id'])
+        std_access_list.append(x['fa_batch__batch_std__std_id'])
 
-    standard_data = Std.objects.filter(std_id__in = std_access_list)
-    subjects_data = Subject.objects.filter(sub_id__in = subject_access_list)
+    standard_data = Std.objects.filter(std_id__in = std_access_list).values('std_id','std_name','std_board__brd_name')
+    subjects_data = Subject.objects.filter(sub_id__in = subject_access_list).values('sub_id','sub_name','sub_std__std_name','sub_std__std_id','sub_std__std_board__brd_name')
     materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id__in = subject_access_list).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
     selected_sub=None
 
     context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, "title":'Materials'}
     if request.GET.get('std_id'):
         std_id = int(request.GET.get('std_id'))
-        subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
+        subjects_data = Subject.objects.filter(sub_std__std_id = std_id).values('sub_id','sub_name','sub_std__std_name','sub_std__std_id','sub_std__std_board__brd_name')
         materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
         std_data = Std.objects.get(std_id = std_id)
         context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_data})
@@ -946,9 +946,9 @@ def teacher_materials(request):
 
 @teacher_login_required
 def teacher_insert_update_materials(request):
-    chepter_data = Chepter.objects.all()
+    chepter_data = Chepter.objects.all().values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
     context = {
-        'title': 'Insert Materials',
+        'title': 'Materials',
         'chepter_data': chepter_data,
     }
 
