@@ -1,0 +1,107 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>{% for i in students_attemp_data|slice:":1" %}
+    {{i.tau_test_id.test_name}}
+    {% endfor %}</h4></div> 
+  
+
+{% for message in messages %}
+ {{message|safe}}
+{% endfor %}
+    <div class="card-datatable table-responsive pt-0">
+        <table class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Attemped Student's Name</th>
+                    <th>Obtained Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in students_attemp_data %}
+                <tr>  
+                    <td>{{i.tau_stud_id.stud_name}} {{i.tau_stud_id.stud_lastname}}</td>
+                    <td>{{i.tau_obtained_marks}}</td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="avatar">
+                    <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                  </div>
+                  <div class="card-info">
+                    <h5 class="card-title mb-0 me-2">{{students_count}}</h5>
+                    <small class="text-muted">Total Students</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="avatar">
+                      <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                    </div>
+                    <div class="card-info">                    
+                      <h5 class="card-title mb-0 me-2">{% if avg_marks %}{{marks_aggregates.max_marks}}{% else %}0{% endif %}</h5> 
+                      <small class="text-muted">Maximun Mark</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="avatar">
+                      <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                    </div>
+                    <div class="card-info">
+                      <h5 class="card-title mb-0 me-2">{% if avg_marks %}{{marks_aggregates.min_marks}}{% else %}0{% endif %}</h5> 
+                      <small class="text-muted">Minimum Mark</small>  
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="avatar">
+                      <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                    </div>
+                    <div class="card-info">
+                      <h5 class="card-title mb-0 me-2">{% if avg_marks %}{{avg_marks}}{% else %}0{% endif %}</h5>
+                      <small class="text-muted">Average Marks</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+
+
+{% endblock %}

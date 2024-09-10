@@ -1,0 +1,103 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Add Cheques</h4></div> 
+   
+  <div class="erroes">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+    <li>{{field}}</li>
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+  </div>
+  <!-- Modal to add new record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %} Update Record {% else %} New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+         
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_cheques_admin' %}{% if update_data %}?pk={{update_data.cheque_id}}{% endif %}">
+        {% csrf_token %} 
+
+        <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+          <label for="defaultSelect" class="form-label">Student</label>
+          <select id="defaultSelect" class="form-select" name="cheque_stud_id">
+            <option value="">--</option>
+            {% for x in students %}
+            
+              <option value="{{x.stud_id}}"  {% if filled_data.cheque_stud_id.stud_id == x.stud_id %} selected {% endif %} {% if x.stud_id == update_data.cheque_stud_id.stud_id %} selected {% endif %} >{{x.stud_name}} {{x.stud_lastname}}</option>
+            
+              {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Cheque Amount</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="cheque_amount" placeholder="0" {% if update_data %} value="{{update_data.cheque_amount}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_amount}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Cheque Number</label>
+            <div class="input-group input-group-merge">
+              <input type="number" class="form-control" name="cheque_number" min="000000" max="999999" placeholder="xxxxxx" {% if update_data %} value="{{update_data.cheque_number}}" {% endif %}{% if filled_data %} value="{{filled_data.cheque_number}}" {% endif %}/>
+            </div>
+          </div>
+
+        
+          <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+            <label for="defaultSelect" class="form-label">Bank</label>
+            <select id="defaultSelect" class="form-select" name="cheque_bank">
+              <option value="">--</option>
+              {% for x in banks %}
+              
+                <option value="{{x.bank_id}}"  {% if filled_data.cheque_bank.bank_id == x.bank_id %} selected {% endif %} {% if x.bank_id == update_data.cheque_bank.bank_id %} selected {% endif %} >{{x.bank_name}}</option>
+              
+                {% endfor %}
+            </select>
+          </div>  
+
+          <div class="col-sm-12 mt-3">
+              <input type="checkbox" class="form-check-input" id="cheque_bounce" name="cheque_bounce" {% if update_data.cheque_bounce %} checked {% endif %}{% if filled_data.cheque_bounce %} checked {% endif %}/>
+              <label class="form-label ms-2" for="cheque_bounce">Cheque Bounced</label>
+          </div>
+
+          <div class="col-sm-12">
+            <label class="form-label mb-2">Cheque Date</label>
+            <div class="input-group input-group-merge">
+                <input type="date" class="form-control" name="cheque_date"
+                       {% if update_data and update_data.cheque_date %} 
+                           value="{{ update_data.cheque_date|date:'c'}}" 
+                       {% elif filled_data and filled_data.cheque_date %} 
+                           value="{{ filled_data.cheque_date|date:'c'}}" 
+                       {% endif %}/>
+            </div>
+        </div>
+
+          <div class="col-sm-12 mt-3">
+            <input type="checkbox" class="form-check-input" id="cheque_paid" name="cheque_paid" {% if update_data.cheque_paid %} checked {% endif %}{% if filled_data.cheque_paid %} checked {% endif %}/>
+            <label class="form-label ms-2" for="cheque_paid">Cheque Paid</label>
+        </div>
+        
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+          {% if update_data %}
+            <a href="{% url 'delete_cheques_admin' %}?delete_cheque={{update_data.cheque_id}}"><span class="btn btn-danger data-submit me-sm-3 me-1 mt-2">Delete</span></a>
+        {% endif %}
+        </div>
+
+        
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

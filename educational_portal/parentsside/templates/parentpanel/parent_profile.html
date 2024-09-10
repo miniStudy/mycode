@@ -1,0 +1,75 @@
+{% extends 'parentpanel/master.html' %}
+ 
+{% block contentsection %}
+  
+
+
+<h4 class="py-3 breadcrumb-wrapper mb-4">Profile</h4>
+  
+  
+  <!-- Header -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="user-profile-header-banner">
+          <img src="/static/assets/img/pages/Untitled designsefsdf.png" alt="Banner image" class="rounded-top" style="width: 100%;">
+        </div>
+        <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
+          <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
+            <img src="/static/assets/img/avatars/1.png" alt="user image" class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" style="width: 120px;border: 2px solid black;">
+          </div>
+          <div class="flex-grow-1 mt-3 mt-sm-5">
+            <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
+              <div class="user-profile-info">
+                {% for parent in parent_profile %}
+                <h4>{{parent.stud_guardian_name}}</h4>
+                {% endfor %}
+              </div>
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Header -->
+  
+  
+  <!-- User Profile Content -->
+  <div class="row">
+    <div class="col-xl-12 col-lg-5 col-md-5">
+      <!-- About User -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <p class="card-text text-uppercase">About</p>
+          {% for parent in parent_profile %}
+          <ul class="list-unstyled mb-4">
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Full Name:</span> <span>{{parent.stud_guardian_name}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Email:</span> <span>{{parent.stud_guardian_email}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Number:</span> <span>{{parent.stud_guardian_number}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Profession:</span> <span>{{parent.stud_guardian_profession}}</span></li>
+          </ul>
+          {% endfor %}
+        </div>
+      </div>
+      <!--/ About User -->
+      <!-- Profile Overview -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <p class="card-text text-uppercase">Overview</p>
+          <ul class="list-unstyled mb-0">
+            <li class="d-flex align-items-center mb-3"><button class="btn btn-primary">Report Card</button></li>
+            <li class="d-flex align-items-center mb-3"><button class="btn btn-primary">Fees Payments</button></li>
+          </ul>
+        </div>
+      </div>
+      <!--/ Profile Overview -->
+    </div>
+    
+
+
+    </div>
+  </div>
+
+{% endblock %}

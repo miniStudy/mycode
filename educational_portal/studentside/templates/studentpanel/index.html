@@ -1,0 +1,237 @@
+{% extends 'studentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>{{title}}</h4>
+</div>
+
+{% include "studentpanel/message_show.html" %}
+
+
+
+<div class="row">
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <a href="{% url 'Student_Timetable' %}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-warning rounded-circle"><i class="bx bx-dollar fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Timetable</h5>
+                <small class="text-muted">View</small>
+              </div>
+            </div>
+            <div id="incomeChart"></div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <a href="{% url 'Student_Materials' %}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Materials</h5>
+                <small class="text-muted">View</small>
+              </div>
+            </div>
+            <div id="conversationChart"></div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <a href="{% url 'Student_Syllabus' %}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Syllabus</h5>
+                <small class="text-muted">View</small>
+              </div>
+            </div>
+            <div id="conversationChart"></div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3 mb-4">
+    <div class="card">
+      <a href="{% url 'Student_Attendence' %}">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar">
+              <span class="avatar-initial bg-label-danger rounded-circle"><i class="bx bx-dollar fs-4"></i></span>
+            </div>
+            <div class="card-info">
+              <h5 class="card-title mb-0 me-2">Attendance</h5>
+              <small class="text-muted">View</small>
+            </div>
+          </div>
+          <div id="incomeChart"></div>
+        </div>
+      </div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="row">
+  <div class="col-sm-6 col-lg-3 mb-4">
+    <a href="{% url 'Student_Doubt' %}">
+    <div class="card card-border-shadow-primary h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-primary"><i class="bx bxs-truck"></i></span>
+          </div>
+          <h4 class="ms-1 mb-0">{{current_doubts}}</h4>
+        </div>
+        <p class="mb-1">Recent Doubts</p>
+      </div>
+    </div>
+  </a>
+  </div>
+  <div class="col-sm-6 col-lg-3 mb-4">
+    <a href="{% url 'Student_Announcement' %}">
+    <div class="card card-border-shadow-warning h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-warning"><i class='bx bx-error'></i></span>
+          </div>
+          <h4 class="ms-1 mb-0">{{current_announcements}}</h4>
+        </div>
+        <p class="mb-1">Recent Announcements</p>
+      </div>
+    </div>
+  </a>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-sm-12 col-lg-12 mb-4">
+    <div class="card card-border-shadow-info h-100">
+      <h5 class="card-header mb-2">Today's Timetable</h5> 
+      <div class="card-body">
+        <div class="mb-2 pb-1"> 
+          <div class="table-responsive text-nowrap">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Day</th>
+              <th>Subject</th>
+              <th>Time</th>
+              <th>Tutor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for x in today_timetable %}
+            <tr>
+              <th>{{x.tt_day}}</th>
+              <th>{{x.tt_subject1.sub_name}}</th>
+              <th>{{x.tt_time1}}</th>
+              <th>{{x.tt_tutor1.fac_name}}</th>
+            </tr>
+            {% endfor %} 
+          </tbody>
+        </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="card mb-4" id="top_students">
+  <h5 class="card-header mb-2">Performance</h5>
+
+<div class="card-body">
+  
+  <div class="table-responsive text-nowrap">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Test Result</th>
+          <th>Attendance Result</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        {% for x in overall_attendance_li %}
+        {% if forloop.counter == 1 %}
+        <tr>
+          <td><img src="/static/imgs/medal (3).png" class="me-2" style="width: 25px;" /> <span
+          class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+          <td>{{x.overall_result}}</td>
+          <td>{{x.overall_attendance_studentwise}}</td>
+        </tr>
+        {% elif forloop.counter == 2 %}
+        <tr>
+          <td><img src="/static/imgs/medal (4).png" class="me-2" style="width: 25px;" /> <span
+          class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+          <td>{{x.overall_result}}</td>
+          <td>{{x.overall_attendance_studentwise}}</td>
+        </tr>
+        {% elif forloop.counter == 3 %}
+        <tr>
+          <td><img src="/static/imgs/medal (5).png" class="me-2" style="width: 25px;" /> <span
+          class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+          <td>{{x.overall_result}}</td>
+          <td>{{x.overall_attendance_studentwise}}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td><img src="/static/imgs/hand2.png" class="me-2" style="width: 25px;" /> <span
+          class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+          <td>{{x.overall_result}}</td>
+          <td>{{x.overall_attendance_studentwise}}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card h-100">
+      
+        <h5 class="card-header mb-2">Test Analysis</h5>
+      
+      <div class="card-body">
+        <div id="students_chart"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

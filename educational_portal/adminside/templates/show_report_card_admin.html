@@ -1,0 +1,238 @@
+{% extends 'master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Report Card</h4>
+</div>
+
+
+{% include 'message_show.html' %}
+<!-- DataTable with Buttons -->
+
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="myheadfont">{{title}} Data</div>
+    </div>
+
+    <br>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group" aria-label="First group">
+      <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown"
+        aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}">ALL</a></li>
+        {% for x in std_data %}
+        <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}?get_std={{x.std_id}}">{{x.std_name}}
+            {{x.std_board}}</a></li>
+        {% endfor %}
+      </ul>
+      <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown"
+        aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}?get_std={{get_std.std_id}}">ALL</a></li>
+        {% for x in batch_data %}
+        <li><a class="dropdown-item"
+            href="{% url 'adminside_report_card' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x.batch_name}}</a>
+        </li>
+        {% endfor %}
+      </ul>
+      <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown"
+        aria-expanded="false">{% if get_student %}{{get_student.stud_name}} {{get_student.stud_lastname}}{% else %}Students{% endif %}</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'adminside_report_card' %}?get_std={{get_std.std_id}}">ALL</a></li>
+        {% for x in stud_data %}
+        <li><a class="dropdown-item"
+            href="{% url 'adminside_report_card' %}?get_std={{x.stud_std.std_id}}&get_batch={{x.stud_batch.batch_id}}&get_student={{x.stud_id}}">{{x.stud_name}}
+            {{x.stud_lastname}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+</div>
+  </div>
+</div>
+
+
+
+
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1C222F;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+  }
+
+  .header {
+      text-align: center;
+      margin-bottom: 20px;
+  }
+
+  .header img {
+      max-width: 100px;
+      margin-bottom: 10px;
+  }
+
+  .header h1 {
+      font-family:Georgia, 'Times New Roman', Times, serif;
+      margin: 0;
+      font-size: 24px;
+      color: #ffffff;
+  }
+
+  .section {
+      margin-bottom: 20px;
+      font-family:Georgia, 'Times New Roman', Times, serif;
+  }
+
+  .section h2 {
+      font-size: 16px;
+      font-family:Georgia, 'Times New Roman', Times, serif;
+      margin-bottom: 10px;
+      color: #ffffff;
+
+      padding-bottom: 5px;
+  }
+
+  .section table {
+      width: 100%;
+      border-collapse: collapse;
+  }
+
+  .section th,
+  .section td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #c4c4c4;
+      color: #cfcfcf;
+  }
+
+  .section th {
+      background-color: #1c222f00;
+  }
+
+  .thank-you {
+      font-family:Georgia, 'Times New Roman', Times, serif;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #ffffff;
+  }
+</style>
+
+{% if noreport_card == 1 %}<div class="mt-3 alert alert-warning alert-dismissible fade show" role="alert">
+    <strong><i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i></strong> Kindly request you to select Standard, Batch and Student for Report Card.
+  </div>{% else %}
+<div class="row d-flex justify-content-center mt-2">
+  <div class="col-md-6">
+      <div class="card">
+          <div class="card-body">
+              <div class="report-card">
+                  <div class="header">
+                      <img src="{{ logo_url }}" alt="ministudy logo" style="width: 100%;" /><br />
+                      <hr>
+                      <h1>Report Card</h1>
+                  </div>
+                  <div class="section">
+                      <h2>Student Data</h2>
+                      <table>
+                          <tr>
+                              <th>Name</th>
+                              <td>{{ get_student }}</td>
+                          </tr>
+                          <tr>
+                              <th>Roll No</th>
+                              <td>{{ get_student.stud_id }}</td>
+                          </tr>
+                      </table>
+                  </div>
+                  <div class="section">
+                      <h2>Attendance</h2>
+                      <table>
+                          <tr>
+                              <th>Overall Attendance</th>
+                              <td>{{ overall_attendence }}%</td>
+                          </tr>
+                          {% for x in overall_attendance_subwise %}
+                          <tr>
+                              <th>{{x.sub_name}}</th>
+                              <td>{{x.attendance_subwise}}%</td>
+                          </tr>
+                          {% endfor %}
+                          <tr>
+                              <th>Total Classes Conducted</th>
+                              <td> {{total_attendence}}</td>
+                          </tr>
+                          <tr>
+                              <th>Absent in Classes</th>
+                              <td> {{absent_attendence}} </td>
+                          </tr>
+                      </table>
+                  </div>
+                  <div class="section">
+                      <h2>Test Results</h2>
+                      <table>
+                          <tr>
+                              <th>Overall Test Result</th>
+                              <td>{{ current_student_overall_test_result }}%</td>
+                          </tr>
+                          {% for x in final_average_marks_subwise %}
+                          <tr>
+                              <th>{{x.subject_name}}</th>
+                              <td>{{x.average_marks_subwise}}%</td>
+                          </tr>
+                          {% endfor %}
+                          <tr>
+                              <th>Total Tests Conducted</th>
+                              <td>{{ total_test_conducted }}</td>
+                          </tr>
+                          <tr>
+                              <th>Absent in Tests</th>
+                              <td>{{ absent_in_test }}</td>
+                          </tr>
+                          <tr>
+                              <th>Class Average Result</th>
+                              <td>{{ class_average_result }}%</td>
+                          </tr>
+                      </table>
+                  </div>
+                  <div class="section">
+                      <h2>Doubts</h2>
+                      <table>
+                          <tr>
+                              <th>Doubts Solved by Me</th>
+                              <td>{{ doubt_solved_byme }}</td>
+                          </tr>
+                          <tr>
+                              <th>Doubts Asked by Me</th>
+                              <td>{{ doubt_asked }}</td>
+                          </tr>
+                          <tr>
+                              <th>Got Verified Response for My Doubts</th>
+                              <td>{{ my_solve_doubts }}</td>
+                          </tr>
+                      </table>
+                  </div>
+                  <div class="thank-you">
+                      <p>Thank You</p>
+                  </div>
+              </div>
+      
+          
+          </div>
+      </div>
+  </div>    
+  {% comment %} <div class="col-md-6">
+      <div class="card">
+          <div class="card-body">
+              <h4>Comming soon......</h4>
+          </div>
+      </div>
+  </div> {% endcomment %}
+</div>
+{% endif %}
+{% endblock %}

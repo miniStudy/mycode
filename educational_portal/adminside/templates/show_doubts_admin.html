@@ -1,0 +1,73 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Student Doubts</h4></div> 
+  
+{% include 'message_show.html' %}
+
+<div class="card">
+    <div class="card-body">
+        <div class="">
+            <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group me-2" role="group" aria-label="First group">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}">ALL</a></li>
+                  {% for x in std_data %}
+                  <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+                  {% endfor %}
+                </ul>
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{get_std.std_id}}">ALL</a></li>
+                  {% for x in batch_data %}
+                  <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x.batch_name}}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br/>
+<div class="card">
+    <div class="card-body">
+        No of Doubts Students Raised : {{Total_doubts}}
+    </div>
+</div>
+<br/>
+<div class="card">
+    <div class="card-body">
+        No of Solutions Student Gave : {{Total_solutions}}
+    </div>
+</div>
+<br/>
+<div class="card">
+    <div class="card-body">
+        No of Doubts Verified by Teachers : {{verified_doubts_count}}
+    </div>
+</div>
+<br/>
+<div class="card">
+    <div class="card-body">
+        No of Doubts which dont have Single Verified Solutions : {{unverified_doubts_count}}
+    </div>
+</div>
+<br/>
+<div class="card">
+    <div class="card-body">
+        No of Doubts which have zero Solutions : {{doubts_zero_solution}}
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+ 
+
+
+          

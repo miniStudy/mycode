@@ -1,0 +1,47 @@
+
+.mybgclr1{background-color:#5A8DEE !important;}
+.mybgclr2{background-color:orange !important;}
+
+
+.h100w100{height: 100px;width: 100px;}
+
+.buttons-collection{background: transparent !important;border: 1px solid #5A8DEE !important;color: white !important;}
+.dt-button-collection{background-color: #283144 !important; color: white !important;}
+.dt-length option{background-color: #283144 !important; color: white !important;}
+.dt-input{outline: none !important;border: none;background-color: transparent !important;}
+.dt-buttons{background-color: transparent !important;outline: none !important;border: none !important;}
+.offcanvas{width: 100% !important;}
+.dt-paging-button:hover{background-color: #283144 !important;}
+
+.mylogofonts {
+    font-family: 'Roboto', sans-serif !important;
+}
+
+#example th:nth-child(1) {
+    width: 5%;
+}
+
+.returnmessage{font-size: 18px;}
+
+.footerlogo{width: 100px;}
+
+
+.myheadfont{font-size: 20px;font-weight: bold;color: #d8deea;}
+
+@media (max-width: 575.98px) {
+    .myheadfont{font-size: 18px;font-weight: bold;color: #d8deea;max-width: 200px;}
+
+}
+
+.table-bordered,td,th,.dt-input{border: 1px solid #88a9e6 !important;border-radius: 10px !important;}
+.dt-search{display: none;}
+.dt-search label{font-size: 14px;}
+#searchbox{font-size: 13px;border-radius: 5px !important;background: none;border: 1px solid #5A8DEE;padding: 7.5px;width: 120px;}
+#searchbox::placeholder{color: white;}
+#example{font-size: 12px !important;}
+#example th{font-weight: 500;}
+.btn-primary{font-size: 12px;}
+
+.material_card{height: 200px; border:1px solid #88a9e6; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;overflow: hidden;position: relative;transition: 0.3s ease;}
+.material_card img{transition: 0.3s ease;}
+.material_card:hover img{transform: scale(1.2);}

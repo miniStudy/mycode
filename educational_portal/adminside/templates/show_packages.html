@@ -1,0 +1,131 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Packages</h4></div> 
+  
+
+{% for message in messages %}
+ {{message|safe}}
+{% endfor %}
+<!-- DataTable with Buttons -->
+<div class="card">
+    
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="myheadfont">{{title}} Data</div>
+        <div>
+          <div class="d-inline-block" id="exportbtns"></div>
+
+        <a href="{% url 'insert_update_packages' %}?get_std={{get_std.std_id}}">
+            <button class="btn btn-primary">
+                <i class="fa-solid fa-plus me-2"></i> ADD
+            </button>
+        </a>
+        
+      </div>
+        
+</div>
+
+
+<!-- =========================filter option============================= -->
+<br>
+<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group me-2" role="group" aria-label="First group">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'admin_packages' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'admin_packages' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+            <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&model_name=packs"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
+          </div>
+          <div class="input-group mt-2">
+            <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+            <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
+          </div>
+        </div>
+<!-- =========================filter option end=================================== -->
+
+
+
+    <form action="{% url 'delete_package' %}" method="POST">
+    {% csrf_token %}        
+    <div class="card-datatable table-responsive pt-0">
+        <table id="example" class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
+                    <th>Packages Name</th>
+                    <th>Packages Subjects</th>
+                    <th>Packages Std</th>
+                    <th>Packages Fees</th>
+                    <th>Edit</th>
+                </tr>   
+            </thead>
+            <tbody>
+                {% for x in data %}
+                <tr>
+                    <td><input type="checkbox" class="form-check-input" value="{{x.pack_id}}" name="selection" /></td>
+                    <td>{{x.pack_name}}</td>
+                    <td>{% for subject in x.pack_subjects.all %}
+                        {{ subject.sub_name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}</td>
+                    <td>{{x.pack_std}}</td>
+                    <td>{{x.pack_fees}}</td>
+                    <td><a href="{% url 'insert_update_packages' %}?pk={{x.pack_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>  
+  <!-- Modal -->
+  <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmdeletemodelLabel"><i class="fa-solid fa-trash me-2"></i> Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this data ..?<br>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Pagination -->
+
+    
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group me-2" role="group" aria-label="First group">
+        {% for x in data.paginator.page_range %}
+        <a href="?page={{x}}&get_std={{get_std.std_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+        {% endfor %}
+      </div>
+    </div>
+    
+   
+  <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+
+    </form>
+    </div>
+    </div>
+
+  <!--/ DataTable with Buttons -->
+{% endblock %}
+
+
+
+
+
+ 
+
+
+          

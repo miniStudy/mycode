@@ -1,0 +1,80 @@
+
+  /* ========================================================================= */
+  
+  /* Background and text color */
+  .note-editor.note-frame,
+  .note-editable {
+      background-color: #283144 !important;
+      color: #ffffff !important;
+      border:none;
+      border-radius: 0px;
+  }
+  
+  /* Text color in code view */
+  .note-codable {
+      background-color: #283144 !important;
+      color: #ffffff !important;
+      border: none;
+  }
+  
+  /* Toolbar icons and background color */
+  .note-toolbar {
+      background-color: #283144 !important;
+      border-bottom: none;
+  }
+  
+  .note-toolbar button {
+      color: #ffffff !important;
+  }
+  
+  .note-toolbar .note-btn {
+      background-color: #283144 !important;
+      border-color: #546990 !important;
+  }
+  
+  .note-toolbar .note-btn:hover {
+      background-color: #283144 !important;
+  }
+  
+  /* Dropdown menu background and text color */
+  .dropdown-menu {
+      background-color: #97b8ff !important;
+      color: #ffffff !important;
+  }
+  
+  .dropdown-item {
+      color: #ffffff !important;
+  }
+  
+  .dropdown-item:hover,
+  .dropdown-item:focus {
+      background-color: #283144 !important;
+  }
+  
+  /* Button background color */
+  .note-btn-group .note-btn {
+      background-color: #283144 !important;
+      color: #ffffff !important;
+      border: none;
+  }
+  
+  .note-btn-group .note-btn:hover {
+      background-color: #283144 !important;
+  }
+  
+  /* Other UI elements */
+  .note-statusbar {
+      background-color: #283144 !important;
+  }
+  
+  .note-modal .modal-content {
+      background-color: #283144 !important;
+      color: #ffffff !important;
+      border: none;
+  }
+  
+  .note-modal .note-btn-primary {
+      background-color: #283144 !important;
+      color: #ffffff !important;
+  }
+  

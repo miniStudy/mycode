@@ -1,0 +1,155 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Student Management</h4></div> 
+   
+  <div class="errors">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+    <li>{{ field }}</li>
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  
+  <!-- Modal to add or update student record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %} Update Student {% else %} New Student {% endif %}</h5>
+    </div>
+    <div class="card-body">
+         
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_students' %}{% if update_data %}?pk={{update_data.stud_id}}{% endif %}">
+        {% csrf_token %}
+        <div class="col-sm-12">
+          <label class="form-label mb-2">First Name</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="stud_name" placeholder="First Name" {% if update_data %} value="{{update_data.stud_name}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_name}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Last Name</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="stud_lastname" placeholder="Last Name" {% if update_data %} value="{{update_data.stud_lastname}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_lastname}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Contact</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="stud_contact" placeholder="Contact Number" {% if update_data %} value="{{update_data.stud_contact}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_contact}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Username</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="stud_username" placeholder="Username" {% if update_data %} value="{{update_data.stud_username}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_username}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Email</label>
+          <div class="input-group input-group-merge">
+            <input type="email" class="form-control" name="stud_email" placeholder="Email" {% if update_data %} value="{{update_data.stud_email}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_email}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Date of Birth</label>
+          <div class="input-group input-group-merge">
+            <input type="date" class="form-control" name="stud_dob" {% if update_data %} value="{{update_data.stud_dob}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_dob}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Gender</label>
+          <div class="input-group input-group-merge">
+            <select class="form-select" name="stud_gender">
+              <option value="Male" {% if filled_data.stud_gender == "Male" %} selected {% endif %}{% if update_data.stud_gender == "Male" %} selected {% endif %}>Male</option>
+              <option value="Female" {% if filled_data.stud_gender == "Female" %} selected {% endif %}{% if update_data.stud_gender == "Female" %} selected {% endif %}>Female</option>
+              <option value="Other" {% if filled_data.stud_gender == "Other" %} selected {% endif %}{% if update_data.stud_gender == "Other" %} selected {% endif %}>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Guardian Name</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="stud_guardian_name" placeholder="Guardian Name" {% if update_data %} value="{{update_data.stud_guardian_name}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_guardian_name}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Guardian Email</label>
+          <div class="input-group input-group-merge">
+            <input type="email" class="form-control" name="stud_guardian_email" placeholder="Guardian Email" {% if update_data %} value="{{update_data.stud_guardian_email}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_guardian_email}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Guardian Contact Number</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="stud_guardian_number" placeholder="Guardian Contact Number" {% if update_data %} value="{{update_data.stud_guardian_number}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_guardian_number}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Guardian Profession</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="stud_guardian_profession" placeholder="Guardian Profession" {% if update_data %} value="{{update_data.stud_guardian_profession}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_guardian_profession}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Address</label>
+          <div class="input-group input-group-merge">
+            <textarea class="form-control" name="stud_address" placeholder="Address">{% if update_data %}{{ update_data.stud_address }}{% endif %}{% if filled_data %}{{ filled_data.stud_address }}{% endif %}</textarea>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label for="defaultSelect" class="form-label">Standard</label>
+          <select id="defaultSelect" class="form-select" name="stud_std">
+            <option value="">--</option>
+            {% for x in std_data %}
+              <option value="{{ x.std_id }}" {% if filled_data.stud_std.std_id == x.std_id %} selected {% endif %}{% if x.std_id == update_data.stud_std.std_id %} selected {% endif %}>{{ x.std_name }} {{ x.std_board.brd_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-sm-12">
+          <label for="defaultSelect" class="form-label">Batch</label>
+          <select id="defaultSelect" class="form-select" name="stud_batch">
+            <option value="">--</option>
+            {% for x in batch_data %}
+              <option value="{{ x.batch_id }}" {% if filled_data.stud_batch.batch_id == x.batch_id %} selected {% endif %}{% if x.batch_id == update_data.stud_batch.batch_id %} selected {% endif %}>{{ x.batch_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-sm-12">
+          <label for="defaultSelect" class="form-label">Package</label>
+          <select id="defaultSelect" class="form-select" name="stud_pack">
+            <option value="">--</option>
+            {% for x in pack_data %}
+              <option value="{{ x.pack_id }}" {% if filled_data.stud_pack.pack_id == x.pack_id %} selected {% endif %}{% if x.pack_id == update_data.stud_pack.pack_id %} selected {% endif %}>{{ x.pack_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

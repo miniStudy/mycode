@@ -1,0 +1,62 @@
+{% extends 'studentpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Update Your Information</h4></div> 
+   
+  <div class="erroes">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+<form class="add-new-record pt-0 row g-2" id="form-add-new-record" action="{% url 'Student_InfoUpdate' %}" method="post">
+    {% csrf_token %} 
+    <div class="col-sm-12">
+      <label class="form-label mb-2">First Name</label>
+      <div class="input-group input-group-merge">
+        <input type="text" class="form-control" name="stud_name" value="{{student_obj.stud_name}}" required>
+      </div>
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label mb-2">Last Name</label>
+        <div class="input-group input-group-merge">
+          <input type="text" class="form-control" name="stud_lastname" value="{{student_obj.stud_lastname}}" required>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label mb-2">Email</label>
+        <div class="input-group input-group-merge">
+          <input type="email" class="form-control" name="stud_email" value="{{student_obj.stud_email}}" required>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label mb-2">Username</label>
+        <div class="input-group input-group-merge">
+          <input type="text" class="form-control" name="stud_username" value="{{student_obj.stud_username}}" required>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label mb-2">Address</label>
+        <div class="input-group input-group-merge">
+          <input type="text" class="form-control" name="stud_address" value="{{student_obj.stud_address}}" required>
+        </div>
+    </div>
+    
+    <div class="col-sm-12">
+      <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Update</button>
+      <a href="{% url 'Student_handle_forgot_password' %}" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Change Password</a>
+    </div>
+  </form>
+{% endblock %}
+<!-- ======================================================================== -->

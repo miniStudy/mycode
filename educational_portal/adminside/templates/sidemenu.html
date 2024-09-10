@@ -1,0 +1,159 @@
+<!-- Menu -->
+
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+
+  
+    <div class="app-brand demo ">
+      <a href="/" class="app-brand-link">
+        <span class="app-brand-logo demo">
+        <img src="/static/imgs/My_dream_logo/4_nobg.png" style="width: 100%;"/>  
+  
+  </span>
+        <span>        <img src="/static/imgs/My_dream_logo/2nobg.png" class="ms-2" style="width: 70%;"/>  
+        </span>
+      </a>
+  
+      <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+        <i class="bx menu-toggle-icon d-none d-xl-block fs-4 align-middle"></i>
+        <i class="bx bx-x d-block d-xl-none bx-sm align-middle"></i>
+      </a>
+    </div>
+  
+    
+    <div class="menu-divider mt-0  ">
+    </div>
+  
+    <div class="menu-inner-shadow"></div>
+  
+    
+    
+    <ul class="menu-inner py-1">
+      <!-- Apps & Pages -->
+      <li class="menu-header small text-uppercase"><span class="menu-header-text">Educational Portal</span></li>
+      <li class="menu-item {% if title == 'Home' %} active {% endif %}">
+        <a href="/adminside/" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-house"></i>
+          <div>Dashboard</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Boards' %} active {% endif %}">
+        <a href="{% url 'boards' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-person-chalkboard"></i>
+          <div>Boards</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Stds' %} active {% endif %}">
+        <a href="{% url 'stds' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-brands fa-firstdraft"></i>
+          <div>Stds</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Subjects' %} active {% endif %}">
+        <a href="{% url 'admin_subjects' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-book"></i>
+          <div>Subjects</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Chepters' %} active {% endif %}">
+        <a href="{% url 'admin_chepters' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-file-circle-check"></i>
+          <div>Chepters</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Inquiries' %} active {% endif %}">
+        <a href="{% url 'inquiry_data' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-clipboard-question"></i>
+          <div>Inquiries</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Students' %} active {% endif %}">
+        <a href="{% url 'students_dataAdmin' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-graduation-cap"></i>
+          <div>Students</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Batches' %} active {% endif %}">
+        <a href="{% url 'admin_batches' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-people-roof"></i>
+          <div>Batches</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Packages' %} active {% endif %}">
+        <a href="{% url 'admin_packages' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-brands fa-gg"></i>
+          <div>Packages</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Tests' %} active {% endif %}">
+        <a href="{% url 'admin_tests' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-spell-check"></i>
+          <div>Tests</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Materials' %} active {% endif %}">
+        <a href="{% url 'admin_materials' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-file-pdf"></i>
+          <div>Materials</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Timetable' %} active {% endif %}">
+        <a href="{% url 'admin_timetable' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-clock"></i>
+          <div>Timetable</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Attendance' %} active {% endif %}">
+        <a href="{% url 'admin_attendance' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-brands fa-creative-commons-by"></i>
+          <div>Attendance</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Payments' %} active {% endif %}">
+        <a href="{% url 'fees_collection_admin' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-hand-holding-dollar"></i>
+          <div>Payments</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Report-Card' %} active {% endif %}">
+        <a href="{% url 'adminside_report_card' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-magnifying-glass-chart"></i>
+          <div>Student Report-Card</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Announcements' %} active {% endif %}">
+        <a href="{% url 'admin_announcements' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-bullhorn"></i>
+          <div>Announcements</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Faculties' %} active {% endif %}">
+        <a href="{% url 'admin_faculties' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-user-check"></i>
+          <div>Faculties</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Doubts' %} active {% endif %}">
+        <a href="{% url 'Student_doubts_adminside' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-regular fa-circle-question"></i>
+          <div>Student Doubts</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Faculty-Access' %} active {% endif %}">
+        <a href="{% url 'faculty_access' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-universal-access"></i>
+          <div>Faculty Access</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Events' %} active {% endif %}">
+        <a href="{% url 'show_events' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-brands fa-galactic-republic"></i>
+          <div>Events</div>
+        </a>
+      </li>
+    </ul>
+
+  </aside>
+  <!-- / Menu -->

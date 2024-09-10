@@ -1,0 +1,280 @@
+{% extends 'master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>{{title}}</h4>
+</div>
+
+<div class="row">
+  <div class="col-md-3 mb-4">
+    <a href="{% url 'students_dataAdmin' %}">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Student</h5>
+                <small class="text-muted">View</small>
+              </div>
+            </div>
+            <div id="conversationChart"></div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-3 mb-4">
+    <a href="{% url 'fees_collection_admin' %}">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar">
+              <span class="avatar-initial bg-label-warning rounded-circle"><i class="bx bx-dollar fs-4"></i></span>
+            </div>
+            <div class="card-info">
+              <h5 class="card-title mb-0 me-2">Payment</h5>
+              <small class="text-muted">Report</small>
+            </div>
+          </div>
+          <div id="incomeChart"></div>
+        </div>
+      </div>
+    </div>
+  </a>
+  </div>
+
+  <div class="col-md-3 mb-4">
+    <a href="{% url 'admin_packages' %}">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar">
+              <span class="avatar-initial bg-label-secondary rounded-circle"><i class="bx bx-dollar fs-4"></i></span>
+            </div>
+            <div class="card-info">
+              <h5 class="card-title mb-0 me-2">Package</h5>
+              <small class="text-muted">View</small>
+            </div>
+          </div>
+          <div id="incomeChart"></div>
+        </div>
+      </div>
+    </div>
+  </a>
+  </div>
+
+  <div class="col-md-3 mb-4">
+    <a href="{% url 'admin_timetable' %}">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div class="avatar">
+              <span class="avatar-initial bg-label-danger rounded-circle"><i class="bx bx-dollar fs-4"></i></span>
+            </div>
+            <div class="card-info">
+              <h5 class="card-title mb-0 me-2">Timetable</h5>
+              <small class="text-muted">View</small>
+            </div>
+          </div>
+          <div id="incomeChart"></div>
+        </div>
+      </div>
+    </div>
+  </a>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-sm-6 col-lg-3 mb-4">
+    <a href="{% url 'inquiry_data' %}">
+    <div class="card card-border-shadow-primary h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-primary"><i class="bx bxs-truck"></i></span>
+          </div>
+          <h4 class="ms-1 mb-0">Check</h4>
+        </div>
+        <p class="mb-1">New Inquiries</p>
+      </div>
+    </div>
+  </a>
+  </div>
+  <div class="col-sm-6 col-lg-3 mb-4">
+    <a href="{% url 'admin_attendance' %}">
+    <div class="card card-border-shadow-warning h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-warning"><i class='bx bx-error'></i></span>
+          </div>
+          <h4 class="ms-1 mb-0">View</h4>
+        </div>
+        <p class="mb-1">Attendance</p>
+      </div>
+    </div>
+  </a>
+  </div>
+
+  <div class="col-sm-6 col-lg-3 mb-4">
+    <a href="{% url 'adminside_report_card' %}">
+      <div class="card card-border-shadow-danger h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2 pb-1">
+            <div class="avatar me-2">
+              <span class="avatar-initial rounded bg-label-danger"><i class='bx bx-git-repo-forked'></i></span>
+            </div>
+            <h4 class="ms-1 mb-0">View</h4>
+          </div>
+          <p class="mb-1">Report-Card</p>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-sm-6 col-lg-3 mb-4">
+    <a href="{% url 'admin_faculties' %}">
+    <div class="card card-border-shadow-info h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-info"><i class='bx bx-time-five'></i></span>
+          </div>
+          <h4 class="ms-1 mb-0">View</h4>
+        </div>
+        <p class="mb-1">Faculties</p>
+      </div>
+    </div>
+  </a>
+  </div>
+</div>
+
+
+
+
+
+<div class="card mb-4" id="top_students">
+  <h5 class="card-header mb-2">Performance</h5>
+  <form action="#" method="GET">
+    <div class="ms-4">
+      <select id="select2Basic" class="select2 form-select form-select-sm d-inline-block" data-allow-clear="true"
+        style="width: auto;" required>
+        <option value="abcd">GSEB 10</option>
+        <option value="HI">NCERT 6</option>
+        <option value="CA">GSEB 7</option>
+        <option value="NV">NCERT 9</option>
+      </select>
+
+      <select id="select2Basic" class="select2 form-select form-select-sm d-inline-block" data-allow-clear="true"
+        style="width: auto;" required>
+        <option value="">Batches</option>
+        <option value="HI">All</option>
+        <option value="HI">Diamond</option>
+        <option value="CA">Gold</option>
+        <option value="NV">Silver</option>
+      </select>
+
+      <select id="select2Basic" class="select2 form-select form-select-sm d-inline-block" data-allow-clear="true"
+        style="width: auto;" required>
+        <option value="">Subjects</option>
+        <hr>
+        <option value="HI">All</option>
+        <option value="HI">Maths</option>
+        <option value="CA">Science</option>
+        <option value="NV">English</option>
+      </select>
+      <BR />
+      <button class="btn btn-sm btn-outline-primary mt-2" type="submit">
+        <i class="fa-solid fa-check me-2"></i> Submit
+      </button>
+  </form>
+</div>
+
+
+
+<div class="card-body">
+  <div class="mb-4">
+    <b>Overall Batch Performance in English : 70%</b>
+  </div>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Test Result</th>
+          <th>Attendance Result</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr>
+          <td><img src="/static/imgs/First-Ranker.png" class="me-2" style="width: 20px;" /> <span
+              class="fw-medium">Vishal Sharma</span></td>
+          <td>79%</td>
+          <td>80%</td>
+        </tr>
+
+        <tr>
+          <td><img src="/static/imgs/ranker.png" class="me-2" style="width: 20px;" /> <span class="fw-medium">Ashish
+              Desai</span></td>
+          <td>75%</td>
+          <td>86%</td>
+        </tr>
+
+        <tr>
+          <td><img src="/static/imgs/ranker.png" class="me-2" style="width: 20px;" /> <span class="fw-medium">Anand
+              Shah</span></td>
+          <td>74%</td>
+          <td>80%</td>
+        </tr>
+
+        <tr>
+          <td><span class="fw-medium">Shivani Patel</span></td>
+          <td>70%</td>
+          <td>72%</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title mb-2">Total Students</h5>
+        <h5 class="fw-light mb-0">{{all_students|safe}}</h5>
+      </div>
+      <div class="card-body">
+        <span class="d-block mb-2">Stdwise Students and Test Data</span>
+        <br>
+        <div id="students_chart"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row mt-4">
+  <div class="col-md-12">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title mb-2">Students Ratio</h5>
+      </div>
+      <div class="card-body">
+        <div id="students_male_female_ratio"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

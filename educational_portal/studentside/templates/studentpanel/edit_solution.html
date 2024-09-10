@@ -1,0 +1,21 @@
+{% extends 'studentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Edit Solution</h4>
+</div>
+
+{% include "message_show.html" %}
+<!-- DataTable with Buttons -->
+
+<form action="{% url 'Student_Edit_Solution' id=sol_id %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="solution_doubt_id" value={{solution_id.solution_doubt_id.doubt_id}}>
+
+  <input type="hidden" name="solution_stud_id" value={{solution_id.solution_stud_id.stud_id}}>
+  
+  <label for="exampleInputEmail1" class="form-label fw-medium mt-3">Write solution</label>
+  {{ form.solution }}
+  <button type="submit" class="btn btn-primary mt-1">Edit Solution</button>
+</form>
+{% endblock %}

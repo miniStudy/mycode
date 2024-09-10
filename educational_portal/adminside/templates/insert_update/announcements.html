@@ -1,0 +1,74 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Announcements</h4></div> 
+   
+  <div class="erroes">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+    <li>{{field}}</li>
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+  </div>
+  <!-- Modal to add new record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %} Update Record {% else %} New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+         
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_announcements' %}{% if update_data %}?pk={{update_data.announce_id}}{% endif %}">
+        {% csrf_token %} 
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Announcement Title</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="announce_title" placeholder="CBSE" {% if update_data %} value="{{update_data.announce_title}}" {% endif %}{% if filled_data %} value="{{filled_data.announce_title}}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Announcement Message</label>
+          <div class="input-group input-group-merge">
+            <textarea class="form-control" name="announce_msg">{% if filled_data %} {{filled_data.announce_msg}} {% endif %}{% if update_data %} {{update_data.announce_msg}} {% endif %}</textarea>
+          </div>
+        </div>
+
+        <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+          <label for="defaultSelect" class="form-label">Std Name</label>
+          <select id="defaultSelect" class="form-select" name="announce_std">
+            <option value="">--</option>
+            {% for x in std_data %}
+            
+              <option value="{{x.std_id}}"  {% if filled_data.announce_std.std_id == x.std_id %} selected {% endif %} {% if x.std_id == update_data.announce_std.std_id %} selected {% endif %} >{{x.std_name}} {{x.std_board.brd_name}}</option>
+            
+              {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+          <label for="defaultSelect" class="form-label">Batch Name</label>
+          <select id="defaultSelect" class="form-select" name="announce_batch">
+            <option value="">--</option>
+            {% for x in batch_data %}
+            
+              <option value="{{x.batch_id}}" {% if filled_data.announce_batch.batch_id == x.batch_id %} selected {% endif %} {% if x.batch_id == update_data.announce_batch.batch_id %} selected {% endif %} >{{x.batch_name}}</option>
+            
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

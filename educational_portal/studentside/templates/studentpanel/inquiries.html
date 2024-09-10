@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-style layout-navbar-fixed layout-menu-fixed layout-compact " dir="ltr"
+  data-theme="theme-default" data-assets-path="/static/assets/" data-template="vertical-menu-template-dark">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+  <title>{{title}} | miniStudy</title>
+
+
+  <meta name="description" content="Educational Portal" />
+  <meta name="keywords" content="Educational Portal">
+  {% include 'links.html' %}
+
+</head>
+<body>
+
+
+  <div class="container-xxl">
+    <div class="container-p-y">
+      <div class="authentication-inner py-4">
+
+        <!-- Register -->
+        <div class="card">
+          <div class="card-body">
+            {% include 'message_show.html' %}
+            <!-- Logo -->
+            <div class="app-brand justify-content-center">
+              <a href="index.html" class="app-brand-link gap-2">
+                <img src="/static/imgs/My_dream_logo/4_nobg.png" alt="My Logo" style="width: 48px;" />
+                <img src="/static/imgs/My_dream_logo/2nobg.png" style="width: 150px;" />
+              </a>
+            </div>
+            <!-- /Logo -->
+
+            <!-- ============form=============== -->
+
+            <h4 class="mb-2 mt-3 text-center">Welcome to {% include 'miniStudy_text.html' %}! 👋</h4>
+            <p class="mb-4 mt-3 text-center">Please Fill this Inquiry Form, Make sure all data are correct. After Submit
+              you will not be able to change it again.</p>
+
+            <form id="formAuthentication" class="mb-3" action="{% url 'Student_Inquiries' %}" method="post">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="inq_name" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="inq_name" name="inq_name"
+                      placeholder="Enter your first name" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_lastname" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="inq_lastname" name="inq_lastname"
+                      placeholder="Enter last name" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_contact" class="form-label">Contact</label>
+                    <input type="number" class="form-control" id="inq_contact" name="inq_contact"
+                      placeholder="Enter your contact" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="inq_email" name="inq_email" value="{{c_email}}"
+                      placeholder="Enter your email" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_dob" class="form-label">DOB</label>
+                    <input type="date" class="form-control" id="inq_dob" name="inq_dob"
+                    autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_gender" class="form-label">Gender</label>
+                    <select name="inq_gender" class="form-select" id="inq_gender">
+                      <option value="">-----</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_schoolname" class="form-label">School Name</label>
+                    <input type="text" class="form-control" id="inq_schoolname" name="inq_schoolname"
+                      placeholder="Enter your school name" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_last_std_and_marks" class="form-label">Previous Standard and Marks</label>
+                    <input type="text" class="form-control" id="inq_last_std_and_marks" name="inq_last_std_and_marks"
+                      placeholder="Enter your previous standard and marks" autofocus>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="inq_std" class="form-label">Standard</label>
+                    <select name="inq_std" class="form-select" id="inq_std">
+                      {% for std in standard_data %}
+                      <option value="{{std.std_id}}">{{std.std_name}}</option>
+                      {% endfor %}
+                    </select> 
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_subjects" class="form-label">Subjects</label>
+                    <input type="text" class="form-control" id="inq_subjects" name="inq_subjects"
+                      placeholder="Enter your subjects" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_guardian_name" class="form-label">Guardian Name</label>
+                    <input type="text" class="form-control" id="inq_guardian_name" name="inq_guardian_name"
+                      placeholder="Enter your guardian name" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_guardian_email" class="form-label">Guardian Email</label>
+                    <input type="email" class="form-control" id="inq_guardian_email" name="inq_guardian_email"
+                      placeholder="Enter your guardian email" autofocus>
+                  </div>                 
+
+                  <div class="mb-3">
+                    <label for="inq_guardian_number" class="form-label">Guardian Contact</label>
+                    <input type="number" class="form-control" id="inq_guardian_number" name="inq_guardian_number"
+                      placeholder="Enter your guardian contact" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_guardian_profession" class="form-label">Guardian Profession</label>
+                    <input type="text" class="form-control" id="inq_guardian_profession" name="inq_guardian_profession"
+                      placeholder="Enter your guardian profession" autofocus>
+                  </div>  
+
+                  <div class="mb-3">
+                    <label for="inq_address" class="form-label">Address</label>
+                    <input type="text" class="form-control" id="inq_address" name="inq_address"
+                      placeholder="Enter your address" autofocus>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="inq_howuknow" class="form-label">How do you know about us?</label>
+                    <input type="text" class="form-control" id="inq_howuknow" name="inq_howuknow"
+                      placeholder="write here..." autofocus>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <button class="btn btn-primary d-grid d-inline-block" type="submit" name="submitInquiry">Submit</button>
+              </div>
+            </form>
+
+            <!-- ==============formEnd ================= -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {% include 'charts.html' %}
+  {% include 'scripts.html' %}
+
+
+
+</body>
+
+</html>

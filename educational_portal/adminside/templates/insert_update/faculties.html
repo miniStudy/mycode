@@ -1,0 +1,72 @@
+{% extends 'master.html' %}
+
+{% block contentsection %}
+  <div class="mb-4"><h4>Faculties</h4></div> 
+
+  <div class="errors">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
+  <!-- Modal to add new record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %} Update Record {% else %} New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+         
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_faculties' %}{% if update_data %}?pk={{ update_data.fac_id }}{% endif %}">
+        {% csrf_token %} 
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Faculty Name</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="fac_name" placeholder="Faculty Name" {% if update_data %} value="{{ update_data.fac_name }}" {% endif %}{% if filled_data %} value="{{ filled_data.fac_name }}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Faculty Number</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="fac_number" placeholder="Faculty Number" {% if update_data %} value="{{ update_data.fac_number }}" {% endif %}{% if filled_data %} value="{{ filled_data.fac_number }}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Faculty Email</label>
+          <div class="input-group input-group-merge">
+            <input type="email" class="form-control" name="fac_email" placeholder="Faculty Email" {% if update_data %} value="{{ update_data.fac_email }}" {% endif %}{% if filled_data %} value="{{ filled_data.fac_email }}" {% endif %}/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Faculty Address</label>
+          <div class="input-group input-group-merge">
+            <textarea class="form-control" name="fac_address" placeholder="Faculty Address">{% if filled_data %} {{ filled_data.fac_address }} {% endif %}{% if update_data %} {{ update_data.fac_address }} {% endif %}</textarea>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Subjects</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="Subjects" placeholder="Subjects" {% if update_data %} value="{{ update_data.Subjects }}" {% endif %}{% if filled_data %} value="{{ filled_data.Subjects }}" {% endif %}/>
+          </div>
+        </div>
+        
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/static/imgs/My_dream_logo/4_nobg.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>miniStudy</title>
+    <style>
+        body{background-color: #1C222F;color: white;}
+        .panel-section{width: 300px;border: 1px solid white;padding: 15px;text-align: center;box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;}
+        .panel-section:hover{background-color: #10141c;}
+        .sectionnn{display: flex;justify-content: center;align-items: center;height: 100vh;}
+        a{color: white;text-decoration: none;}
+
+    </style>
+</head>
+<body>
+   
+    <section class="sectionnn">
+    <div class="container">
+    <div style="text-align: center;">
+        <img src="/static/imgs/My_dream_logo/3nobg.png" style="width: 150px;box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" />
+    </div>
+    <br><br>
+    <a href="{% url 'Admin Home' %}"><div class="panel-section">Admin Panel</div></a>
+    <a href="{% url 'Student_home' %}"><div class="panel-section">Student Panel</div></a>
+    <a href="{% url 'teacher_home' %}"><div class="panel-section">Teacher Panel</div></a>
+    <a href="{% url 'parent_home' %}"><div class="panel-section">Parents Panel</div></a>
+    </div> 
+    </section>
+    
+</body>
+</html>

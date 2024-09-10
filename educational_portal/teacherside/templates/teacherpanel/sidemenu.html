@@ -1,0 +1,112 @@
+<!-- Menu -->
+
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+
+  
+    <div class="app-brand demo ">
+      <a href="/" class="app-brand-link">
+        <span class="app-brand-logo demo">
+        <img src="/static/imgs/My_dream_logo/4_nobg.png" style="width: 100%;"/>  
+  
+  </span>
+        <span>        <img src="/static/imgs/My_dream_logo/2nobg.png" class="ms-2" style="width: 70%;"/>  
+        </span>
+      </a>
+  
+      <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+        <i class="bx menu-toggle-icon d-none d-xl-block fs-4 align-middle"></i>
+        <i class="bx bx-x d-block d-xl-none bx-sm align-middle"></i>
+      </a>
+    </div>
+  
+    
+    <div class="menu-divider mt-0  ">
+    </div>
+  
+    <div class="menu-inner-shadow"></div>
+  
+    
+    
+    <ul class="menu-inner py-1">
+      <!-- Apps & Pages -->
+      <li class="menu-header small text-uppercase"><span class="menu-header-text">Educational Portal</span></li>
+      <li class="menu-item {% if title == 'Home' %} active {% endif %}">
+        <a href="/teacherside/" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-house"></i>
+          <div>Dashboard</div>
+        </a>
+      </li>
+      
+      <li class="menu-item {% if title == 'Tests' %} active {% endif %}">
+        <a href="{% url 'teacher_test' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-spell-check"></i>
+          <div>Tests</div>
+        </a>
+      </li>
+      <li class="menu-item {% if title == 'Materials' %} active {% endif %}">
+        <a href="{% url 'teacher_materials' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-file-pdf"></i>
+          <div>Materials</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Timetable' %} active {% endif %}">
+        <a href="{% url 'teacher_timetable' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-clock"></i>
+          <div>Timetable</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Attendance' %} active {% endif %}">
+        <a href="{% url 'teacher_attendance' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-brands fa-creative-commons-by"></i>
+          <div>Attendance</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Syllabus' %} active {% endif %}">
+        <a href="{% url 'teacher_syllabus' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-clipboard-list"></i>
+          <div>Syllabus</div>
+        </a>
+      </li>
+      
+      <li class="menu-item {% if title == 'Announcements' %} active {% endif %}">
+        <a href="{% url 'teacher_announcement' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-bullhorn"></i>
+          <div>Announcements</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Class-Overview' %} active {% endif %}">
+        <a href="{% url 'today_learning' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-thumbtack"></i>
+          <div>Today's Learning</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Doubts' %} active {% endif %}">
+        <a href="{% url 'teacher_doubts' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-regular fa-circle-question"></i>
+          <div>Doubt-Box</div>
+        </a>
+      </li>
+
+
+      <li class="menu-item {% if title == 'Report-Card' %} active {% endif %}">
+        <a href="{% url 'report_card' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-magnifying-glass-chart"></i>
+          <div>Report Card</div>
+        </a>
+      </li>
+
+      <li class="menu-item {% if title == 'Events' %} active {% endif %}">
+        <a href="{% url 'teacher_events' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-brands fa-galactic-republic"></i>
+          <div>Events</div>
+        </a>
+      </li>
+    </ul>
+    
+  </aside>
+  <!-- / Menu -->

@@ -1,0 +1,31 @@
+{% extends 'studentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Tests</h4>
+</div>
+
+{% for message in messages %}
+{{message|safe}}
+{% endfor %}
+
+
+    <!-- <div class="container mt-5">
+        <div class="row">
+            {% for test_name in test_names %}
+            <div class="col-md-3 d-flex align-items-stretch">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{test_name.test_name}}</h5>
+                        <p class="card-text">Attemp all the questions and write proper answers!</p>
+                        <a href="{% url 'Student_Test_Q' test_name.test_id %}" class="btn btn-primary">Attem test</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div> -->
+
+
+
+{% endblock %}

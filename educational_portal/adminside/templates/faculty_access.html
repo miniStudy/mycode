@@ -1,0 +1,68 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Faculty Access</h4></div> 
+  
+
+{% for message in messages %}
+ {{message|safe}}
+{% endfor %}
+
+<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group me-2" role="group" aria-label="First group">
+      <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {% if selected_standard %}
+          {{ selected_standard }}
+        {% else %}
+          Select Standard
+        {% endif %}</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'faculty_access' %}">ALL</a></li>
+        {% for x in standard_data %}
+        <li><a class="dropdown-item" href="{% url 'faculty_access' %}?get_std={{x.std_id}}">{{ x }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+</div>    
+<hr>
+    <form action="{% url 'faculty_access' %}"  method="POST">
+        {% csrf_token %}
+        
+        
+        <div class="row">
+          <div class="col-md-6"><select name="fa_faculty" class="form-select" required>
+            {% for data in teachers_names %}
+            <option value="{{data.fac_id}}">{{data.fac_name}}</option>
+            {% endfor %}
+        </select></div>
+        <div class="col-md-6">
+          <select name="fa_batch" class="form-select" required>
+            {% for data in batch_data %}
+            <option value="{{data.batch_id}}">{{data}}</option>
+            {% endfor %}
+        </select>
+        </div>
+        </div>
+        
+        
+            
+       
+
+        <hr>
+        
+            <h5>Select Subjects</h5>
+            {% for data in subject_data %}
+            <ul class="list-group">
+                <li class="list-group-item">
+                  <input class="form-check-input me-1" type="checkbox" name="fa_subject" value="{{data.sub_id}}" id="subject_{{ forloop.counter }}">
+                  <label class="form-check-label" for="subject_{{ forloop.counter }}">{{data}}</label>
+                </li>
+            </ul>
+            {% endfor %}
+        
+    
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+
+
+{% endblock %}

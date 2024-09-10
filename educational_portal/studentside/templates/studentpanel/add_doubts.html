@@ -1,0 +1,34 @@
+{% extends 'studentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Add Doubt</h4>
+</div>
+
+
+{% for message in messages %}
+{{message|safe}}
+{% endfor %}
+<!-- DataTable with Buttons -->
+
+<form action="{% url 'Student_add_doubts' %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="doubt_stud_id" value={{student_id}} />
+
+  <div class="col-sm-12" {% if update_data %}style="display:none;" {% endif %}>
+    <label for="defaultSelect" class="form-label">Subjects</label>
+    <select id="defaultSelect" class="form-select" name="doubt_subject">
+      <option value="">--</option>
+      {% for x in subjects %}
+      <option value="{{x.sub_id}}">{{x.sub_name}}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <label for="exampleInputEmail1" class="form-label fw-medium mt-3">Enter Doubt</label>
+  {{ form.doubt_doubt }}
+
+  <button type="submit" class="btn btn-primary my-3">Add Doubt</button>
+</form>
+
+{% endblock %}

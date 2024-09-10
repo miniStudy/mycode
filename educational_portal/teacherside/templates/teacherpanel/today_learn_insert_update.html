@@ -1,0 +1,72 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Today's Learning</h4></div> 
+   
+  <div class="erroes">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+    <li>{{field}}</li>
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% include "teacherpanel/message_show.html" %}
+
+  </div>
+  <!-- Modal to add new record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %} Update Record {% else %} New Record{% endif %}</h5>
+    </div>
+    <div class="card-body">
+         
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'today_learning_insert_update' %}{% if update_data %}?pk={{update_data.today_teaching_id}}{% endif %}">
+        {% csrf_token %} 
+    
+        <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+            <label for="defaultSelect" class="form-label">Today's Learning Title</label>
+            <select id="defaultSelect" class="form-select" name="today_teaching_chap_id">
+              <option value="">--</option>
+              {% for x in today_learning_data %}
+              
+                <option value="{{x.today_teaching_chap_id.chep_id}}" {% if filled_data.today_teaching_chap_id.chep_id == x.today_teaching_chap_id.chep_id %} selected {% endif %} {% if x.today_teaching_chap_id.chep_id == update_data.today_teaching_chap_id.chep_id %} selected {% endif %} >{{x.today_teaching_chap_id.chep_name}}</option>
+              
+              {% endfor %}
+            </select>
+          </div>
+
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Today's Learning Message</label>
+          <div class="input-group input-group-merge">
+            <textarea class="form-control" name="today_teaching_desc">{% if filled_data %} {{filled_data.today_teaching_desc}} {% endif %}{% if update_data %} {{update_data.today_teaching_desc}} {% endif %}</textarea>
+          </div>
+        </div>
+
+       
+        <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
+          <label for="defaultSelect" class="form-label">Batch Name</label>
+          <select id="defaultSelect" class="form-select" name="today_teaching_batches_id">
+            <option value="">--</option>
+            {% for x in batch_access_data %}          
+              <option value="{{x.batch_id}}" {% if filled_data.announce_batch.batch_id == x.batch_id %} selected {% endif %} {% if x.batch_id == update_data.today_teaching_batches_id.batch_id %} selected {% endif %} >{{x}}</option>        
+            {% endfor %}
+          </select>
+        </div>
+        
+        <input type="hidden" name="today_teaching_fac_id" value="{{request.session.fac_id}}">
+
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

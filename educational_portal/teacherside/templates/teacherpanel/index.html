@@ -1,0 +1,219 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>{{title}}</h4></div>  
+
+  <div class="row">
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <a href="{% url 'teacher_timetable' %}">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar">
+                  <span class="avatar-initial bg-label-warning rounded-circle"><i class="bx bx-dollar fs-4"></i></span>
+                </div>
+                <div class="card-info">
+                  <h5 class="card-title mb-0 me-2">Timetable</h5>
+                  <small class="text-muted">View</small>
+                </div>
+              </div>
+              <div id="incomeChart"></div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <a href="{% url 'teacher_materials' %}">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar">
+                  <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                </div>
+                <div class="card-info">
+                  <h5 class="card-title mb-0 me-2">Materials</h5>
+                  <small class="text-muted">View</small>
+                </div>
+              </div>
+              <div id="conversationChart"></div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <a href="{% url 'teacher_syllabus' %}">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar">
+                  <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                </div>
+                <div class="card-info">
+                  <h5 class="card-title mb-0 me-2">Syllabus</h5>
+                  <small class="text-muted">View</small>
+                </div>
+              </div>
+              <div id="conversationChart"></div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <a href="{% url 'teacher_attendance' %}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-danger rounded-circle"><i class="bx bx-dollar fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Attendance</h5>
+                <small class="text-muted">View</small>
+              </div>
+            </div>
+            <div id="incomeChart"></div>
+          </div>
+        </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+   <div class="row">
+    <div class="col-sm-6 col-lg-6 mb-4">
+      <div class="card card-border-shadow-primary h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2 pb-1">
+            <div class="avatar me-2">
+              <span class="avatar-initial rounded bg-label-primary"><i class="bx bxs-truck"></i></span>
+            </div>
+            <h4 class="ms-1 mb-0">{{unverified_solution}}</h4>
+          </div>
+          <p class="mb-1">Unverified Solution</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-6 mb-4">
+      <a href="{% url 'report_card' %}">
+      <div class="card card-border-shadow-danger h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2 pb-1">
+            <div class="avatar me-2">
+              <span class="avatar-initial rounded bg-label-danger"><i class='bx bx-git-repo-forked'></i></span>
+            </div>
+            <h4 class="ms-1 mb-0">View</h4>
+          </div>
+          <p class="mb-1">Report-Card</p>
+        </div>
+      </div>
+      </a>
+    </div>
+  </div>
+  
+
+  
+  
+  
+  <div class="card mb-4" id="top_students">
+    <h5 class="card-header mb-2">Performance</h5>
+   
+    <div class="card-body">
+      <div class="btn-group mb-3">
+        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+        <ul class="dropdown-menu">
+          {% for x in std_data %}
+          <li><a class="dropdown-item" href="{% url 'teacher_home' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="table-responsive text-nowrap">
+        <table class="table table-bordered">
+          {% if get_std %}
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Test Result</th>
+              <th>Attendance Result</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            {% for x in overall_attendance_li %}
+            {% if forloop.counter == 1 %}
+            <tr>
+              <td><img src="/static/imgs/medal (3).png" class="me-2" style="width: 25px;" /> <span
+              class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+              <td>{{x.overall_result}}</td>
+              <td>{{x.overall_attendance_studentwise}}</td>
+            </tr>
+            {% elif forloop.counter == 2 %}
+            <tr>
+              <td><img src="/static/imgs/medal (4).png" class="me-2" style="width: 25px;" /> <span
+              class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+              <td>{{x.overall_result}}</td>
+              <td>{{x.overall_attendance_studentwise}}</td>
+            </tr>
+            {% elif forloop.counter == 3 %}
+            <tr>
+              <td><img src="/static/imgs/medal (5).png" class="me-2" style="width: 25px;" /> <span
+              class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+              <td>{{x.overall_result}}</td>
+              <td>{{x.overall_attendance_studentwise}}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td><img src="/static/imgs/hand2.png" class="me-2" style="width: 25px;" /> <span
+              class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+              <td>{{x.overall_result}}</td>
+              <td>{{x.overall_attendance_studentwise}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            {{msg}}
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  
+
+<div class="row">
+ 
+    
+    <div class="col-md-12">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="card-title mb-2">All Students</h5>
+          <h1 class="display-6 fw-normal mb-0">400</h1>
+        </div>
+        <div class="card-body">
+          <span class="d-block mb-2">Stdwise Students and Test Data</span>
+          <br>
+          <div id="students_chart"></div>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+ 
+
+
+          

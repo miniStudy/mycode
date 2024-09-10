@@ -1,0 +1,336 @@
+
+insert chepters of maths std 10
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('Real Numbers','1','','13','5'),
+('Polynomials','1','','13','5'),
+('Pair Of Linear Equations In Two Variables','1','','13','5'),
+('Quadratic Equations','1','','13','5'),
+('Arithmetic Progressions','1','','13','5'),
+('Triangles','1','','13','5'),
+('Coordinate Geometry','1','','13','5'),
+('Introduction To Trigonometry','1','','13','5'),
+('Some Applications Of Trigonometry','1','','13','5'),
+
+('Circles','1','','13','5'),
+('Areas Related To Circles','1','','13','5'),
+('Surface Areas And Volumes','1','','13','5'),
+('Statistics','1','','13','5'),
+('Probability','1','','13','5'),;
+
+
+<<<<<<< HEAD
+
+
+
+Insert math's chapter name for standard 8
+INSERT INTO `chepter` (`chep_name`, `chep_sem`, `chep_std_id`, `chep_sub_id`, `chep_icon`) 
+VALUES 
+('Rational Numbers', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Linear Equations in One Variable', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Understanding Quadrilaterals', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Data Handling', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Square and Square Roots', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Cube and Cube Roots', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Comparing Quantities', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Algebraic Expressions and Identities', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Mensuration', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Exponents and Power', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Direct and Inverse Proportions', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Factorisation', 'sem1', '11', '33', '/uploads/default_chep_icon.png'),
+('Introduction to Graphs', 'sem1', '11', '33', '/uploads/default_chep_icon.png');
+
+
+
+
+
+Insert science chapter name for standard 8
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) 
+VALUES 
+('Crop Production and Management', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Microorganisms: Friend and Foe', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Coal and Petroleum', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Combustion and Flame', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Conservation of Plants and Animals', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Reproduction in Animals', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Reaching the Age of Adolescence', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Force and Pressure', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Friction', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Sound', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Chemical Effects of Electric Current', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Some Natural Phenomena', 'sem1', '/uploads/default_chep_icon.png', '11', '34'),
+('Light', 'sem1', '/uploads/default_chep_icon.png', '11', '34');
+
+
+
+
+Insert social science chapter name for standard 8
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) 
+VALUES 
+('How, When and Where - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('From Trade to Territory - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('Ruling the Countryside - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('Tribals, Dikus and the Vision of a Golden Age - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('When People Rebel - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('Civilising the “Native”, Educating the Nation - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('Women, Caste and Reform - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+('The Making of the National Movement: 1870s – 1947 - H', 'sem1', '/uploads/default_chep_icon.png', '11', '35'),
+
+('Resources - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+('Land, Soil, Water, Natural Vegetation and Wildlife Resources - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+('Agriculture - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+('Industries - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+('Human Resources - G', 'sem1', '/uploads/default_chep_icon.png', '11', '36'),
+
+('The Indian Constitution - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Understanding Secularism - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Parliament and the Making of Laws - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Judiciary - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Understanding Marginalisation - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Confronting Marginalisation - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Public Facilities - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37'),
+('Law and Social Justice - C', 'sem1', '/uploads/default_chep_icon.png', '11', '37');
+
+=======
+# Insert Chepters of maths std 7 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('Integers','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Fractions and Decimals','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Data Handling','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Simple Equations','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Lines and Angles','sem 1','/uploads/default_chep_icon.png','10','28'),
+('The Triangle and Its Properties','sem 1','/uploads/default_chep_icon.png.png','10','28'),
+('Comparing Quantities','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Rational Numbers','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Perimeter and Area','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Algebraic Expressions','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Exponents and Powers','sem 1','/uploads/default_chep_icon.png.png','10','28'),
+('Symmetry','sem 1','/uploads/default_chep_icon.png','10','28'),
+('Visualising Solid Shapes','sem 1','/uploads/default_chep_icon.png.png','10','28');
+
+# Insert Chepters of Science std 7 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('Nutrition in Plants','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Nutrition in Animals','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Heat','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Acids, Bases and Salts','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Physical and Chemical Changes','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Respiration in Organisms','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Transportation in Animals and Plants','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Reproduction in Plants','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Motion and Time','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Electric Current and Its Effects','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Light','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Forests: Our Lifeline','sem 1','/uploads/default_chep_icon.png','10','29'),
+('Wastewater Story','sem 1','/uploads/default_chep_icon.png','10','29');
+
+# Insert Chepters of Social Science std 7 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('Tracing Changes through a Thousand Years - H','sem 1','uploads/default_chep_icon.png','10','30'),
+('New Kings and Kingdoms - H','sem 1','uploads/default_chep_icon.png','10','30'),
+('The Delhi Sultans - H','sem 1','uploads/default_chep_icon.png','10','30'),
+('The Mughal Empire - H','sem 1','uploads/default_chep_icon.png','10','30'),
+('Tribes, Nomads and Settled Communities - H','sem 1','uploads/default_chep_icon.png','10','30'),
+('Devotional Paths to the Divine - H','sem 1','uploads/default_chep_icon.png','10','30'),
+('The Making of Regional Cultures - H','sem 1','uploads/default_chep_icon.png','10','30'),
+('Eighteenth-Century Political Formations - H','sem 1','uploads/default_chep_icon.png','10','30'),
+('Environment - G','sem 1','uploads/default_chep_icon.png','10','30'),
+('Inside Our Earth - G','sem 1','uploads/default_chep_icon.png','10','30'),
+('Our Changing Earth - G','sem 1','uploads/default_chep_icon.png','10','30'),
+('Air - G','sem 1','uploads/default_chep_icon.png','10','30'),
+('Water - G','sem 1','uploads/default_chep_icon.png','10','30'),
+('Human-Environment Interactions The Tropical and the Subtropical Region - G','sem 1','uploads/default_chep_icon.png','10','30'),
+('Life in the Deserts - G','sem 1','uploads/default_chep_icon.png','10','30'),
+('On Equality - C','sem 1','uploads/default_chep_icon.png','10','30'),
+('Role of the Government in Health - C','sem 1','uploads/default_chep_icon.png','10','30'),
+('How the State Government Works - C','sem 1','uploads/default_chep_icon.png','10','30'),
+('Growing Up as Boys and Girls - C','sem 1','uploads/default_chep_icon.png','10','30'),
+('Women Change the World - C','sem 1','uploads/default_chep_icon.png','10','30'),
+('Understanding Media - C','sem 1','uploads/default_chep_icon.png','10','30'),
+('Markets around Us - C','sem 1','uploads/default_chep_icon.png','10','30'),
+('A Shirt in the Market - C','sem 1','uploads/default_chep_icon.png','10','30');
+
+# Insert Chepters of Hindi std 7 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('हम पंछी उन्मुक्त गगन के (कविता)','sem 1','uploads/default_chep_icon.png','10','31'),
+('हिमालय की बेटियाँ (निबंध) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('कठपुतली (कविता) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('मिठाईवाला (कहानी) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('रक्त और हमारा शरीर (निबंध) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('पापा खो गए (नाटक) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('शाम – एक किसान (कविता) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('अपूर्व अनुभव (संस्मरण) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('रहीम के दोहे (कविता) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('एक तिनका (कविता) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('खानपान की बदलती तसवीर (निबंध) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('नीलकंठ (रेखाचित्र) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('भोर और बरखा (कविता) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('वीर कुवँर सिंह (जीवनी) ','sem 1','uploads/default_chep_icon.png','10','31'),
+('संघर्ष के कारन मैं तुनकमिज़ाज हो गया: धनराज (साक्षात्कार) ','sem 1','uploads/default_chep_icon.png','10','31');
+
+# Insert Chepters of English std 7 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('Three Questions','sem 1','uploads/default_chep_icon.png','10','32'),
+('A Gift of Chappals: The Squirrel','sem 1','uploads/default_chep_icon.png','10','32'),
+('Gopal and the Hilsa Fish','sem 1','uploads/default_chep_icon.png','10','32'),
+('The Ashes That Made Trees Bloom','sem 1','uploads/default_chep_icon.png','10','32'),
+('Quality','sem 1','uploads/default_chep_icon.png','10','32'),
+('Expert Detectives','sem 1','uploads/default_chep_icon.png','10','32'),
+('The Invention of Vita-Wonk','sem 1','uploads/default_chep_icon.png','10','32'),
+('A Homage to Our Brave Soldiers','sem 1','uploads/default_chep_icon.png','10','32');
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('The Tiny Teacher - II','sem 1','uploads/default_chep_icon.png','10','32'),
+('Bringing up Kari - II','sem 1','uploads/default_chep_icon.png','10','32'),
+('Golu Grows a Nose - II','sem 1','uploads/default_chep_icon.png','10','32'),
+('Chandni - II','sem 1','uploads/default_chep_icon.png','10','32'),
+('The Bear Story - II','sem 1','uploads/default_chep_icon.png','10','32'),
+('A Tiger in the House - II','sem 1','uploads/default_chep_icon.png','10','32'),
+('An Alien Hand - II','sem 1','uploads/default_chep_icon.png','10','32');
+
+# Insert Chepters of Science std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('Chemical Reactions and Equations','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Acids, Bases and Salts ','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Metals and Non-metals ','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Carbon and its Compounds','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Life Processes ','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Control and Coordination ','sem 1','/uploads/default_chep_icon.png','13','6'),
+('How do Organisms Reproduce?','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Heredity','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Light – Reflection and Refraction','sem 1','/uploads/default_chep_icon.png','13','6'),
+('The Human Eye and the Colourful World','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Electricity','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Magnetic Effects of Electric Current','sem 1','/uploads/default_chep_icon.png','13','6'),
+('Our Environment','sem 1','/uploads/default_chep_icon.png','13','6');
+
+# Insert Chepters of English std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('The Fun They Had','sem 1','uploads/default_chep_icon.png','12','38'),
+('The Sound of Music','sem 1','uploads/default_chep_icon.png','12','38'),
+('The Little Girl','sem 1','uploads/default_chep_icon.png','12','38'),
+('A Truly Beautiful Mind','sem 1','uploads/default_chep_icon.png','12','38'),
+('The Snake and the Mirror','sem 1','uploads/default_chep_icon.png','12','38'),
+('My Childhood','sem 1','uploads/default_chep_icon.png','12','38'),
+('Reach for the Top','sem 1','uploads/default_chep_icon.png','12','38'),
+('Kathmandu','sem 1','uploads/default_chep_icon.png','12','38'),
+('If I Were You','sem 1','uploads/default_chep_icon.png','12','38');
+
+# Insert Chepters of History std 10 ============================
+
+INSERT INTO `chepter`( `chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('The Rise of Nationalism in Europe','sem 1','uploads/default_chep_icon.png','13','8'),
+('Nationalism in India','sem 1','uploads/default_chep_icon.png','13','8'),
+('The Making of a Global World','sem 1','uploads/default_chep_icon.png','13','8'),
+('The Age of Industrialisation','sem 1','uploads/default_chep_icon.png','13','8'),
+('Print Culture and the Modern World ','sem 1','uploads/default_chep_icon.png','13','8');
+
+# Insert Chepters of Geography std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1: Resources and Development','sem 1','uploads/default_chep_icon.png','13','9'),
+('2: Forest and Wildlife Resources','sem 1','uploads/default_chep_icon.png','13','9'),
+('3: Water Resources','sem 1','uploads/default_chep_icon.png','13','9'),
+('4: Agriculture ','sem 1','uploads/default_chep_icon.png','13','9'),
+('5: Minerals and Energy Resources','sem 1','uploads/default_chep_icon.png','13','9'),
+('6: Manufacturing Industries','sem 1','uploads/default_chep_icon.png','13','9'),
+('7: Lifelines of National Economy','sem 1','uploads/default_chep_icon.png','13','9');
+
+# Insert Chepters of Hindi std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('दो बैलों की कथा','sem 1','/uploads/default_chep_icon.png','12','21'),
+('ल्हासा की ओर','sem 1','/uploads/default_chep_icon.png','12','21'),
+('उपभोक्तावाद की संस्कृति','sem 1','/uploads/default_chep_icon.png','12','21'),
+('साँवले सपनों की याद','sem 1','/uploads/default_chep_icon.png','12','21'),
+('प्रेमचंद के फटे जूते','sem 1','/uploads/default_chep_icon.png','12','21'),
+('मेरे बचपन के दिन','sem 1','/uploads/default_chep_icon.png','12','21'),
+('साखियाँ एवं सबद','sem 1','/uploads/default_chep_icon.png','12','21'),
+('वाख','sem 1','/uploads/default_chep_icon.png','12','21'),
+('सवैये','sem 1','/uploads/default_chep_icon.png','12','21'),
+('कैदी और कोकिला','sem 1','/uploads/default_chep_icon.png','12','21'),
+('ग्राम श्री','sem 1','/uploads/default_chep_icon.png','12','21'),
+('मेघ आए','sem 1','/uploads/default_chep_icon.png','12','21'),
+('बच्चे काम पर जा रहे हैंरी','sem 1','/uploads/default_chep_icon.png','12','21');
+
+# Insert Chepters of Economics std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('DEVELOPMENT','sem 1','/uploads/default_chep_icon.png','13','10'),
+('SECTORS OF THE INDIAN ECONOMY','sem 1','/uploads/default_chep_icon.png','13','10'),
+('MONEY AND CREDIT','sem 1','/uploads/default_chep_icon.png','13','10'),
+('GLOBALISATION AND THE INDIAN ECONOMY','sem 1','/uploads/default_chep_icon.png','13','10'),
+('CONSUMER RIGHTS','sem 1','/uploads/default_chep_icon.png','13','10');
+
+# Insert Chepters of Political Science std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1: Power-sharing','sem 1','/uploads/default_chep_icon.png','13','11'),
+('2: Federalism','sem 1','/uploads/default_chep_icon.png','13','11'),
+('3: Gender, Religion and Caste','sem 1','/uploads/default_chep_icon.png','13','11'),
+('4: Political Parties','sem 1','/uploads/default_chep_icon.png','13','11'),
+('5: Outcomes of Democracy','sem 1','/uploads/default_chep_icon.png','13','11');
+
+# Insert Chepters of History std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1: The French Revolution','sem 1','/uploads/default_chep_icon.png','12','22'),
+('2: Socialism in Europe and the Russian Revolution','sem 1','/uploads/default_chep_icon.png','12','22'),
+('3: Nazism and the Rise of Hitler','sem 1','/uploads/default_chep_icon.png','12','22'),
+('4: Forest Society and Colonialism','sem 1','/uploads/default_chep_icon.png','12','22'),
+('5: Pastoralists in the Modern World','sem 1','/uploads/default_chep_icon.png','12','22');
+
+# Insert Chepters of Political Science std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1 - What is Democracy? Why Democracy?','sem 1','/uploads/default_chep_icon.png','12','25'),
+('2 - Constitutional Design','sem 1','/uploads/default_chep_icon.png','12','25'),
+('3 - Electoral Politics','sem 1','/uploads/default_chep_icon.png','12','25'),
+('4 - Working of Institutions','sem 1','/uploads/default_chep_icon.png','12','25'),
+('5 - Democratic Rights','sem 1','/uploads/default_chep_icon.png','12','25');
+
+# Insert Chepters of Geography std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1: India - Size and Location','sem 1','/uploads/default_chep_icon.png','12','23'),
+('2: Physical Features of India','sem 1','/uploads/default_chep_icon.png','12','23'),
+('3: Drainage','sem 1','/uploads/default_chep_icon.png','12','23'),
+('4: Climate','sem 1','/uploads/default_chep_icon.png','12','23'),
+('5: Natural Vegetation and Wildlife','sem 1','/uploads/default_chep_icon.png','12','23'),
+('6: Population','sem 1','/uploads/default_chep_icon.png','12','23');
+
+# Insert Chepters of Economics std 9 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('1 - The Story of Village Palampur','sem 1','/uploads/default_chep_icon.png','12','24'),
+('2 - People as Resource','sem 1','/uploads/default_chep_icon.png','12','24'),
+('3 - Poverty as a Challenge','sem 1','/uploads/default_chep_icon.png','12','24'),
+('4 - Food Security in India','sem 1','/uploads/default_chep_icon.png','12','24');
+
+# Insert Chepters of English std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('A Letter to God','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Nelson Mandela: Long Walk to Freedom','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Two Stories about Flying','sem 1','/uploads/default_chep_icon.png','13','39'),
+('From the Diary of Anne Frank','sem 1','/uploads/default_chep_icon.png','13','39'),
+('The Hundred Dresses – I','sem 1','/uploads/default_chep_icon.png','13','39'),
+('The Hundred Dresses – II','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Glimpses of India','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Mijbil the Otter','sem 1','/uploads/default_chep_icon.png','13','39'),
+('Madam Rides the Bus','sem 1','/uploads/default_chep_icon.png','13','39'),
+('The Sermon at Benares','sem 1','/uploads/default_chep_icon.png','13','39'),
+('The Proposal','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - A Triumph of Surgery','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Thief’s Story','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Midnight Visitor','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - A Question of Trust','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - Footprints without Feet','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Making of a Scientist','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Necklace','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Hack Driver','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - Bholi','sem 1','/uploads/default_chep_icon.png','13','39'),
+('II - The Book that Saved the Earth','sem 1','/uploads/default_chep_icon.png','13','39');
+
+# Insert Chepters of Hindi std 10 ============================
+
+INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep_sub_id`) VALUES ('पद','sem 1','/uploads/default_chep_icon.png','13','40'),
+('राम-लक्ष्मण-परशुराम संवाद','sem 1','/uploads/default_chep_icon.png','13','40'),
+('आत्मकथ्य','sem 1','/uploads/default_chep_icon.png','13','40'),
+('उत्साह और अट नहीं रही','sem 1','/uploads/default_chep_icon.png','13','40'),
+('यह दंतुरहित मुस्कान और फसल','sem 1','/uploads/default_chep_icon.png','13','40'),
+('संगतकार','sem 1','/uploads/default_chep_icon.png','13','40'),
+('नेताजी का चश्मा','sem 1','/uploads/default_chep_icon.png','13','40'),
+('बालगोबिन भगत','sem 1','/uploads/default_chep_icon.png','13','40'),
+('लखनवी अंदाज़','sem 1','/uploads/default_chep_icon.png','13','40'),
+('एक कहानी यह भी','sem 1','/uploads/default_chep_icon.png','13','40'),
+('नौबतखाने में इबादत','sem 1','/uploads/default_chep_icon.png','13','40'),
+('संस्कृति','sem 1','/uploads/default_chep_icon.png','13','40');

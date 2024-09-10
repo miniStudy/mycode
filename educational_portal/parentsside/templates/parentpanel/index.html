@@ -1,0 +1,141 @@
+{% extends 'parentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>{{title}}</h4>
+</div>
+
+<div class="row">
+  <div class="col-md-4 mb-4">
+    <a href="{% url 'parentside_payment' %}">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-warning rounded-circle"><i
+                    class="tf-icons fa-solid fa-hand-holding-dollar"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Payments</h5>
+                <small class="text-muted">Report</small>
+              </div>
+            </div>
+            <div id="incomeChart"></div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <a href="{% url 'parentside_announcement' %}">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-secondary rounded-circle"><i
+                    class="tf-icons fa-solid fa-bullhorn"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Announcement</h5>
+                <small class="text-muted">New</small>
+              </div>
+            </div>
+            <div id="incomeChart"></div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <a href="{% url 'parentside_timetable' %}">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-danger rounded-circle"><i
+                    class="tf-icons fa-regular fa-clock"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Timetable</h5>
+                <small class="text-muted">View</small>
+              </div>
+            </div>
+            <div id="incomeChart"></div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+
+
+<div class="card mb-4" id="top_students">
+  <h5 class="card-header mb-2">Performance</h5>
+  <div class="card-body">
+    <div class="table-responsive text-nowrap">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Test Result</th>
+            <th>Attendance Result</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          {% for x in overall_attendance_li %}
+          {% if forloop.counter == 1 %}
+          <tr>
+            <td><img src="/static/imgs/medal (3).png" class="me-2" style="width: 25px;" /> <span
+                class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+            <td>{{x.overall_result}}</td>
+            <td>{{x.overall_attendance_studentwise}}</td>
+          </tr>
+          {% elif forloop.counter == 2 %}
+          <tr>
+            <td><img src="/static/imgs/medal (4).png" class="me-2" style="width: 25px;" /> <span
+                class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+            <td>{{x.overall_result}}</td>
+            <td>{{x.overall_attendance_studentwise}}</td>
+          </tr>
+          {% elif forloop.counter == 3 %}
+          <tr>
+            <td><img src="/static/imgs/medal (5).png" class="me-2" style="width: 25px;" /> <span
+                class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+            <td>{{x.overall_result}}</td>
+            <td>{{x.overall_attendance_studentwise}}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td><img src="/static/imgs/hand2.png" class="me-2" style="width: 25px;" /> <span
+                class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+            <td>{{x.overall_result}}</td>
+            <td>{{x.overall_attendance_studentwise}}</td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card h-100">
+      
+        <h5 class="card-header mb-2">Test Analysis</h5>
+      
+      <div class="card-body">
+        <div id="students_chart"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-style layout-navbar-fixed layout-menu-fixed layout-compact " dir="ltr" data-theme="theme-default" data-assets-path="/static/assets/" data-template="vertical-menu-template-dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>{{title}} | miniStudy</title>
+
+    
+    <meta name="description" content="Educational Portal" />
+    <meta name="keywords" content="Educational Portal">
+    {% include 'links.html' %}
+    
+</head>
+
+<body>
+  
+    <!-- <div class="loginbg d-flex justify-content-center align-items-center">
+        {% if login_set == 1 %}
+        <div class="loginbox shadow2">
+            <div class="LogonName d-flex justify-content-center align-items-center"><img src="/static/imgs/My_dream_logo/4_nobg.png" alt="Logo" /> <span>miniStudy</span></div>
+            <hr>
+            <div class="loginform">
+                <div class="h44 text-center bg2">LOGIN</div><hr>
+                {% include 'message_show.html' %}
+                <form action="{% url 'admin_login_handle' %}" method="post">
+                    {% csrf_token %}
+                    <p><input class="input" type="email" placeholder="EMAIL" name="email" value="{{c_email}}" /></p>
+                    <p><input class="input" type="password" name="password" placeholder="password" value="{{c_pass}}" /></p>
+                    <p><input type="checkbox" name="remember" id="remember" {% if c_email %} checked {% endif %}/> <label style="margin-left: 10px;" for="remember">Remember Me</label></p>
+                    <p><input type="submit" class="btn" value="SUBMIT" name="submitLogin" /></p>
+                </form>
+            </div>
+            <hr>
+            <p style="text-align: center;"><a href="{% url 'Admin_Forgot_Password' %}">Forgot Password</a></p>
+        </div>
+        {% elif login_set == 2 %}
+
+        <div class="loginbox shadow2">
+            <div class="LogonName d-flex justify-content-center align-items-center"><img src="/static/studentside/imgs/logo.png" alt="Logo" /> <span>SKILLTERS</span></div>
+            <hr>
+            <div class="loginform">
+                <div class="h44 text-center bg2">Forgot Password</div><hr>
+                {% include 'message_show.html' %}
+                <form action="{% url 'admin_handle_forgot_password' %}" method="post">
+                    {% csrf_token %}
+                    <p><input class="input" type="email" placeholder="EMAIL" name="email" value="{{c_email}}" /></p>
+                    <p><input type="submit" class="btn" value="SUBMIT" name="submitLogin" /></p>
+                </form>
+            </div>
+            <hr>
+            <p style="text-align: center;"><a href="{% url 'Admin Login' %}">Login</a></p>
+        </div>
+
+        {% elif login_set == 3 %}
+        <div class="loginbox shadow2">
+            <div class="LogonName d-flex justify-content-center align-items-center"><img src="/static/studentside/imgs/logo.png" alt="Logo" /> <span>SKILLTERS</span></div>
+            <hr>
+            <div class="loginform">
+                <div class="h44 text-center bg2">Set New Password</div><hr>
+                {% include 'message_show.html' %}
+                <form action="{% url 'admin_handle_set_new_password' %}" method="post">
+                    {% csrf_token %}
+                    <p><input class="input" type="text" placeholder="OTP" name="otp" required/></p>
+                    <p><input class="input" type="password" name="password" placeholder="Password" required/></p>
+                    <p><input class="input" type="password" name="confirm_password" placeholder="Confirm Password" required/></p>
+                    <p><input type="submit" class="btn" value="SUBMIT" name="submitLogin" /></p>
+                </form>
+            </div>
+            <hr>
+            <p style="text-align: center;"><a href="{% url 'Admin Login' %}">Login</a></p>
+        </div>
+
+        {% endif %}
+
+    </div> -->
+
+
+
+    <div class="container-xxl">
+        <div class="authentication-wrapper authentication-basic container-p-y">
+          <div class="authentication-inner py-4">
+      
+            <!-- Register -->
+            <div class="card">
+              <div class="card-body">
+                {% include 'message_show.html' %}
+                <!-- Logo -->
+                <div class="app-brand justify-content-center">
+                  <a href="index.html" class="app-brand-link gap-2">
+                    <img src="/static/imgs/My_dream_logo/4_nobg.png" alt="My Logo" style="width: 48px;" />    
+                    <img src="/static/imgs/My_dream_logo/2nobg.png" style="width: 150px;" />
+                  </a>
+                </div>
+                <!-- /Logo -->
+                {% if login_set == 1 %}
+                  {% include 'admin_login.html' %}
+                {% elif login_set == 2 %}
+                  {% include 'Admin_Forgot_Password.html' %}
+                {% elif login_set == 3 %}  
+                  {% include 'admin_reset_password.html' %}
+                {% endif %}
+
+                <div class="text-center"><a href="{% url 'FirstPage' %}" style="color: #a1b0cb;">Change Panel ..?</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% include 'charts.html' %}
+    {% include 'scripts.html' %}
+    
+    
+    
+    </body>
+    </html>
+    

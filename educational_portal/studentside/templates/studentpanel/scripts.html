@@ -1,0 +1,57 @@
+
+  <!-- Core JS -->
+  <!-- build:js assets/vendor/js/core.js -->
+  
+  <script src="/static/assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="/static/assets/vendor/libs/popper/popper.js"></script>
+  <script src="/static/assets/vendor/js/bootstrap.js"></script>
+  <script src="/static/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="/static/assets/vendor/libs/hammer/hammer.js"></script>
+  <script src="/static/assets/vendor/libs/typeahead-js/typeahead.js"></script>
+  <script src="/static/assets/vendor/js/menu.js"></script>
+  <script src="/static/assets/js/main.js"></script>
+  <script src="/static/assets/js/dashboards-analytics.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Initially hide the delete button
+        $('#selected').hide();
+
+        // Function to update the delete button text and visibility
+        function updateDeleteButton() {
+            var selectedCount = $('input[name="selection"]:checked').length;
+            if (selectedCount > 0) {
+                $('#selected').html('<i class="fa-solid fa-trash me-2"></i> Delete ' + selectedCount).show();
+            } else {
+                $('#selected').hide();
+            }
+        }
+
+        // Handle click on "select all" control
+        $('input[name="selectionall"]').on('click', function() {
+            var checked = this.checked;
+            $('input[name="selection"]').each(function() {
+                this.checked = checked;
+            });
+            updateDeleteButton();
+        });
+
+        // Handle click on individual checkboxes
+        $('input[name="selection"]').on('change', function() {
+            updateDeleteButton();
+        });
+    });
+</script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function() {
+            var messageDiv = document.getElementById('returnmessage');
+            if (messageDiv) {
+                messageDiv.style.display = 'none';
+            }
+        }, 4000); 
+    });
+</script>

@@ -1,0 +1,161 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Attendance</h4></div> 
+  
+
+{% for message in messages %}
+ {{message|safe}}
+{% endfor %}
+<!-- DataTable with Buttons -->
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+                <div class="myheadfont">{{title}} Data</div>  
+                
+        </div>
+    
+        <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+          <div class="btn-group me-2" role="group" aria-label="First group">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'admin_attendance' %}">ALL</a></li>
+              {% for x in std_data %}
+              <li><a class="dropdown-item" href="{% url 'admin_attendance' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+              {% endfor %}
+            </ul>
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batchs{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'admin_attendance' %}?get_std={{get_std.std_id}}">ALL</a></li>
+              {% for x in batch_data %}
+              <li><a class="dropdown-item" href="{% url 'admin_attendance' %}?get_std={{x.batch_std.std_id}}&get_batch={{x.batch_id}}">{{x.batch_name}}</a></li>
+              {% endfor %}
+            </ul>
+            <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&get_batch={{ get_batch.batch_id }}&model_name=attendance"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
+          </div>
+          <div class="input-group mt-2">
+            <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+            <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
+          </div>
+        </div>
+
+ 
+
+<div class="card-datatable table-responsive pt-0">
+    <table id="data-table" class="display table table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>time/ day / Date</th>
+                <th>Subject</th>
+                <th>tutor</th>
+                <th>Attendance</th>
+                <th>Student</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for x in data %}
+            <tr>
+                <td>{{ x.atten_timetable__tt_day }}</td>
+                <td>{{ x.atten_timetable__tt_time1 }}  {{x.atten_date|date:"d-m-Y"}}</td>
+                <td>{{ x.atten_timetable__tt_subject1 }}</td>
+                <td>{{ x.atten_timetable__tt_tutor1__fac_name }}</td>
+                <td>{% if x.atten_present %}Present{% else %}Absent{% endif %}</td>
+                <td>{{ x.atten_student__stud_name }} {{ x.atten_student__stud_lastname }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div> 
+
+      <!-- Pagination -->
+      
+  
+      
+      <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group" aria-label="First group">
+          {% for x in data.paginator.page_range %}
+          <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+          {% endfor %}
+        </div>
+      </div>
+
+         
+
+    </div>
+</div>
+
+
+<br>
+{% if overall_attendance %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="avatar">
+                    <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                  </div>
+                  <div class="card-info">
+                    <h5 class="card-title mb-0 me-2">{{overall_attendance}}%</h5>
+                    <small class="text-muted">Overall Attendance</small>
+                  </div>
+                </div>
+                <div id="conversationChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+{% endif %}  
+
+
+<div class="row">
+    {% for x, y in combined_data %}
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar">
+                            <span class="avatar-initial bg-label-primary rounded-circle">
+                                <i class="bx bx-user fs-4"></i>
+                            </span>
+                        </div>
+                        <div class="card-info">
+                            <h5 class="card-title mb-0 me-2">{{ x }}%</h5>
+                            <small class="text-muted">{{ y }}</small>
+                        </div>
+                    </div>
+                    <div id="conversationChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endfor %}
+
+        </div>
+
+
+
+
+
+
+    
+
+
+{% endblock %}
+
+
+
+
+
+ 
+
+
+          
