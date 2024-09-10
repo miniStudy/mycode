@@ -62,9 +62,6 @@ urlpatterns = [
 
     # ---------------------------Today's Study------------------------------------------------------------------
     path('today_study/', studentview.today_study_page, name='today_study'),
-<<<<<<< HEAD
-=======
-
     path('show_pdf/', studentview.show_pdf, name='show_pdf'),
->>>>>>> 5328c9b285049905840a82d37b9a10369713da7c
+
 ]
