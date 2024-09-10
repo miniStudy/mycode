@@ -62,6 +62,4 @@ urlpatterns = [
 
     # ---------------------------Today's Study------------------------------------------------------------------
     path('today_study/', studentview.today_study_page, name='today_study'),
-    path('show_pdf/', studentview.show_pdf, name='show_pdf'),
-
 ]

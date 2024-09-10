@@ -53,14 +53,14 @@
         <label for="tq_chapter">Chapter:</label>
         <select name="tq_chapter" class="form-control" required>
             {% for chapter in chap_data %}
-                <option value="{{ chapter.chep_id }}">{{ chapter }}</option>
+                <option value="{{ chapter.chep_id }}">{{ chapter.chep_name }} - {{chapter.chep_sub__sub_name}} - std:{{chapter.chep_sub__sub_std__std_name}}</option>
             {% endfor %}
         </select><br>
 
         <div id="questions-container"></div>
 
         <button type="button" class="btn btn-warning mt-3" id="add-question-btn">Add Another Question</button><br><br>
-        <button type="submit" class="btn btn-success mt-3">Submit All Questions</button>
+        <button type="submit" class="btn btn-success mt-3 mb-4">Submit All Questions</button>
     </form>
 
     <!-- Template for Question Entry -->

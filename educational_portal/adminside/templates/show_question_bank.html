@@ -29,7 +29,7 @@
             {% for question in questions %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ question.qb_chepter }}</td>
+                <td>{{ question.qb_chepter__chep_name }}</td>
                 <td>{{ question.qb_q_type }}</td>
                 <td>{{ question.qb_question|safe }}</td>
                 <td>{{ question.qb_answer|safe }}</td>
@@ -47,18 +47,19 @@
             {% endfor %}
         </tbody>
     </table>
-
+    
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group me-2" role="group" aria-label="First group">
           {% for x in questions.paginator.page_range %}
-          <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if questions.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+          <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if questions.number == x %} bg-primary text-white{% endif %}">{{x}}</button></a>
           {% endfor %}
         </div>
-      </div>
+    </div>
+    {{total_questions}} Questions
 
-      <br>
+    <br>
 
-    <a href="{% url 'bulk_upload_test_questions' %}" class="btn btn-primary">Upload More Questions</a>
+    <a href="{% url 'bulk_upload_test_questions' %}" class="btn btn-primary mb-5">Upload More Questions</a>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
