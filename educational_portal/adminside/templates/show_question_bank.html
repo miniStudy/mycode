@@ -51,11 +51,7 @@
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group me-2" role="group" aria-label="First group">
           {% for x in questions.paginator.page_range %}
-<<<<<<< HEAD
           <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if questions.number == x %} bg-primary text-white{% endif %}">{{x}}</button></a>
-=======
-          <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if questions.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
->>>>>>> 6bb7e8c8bbd5b04c25d18fee5ae595640f89c67e
           {% endfor %}
         </div>
     </div>
