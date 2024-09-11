@@ -67,6 +67,7 @@
               <th>Test Std</th>
               <th>Questions</th>
               <th>Total Marks</th>
+              <th>Question Paper</th>
               <th>Insert Offline Marks</th>
               <th>Attempted By</th>
               <!-- <th>Edit</th> -->
@@ -81,6 +82,7 @@
               <td>{{x.test_std}}</td>
               <td>{{x.num_questions}}</td>
               <td>{{x.total_marks}}</td>
+              <td><a href="{% url 'show_question_paper' %}?test_id={{x.test_id}}">View</a></td>
               <td><a href="{% url 'insert_offline_marks' %}?test_id={{x.test_id}}&std_id={{get_std.std_id}}"
                   class="btn btn-primary btn-sm">Insert</a></td>
               <td><a href="{% url 'view_attemp_students' %}?test_id={{x.test_id}}">View</a></td>
