@@ -188,24 +188,32 @@
   </div>
 
   
-
-<div class="row">
- 
-    
-    <div class="col-md-12">
+  <div class="row">
+    <div class="col-md-6">
       <div class="card h-100">
         <div class="card-header">
-          <h5 class="card-title mb-2">All Students</h5>
-          <h1 class="display-6 fw-normal mb-0">400</h1>
+          <h5 class="card-title mb-2 text-uppercase">Total Students : {{all_students|safe}}</h5>
+          <!-- <h5 class="fw-light mb-0">{{all_students|safe}}</h5> -->
         </div>
         <div class="card-body">
-          <span class="d-block mb-2">Stdwise Students and Test Data</span>
-          <br>
+          <!-- <span class="d-block mb-2">Stdwise Students and Test Data</span> -->
+      
           <div id="students_chart"></div>
         </div>
       </div>
     </div>
-</div>
+  
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="card-title mb-2">Students Ratio</h5>
+        </div>
+        <div class="card-body">
+          <div id="students_male_female_ratio"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
 
