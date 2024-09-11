@@ -1313,6 +1313,7 @@ def insert_update_test_questions(request):
 def show_packages(request):
     data = Packs.objects.prefetch_related('pack_subjects').all()
     std_data = Std.objects.all()
+    print(data)
     data = paginatoorrr(data, request)
 
     context ={
