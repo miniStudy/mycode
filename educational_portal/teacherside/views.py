@@ -74,6 +74,7 @@ def teacher_home(request):
 
     std_data = Std.objects.filter(std_id__in = std_access_list)
 
+
     if request.GET.get('get_std'):
         get_std = request.GET.get('get_std')
 
@@ -120,6 +121,23 @@ def teacher_home(request):
             output_field=IntegerField(),
         ))).filter(verified_solution=0).count()
     
+    # ----------------------------for chart on dashboard---------------------
+    all_students= Students.objects.filter().count()
+    all_male=Students.objects.filter(stud_gender='Male').count()
+    all_female=Students.objects.filter(stud_gender='Female').count()
+    all_other=Students.objects.filter(stud_gender='Other').count()
+    piechart_category = ['Male','Female','Other']
+    piechart_data = [all_male,all_female,all_other]
+    stds = Std.objects.all().order_by('-std_board')
+
+    std_list = []
+    students_for_that_std = []
+    for x in stds:
+        n = (x.std_name+' '+x.std_board.brd_name)
+        std_list.append(n)
+        noss = Students.objects.filter(stud_std__std_id=x.std_id).count()
+        students_for_that_std.append(noss)
+    
     
     context={
         'title':'Home',
@@ -127,7 +145,12 @@ def teacher_home(request):
         'std_data':std_data,
         'get_std': get_std,
         'msg': msg,
-        'overall_attendance_li':overall_attendance_li
+        'overall_attendance_li':overall_attendance_li,
+        'all_students':all_students,
+        'piechart_category':piechart_category,
+        'piechart_data':piechart_data,
+        'std_list':std_list,
+        'students_for_that_std':students_for_that_std,
     }
     return render(request, 'teacherpanel/index.html',context)
 
