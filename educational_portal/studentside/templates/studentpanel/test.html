@@ -8,22 +8,22 @@
 {% include 'message_show.html' %}
 
 
-    <!-- <div class="container mt-5">
+    <div class="mt-2">
         <div class="row">
-            {% for test_name in test_names %}
-            <div class="col-md-3 d-flex align-items-stretch">
-                <div class="card">
+            {% for data in test_analysis_data %}
+            <div class="col-md-3 d-flex align-items-stretch mb-4">
+                <div class="card myborder w-100">
                     <div class="card-body">
-                        <h5 class="card-title">{{test_name.test_name}}</h5>
-                        <p class="card-text">Attemp all the questions and write proper answers!</p>
-                        <a href="{% url 'Student_Test_Q' test_name.test_id %}" class="btn btn-primary">Attem test</a>
+                        <p><b>Test Name:</b> {{data.tau_test_id.test_name}}</p>
+                        <p><b>Subject:</b> {{data.tau_test_id.test_sub}}</p>
+                        <p class="card-text"><b>Total Marks:</b> {{data.tau_total_marks}}</p>
+                        <p class="card-text"><b>Time Taken:</b> {{data.tau_completion_time}}</p>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-    </div> -->
-
+    </div>
 
 
 {% endblock %}

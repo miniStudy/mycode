@@ -1444,3 +1444,8 @@ def today_learning_delete(request):
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
     return redirect('today_learning')
+
+
+def show_question_paper(request):
+    context = {}
+    return render(request, 'teacherpanel/show_question_paper.html', context)

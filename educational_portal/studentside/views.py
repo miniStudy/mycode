@@ -265,11 +265,11 @@ def show_materials(request):
     title = 'Materials'
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
-    materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name')
+    materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name','cm_chepter__chep_sub__sub_id','cm_file_icon')
     selected_sub=None
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']
-        materials = materials.filter(cm_chepter__chep_sub__sub_id = id)
+        materials = materials.filter(cm_chepter__chep_sub__sub_id = id).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name','cm_chepter__chep_sub__sub_id','cm_file_icon')
         selected_sub = Subject.objects.get(sub_id=id)
 
     return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects,'selected_sub':selected_sub, 'title':title})
@@ -337,11 +337,11 @@ def show_event(request):
 
 @student_login_required
 def show_test(request):
-    return redirect('comming_soon')
-    # title = 'Tests'
-    # standard_id = request.session['stud_std']
-    # test_names = Chepterwise_test.objects.filter(test_std__std_id = standard_id)
-    # return render(request, 'studentpanel/test.html', {'test_names':test_names, 'title':title})
+    student_id = request.session['stud_id']
+    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id)
+    title = 'Tests'
+    context = {'test_analysis_data':test_analysis_data,'title':title}
+    return render(request, 'studentpanel/test.html', context)
 
 @student_login_required
 def show_test_questions(request, id):
@@ -764,9 +764,7 @@ def student_fees_collection_view(request):
 
 # ============================coming soon function========================
 def comming_soon_page(request):
-    student_id = request.session['stud_id']
-    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id)
-    context = {'test_analysis_data':test_analysis_data}
+    context={}
     return render(request, 'studentpanel/coming-soon.html', context)
 
 

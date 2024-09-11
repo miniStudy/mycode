@@ -1,0 +1,113 @@
+{% extends 'teacherpanel/master.html' %}
+
+{% block contentsection %}
+<style>
+/* General styles for the question paper container */
+.question_paper {
+    background-color: #283144;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    color: white;
+    padding-bottom: 40px;
+}
+
+hr {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .question_paper,
+    .question_paper * {
+        visibility: visible;
+    }
+
+    .question_paper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+}
+</style>
+
+<div class="mb-4">
+    <h4>Question Paper</h4>
+</div>
+
+{% include 'message_show.html' %}
+
+<div class="question_paper" style="background-color: #ffffff; padding: 20px; border-radius: 8px; max-width: 800px; margin: 0 auto; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); color: rgb(0, 0, 0); padding-bottom: 40px;">
+    <!-- Logo on Top Center -->
+    <div class="logo" style="text-align: center; margin-bottom: 20px;">
+        <img src="https://metrofoods.co.nz/3%20-%20Copy.png" alt="Logo" style="max-width: 100px; height: auto;" />
+    </div>
+    <br>
+    <!-- Subject, Chapter, Total Marks Row in a Table Format -->
+    <table style="width: 100%; margin-bottom: 20px; text-align: center; border-collapse: collapse;">
+        <tr>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Subject: Mathematics</td>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Chapter: Algebra</td>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Total Marks: 100</td>
+        </tr>
+    </table>
+
+    <!-- Questions with Weightage -->
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr class="question">
+            <td style="font-size: 16px; padding: 10px; border: 1px solid #000000;">
+                <p>1. What is 2 + 2? (Weightage: 2 Marks)</p>
+                <!-- Options for MCQ -->
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <li>(a) 3</li>
+                    <li>(b) 4</li>
+                    <li>(c) 5</li>
+                    <li>(d) 6</li>
+                </ul>
+            </td>
+        </tr>
+        <tr class="question">
+            <td style="font-size: 16px; padding: 10px; border: 1px solid #000000;">
+                <p>2. Solve for x: 2x + 3 = 7 (Weightage: 4 Marks)</p>
+            </td>
+        </tr>
+        <!-- Add more questions as needed -->
+    </table>
+</div>
+
+<!-- Print Button -->
+<button onclick="printQuestionPaper()">Print Question Paper</button>
+
+<script>
+function printQuestionPaper() {
+    const printContents = document.querySelector('.question_paper').outerHTML;
+    const originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+}
+</script>
+{% endblock %}
