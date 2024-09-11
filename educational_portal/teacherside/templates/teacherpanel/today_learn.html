@@ -4,9 +4,7 @@
   <div class="mb-4"><h4>Today's Learning</h4></div> 
   
 
-{% for message in messages %}
- {{message|safe}}
-{% endfor %}
+{% include "message_show.html" %}
 <!-- DataTable with Buttons -->
 
 <div class="card">

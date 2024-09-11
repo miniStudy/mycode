@@ -226,6 +226,7 @@ def admin_logout(request):
 # -----------------------------------auth End -------------------------
 @admin_login_required
 def home(request):
+    context = {}
     all_students= Students.objects.filter().count()
 
     all_male=Students.objects.filter(stud_gender='Male').count()
@@ -243,14 +244,55 @@ def home(request):
         noss = Students.objects.filter(stud_std__std_id=x.std_id).count()
         students_for_that_std.append(noss)
 
-    context={
+    # Performance of all standards
+    std_data = Std.objects.all()
+
+    if request.GET.get('get_std'):
+        get_std = request.GET.get('get_std')
+
+        get_std = Std.objects.get(std_id = get_std)
+        students_li = Students.objects.filter(stud_std = get_std).values('stud_id','stud_name','stud_lastname')
+        overall_attendance_li = []
+        for x in students_li:
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
+            if total_attendence_studentwise > 0:
+                overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+            else:
+                overall_attendence_studentwise = 0
+            
+
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            
+            
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            
+
+            if total_marks == 0:
+                overall_result = 0
+            else:
+                overall_result = round((obtained_marks/total_marks)*100,2)
+
+            overall_attendance_li.append({'stud_name':x['stud_name'], 'stud_lastname':x['stud_lastname'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
+        overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+        overall_attendance_li = overall_attendance_li[:5]   
+        context.update({'overall_attendance_li':overall_attendance_li})     
+    else:
+        get_std = 0
+        msg = "Please! Select standard for data"
+        context.update({'msg':msg})
+
+    context.update({
         'title' : 'Home',
         'all_students':all_students,
         'piechart_category':piechart_category,
         'piechart_data':piechart_data,
+        'get_std': get_std,
         'std_list':std_list,
         'students_for_that_std':students_for_that_std,
-    }
+        'std_data':std_data
+    })
     return render(request, 'index.html',context)
 
 @admin_login_required
@@ -964,10 +1006,9 @@ def show_attendance(request):
 
 @admin_login_required
 def show_events(request):
-    events = Event.objects.all()
+    events = Event.objects.all().values('event_id', 'event_name')
     events_imgs = Event_Image.objects.all()
     selected_events = Event.objects.first()
-    print(selected_events)
     context = {
         'events':events,
         'events_imgs':events_imgs,

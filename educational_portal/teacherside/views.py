@@ -74,6 +74,7 @@ def teacher_home(request):
 
     std_data = Std.objects.filter(std_id__in = std_access_list)
 
+
     if request.GET.get('get_std'):
         get_std = request.GET.get('get_std')
 
@@ -81,18 +82,18 @@ def teacher_home(request):
         students_li = Students.objects.filter(stud_std = get_std).values('stud_id','stud_name','stud_lastname')
         overall_attendance_li = []
         for x in students_li:
-            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
-            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
             if total_attendence_studentwise > 0:
                 overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
             else:
                 overall_attendence_studentwise = 0
             
 
-            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
             
             
-            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
             
 
             if total_marks == 0:
@@ -100,7 +101,7 @@ def teacher_home(request):
             else:
                 overall_result = round((obtained_marks/total_marks)*100,2)
 
-            overall_attendance_li.append({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+            overall_attendance_li.append({'stud_name':x['stud_name'], 'stud_lastname':x['stud_lastname'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
 
 
         overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
@@ -120,6 +121,23 @@ def teacher_home(request):
             output_field=IntegerField(),
         ))).filter(verified_solution=0).count()
     
+    # ----------------------------for chart on dashboard---------------------
+    all_students= Students.objects.filter().count()
+    all_male=Students.objects.filter(stud_gender='Male').count()
+    all_female=Students.objects.filter(stud_gender='Female').count()
+    all_other=Students.objects.filter(stud_gender='Other').count()
+    piechart_category = ['Male','Female','Other']
+    piechart_data = [all_male,all_female,all_other]
+    stds = Std.objects.all().order_by('-std_board')
+
+    std_list = []
+    students_for_that_std = []
+    for x in stds:
+        n = (x.std_name+' '+x.std_board.brd_name)
+        std_list.append(n)
+        noss = Students.objects.filter(stud_std__std_id=x.std_id).count()
+        students_for_that_std.append(noss)
+    
     
     context={
         'title':'Home',
@@ -127,7 +145,12 @@ def teacher_home(request):
         'std_data':std_data,
         'get_std': get_std,
         'msg': msg,
-        'overall_attendance_li':overall_attendance_li
+        'overall_attendance_li':overall_attendance_li,
+        'all_students':all_students,
+        'piechart_category':piechart_category,
+        'piechart_data':piechart_data,
+        'std_list':std_list,
+        'students_for_that_std':students_for_that_std,
     }
     return render(request, 'teacherpanel/index.html',context)
 
@@ -136,9 +159,9 @@ def teacher_login_page(request):
     if request.COOKIES.get("fac_email"):
           cookie_email = request.COOKIES['fac_email']
           cookie_pass = request.COOKIES['fac_password']
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title': 'login'})
     else:
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login, 'title':'login'})
 
 def teacher_login_handle(request):
     if request.method == "POST":
@@ -163,7 +186,7 @@ def teacher_login_handle(request):
             return redirect('teacher_home')
         else:
             messages.error(request, "Invalid Username & Password.")
-            return redirect('Student_Login')
+            return redirect('teacher_login')
     else:
         return redirect('teacher_login')
 
@@ -171,9 +194,9 @@ def teacher_forget_password(request):
     login=2
     if request.COOKIES.get("fac_email"):
           cookie_email = request.COOKIES['fac_email']
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email, 'title':'Forget Password'})
     else:
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login, 'title':'Forget Password'})
     
 def teacher_handle_forget_password(request):
      if request.method == "POST":
@@ -200,7 +223,7 @@ def teacher_set_new_password(request):
     login=3      
     if request.GET.get('email'):
          foremail = request.GET['email']
-    return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'email':foremail})
+    return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'email':foremail, 'title':'New Password'})
 
 def teacher_handle_set_new_password(request):
      if request.method == "POST":
@@ -524,8 +547,8 @@ def show_teacher_solution_verified(request):
 @teacher_login_required
 def teacher_events(request):
     event_data = Event.objects.all().values('event_id','event_name')
-    event_imgs = Event_Image.objects.all().values('event_id','event_img')
-    selected_events = Event.objects.all()[:1]
+    event_imgs = Event_Image.objects.all()
+    selected_events = Event.objects.first()
     context={
         'event_data':event_data,
         'event_imgs':event_imgs,
@@ -535,11 +558,10 @@ def teacher_events(request):
 
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
-        selected_events = Event.objects.filter(event_id = event_id)
+        selected_events = Event.objects.get(event_id = event_id)
         event_imgs = Event_Image.objects.filter(event__event_id = event_id)
         
         context.update({'selected_events':selected_events, 'events_img':event_imgs})
-
     return render(request, 'teacherpanel/events.html', context)
 
 
@@ -554,7 +576,7 @@ def teacher_test(request):
         subjects_list.append(x.fa_subject.sub_id)
 
 
-    data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+    data = Chepterwise_test.objects.filter(test_std__std_id__in = std_list).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
     data = paginatoorrr(data,request)
 
     std_data = Std.objects.filter(std_id__in = std_list)
@@ -570,7 +592,7 @@ def teacher_test(request):
         if get_std == 0:
             pass
         else:    
-            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std)
+            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
             data = paginatoorrr(data,request)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
@@ -582,7 +604,7 @@ def teacher_test(request):
         if get_subject == 0:
             pass
         else:    
-            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject)
+            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
             data = paginatoorrr(data,request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
@@ -1294,8 +1316,7 @@ def report_card_show(request):
         })
     else:
         noreport_card = 1       
-        nobody = messages.error(request, 'Please Select Student!')
-        context.update({'nobody':nobody, 'noreport_card':noreport_card})
+        context.update({'noreport_card':noreport_card})
     return render(request, 'teacherpanel/report_card.html', context)
 
 

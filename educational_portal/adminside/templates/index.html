@@ -161,120 +161,99 @@
 
 <div class="card mb-4" id="top_students">
   <h5 class="card-header mb-2">Performance</h5>
-  <form action="#" method="GET">
-    <div class="ms-4">
-      <select id="select2Basic" class="select2 form-select form-select-sm d-inline-block" data-allow-clear="true"
-        style="width: auto;" required>
-        <option value="abcd">GSEB 10</option>
-        <option value="HI">NCERT 6</option>
-        <option value="CA">GSEB 7</option>
-        <option value="NV">NCERT 9</option>
-      </select>
 
-      <select id="select2Basic" class="select2 form-select form-select-sm d-inline-block" data-allow-clear="true"
-        style="width: auto;" required>
-        <option value="">Batches</option>
-        <option value="HI">All</option>
-        <option value="HI">Diamond</option>
-        <option value="CA">Gold</option>
-        <option value="NV">Silver</option>
-      </select>
-
-      <select id="select2Basic" class="select2 form-select form-select-sm d-inline-block" data-allow-clear="true"
-        style="width: auto;" required>
-        <option value="">Subjects</option>
-        <hr>
-        <option value="HI">All</option>
-        <option value="HI">Maths</option>
-        <option value="CA">Science</option>
-        <option value="NV">English</option>
-      </select>
-      <BR />
-      <button class="btn btn-sm btn-outline-primary mt-2" type="submit">
-        <i class="fa-solid fa-check me-2"></i> Submit
-      </button>
-  </form>
-</div>
-
-
-
-<div class="card-body">
-  <div class="mb-4">
-    <b>Overall Batch Performance in English : 70%</b>
+  <div class="card-body">
+    <div class="btn-group mb-3">
+      <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
+      <ul class="dropdown-menu">
+        {% for x in std_data %}
+        <li><a class="dropdown-item" href="{% url 'Admin Home' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="table-responsive text-nowrap">
+      <table class="table table-bordered">
+        {% if get_std %}
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Test Result</th>
+            <th>Attendance Result</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          {% for x in overall_attendance_li %}
+          {% if forloop.counter == 1 %}
+          <tr>
+            <td><img src="/static/imgs/medal (3).png" class="me-2" style="width: 25px;" /> <span
+            class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+            <td>{{x.overall_result}}</td>
+            <td>{{x.overall_attendance_studentwise}}</td>
+          </tr>
+          {% elif forloop.counter == 2 %}
+          <tr>
+            <td><img src="/static/imgs/medal (4).png" class="me-2" style="width: 25px;" /> <span
+            class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+            <td>{{x.overall_result}}</td>
+            <td>{{x.overall_attendance_studentwise}}</td>
+          </tr>
+          {% elif forloop.counter == 3 %}
+          <tr>
+            <td><img src="/static/imgs/medal (5).png" class="me-2" style="width: 25px;" /> <span
+            class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+            <td>{{x.overall_result}}</td>
+            <td>{{x.overall_attendance_studentwise}}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td><img src="/static/imgs/hand2.png" class="me-2" style="width: 25px;" /> <span
+            class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
+            <td>{{x.overall_result}}</td>
+            <td>{{x.overall_attendance_studentwise}}</td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+          {% else %}
+          {{msg}}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="table-responsive text-nowrap">
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Student Name</th>
-          <th>Test Result</th>
-          <th>Attendance Result</th>
-        </tr>
-      </thead>
-      <tbody class="table-border-bottom-0">
-        <tr>
-          <td><img src="/static/imgs/First-Ranker.png" class="me-2" style="width: 20px;" /> <span
-              class="fw-medium">Vishal Sharma</span></td>
-          <td>79%</td>
-          <td>80%</td>
-        </tr>
-
-        <tr>
-          <td><img src="/static/imgs/ranker.png" class="me-2" style="width: 20px;" /> <span class="fw-medium">Ashish
-              Desai</span></td>
-          <td>75%</td>
-          <td>86%</td>
-        </tr>
-
-        <tr>
-          <td><img src="/static/imgs/ranker.png" class="me-2" style="width: 20px;" /> <span class="fw-medium">Anand
-              Shah</span></td>
-          <td>74%</td>
-          <td>80%</td>
-        </tr>
-
-        <tr>
-          <td><span class="fw-medium">Shivani Patel</span></td>
-          <td>70%</td>
-          <td>72%</td>
-        </tr>
-
-      </tbody>
-    </table>
-  </div>
-</div>
 </div>
 
 
 
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-6 mb-3">
     <div class="card h-100">
       <div class="card-header">
-        <h5 class="card-title mb-2">Total Students</h5>
-        <h5 class="fw-light mb-0">{{all_students|safe}}</h5>
+        <h5 class="card-title mb-2 text-uppercase">Total Students : {{all_students|safe}}</h5>
+        <!-- <h5 class="fw-light mb-0">{{all_students|safe}}</h5> -->
       </div>
       <div class="card-body">
-        <span class="d-block mb-2">Stdwise Students and Test Data</span>
-        <br>
+        <!-- <span class="d-block mb-2">Stdwise Students and Test Data</span> -->
+    
         <div id="students_chart"></div>
       </div>
     </div>
   </div>
-</div>
 
-
-<div class="row mt-4">
-  <div class="col-md-12">
+  <div class="col-md-6 mb-3">
     <div class="card h-100">
       <div class="card-header">
-        <h5 class="card-title mb-2">Students Ratio</h5>
+        <h5 class="card-title mb-2 text-uppercase">Students Ratio</h5>
       </div>
-      <div class="card-body">
+      <div class="card-body d-flex justify-content-center">
         <div id="students_male_female_ratio"></div>
       </div>
     </div>
   </div>
 </div>
+
+
+
+  
+
 
 {% endblock %}

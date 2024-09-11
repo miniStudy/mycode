@@ -5,10 +5,7 @@
   <h4>Class Overview for Today</h4> 
 </div>
 
-
-{% for message in messages %}
-{{message|safe}}
-{% endfor %}
+{% include 'message_show.html' %}
 <!-- DataTable with Buttons -->
 
 {% for data in todays_study_data %}

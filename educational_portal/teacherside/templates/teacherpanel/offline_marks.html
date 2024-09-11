@@ -4,9 +4,7 @@
   <div class="mb-4"><h4>Tests</h4></div> 
   
 
-{% for message in messages %}
- {{message|safe}}
-{% endfor %}
+{% include 'message_show.html' %}
 
 <div class="btn-group mb-3">
     <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if batch_id %}{{batch_id.batch_name}}{% else %}Batch{% endif %}</button>
