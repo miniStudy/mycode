@@ -592,7 +592,7 @@ def teacher_test(request):
         if get_std == 0:
             pass
         else:    
-            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std)
+            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
             data = paginatoorrr(data,request)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
@@ -604,7 +604,7 @@ def teacher_test(request):
         if get_subject == 0:
             pass
         else:    
-            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject)
+            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
             data = paginatoorrr(data,request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
