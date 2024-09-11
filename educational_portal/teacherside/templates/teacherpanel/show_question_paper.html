@@ -67,32 +67,40 @@ button:hover {
     <br>
     <!-- Subject, Chapter, Total Marks Row in a Table Format -->
     <table style="width: 100%; margin-bottom: 20px; text-align: center; border-collapse: collapse;">
+        {% for test_data in tests_data %}
         <tr>
-            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Subject: Mathematics</td>
-            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Chapter: Algebra</td>
-            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Total Marks: 100</td>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Subject: {{test_data.test_sub.sub_name}}</td>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Test Name: {{test_data.test_name}}</td>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Total Marks: {{test_data.total_marks}}</td>
         </tr>
+        {% endfor %}
     </table>
 
     <!-- Questions with Weightage -->
     <table style="width: 100%; border-collapse: collapse;">
+        {% for question in questions_data %}
+        {% if question.tq_q_type == 'MCQ' %}
         <tr class="question">
             <td style="font-size: 16px; padding: 10px; border: 1px solid #000000;">
-                <p>1. What is 2 + 2? (Weightage: 2 Marks)</p>
+                <p>{{forloop.counter}}. {{question.tq_question|safe}} (Weightage: {{question.tq_weightage}} Marks)</p>
                 <!-- Options for MCQ -->
                 <ul style="list-style-type: none; padding: 0; margin: 0;">
-                    <li>(a) 3</li>
-                    <li>(b) 4</li>
-                    <li>(c) 5</li>
-                    <li>(d) 6</li>
+                    <li>(a) {{question.tq_optiona}}</li>
+                    <li>(b) {{question.tq_optionb}}</li>
+                    <li>(c) {{question.tq_optionc}}</li>
+                    <li>(d) {{question.tq_optiond}}</li>
                 </ul>
             </td>
         </tr>
+        {% else %}
         <tr class="question">
             <td style="font-size: 16px; padding: 10px; border: 1px solid #000000;">
-                <p>2. Solve for x: 2x + 3 = 7 (Weightage: 4 Marks)</p>
+                <p>{{forloop.counter}}. {{question.tq_question|safe}} (Weightage: {{question.tq_weightage}} Marks)</p>
             </td>
         </tr>
+        {% endif %}
+        {% endfor %}
+        
         <!-- Add more questions as needed -->
     </table>
 </div>

@@ -1447,5 +1447,13 @@ def today_learning_delete(request):
 
 
 def show_question_paper(request):
-    context = {}
+    if request.GET.get('test_id'):
+        test_id = request.GET.get('test_id')
+        tests_data = Chepterwise_test.objects.filter(test_id = test_id).annotate(total_marks=Sum('test_questions_answer__tq_weightage'))
+
+        questions_data = Test_questions_answer.objects.filter(tq_name__test_id = test_id)
+    context = {
+        'tests_data':tests_data,
+        'questions_data':questions_data
+    }
     return render(request, 'teacherpanel/show_question_paper.html', context)
