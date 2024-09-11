@@ -93,6 +93,7 @@ def parent_login_handle(request):
             Data = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password)
             for item in Data:
                request.session['parent_id'] = item.stud_id
+               request.session['parent_name'] = item.stud_guardian_name
                request.session['parent_logged_in'] = 'yes'
 
             if request.POST.get("remember"):
@@ -186,23 +187,20 @@ def parent_logout_page(request):
 
 @parent_login_required
 def show_parent_events(request):
-    event_data = Event.objects.all().values('event_id','event_name')
-    event_imgs = Event_Image.objects.all().values('event_id','event_img')
-    selected_events = Event.objects.all()[:1]
+    event_data = Event.objects.all().values('event_id', 'event_name')
+    event_imgs = Event_Image.objects.all()
+    selected_events = Event.objects.first()
     context={
         'event_data':event_data,
         'event_imgs':event_imgs,
         'selected_events':selected_events,
         'title': 'Events'
     }
-
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
-        selected_events = Event.objects.filter(event_id = event_id)
+        selected_events = Event.objects.get(event_id = event_id)
         event_imgs = Event_Image.objects.filter(event__event_id = event_id)
-        
-        context.update({'selected_events':selected_events, 'events_img':event_imgs})
-
+        context.update({'selected_events':selected_events, 'event_imgs':event_imgs})
     return render(request, 'parentpanel/events.html', context)
 
 @parent_login_required

@@ -1444,3 +1444,16 @@ def today_learning_delete(request):
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
     return redirect('today_learning')
+
+
+def show_question_paper(request):
+    if request.GET.get('test_id'):
+        test_id = request.GET.get('test_id')
+        tests_data = Chepterwise_test.objects.filter(test_id = test_id).annotate(total_marks=Sum('test_questions_answer__tq_weightage'))
+
+        questions_data = Test_questions_answer.objects.filter(tq_name__test_id = test_id)
+    context = {
+        'tests_data':tests_data,
+        'questions_data':questions_data
+    }
+    return render(request, 'teacherpanel/show_question_paper.html', context)

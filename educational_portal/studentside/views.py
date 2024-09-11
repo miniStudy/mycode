@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.conf import settings
 import math
 import statistics
-from django.db.models import Sum,Count,Avg
+from django.db.models import Sum,Count,Avg, Value
 from django.db.models import Count, Case, When, IntegerField
 import random
 from django.http import Http404,JsonResponse
@@ -265,11 +265,11 @@ def show_materials(request):
     title = 'Materials'
     student_std = request.session['stud_std']
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
-    materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name')
+    materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name','cm_chepter__chep_sub__sub_id','cm_file_icon')
     selected_sub=None
     if request.GET.get('sub_id'):
         id = request.GET['sub_id']
-        materials = materials.filter(cm_chepter__chep_sub__sub_id = id)
+        materials = materials.filter(cm_chepter__chep_sub__sub_id = id).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name','cm_chepter__chep_sub__sub_id','cm_file_icon')
         selected_sub = Subject.objects.get(sub_id=id)
 
     return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects,'selected_sub':selected_sub, 'title':title})
@@ -327,22 +327,21 @@ def show_event(request):
         'selected_events':selected_events,
         'title': 'Events'
     }
-    print(event_data)
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
         selected_events = Event.objects.get(event_id = event_id)
         event_imgs = Event_Image.objects.filter(event__event_id = event_id)
-        context.update({'selected_events':selected_events, 'events_img':event_imgs})
+        context.update({'selected_events':selected_events, 'event_imgs':event_imgs})
 
     return render(request, 'studentpanel/event.html', context)
 
 @student_login_required
 def show_test(request):
-    return redirect('comming_soon')
-    # title = 'Tests'
-    # standard_id = request.session['stud_std']
-    # test_names = Chepterwise_test.objects.filter(test_std__std_id = standard_id)
-    # return render(request, 'studentpanel/test.html', {'test_names':test_names, 'title':title})
+    student_id = request.session['stud_id']
+    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id)
+    title = 'Tests'
+    context = {'test_analysis_data':test_analysis_data,'title':title}
+    return render(request, 'studentpanel/test.html', context)
 
 @student_login_required
 def show_test_questions(request, id):
@@ -449,12 +448,14 @@ def Student_Test_Submission(request):
 @student_login_required
 def show_syllabus(request):
     student_std = request.session['stud_std']
+    syllabus_data = Syllabus.objects.filter(syllabus_chapter__chep_std__std_id = student_std)
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
-    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std).values('chep_sub__sub_id', 'chep_name')
-
+    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std).annotate(status=Case(When(syllabus__syllabus_status = None, then=Value(0)), default=1, output_filed=IntegerField())).values('chep_sub__sub_id','chep_name', 'status')
+    print(chepters)
     context = {
         'subjects':subjects,
         'chepters':chepters, 
+        'syllabus_data':syllabus_data,
         'title':'Syllabus',
     }
     return render(request, 'studentpanel/syllabus.html', context)
@@ -763,9 +764,7 @@ def student_fees_collection_view(request):
 
 # ============================coming soon function========================
 def comming_soon_page(request):
-    student_id = request.session['stud_id']
-    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id)
-    context = {'test_analysis_data':test_analysis_data}
+    context={}
     return render(request, 'studentpanel/coming-soon.html', context)
 
 

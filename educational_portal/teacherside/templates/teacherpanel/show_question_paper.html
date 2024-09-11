@@ -1,0 +1,121 @@
+{% extends 'teacherpanel/master.html' %}
+
+{% block contentsection %}
+<style>
+/* General styles for the question paper container */
+.question_paper {
+    background-color: #283144;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    color: white;
+    padding-bottom: 40px;
+}
+
+hr {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .question_paper,
+    .question_paper * {
+        visibility: visible;
+    }
+
+    .question_paper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+}
+</style>
+
+<div class="mb-4">
+    <h4>Question Paper</h4>
+</div>
+
+{% include 'message_show.html' %}
+
+<div class="question_paper" style="background-color: #ffffff; padding: 20px; border-radius: 8px; max-width: 800px; margin: 0 auto; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); color: rgb(0, 0, 0); padding-bottom: 40px;">
+    <!-- Logo on Top Center -->
+    <div class="logo" style="text-align: center; margin-bottom: 20px;">
+        <img src="https://metrofoods.co.nz/3%20-%20Copy.png" alt="Logo" style="max-width: 100px; height: auto;" />
+    </div>
+    <br>
+    <!-- Subject, Chapter, Total Marks Row in a Table Format -->
+    <table style="width: 100%; margin-bottom: 20px; text-align: center; border-collapse: collapse;">
+        {% for test_data in tests_data %}
+        <tr>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Subject: {{test_data.test_sub.sub_name}}</td>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Test Name: {{test_data.test_name}}</td>
+            <td style="font-weight: bold; font-size: 18px; padding: 10px 20px; border: 1px solid #000000;">Total Marks: {{test_data.total_marks}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Questions with Weightage -->
+    <table style="width: 100%; border-collapse: collapse;">
+        {% for question in questions_data %}
+        {% if question.tq_q_type == 'MCQ' %}
+        <tr class="question">
+            <td style="font-size: 16px; padding: 10px; border: 1px solid #000000;">
+                <p>{{forloop.counter}}. {{question.tq_question|safe}} (Weightage: {{question.tq_weightage}} Marks)</p>
+                <!-- Options for MCQ -->
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <li>(a) {{question.tq_optiona}}</li>
+                    <li>(b) {{question.tq_optionb}}</li>
+                    <li>(c) {{question.tq_optionc}}</li>
+                    <li>(d) {{question.tq_optiond}}</li>
+                </ul>
+            </td>
+        </tr>
+        {% else %}
+        <tr class="question">
+            <td style="font-size: 16px; padding: 10px; border: 1px solid #000000;">
+                <p>{{forloop.counter}}. {{question.tq_question|safe}} (Weightage: {{question.tq_weightage}} Marks)</p>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        
+        <!-- Add more questions as needed -->
+    </table>
+</div>
+
+<!-- Print Button -->
+<button onclick="printQuestionPaper()">Print Question Paper</button>
+
+<script>
+function printQuestionPaper() {
+    const printContents = document.querySelector('.question_paper').outerHTML;
+    const originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+}
+</script>
+{% endblock %}

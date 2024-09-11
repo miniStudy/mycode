@@ -55,7 +55,7 @@ urlpatterns = [
     path('teacher_tests/', teacherview.teacher_test, name='teacher_tests'),
     path('teacher_insert_update_tests/', teacherview.insert_update_tests, name='teacher_insert_update_tests'),
     path('teacher_delete_tests/', teacherview.delete_tests, name='teacher_delete_tests'),
-    
+    path('show_question_paper/', teacherview.show_question_paper, name='show_question_paper'),
 
     path('show_test_questions_teacher/', teacherview.show_test_questions_teacher, name='show_test_questions_teacher'),
     path('insert_update_test_question_teacher/', teacherview.insert_update_test_questions_teacher, name='insert_update_test_question_teacher'),
