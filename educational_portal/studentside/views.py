@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.conf import settings
 import math
 import statistics
-from django.db.models import Sum,Count,Avg
+from django.db.models import Sum,Count,Avg, Value
 from django.db.models import Count, Case, When, IntegerField
 import random
 from django.http import Http404,JsonResponse
@@ -327,12 +327,11 @@ def show_event(request):
         'selected_events':selected_events,
         'title': 'Events'
     }
-    print(event_data)
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
         selected_events = Event.objects.get(event_id = event_id)
         event_imgs = Event_Image.objects.filter(event__event_id = event_id)
-        context.update({'selected_events':selected_events, 'events_img':event_imgs})
+        context.update({'selected_events':selected_events, 'event_imgs':event_imgs})
 
     return render(request, 'studentpanel/event.html', context)
 
@@ -449,12 +448,14 @@ def Student_Test_Submission(request):
 @student_login_required
 def show_syllabus(request):
     student_std = request.session['stud_std']
+    syllabus_data = Syllabus.objects.filter(syllabus_chapter__chep_std__std_id = student_std)
     subjects = Subject.objects.filter(sub_std__std_id = student_std)
-    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std).values('chep_sub__sub_id', 'chep_name')
-
+    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std).annotate(status=Case(When(syllabus__syllabus_status = None, then=Value(0)), default=1, output_filed=IntegerField())).values('chep_sub__sub_id','chep_name', 'status')
+    print(chepters)
     context = {
         'subjects':subjects,
         'chepters':chepters, 
+        'syllabus_data':syllabus_data,
         'title':'Syllabus',
     }
     return render(request, 'studentpanel/syllabus.html', context)

@@ -37,7 +37,7 @@
               <li><a class="dropdown-item" href="{% url 'admin_packages' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
               {% endfor %}
             </ul>
-            <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&model_name=packs"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
+            
           </div>
           <div class="input-group mt-2">
             <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
