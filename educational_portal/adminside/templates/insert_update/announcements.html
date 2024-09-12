@@ -29,7 +29,7 @@
         <div class="col-sm-12">
           <label class="form-label mb-2">Announcement Title</label>
           <div class="input-group input-group-merge">
-            <input type="text" class="form-control" name="announce_title" placeholder="CBSE" {% if update_data %} value="{{update_data.announce_title}}" {% endif %}{% if filled_data %} value="{{filled_data.announce_title}}" {% endif %}/>
+            <input type="text" class="form-control" name="announce_title" {% if update_data %} value="{{update_data.announce_title}}" {% endif %}{% if filled_data %} value="{{filled_data.announce_title}}" {% endif %}/>
           </div>
         </div>
 
@@ -58,7 +58,7 @@
             <option value="">--</option>
             {% for x in batch_data %}
             
-              <option value="{{x.batch_id}}" {% if filled_data.announce_batch.batch_id == x.batch_id %} selected {% endif %} {% if x.batch_id == update_data.announce_batch.batch_id %} selected {% endif %} >{{x.batch_name}}</option>
+              <option value="{{x.batch_id}}" {% if filled_data.announce_batch.batch_id == x.batch_id %} selected {% endif %} {% if x.batch_id == update_data.announce_batch.batch_id %} selected {% endif %} >{{x}}</option>
             
             {% endfor %}
           </select>
