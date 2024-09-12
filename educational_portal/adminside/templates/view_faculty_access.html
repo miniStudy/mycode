@@ -12,7 +12,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
             <div class="myheadfont">{{ title }} Data</div>   
-            <a href="{% url 'insert_update_faculties' %}">
+            <a href="{% url 'faculty_access' %}">
                 <button class="btn btn-primary">
                     <i class="fa-solid fa-plus me-2"></i> ADD
                 </button>
@@ -20,13 +20,7 @@
         </div>
         <br>
 
-        <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-                <div class="input-group mt-2 mb-2">
-                    <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
-                    <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
-                    <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
-                </div>
-        </div>
+        
         
 
         <form action="{% url 'delete_faculties' %}" method="POST"> 
@@ -35,29 +29,30 @@
                 <table id="data-table" class="display table table-bordered" style="width:100%">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
                             <th>Faculty Name</th>
-                            <th>Number</th>
-                            <th>Email</th>
-                            <th>Address</th>
-                            <th>Subject</th>
                             <th>Access</th>
-                            <th>Edit</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for x in faculty_data %}
                         <tr>
-                            <td><input type="checkbox" class="form-check-input" value="{{ x.fac_id }}" name="selection" /></td>
-                            <td>{{ x.fac_name }}</td>
-                            <td>{{ x.fac_number }}</td>
-                            <td>{{ x.fac_email }}</td>
-                            <td>{{ x.fac_address }}</td>
-                            <td>{{ x.Subjects }}</td>
-                            <td><a href="{% url 'view_faculty_access' %}?fac_id={{x.fac_id}}">View Access</a></td>
-                            <td><a href="{% url 'insert_update_faculties' %}?pk={{ x.fac_id }}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+                            
+                           <td>{{ faculty_data.fac_name }}</td>
+
+                            <td>{% for fac_access in faculty_access_data %}
+                                <div class="row d-flex justify-content-between">
+                                    <div class="col-10">{{fac_access.fa_batch}} {{fac_access.fa_subject.sub_name}}<hr/>
+                                    </div> 
+                                    <div class="col-2">
+                                        <a href="{% url 'delete_faculty_access' %}?fac_access_id={{ fac_access.fa_id }}&fac_id={{faculty_data.fac_id}}">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a><hr/>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </td>
+                            
                         </tr>
-                        {% endfor %}
+                      
                     </tbody>
                 </table>
                  <!-- Pagination -->

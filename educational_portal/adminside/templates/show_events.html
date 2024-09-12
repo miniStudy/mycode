@@ -46,6 +46,7 @@
             </div>
             {% endif %}
           {% endfor %}
+          <a href="{% url 'delete_event' %}?event_id={{selected_events.event_id}}">DELETE</a>
         </div>
     </div>
 
