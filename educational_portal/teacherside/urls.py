@@ -60,7 +60,8 @@ urlpatterns = [
     path('show_test_questions_teacher/', teacherview.show_test_questions_teacher, name='show_test_questions_teacher'),
     path('insert_update_test_question_teacher/', teacherview.insert_update_test_questions_teacher, name='insert_update_test_question_teacher'),
     path('view_attemp_students/', teacherview.view_attemp_students, name='view_attemp_students'),
-    
+    path('delete_test_question_answer_teacher/',teacherview.delete_test_question_answer_teacher,name="delete_test_question_answer_teacher"),
+
     path('insert_offline_marks/', teacherview.teacher_insert_offline_marks, name='insert_offline_marks'),
     path('save_offline_marks/', teacherview.teacher_save_offline_marks, name='save_offline_marks'),
     
