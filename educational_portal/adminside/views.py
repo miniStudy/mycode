@@ -1544,6 +1544,7 @@ def insert_update_students(request):
             form = student_form(request.POST, instance=instance)
             if form.is_valid():
                 form.save()
+                messages.success(request, 'Insert student successfully')
                 return redirect('students_dataAdmin')
             else:
                 filled_data = form.data
@@ -1562,6 +1563,11 @@ def insert_update_students(request):
     if request.GET.get('pk'):
         update_data = Students.objects.get(stud_id = request.GET['pk'])
         context.update({'update_data':update_data})
+    
+    if request.GET.get('inq_id'):
+        inq_id = request.GET.get('inq_id')
+        inquires_admission_data = Inquiries.objects.get(inq_id=inq_id)
+        context.update({'inquires_admission_data':inquires_admission_data})
     return render(request, 'insert_update/add_student.html',context)
 
 

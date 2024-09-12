@@ -25,7 +25,7 @@
 </div>
 
 
-<form action="{% url 'delete_announcements' %}" method="POST"> 
+<form action="{% url 'delete_event' %}?event_id={{selected_events.event_id}}" method="POST"> 
   {% csrf_token %}
 
     
@@ -46,7 +46,9 @@
             </div>
             {% endif %}
           {% endfor %}
-          <a href="{% url 'delete_event' %}?event_id={{selected_events.event_id}}">DELETE</a>
+          <div class="mt-5">
+            <a href="{% url 'delete_event' %}?event_id={{selected_events.event_id}}"><button class="btn btn-sm btn-danger">DELETE</button></a>
+          </div>
         </div>
     </div>
 
