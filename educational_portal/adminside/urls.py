@@ -90,7 +90,7 @@ urlpatterns = [
     path('show_test_questions_admin/', adminview.show_test_questions_admin, name='show_test_questions_admin'),
     path('insert_update_test_question_admin/', adminview.insert_update_test_questions, name='insert_update_test_question_admin'),
     path('show_events/', adminview.show_events, name='show_events'),
-
+    path('delete_test_question_answer/',adminview.delete_test_question_answer,name="delete_test_question_answer"),
     # ========================== Students and Faculty Data show ======================================
     path('students_dataAdmin/', adminview.show_students, name='students_dataAdmin'),
     path('insert_update_students/',adminview.insert_update_students,name='insert_update_students'),

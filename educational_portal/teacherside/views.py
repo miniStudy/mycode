@@ -1457,3 +1457,21 @@ def show_question_paper(request):
         'questions_data':questions_data
     }
     return render(request, 'teacherpanel/show_question_paper.html', context)
+
+
+
+
+
+def delete_test_question_answer_teacher(request):
+    if request.GET.get('delete_id'):
+        del_id = request.GET['delete_id']
+        print(del_id)
+        try:
+            data = Test_questions_answer.objects.get(tq_id=del_id)
+            data.delete()
+            messages.success(request,"Question Deleted Successfully")
+        except data.DoesNotExist:
+            messages.error(request,"Question Not Found")
+
+        url = '/teacherside/show_test_questions_teacher/?test_id={}'.format(request.GET['test_id'])
+    return redirect(url)
