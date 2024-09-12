@@ -462,6 +462,7 @@ def show_syllabus(request):
 
 def student_inquiries_data(request):
     standard_data = Std.objects.all()
+    package_data = Packs.objects.all()
     if request.method == 'POST':
         form = student_inquiries(request.POST)
         if form.is_valid():
@@ -471,7 +472,7 @@ def student_inquiries_data(request):
             return redirect('Student_Inquiries')
     else:
         form = student_inquiries()
-    return render(request, 'studentpanel/inquiries.html', {'form':form, 'standard_data':standard_data})
+    return render(request, 'studentpanel/inquiries.html', {'form':form, 'standard_data':standard_data, 'package_data':package_data})
 
 @student_login_required
 def student_profile(request):

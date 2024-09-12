@@ -46,37 +46,37 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="inq_name" class="form-label">First Name</label>
+                    <label for="inq_name" class="form-label" required>First Name</label>
                     <input type="text" class="form-control" id="inq_name" name="inq_name"
                       placeholder="Enter your first name" autofocus>
                   </div>
 
                   <div class="mb-3">
-                    <label for="inq_lastname" class="form-label">Last Name</label>
+                    <label for="inq_lastname" class="form-label" required>Last Name</label>
                     <input type="text" class="form-control" id="inq_lastname" name="inq_lastname"
                       placeholder="Enter last name" autofocus>
                   </div>
 
                   <div class="mb-3">
-                    <label for="inq_contact" class="form-label">Contact</label>
+                    <label for="inq_contact" class="form-label" required>Contact</label>
                     <input type="number" class="form-control" id="inq_contact" name="inq_contact"
                       placeholder="Enter your contact" autofocus>
                   </div>
 
                   <div class="mb-3">
-                    <label for="inq_email" class="form-label">Email</label>
+                    <label for="inq_email" class="form-label" required>Email</label>
                     <input type="email" class="form-control" id="inq_email" name="inq_email" value="{{c_email}}"
                       placeholder="Enter your email" autofocus>
                   </div>
 
                   <div class="mb-3">
-                    <label for="inq_dob" class="form-label">DOB</label>
+                    <label for="inq_dob" class="form-label" required>DOB</label>
                     <input type="date" class="form-control" id="inq_dob" name="inq_dob"
                     autofocus>
                   </div>
 
                   <div class="mb-3">
-                    <label for="inq_gender" class="form-label">Gender</label>
+                    <label for="inq_gender" class="form-label" required>Gender</label>
                     <select name="inq_gender" class="form-select" id="inq_gender">
                       <option value="">-----</option>
                       <option value="Male">Male</option>
@@ -86,13 +86,13 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="inq_schoolname" class="form-label">School Name</label>
+                    <label for="inq_schoolname" class="form-label" required>School Name</label>
                     <input type="text" class="form-control" id="inq_schoolname" name="inq_schoolname"
                       placeholder="Enter your school name" autofocus>
                   </div>
 
                   <div class="mb-3">
-                    <label for="inq_last_std_and_marks" class="form-label">Previous Standard and Marks</label>
+                    <label for="inq_last_std_and_marks" class="form-label" required>Previous Standard and Marks</label>
                     <input type="text" class="form-control" id="inq_last_std_and_marks" name="inq_last_std_and_marks"
                       placeholder="Enter your previous standard and marks" autofocus>
                   </div>
@@ -109,13 +109,17 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="inq_subjects" class="form-label">Subjects</label>
-                    <input type="text" class="form-control" id="inq_subjects" name="inq_subjects"
-                      placeholder="Enter your subjects" autofocus>
+                    <label for="stud_pack" class="form-label">Package</label>
+                    <select name="stud_pack" class="form-select" id="stud_pack">
+                      {% for pack in package_data %}
+                      <option value="{{pack.pack_id}}">{{pack.pack_name}}</option>
+                      {% endfor %}
+                    </select> 
                   </div>
 
+
                   <div class="mb-3">
-                    <label for="inq_guardian_name" class="form-label">Guardian Name</label>
+                    <label for="inq_guardian_name" class="form-label" required>Guardian Name</label>
                     <input type="text" class="form-control" id="inq_guardian_name" name="inq_guardian_name"
                       placeholder="Enter your guardian name" autofocus>
                   </div>
@@ -127,7 +131,7 @@
                   </div>                 
 
                   <div class="mb-3">
-                    <label for="inq_guardian_number" class="form-label">Guardian Contact</label>
+                    <label for="inq_guardian_number" class="form-label" required>Guardian Contact</label>
                     <input type="number" class="form-control" id="inq_guardian_number" name="inq_guardian_number"
                       placeholder="Enter your guardian contact" autofocus>
                   </div>
@@ -139,11 +143,12 @@
                   </div>  
 
                   <div class="mb-3">
-                    <label for="inq_address" class="form-label">Address</label>
+                    <label for="inq_address" class="form-label" required>Address</label>
                     <input type="text" class="form-control" id="inq_address" name="inq_address"
                       placeholder="Enter your address" autofocus>
-                  </div>
-
+                  </div> 
+                </div>
+                <div class="col-md-12">
                   <div class="mb-3">
                     <label for="inq_howuknow" class="form-label">How do you know about us?</label>
                     <input type="text" class="form-control" id="inq_howuknow" name="inq_howuknow"
