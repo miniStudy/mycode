@@ -137,5 +137,5 @@ urlpatterns = [
     path('edit_question_bankk/', adminview.edit_question_bankk, name="edit_question_bankk"),
     path('delete_question_bank/', adminview.delete_question_bank, name="delete_question_bank"),
 
-
+    path('generate_payment_slip/',adminview.generate_payment_slip, name='generate_payment_slip'),
 ]

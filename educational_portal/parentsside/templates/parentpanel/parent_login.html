@@ -1,5 +1,5 @@
-<h4 class="mb-2">Welcome to {% include 'miniStudy_text.html' %}! 👋</h4>
-                <p class="mb-4">Please sign-in to your account and start the Student Panel</p>
+<h4 class="mb-2 text-center">Welcome to {% include 'miniStudy_text.html' %}! 👋</h4>
+                <p class="mb-4 text-center">Please sign-in to your account and start the Student Panel</p>
       
                 <form id="formAuthentication" class="mb-3" action="{% url 'parent_login_handle' %}" method="post">
                   {% csrf_token %}

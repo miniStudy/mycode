@@ -149,7 +149,11 @@ def student_Forgot_Password(request):
 def student_handle_forgot_password(request):
      if request.method == "POST":
         email2 = request.POST['email']
-
+        val = AdminData.objects.filter(admin_email=email2).count()
+        if val!=1:
+            messages.error(request, "Email is Wrong")
+            url = f"{reverse('Student_Forgot_Password')}?email={email2}"
+            return redirect(url)
      # ------------mail sending ---------------
 
         sub = 'OTP from EDUPORTAL'

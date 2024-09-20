@@ -160,6 +160,11 @@ def admin_Forgot_Password(request):
 def admin_handle_forgot_password(request):
      if request.method == "POST":
         email2 = request.POST['email']
+        val = AdminData.objects.filter(admin_email=email2).count()
+        if val!=1:
+            messages.error(request, "Email is Wrong")
+            url = f"{reverse('Admin_Forgot_Password')}?email={email2}"
+            return redirect(url)
      # ------------mail sending ---------------
         sub = 'OTP from EDUPORTAL'
         otp = random.randint(000000,999999)
@@ -2317,3 +2322,32 @@ def delete_test_question_answer(request):
 
         url = '/adminside/show_test_questions_admin/?test_id={}'.format(request.GET['test_id'])
     return redirect(url)
+
+
+
+
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from io import BytesIO
+from django.core.mail import EmailMessage
+
+def render_to_pdf(template_src, context_dict={}):
+    template = render_to_string(template_src, context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(template.encode("UTF-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+def generate_payment_slip(request):
+    context = {
+        'payer_name': 'John Doe',
+        'payer_email': 'john@example.com',
+        'amount': '500',
+        'payment_date': '2024-09-12',
+        'payment_method': 'Credit Card',
+        'transaction_id': 'TX123456789',
+    }
+    pdf = render_to_pdf('payment_slip.html', context)
+    return HttpResponse(pdf, content_type='application/pdf')
