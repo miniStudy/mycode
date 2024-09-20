@@ -35,7 +35,7 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'admin_chepters' %}?get_std={{get_std.std_id}}">ALL</a></li>
               {% for x in subject_data %}
-              <li><a class="dropdown-item" href="{% url 'admin_chepters' %}?get_std={{x.sub_std.std_id}}&get_subject={{x.sub_id}}">{{x.sub_name}}</a></li>
+              <li><a class="dropdown-item" href="{% url 'admin_chepters' %}?get_std={{x.sub_std.std_id}}&get_subject={{x.sub_id}}">{{x}}</a></li>
               {% endfor %}
     </ul>
     <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&get_subject={{ get_subject.sub_id }}&model_name=chepter"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>

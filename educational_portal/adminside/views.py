@@ -430,7 +430,7 @@ def delete_stds(request):
 
 @admin_login_required
 def show_announcements(request):
-    data = Announcements.objects.all()
+    data = Announcements.objects.all().order_by('-pk')
     std_data = Std.objects.all()
     batch_data = Batches.objects.all()
    
@@ -445,7 +445,7 @@ def show_announcements(request):
         if get_std == 0:
             pass
         else:    
-            data = data.filter(announce_std__std_id = get_std)
+            data = data.filter(announce_std__std_id = get_std).order_by('-pk')
             batch_data = batch_data.filter(batch_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'batch_data':batch_data,'get_std':get_std})
@@ -456,7 +456,7 @@ def show_announcements(request):
         if get_batch == 0:
             pass
         else:
-            data = data.filter(announce_batch__batch_id = get_batch)
+            data = data.filter(announce_batch__batch_id = get_batch).order_by('-pk')
             get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'data':data,'get_batch':get_batch})        
             
@@ -765,6 +765,31 @@ def show_faculties(request):
     return render(request, 'show_faculties.html', context)
 
 @admin_login_required
+def view_faculty_access(request):
+    if request.GET.get('fac_id'):
+        fac_id = request.GET.get('fac_id')
+        faculty_data = Faculties.objects.get(fac_id = fac_id)
+        faculty_access_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+        context = {
+            'faculty_data':faculty_data,
+            'faculty_access_data':faculty_access_data,
+            'title': 'Access'
+        }
+        return render(request, 'view_faculty_access.html', context)
+
+@admin_login_required
+def delete_faculty_access(request):
+    if request.GET.get('fac_access_id'):
+        fac_access_id = request.GET.get('fac_access_id')
+
+        faculty_access_del = get_object_or_404(Faculty_Access, fa_id=fac_access_id)
+        faculty_access_del.delete()
+        messages.success(request, "Access deleted successfully")
+        url = '/adminside/view_faculty_access/?fac_id={}'.format(request.GET['fac_id']) 
+        return redirect(url)
+
+
+@admin_login_required
 def insert_update_faculties(request):
     context = {
         'title': 'Faculties',
@@ -1046,6 +1071,13 @@ def insert_events(request):
         return redirect('show_events')
     return render(request, 'insert_update/events_insert_admin.html', {'title':title})
 
+def delete_event(request):
+    if request.GET.get('event_id'):
+        event_id = request.GET.get('event_id')
+        event_data_del = get_object_or_404(Event, event_id=event_id)
+        event_data_del.delete()
+        messages.success(request, "Event deleted successfully")
+        return redirect('show_events')
 
 @admin_login_required
 def show_tests(request):
@@ -1517,6 +1549,7 @@ def insert_update_students(request):
             form = student_form(request.POST, instance=instance)
             if form.is_valid():
                 form.save()
+                messages.success(request, 'Insert student successfully')
                 return redirect('students_dataAdmin')
             else:
                 filled_data = form.data
@@ -1535,6 +1568,11 @@ def insert_update_students(request):
     if request.GET.get('pk'):
         update_data = Students.objects.get(stud_id = request.GET['pk'])
         context.update({'update_data':update_data})
+    
+    if request.GET.get('inq_id'):
+        inq_id = request.GET.get('inq_id')
+        inquires_admission_data = Inquiries.objects.get(inq_id=inq_id)
+        context.update({'inquires_admission_data':inquires_admission_data})
     return render(request, 'insert_update/add_student.html',context)
 
 
@@ -2141,7 +2179,8 @@ def faculty_access_show(request):
             for x in selected_subjects:
                 x_obj = Subject.objects.get(sub_id=x)
                 Faculty_Access.objects.create(fa_faculty=fac, fa_batch=batch, fa_subject=x_obj)
-            return redirect('Admin Home')
+            messages.success(request, "Access given successfully")
+            return redirect('faculty_access')
     else:
         form = faculty_access_form()
         context.update({'form':form})

@@ -85,7 +85,7 @@ def api_update_boards(request):
 
     
 @api_view(['POST', 'GET'])
-def delete_boards(request):
+def api_delete_boards(request):
     if request.method == 'POST':
         selected_items = request.POST.get('selection', [])
         if selected_items:

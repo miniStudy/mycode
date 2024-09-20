@@ -26,7 +26,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('get_boards/', apiviews.get_boards, name='get_boards'),
     path('api_update_boards/', apiviews.api_update_boards, name='api_update_boards'),
-    path('delete_boards/', apiviews.delete_boards, name='delete_boards'),
+    path('api_delete_boards/', apiviews.api_delete_boards, name='api_delete_boards'),
 
     path('get_stds/', apiviews.get_stds, name='get_stds'),
     path('api_update_stds/', apiviews.api_update_stds, name='api_update_stds'),

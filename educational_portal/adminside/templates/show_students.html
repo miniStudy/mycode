@@ -40,7 +40,7 @@
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{ get_std.std_id }}">ALL</a></li>
           {% for x in batch_data %}
-          <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{ x.batch_std.std_id }}&get_batch={{ x.batch_id }}">{{ x.batch_name }}</a></li>
+          <li><a class="dropdown-item" href="{% url 'students_dataAdmin' %}?get_std={{ x.batch_std.std_id }}&get_batch={{ x.batch_id }}">{{ x }}</a></li>
           {% endfor %}
         </ul>
         <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&get_batch={{ get_batch.batch_id }}&model_name=Students"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
@@ -53,7 +53,7 @@
     </div>
     
 
-    <form action="{% url 'delete_boards' %}" method="POST">
+    <form action="{% url 'delete_students' %}" method="POST">
       {% csrf_token %}
       <div class="card-datatable table-responsive pt-0">
         <table id="data-table" class="display table table-bordered" style="width:100%">

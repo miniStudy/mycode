@@ -79,6 +79,7 @@ urlpatterns = [
     # ==========================add events =========================================================
 
     path('insert_event/', adminview.insert_events, name="insert_event"),
+    path('delete_event/', adminview.delete_event, name="delete_event"),
 
     # ==========================Tests ==============================================================
 
@@ -130,12 +131,17 @@ urlpatterns = [
 
     # ========================================Faculty Access======================================================
     path('faculty_access/', adminview.faculty_access_show, name="faculty_access"),
+    path('view_faculty_access/', adminview.view_faculty_access, name="view_faculty_access"),
+    path('delete-faculty-access/', adminview.delete_faculty_access, name='delete_faculty_access'),
     path('export_data',adminview.export_data, name='export_data'),
 
     path('bulk_upload_test_questions/', adminview.bulk_upload_questions, name='bulk_upload_test_questions'),
     path('show_question_bank/', adminview.show_question_bank, name="show_question_bank"),
     path('edit_question_bankk/', adminview.edit_question_bankk, name="edit_question_bankk"),
     path('delete_question_bank/', adminview.delete_question_bank, name="delete_question_bank"),
+<<<<<<< HEAD
 
     path('generate_payment_slip/',adminview.generate_payment_slip, name='generate_payment_slip'),
+=======
+>>>>>>> 6ed7490e887036be5ef69cb2adf20ca80580cb4a
 ]

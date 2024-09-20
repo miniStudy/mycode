@@ -36,7 +36,7 @@
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="{% url 'admin_timetable' %}?get_std={{ get_std.std_id }}">ALL</a></li>
           {% for batch in batch_data %}
-          <li><a class="dropdown-item" href="{% url 'admin_timetable' %}?get_std={{ get_std.std_id }}&get_batch={{ batch.batch_id }}">{{ batch.batch_name }}</a></li>
+          <li><a class="dropdown-item" href="{% url 'admin_timetable' %}?get_std={{ get_std.std_id }}&get_batch={{ batch.batch_id }}">{{ batch }}</a></li>
           {% endfor %}
         </ul>
       </div>
