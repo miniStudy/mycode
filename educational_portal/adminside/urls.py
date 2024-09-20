@@ -139,9 +139,6 @@ urlpatterns = [
     path('show_question_bank/', adminview.show_question_bank, name="show_question_bank"),
     path('edit_question_bankk/', adminview.edit_question_bankk, name="edit_question_bankk"),
     path('delete_question_bank/', adminview.delete_question_bank, name="delete_question_bank"),
-<<<<<<< HEAD
 
     path('generate_payment_slip/',adminview.generate_payment_slip, name='generate_payment_slip'),
-=======
->>>>>>> 6ed7490e887036be5ef69cb2adf20ca80580cb4a
 ]
