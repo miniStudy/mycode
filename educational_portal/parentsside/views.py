@@ -123,7 +123,11 @@ def parent_forget_password(request):
 def parent_handle_forget_password(request):
      if request.method == "POST":
           email2 = request.POST['email']
-
+          val = AdminData.objects.filter(admin_email=email2).count()
+          if val!=1:
+            messages.error(request, "Email is Wrong")
+            url = f"{reverse('parent_forget_password')}?email={email2}"
+            return redirect(url)  
      # ------------mail sending ---------------
           sub = 'OTP from EDUPORTAL'
           otp = random.randint(000000,999999)

@@ -13,7 +13,7 @@
     
 </head>
 
-<body>
+<body style="height: 100vh;" class="d-flex justify-content-center align-items-center">
   
     <!-- <div class="loginbg d-flex justify-content-center align-items-center">
         {% if login_set == 1 %}
@@ -76,8 +76,8 @@
     </div> -->
 
 
-
-    <div class="container-xxl">
+    
+    <div class="col-4">
         <div class="authentication-wrapper authentication-basic container-p-y">
           <div class="authentication-inner py-4">
       
@@ -91,7 +91,7 @@
                     <img src="/static/imgs/My_dream_logo/4_nobg.png" alt="My Logo" style="width: 48px;" />    
                     <img src="/static/imgs/My_dream_logo/2nobg.png" style="width: 150px;" />
                   </a>
-                </div>
+                </div><br/>
                 <!-- /Logo -->
                 {% if login_set == 1 %}
                   {% include 'admin_login.html' %}
