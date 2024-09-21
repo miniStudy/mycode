@@ -1131,7 +1131,7 @@ def insert_update_tests(request):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id=get_std)
         subject_data = subject_data.filter(sub_std__std_id=get_std)
-        chap_data = Chepter.objects.filter(chep_sub__sub_std__std_id = get_std).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
+        chap_data = Chepter.objects.filter(chep_std__std_id = get_std).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
         context.update({'get_std': get_std, 'std_data': std_data,'subject_data':subject_data,'chap_data':chap_data})
 
     if request.GET.get('get_subject'):

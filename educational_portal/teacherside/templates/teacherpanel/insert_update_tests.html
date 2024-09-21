@@ -41,7 +41,7 @@
             <select id="test_sub" class="form-select" name="test_sub">
               <option value="">--</option>
               {% for x in subject_data %}
-                <option value="{{ x.sub_id }}" {% if filled_data and filled_data.test_sub == x.sub_id %} selected {% endif %} {% if update_data and x.sub_id == update_data.test_sub_id %} selected {% endif %}>{{ x }}</option>
+                <option value="{{ x.sub_id }}" {% if filled_data and filled_data.test_sub.sub_id == x.sub_id %} selected {% endif %} {% if update_data and x.sub_id == update_data.test_sub_id %} selected {% endif %}>{{ x }}</option>
               {% endfor %}
             </select>
           </div>
