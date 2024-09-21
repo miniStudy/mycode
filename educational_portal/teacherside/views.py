@@ -730,11 +730,106 @@ def insert_update_tests(request):
                 else:    
                     form.save()
                     return redirect('teacher_test')
+            
+
+
+        if request.method == 'POST':
+            form = tests_form(request.POST, request.FILES)
+            if form.is_valid():
+                check = Chepterwise_test.objects.filter(
+                    test_name=form.data['test_name'], test_std__std_id=form.data['test_std']
+                ).count()
+                if check >= 1:
+                    messages.error(request, '{} already exists'.format(form.data['test_name']))
+                else:
+                    test_instance = form.save()
+
+                    # Check for auto-generate test
+                    if request.POST.get('auto_generate_test'):
+                        one_mark_count = int(request.POST.get('one_mark_questions', 0))
+                        two_mark_count = int(request.POST.get('two_mark_questions', 0))
+                        three_mark_count = int(request.POST.get('three_mark_questions', 0))
+                        four_mark_count = int(request.POST.get('four_mark_questions', 0))
+                        chap_object = Chepter.objects.get(chep_id = request.POST.get('test_chap'))
+
+                        # Function to get questions by weightage
+                        def get_questions_by_weightage(weightage, count):
+                            return question_bank.objects.filter(
+                                qb_chepter=chap_object,
+                                qb_weightage=weightage
+                            ).order_by('?')[:count]
+
+                        # Retrieve questions based on weightage
+                        one_mark_questions = get_questions_by_weightage(1, one_mark_count)
+                        two_mark_questions = get_questions_by_weightage(2, two_mark_count)
+                        three_mark_questions = get_questions_by_weightage(3, three_mark_count)
+                        four_mark_questions = get_questions_by_weightage(4, four_mark_count)
+
+                        # Insert the generated questions into Test_questions_answer
+                        for question in one_mark_questions:
+                            Test_questions_answer.objects.create(     
+                                tq_name=test_instance,
+                                tq_chepter=question.qb_chepter,
+                                tq_q_type=Test_questions_answer.que_type.Question_Answer,
+                                tq_question=question.qb_question,
+                                tq_answer=question.qb_answer,
+                                tq_weightage=1,
+                                tq_hint=question.qb_hint,
+                                tq_optiona=question.qb_optiona,
+                                tq_optionb=question.qb_optionb,
+                                tq_optionc=question.qb_optionc,
+                                tq_optiond=question.qb_optiond
+                            )
+
+                        for question in two_mark_questions:
+                            Test_questions_answer.objects.create(
+                                tq_name=test_instance,
+                                tq_chepter=question.qb_chepter,
+                                tq_q_type=Test_questions_answer.que_type.Question_Answer,
+                                tq_question=question.qb_question,
+                                tq_answer=question.qb_answer,
+                                tq_weightage=2,
+                                tq_hint=question.qb_hint,
+                                tq_optiona=question.qb_optiona,
+                                tq_optionb=question.qb_optionb,
+                                tq_optionc=question.qb_optionc,
+                                tq_optiond=question.qb_optiond
+                            )
+
+                        for question in three_mark_questions:
+                            Test_questions_answer.objects.create(
+                                tq_name=test_instance,
+                                tq_chepter=question.qb_chepter,
+                                tq_q_type=Test_questions_answer.que_type.Question_Answer,
+                                tq_question=question.qb_question,
+                                tq_answer=question.qb_answer,
+                                tq_weightage=3,
+                                tq_hint=question.qb_hint,
+                                tq_optiona=question.qb_optiona,
+                                tq_optionb=question.qb_optionb,
+                                tq_optionc=question.qb_optionc,
+                                tq_optiond=question.qb_optiond
+                            )
+
+                        for question in four_mark_questions:
+                            Test_questions_answer.objects.create(
+                                tq_name=test_instance,
+                                tq_chepter=question.qb_chepter,
+                                tq_q_type=Test_questions_answer.que_type.Question_Answer,
+                                tq_question=question.qb_question,
+                                tq_answer=question.qb_answer,
+                                tq_weightage=4,
+                                tq_hint=question.qb_hint,
+                                tq_optiona=question.qb_optiona,
+                                tq_optionb=question.qb_optionb,
+                                tq_optionc=question.qb_optionc,
+                                tq_optiond=question.qb_optiond
+                            )
+                    return redirect('teacher_test')
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
                 return render(request, 'teacherpanel/insert_update_tests.html', context) 
-        
     return render(request, 'teacherpanel/insert_update_tests.html', context)
 
 @teacher_login_required

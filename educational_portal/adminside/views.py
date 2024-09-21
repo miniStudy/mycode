@@ -1257,7 +1257,6 @@ def insert_update_tests(request):
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
                 return render(request, 'insert_update/add_tests.html', context)
-
     return render(request, 'insert_update/add_tests.html', context)
 
 
