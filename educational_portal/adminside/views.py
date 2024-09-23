@@ -160,6 +160,11 @@ def admin_Forgot_Password(request):
 def admin_handle_forgot_password(request):
      if request.method == "POST":
         email2 = request.POST['email']
+        val = AdminData.objects.filter(admin_email=email2).count()
+        if val!=1:
+            messages.error(request, "Email is Wrong")
+            url = f"{reverse('Admin_Forgot_Password')}?email={email2}"
+            return redirect(url)
      # ------------mail sending ---------------
         sub = 'OTP from EDUPORTAL'
         otp = random.randint(000000,999999)
@@ -1126,7 +1131,7 @@ def insert_update_tests(request):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id=get_std)
         subject_data = subject_data.filter(sub_std__std_id=get_std)
-        chap_data = Chepter.objects.filter(chep_sub__sub_std__std_id = get_std).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
+        chap_data = Chepter.objects.filter(chep_std__std_id = get_std).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
         context.update({'get_std': get_std, 'std_data': std_data,'subject_data':subject_data,'chap_data':chap_data})
 
     if request.GET.get('get_subject'):
@@ -1257,7 +1262,6 @@ def insert_update_tests(request):
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
                 return render(request, 'insert_update/add_tests.html', context)
-
     return render(request, 'insert_update/add_tests.html', context)
 
 
@@ -2356,3 +2360,32 @@ def delete_test_question_answer(request):
 
         url = '/adminside/show_test_questions_admin/?test_id={}'.format(request.GET['test_id'])
     return redirect(url)
+
+
+
+
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from io import BytesIO
+from django.core.mail import EmailMessage
+
+def render_to_pdf(template_src, context_dict={}):
+    template = render_to_string(template_src, context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(template.encode("UTF-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+def generate_payment_slip(request):
+    context = {
+        'payer_name': 'John Doe',
+        'payer_email': 'john@example.com',
+        'amount': '500',
+        'payment_date': '2024-09-12',
+        'payment_method': 'Credit Card',
+        'transaction_id': 'TX123456789',
+    }
+    pdf = render_to_pdf('payment_slip.html', context)
+    return HttpResponse(pdf, content_type='application/pdf')
