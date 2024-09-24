@@ -21,11 +21,12 @@
         <br>
 
         <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-                <div class="input-group mt-2 mb-2">
-                    <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
-                    <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
-                    <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
+            <form method="get" action="{% url 'admin_faculties' %}">
+                <div class="input-group mt-2">
+                  <input type="text" id="" name="searchhh" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+                  <button id="searchButton" class="input-group-text" id="btnGroupAddon" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
+              </form>
         </div>
         
 
@@ -62,7 +63,7 @@
                 </table>
                  <!-- Pagination -->
                         {% for x in faculties.paginator.page_range %}
-                        <a href="?page={{x}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>
+                        <a href="?page={{x}}&searchhh={{searchhh}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>
                         {% endfor %}
                 </div>
             </div>  

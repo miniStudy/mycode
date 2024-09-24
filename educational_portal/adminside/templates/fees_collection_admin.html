@@ -79,11 +79,13 @@
             </ul>
             <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&model_name=fees_collection"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
           </div>
-          <div class="input-group mt-2">
-            <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
-            <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
-            <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
-          </div>
+          <form method="get" action="{% url 'fees_collection_admin' %}">
+            <div class="input-group mt-2">
+              <input type="text" id="" name="searchhh" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+              <input type="hidden" name="get_std" value="{{get_std.std_id}}" />
+              <button id="searchButton" class="input-group-text" id="btnGroupAddon" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+          </form>
 </div>
  <!-- ----------------------endfilter option------------------------------------------  -->
           <div class="card-datatable table-responsive pt-0">
@@ -118,7 +120,7 @@
           <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
             <div class="btn-group me-2" role="group" aria-label="First group">
               {% for x in students_data.paginator.page_range %}
-              <a href="?page={{x}}&get_std={{get_std.std_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if students_data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+              <a href="?page={{x}}&get_std={{get_std.std_id}}&searchhh={{searchhh}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if students_data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
               {% endfor %}
             </div>
           </div>
