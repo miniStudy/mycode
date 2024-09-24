@@ -40,11 +40,12 @@
     </ul>
     <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&get_subject={{ get_subject.sub_id }}&model_name=chepter"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
   </div>
+  <form method="get" action="{% url 'admin_chepters' %}">
   <div class="input-group mt-2">
-    <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
-    <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
-    <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
+    <input type="text" id="" name="searchhh" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+    <button id="searchButton" class="input-group-text" id="btnGroupAddon" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
   </div>
+</form>
 </div>
 <!-- =========================filter option end=================================== -->
 
@@ -101,7 +102,7 @@
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">
         {% for x in data.paginator.page_range %}
-        <a href="?page={{x}}&get_std={{get_std.std_id}}&get_subject={{get_subject.sub_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+        <a href="?page={{x}}&get_std={{get_std.std_id}}&get_subject={{get_subject.sub_id}}&searchhh={{searchhh}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
         {% endfor %}
       </div>
     </div>

@@ -669,6 +669,16 @@ def show_chepters(request):
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
 
 
+    if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            data = Chepter.objects.filter(
+            Q(chep_name__icontains=searchhh) |
+            Q(chep_sub__sub_name__icontains=searchhh) |
+            Q(chep_sub__sub_std__std_name__icontains=searchhh)).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
+            data = paginatoorrr(data, request)
+            context.update({'data':data,'searchhh':searchhh})      
+
     return render(request, 'show_chepters.html',context)
 
 
