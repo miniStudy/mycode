@@ -689,22 +689,27 @@ def view_attemp_students(request):
 def insert_update_tests(request):
     std_data = Std.objects.all()
     subject_data = Subject.objects.select_related().all()
+    chap_data = Chepter.objects.all().values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
     context = {
         'title' : 'Tests',
         'std_data':std_data,
         'subject_data':subject_data,
+        'chap_data':chap_data
     }
 
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id = get_std)
-        context.update({'get_std': get_std, 'std_data': std_data})
+        chap_data = Chepter.objects.filter(chep_std__std_id = get_std).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
+        context.update({'get_std': get_std, 'std_data': std_data, 'chap_data':chap_data})
 
     if request.GET.get('get_subject'):
         get_subject = int(request.GET['get_subject'])
         subject_data = subject_data.filter(sub_id = get_subject)
-        context.update({'get_subject': get_subject, 'subject_data': subject_data})     
+        chap_data = Chepter.objects.filter(chep_sub__sub_id = get_subject).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
+        context.update({'get_subject': get_subject, 'subject_data': subject_data, 'chap_data':chap_data})     
 
+    
     # ================update Logic============================
     if request.GET.get('pk'):
         if request.method == 'POST':
@@ -723,22 +728,108 @@ def insert_update_tests(request):
         
         update_data = Chepterwise_test.objects.get(test_id=request.GET['pk'])
         context.update({'update_data': update_data})  
+
     else:
-        # ===================insert_logic===========================
         if request.method == 'POST':
             form = tests_form(request.POST, request.FILES)
             if form.is_valid():
-                check = Chepterwise_test.objects.filter(test_name=form.data['test_name'], test_std__std_id=form.data['test_std']).count()
+                check = Chepterwise_test.objects.filter(
+                    test_name=form.data['test_name'], test_std__std_id=form.data['test_std']
+                ).count()
                 if check >= 1:
-                    messages.error(request, '{} is already Exists'.format(form.data['test_name']))
-                else:    
-                    form.save()
+                    messages.error(request, '{} already exists'.format(form.data['test_name']))
+                else:
+                    test_instance = form.save()
+
+                    # Check for auto-generate test
+                    if request.POST.get('auto_generate_test'):
+                        one_mark_count = int(request.POST.get('one_mark_questions', 0))
+                        print(one_mark_count)
+                        two_mark_count = int(request.POST.get('two_mark_questions', 0))
+                        three_mark_count = int(request.POST.get('three_mark_questions', 0))
+                        four_mark_count = int(request.POST.get('four_mark_questions', 0))
+                        chap_object = Chepter.objects.filter(chep_id = request.POST.get('test_chap'))
+
+                        # Function to get questions by weightage
+                        def get_questions_by_weightage(weightage, count):
+                            return question_bank.objects.filter(
+                                qb_chepter=chap_object,
+                                qb_weightage=weightage
+                            ).order_by('?')[:count]
+
+                        # Retrieve questions based on weightage
+                        one_mark_questions = get_questions_by_weightage(1, one_mark_count)
+                        print(one_mark_questions)
+                        two_mark_questions = get_questions_by_weightage(2, two_mark_count)
+                        three_mark_questions = get_questions_by_weightage(3, three_mark_count)
+                        four_mark_questions = get_questions_by_weightage(4, four_mark_count)
+
+                        # Insert the generated questions into Test_questions_answer
+                        for question in one_mark_questions:
+                            print(question)
+                            Test_questions_answer.objects.create(     
+                                tq_name=test_instance,
+                                tq_chepter=question.qb_chepter,
+                                tq_q_type=Test_questions_answer.que_type.Question_Answer,
+                                tq_question=question.qb_question,
+                                tq_answer=question.qb_answer,
+                                tq_weightage=1,
+                                tq_hint=question.qb_hint,
+                                tq_optiona=question.qb_optiona,
+                                tq_optionb=question.qb_optionb,
+                                tq_optionc=question.qb_optionc,
+                                tq_optiond=question.qb_optiond
+                            )
+
+                        for question in two_mark_questions:
+                            Test_questions_answer.objects.create(
+                                tq_name=test_instance,
+                                tq_chepter=question.qb_chepter,
+                                tq_q_type=Test_questions_answer.que_type.Question_Answer,
+                                tq_question=question.qb_question,
+                                tq_answer=question.qb_answer,
+                                tq_weightage=2,
+                                tq_hint=question.qb_hint,
+                                tq_optiona=question.qb_optiona,
+                                tq_optionb=question.qb_optionb,
+                                tq_optionc=question.qb_optionc,
+                                tq_optiond=question.qb_optiond
+                            )
+
+                        for question in three_mark_questions:
+                            Test_questions_answer.objects.create(
+                                tq_name=test_instance,
+                                tq_chepter=question.qb_chepter,
+                                tq_q_type=Test_questions_answer.que_type.Question_Answer,
+                                tq_question=question.qb_question,
+                                tq_answer=question.qb_answer,
+                                tq_weightage=3,
+                                tq_hint=question.qb_hint,
+                                tq_optiona=question.qb_optiona,
+                                tq_optionb=question.qb_optionb,
+                                tq_optionc=question.qb_optionc,
+                                tq_optiond=question.qb_optiond
+                            )
+
+                        for question in four_mark_questions:
+                            Test_questions_answer.objects.create(
+                                tq_name=test_instance,
+                                tq_chepter=question.qb_chepter,
+                                tq_q_type=Test_questions_answer.que_type.Question_Answer,
+                                tq_question=question.qb_question,
+                                tq_answer=question.qb_answer,
+                                tq_weightage=4,
+                                tq_hint=question.qb_hint,
+                                tq_optiona=question.qb_optiona,
+                                tq_optionb=question.qb_optionb,
+                                tq_optionc=question.qb_optionc,
+                                tq_optiond=question.qb_optiond
+                            )
                     return redirect('teacher_test')
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
                 return render(request, 'teacherpanel/insert_update_tests.html', context) 
-        
     return render(request, 'teacherpanel/insert_update_tests.html', context)
 
 @teacher_login_required

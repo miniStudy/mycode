@@ -22,15 +22,12 @@ from website import views as websiteview
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('adminside/', include('adminside.urls')),
-
+    path('', websiteview.firstpage, name="FirstPage"),
     path('summernote/', include('django_summernote.urls')),
     path('studentside/', include('studentside.urls')),
     path('teacherside/', include('teacherside.urls')),
     path('parentsside/', include('parentsside.urls')),
-    path('api/', include('api.apiurls')),
-
-    path('', websiteview.firstpage, name="FirstPage")
-]
+    path('api/', include('api.apiurls')),]
 
 
 urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
