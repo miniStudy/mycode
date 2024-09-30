@@ -2113,7 +2113,6 @@ def fees_collection_admin(request):
         'total_pending_fees':total_pending_fees,
         'students_data':students_data,
     })
-<<<<<<< HEAD
     
     model_name = request.GET.get('model_name')
     get_standard = request.GET.get('get_standard')
@@ -2136,7 +2135,7 @@ def fees_collection_admin(request):
             payment_data.append(temp_data)
         Context.update({'payment_data':payment_data,'field_names':field_names})
         return render(request, 'export_data.html', Context)
-=======
+
 
     if request.GET.get('searchhh'):
         searchhh = request.GET['searchhh']
@@ -2153,7 +2152,6 @@ def fees_collection_admin(request):
                 )).values('stud_id','amount_paid','discountt','stud_std__std_name','stud_std__std_board__brd_name','stud_name','stud_lastname','stud_pack__pack_fees')
             students_data = paginatoorrr(students_data, request)
             Context.update({'students_data':students_data,'searchhh':searchhh}) 
->>>>>>> 5907574cf93cb0057ab8a71f6b7a8ef8793babc6
 
     return render(request, 'fees_collection_admin.html', Context)
 
