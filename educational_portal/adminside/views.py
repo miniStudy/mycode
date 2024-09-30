@@ -2026,6 +2026,29 @@ def fees_collection_admin(request):
         'students_data':students_data,
    
     })
+    
+    model_name = request.GET.get('model_name')
+    get_standard = request.GET.get('get_standard')
+    if model_name == 'fees_collection':
+        payment_data = []
+        if get_standard:
+            data = Fees_Collection.objects.filter(stud_std__std_id=get_standard)
+        else:
+            data = Fees_Collection.objects.all()
+        field_names = ['Student Name','Student Standard','Total Payable Amount','Discount Fees','Amount Paid','Remaining Amount']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'student_name':x.fees_stud_id.stud_name,
+                              'student_lastname':x.fees_stud_id.stud_name,
+                              'student_standard':x.fees_stud_id.stud_std,
+                              'total_payable_amount':total_amount_fees_paid,
+                              'discount_fees':total_discount_amount,
+                              'amount_paid':total_fees_amount,
+                              'remaining_amount':total_pending_fees,})
+            payment_data.append(temp_data)
+        Context.update({'payment_data':payment_data,'field_names':field_names})
+        return render(request, 'export_data.html', Context)
+
     return render(request, 'fees_collection_admin.html', Context)
 
 def add_cheques_admin(request):
@@ -2210,26 +2233,8 @@ def export_data(request):
             student_data.append(temp_data)
         Context.update({'data':student_data,'field_names':field_names})
 
-
-
-    if model_name == 'Students':
-        student_data = []
-        if get_std:
-            data = Students.objects.filter(stud_std__std_id=get_std)
-        elif get_batch:
-            data = Students.objects.filter(stud_batch__batch_id=get_batch)
-        else:
-            data = Students.objects.all()
-
-        field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
-        for x in data:
-            temp_data = {}
-            temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
-            student_data.append(temp_data)
-        Context.update({'data':student_data,'field_names':field_names})
-
     if model_name == 'attendance':
-        all_data = []
+        attendance_data = []
         if get_std:
             data = Attendance.objects.filter(atten_student__stud_std__std_id=get_std)
         elif get_batch:
@@ -2237,12 +2242,25 @@ def export_data(request):
         else:
             data = Attendance.objects.all()
 
-        field_names = ['Date','Student Roll No','Student Name','Subject','Time','Tutor','Attendance','Batch','Std','Board']
+        field_names = ['Date','Student Roll No','Student Name','Subject','Tutor','Attendance','Batch','Std','Board']
         for x in data:
             temp_data = {}
-            temp_data.update({'Date':x.atten_date,'student_roll_no':x.stud_lastname,'Student_name':x.stud_contact,'subject':x.stud_contact,'time':x.stud_dob,'tutor':x.stud_gender,'Attendance':x.stud_admission_no,'Batch':x.stud_roll_no,'Std':x.stud_enrollment_no,'Board':x.stud_guardian_name})
-            student_data.append(temp_data)
-        Context.update({'data':student_data,'field_names':field_names})   
+            if x.atten_present == True:
+                atten_present = "Present"
+            else:
+                atten_present = "Absent"
+            temp_data.update({'Date':x.atten_date,
+            'student_roll_no':x.atten_student.stud_roll_no,
+            'Student_name':x.atten_student.stud_name,
+            'subject':x.atten_timetable.tt_subject1.sub_name,
+            'tutor':x.atten_timetable.tt_tutor1.fac_name,
+            'Attendance': atten_present,
+            'Batch':x.atten_student.stud_batch.batch_name,
+            'Std':x.atten_student.stud_std.std_name,
+            'Board':x.atten_student.stud_std.std_board.brd_name})
+
+            attendance_data.append(temp_data)
+        Context.update({'attendance_data':attendance_data,'field_names':field_names})   
         
     return render(request, 'export_data.html',Context)
 
