@@ -65,7 +65,7 @@
         <div class="col-sm-12">
           <label class="form-label mb-2">Date of Birth</label>
           <div class="input-group input-group-merge">
-            <input type="date" class="form-control" name="stud_dob" {% if inquires_admission_data %} value="{{inquires_admission_data.inq_dob|date:'Y-m-d'}}" {% endif %} {% if update_data %} value="{{update_data.stud_dob}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_dob}}" {% endif %} required/>
+            <input type="date" class="form-control" name="stud_dob" {% if inquires_admission_data %} value="{{inquires_admission_data.inq_dob|date:'Y-m-d'}}" {% endif %} {% if update_data %} value="{{update_data.stud_dob|date:'Y-m-d'}}" {% endif %}{% if filled_data %} value="{{filled_data.stud_dob|date:'Y-m-d'}}" {% endif %} required/>
           </div>
         </div>
 

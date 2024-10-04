@@ -75,7 +75,7 @@
                     {% endfor %}</td>
                     <td>{{x.pack_std}}</td>
                     <td>{{x.pack_fees}}</td>
-                    <td><a href="{% url 'insert_update_packages' %}?pk={{x.pack_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+                    <td><a href="{% url 'insert_update_packages' %}?pk={{x.pack_id}}&get_std={{get_std.std_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

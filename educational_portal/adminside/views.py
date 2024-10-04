@@ -1448,7 +1448,7 @@ def insert_update_packages(request):
         context.update({'get_std ':get_std,'std_data':std_data, 'subjects_data':subjects_data}) 
 
 
-   
+    
 
  # ================update Logic============================
     if request.GET.get('pk'):

@@ -268,7 +268,20 @@ def show_chepters(request):
 def show_materials(request):
     title = 'Materials'
     student_std = request.session['stud_std']
-    subjects = Subject.objects.filter(sub_std__std_id = student_std)
+    student_id = request.session['stud_id']
+    student = Students.objects.get(stud_id=student_id)
+
+    # Get the student's package
+    package = student.stud_pack
+
+    # Get the subjects associated with the package
+    subjects = package.pack_subjects.all()
+
+    # Print or return the subjects
+    for subject in subjects:
+        print(subject)
+                
+                
     materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name','cm_chepter__chep_sub__sub_id','cm_file_icon')
     selected_sub=None
     if request.GET.get('sub_id'):
@@ -339,13 +352,35 @@ def show_event(request):
 
     return render(request, 'studentpanel/event.html', context)
 
+from django.db.models import Avg
+
 @student_login_required
 def show_test(request):
     student_id = request.session['stud_id']
-    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id)
-    title = 'Tests'
-    context = {'test_analysis_data':test_analysis_data,'title':title}
+    
+    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id=student_id)
+
+    average_marks = Test_attempted_users.objects.values('tau_test_id').annotate(average_marks=Avg('tau_obtained_marks'))
+    avg_marks_dict = {item['tau_test_id']: item['average_marks'] for item in average_marks}
+    print(avg_marks_dict)
+ 
+    test_details = []
+    for data in test_analysis_data:
+        test_details.append({
+            'test_name': data.tau_test_id.test_name,
+            'sub_name': data.tau_test_id.test_sub.sub_name,
+            'total_marks': data.tau_total_marks,
+            'time_taken': data.tau_completion_time,
+            'obtained_marks': data.tau_obtained_marks,
+            'avg_marks': round(avg_marks_dict.get(data.tau_test_id.test_id, 0),2)
+        })
+
+    context = {
+        'title': 'Tests',
+        'test_analysis_data': test_details  # Pass the detailed test data to the context
+    }
     return render(request, 'studentpanel/test.html', context)
+
 
 @student_login_required
 def show_test_questions(request, id):

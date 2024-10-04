@@ -95,7 +95,7 @@ class Packs(models.Model):
     pack_id = models.BigAutoField(primary_key=True)
     pack_name = models.CharField(max_length=50)
     pack_std = models.ForeignKey(Std,on_delete=models.CASCADE)
-    pack_subjects = models.ManyToManyField(Subject, blank=True)
+    pack_subjects = models.ManyToManyField(Subject, blank=True, related_name='pack_subject')
     pack_fees = models.IntegerField()
 
     def __str__(self):
@@ -157,7 +157,7 @@ class Students(models.Model):
     stud_address = models.TextField(blank=True, null=True)
     stud_std = models.ForeignKey(Std, on_delete = models.CASCADE)
     stud_batch = models.ForeignKey(Batches, on_delete = models.CASCADE)
-    stud_pack = models.ForeignKey(Packs, on_delete = models.CASCADE)
+    stud_pack = models.ForeignKey(Packs, on_delete = models.CASCADE, related_name='packages')
     stud_pass = models.TextField(null=True, blank=True,default='12345678')
     stud_otp = models.CharField(blank=True,null=True,max_length=10)
 
