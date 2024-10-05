@@ -26,6 +26,14 @@ from django.core.paginator import Paginator
 from django.views.decorators.http import require_GET
 import requests
 
+
+
+
+
+
+
+
+
 def paginatoorrr(queryset,request):
         paginator = Paginator(queryset, 20)
         page_number = request.GET.get('page', 1)
