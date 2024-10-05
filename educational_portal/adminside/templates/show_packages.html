@@ -39,11 +39,13 @@
             </ul>
             
           </div>
-          <div class="input-group mt-2">
-            <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
-            <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
-            <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
-          </div>
+          <form method="get" action="{% url 'admin_packages' %}">
+            <div class="input-group mt-2">
+              <input type="text" id="" name="searchhh" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
+              <input type="hidden" name="get_std" value="{{get_std.std_id}}" />
+              <button id="searchButton" class="input-group-text" id="btnGroupAddon" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+          </form>
         </div>
 <!-- =========================filter option end=================================== -->
 
@@ -73,7 +75,7 @@
                     {% endfor %}</td>
                     <td>{{x.pack_std}}</td>
                     <td>{{x.pack_fees}}</td>
-                    <td><a href="{% url 'insert_update_packages' %}?pk={{x.pack_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
+                    <td><a href="{% url 'insert_update_packages' %}?pk={{x.pack_id}}&get_std={{get_std.std_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -105,7 +107,7 @@
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group me-2" role="group" aria-label="First group">
         {% for x in data.paginator.page_range %}
-        <a href="?page={{x}}&get_std={{get_std.std_id}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+        <a href="?page={{x}}&get_std={{get_std.std_id}}&searchhh={{searchhh}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
         {% endfor %}
       </div>
     </div>

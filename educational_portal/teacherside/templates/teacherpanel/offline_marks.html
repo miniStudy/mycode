@@ -17,8 +17,10 @@
 
 <form action="{% url 'save_offline_marks' %}" method="post"> 
     {% csrf_token %}    
-    <input type="hidden" name="test_id" value="{{test_id}}">    
-    <div class="card-datatable table-responsive pt-0">
+    <input type="hidden" name="test_id" value="{{test_id}}">
+    <input type="date" name="tau_date" class="form-control w-auto">
+
+    <div class="card-datatable table-responsive pt-0 mt-3">
         <table class="display table table-bordered" style="width:100%">
             <thead>
                 <tr>

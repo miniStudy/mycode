@@ -14,10 +14,13 @@
             <div class="col-md-3 d-flex align-items-stretch mb-4">
                 <div class="card myborder w-100">
                     <div class="card-body">
-                        <p><b>Test Name:</b> {{data.tau_test_id.test_name}}</p>
-                        <p><b>Subject:</b> {{data.tau_test_id.test_sub}}</p>
-                        <p class="card-text"><b>Total Marks:</b> {{data.tau_total_marks}}</p>
-                        <p class="card-text"><b>Time Taken:</b> {{data.tau_completion_time}}</p>
+                        <p><b>Test Name:</b> {{ data.test_name }}</p>
+                        <p><b>Subject:</b> {{ data.sub_name }}</p>
+                        <p class="card-text"><b>Total Marks:</b> {{ data.total_marks }}</p>
+                        <p class="card-text"><b>Time Taken:</b> {{ data.time_taken }}</p>
+                        <p class="card-text"><b>Obtained Marks:</b> {{ data.obtained_marks }}</p>
+                        <p class="card-text"><b>Average Marks:</b> {{ data.avg_marks }}</p>
+                        <p class="card-text"><b>Date:</b> {{ data.date }}</p>
                     </div>
                 </div>
             </div>

@@ -379,6 +379,22 @@ def teacher_attendance(request):
      combined_data = zip(subject_wise_attendance, subjects)
 
      context.update({'combined_data': combined_data})
+
+     if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            data = Attendance.objects.filter(
+            Q(atten_timetable__tt_day__icontains=searchhh) |
+            Q(atten_timetable__tt_time1__icontains=searchhh) |
+            Q(atten_timetable__tt_subject1__sub_name__icontains=searchhh) |
+            Q(atten_timetable__tt_tutor1__fac_name__icontains=searchhh) |
+            Q(atten_present__icontains=searchhh) |
+            Q(atten_student__stud_name__icontains=searchhh) |
+            Q(atten_student__stud_lastname__icontains=searchhh) |
+            Q(atten_date__icontains=searchhh)).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = paginatoorrr(data, request)
+            context.update({'data':data,'searchhh':searchhh})  
+
      return render(request, 'teacherpanel/attendance.html',context)
 
 def teacher_edit_attendance(request):
@@ -611,7 +627,17 @@ def teacher_test(request):
             data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
             data = paginatoorrr(data,request)
             get_subject = Subject.objects.get(sub_id = get_subject)
-            context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
+            context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject})
+
+    if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            data = Chepterwise_test.objects.filter(
+            Q(test_name__icontains=searchhh) |
+            Q(test_sub__sub_name__icontains=searchhh) |
+            Q(test_std__std_name__icontains=searchhh)).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+            data = paginatoorrr(data, request)
+            context.update({'data':data,'searchhh':searchhh})  
 
     return render(request, 'teacherpanel/show_tests.html',context)
 
@@ -647,6 +673,7 @@ def teacher_save_offline_marks(request):
         student_ids = request.POST.getlist('student_id')
         test_id = request.POST.get('test_id')
         marks = request.POST.getlist('marks')
+        date = request.POST.get('tau_date')
         test_data = Test_questions_answer.objects.filter(tq_name__test_id = test_id)
         test_id = Chepterwise_test.objects.get(test_id=test_id)
         sum = 0
@@ -664,7 +691,8 @@ def teacher_save_offline_marks(request):
                 tau_attempted_questions=count,  # Update with actual number of attempted questions
                 tau_correct_ans=0,  # Update with actual number of correct answers
                 tau_total_marks=sum,  # Update with actual total marks
-                tau_obtained_marks=mark
+                tau_obtained_marks=mark,
+                tau_date = date,
             )
             test_attempt.save()
     messages.success(request, 'Marks have been successfully saved.')

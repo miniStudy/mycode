@@ -268,7 +268,10 @@ def show_chepters(request):
 def show_materials(request):
     title = 'Materials'
     student_std = request.session['stud_std']
-    subjects = Subject.objects.filter(sub_std__std_id = student_std)
+    student_id = request.session['stud_id']
+    student = Students.objects.get(stud_id=student_id)
+    subjects = student.stud_pack.pack_subjects.all()
+              
     materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name','cm_chepter__chep_sub__sub_id','cm_file_icon')
     selected_sub=None
     if request.GET.get('sub_id'):
@@ -339,13 +342,35 @@ def show_event(request):
 
     return render(request, 'studentpanel/event.html', context)
 
+from django.db.models import Avg
+
 @student_login_required
 def show_test(request):
     student_id = request.session['stud_id']
-    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id)
-    title = 'Tests'
-    context = {'test_analysis_data':test_analysis_data,'title':title}
+    
+    test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id=student_id)
+
+    average_marks = Test_attempted_users.objects.values('tau_test_id').annotate(average_marks=Avg('tau_obtained_marks'))
+    avg_marks_dict = {item['tau_test_id']: item['average_marks'] for item in average_marks}
+
+    test_details = []
+    for data in test_analysis_data:
+        test_details.append({
+            'test_name': data.tau_test_id.test_name,
+            'sub_name': data.tau_test_id.test_sub.sub_name,
+            'total_marks': data.tau_total_marks,
+            'time_taken': data.tau_completion_time,
+            'obtained_marks': data.tau_obtained_marks,
+            'date': data.tau_date,
+            'avg_marks': round(avg_marks_dict.get(data.tau_test_id.test_id, 0),2)
+        })
+
+    context = {
+        'title': 'Tests',
+        'test_analysis_data': test_details  # Pass the detailed test data to the context
+    }
     return render(request, 'studentpanel/test.html', context)
+
 
 @student_login_required
 def show_test_questions(request, id):
@@ -452,10 +477,11 @@ def Student_Test_Submission(request):
 @student_login_required
 def show_syllabus(request):
     student_std = request.session['stud_std']
+    student_id = request.session['stud_id']
     syllabus_data = Syllabus.objects.filter(syllabus_chapter__chep_std__std_id = student_std)
-    subjects = Subject.objects.filter(sub_std__std_id = student_std)
+    student = Students.objects.get(stud_id=student_id)
+    subjects = student.stud_pack.pack_subjects.all()
     chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std).annotate(status=Case(When(syllabus__syllabus_status = None, then=Value(0)), default=1, output_filed=IntegerField())).values('chep_sub__sub_id','chep_name', 'status')
-    print(chepters)
     context = {
         'subjects':subjects,
         'chepters':chepters, 
@@ -506,12 +532,12 @@ def Student_doubt_section(request):
 @student_login_required
 def Student_add_doubts(request):
     student_id = request.session['stud_id']
-    std_id = request.session['stud_std']
-    subjects = Subject.objects.filter(sub_std__std_id = std_id)
+    student = Students.objects.get(stud_id=student_id)
+    subjects_li = student.stud_pack.pack_subjects.all()
 
     context = {
     'student_id':student_id,
-    'subjects':subjects,
+    'subjects':subjects_li,
     'title': 'Doubts'
     }
 
@@ -637,11 +663,13 @@ def student_analysis_view(request):
 
 
    # ===================SubjectsWise Attendance============================
-    subjects_li = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
+    
+    student = Students.objects.get(stud_id=student_id)
+    subjects_li = student.stud_pack.pack_subjects.all()
     overall_attendance_subwise = []
 
     for x in subjects_li:
-        x = x['sub_name']
+        x = x.sub_name
         total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
 
         present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
@@ -654,14 +682,15 @@ def student_analysis_view(request):
     
     # ======================SubjectWise TestResult==============================
 
-    subjects_data = Subject.objects.filter(sub_std=student_std).values('sub_name')
+    student = Students.objects.get(stud_id=student_id)
+    subjects_li = student.stud_pack.pack_subjects.all()
     final_average_marks_subwise = []
 
-    for x in subjects_data:
-        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x['sub_name'], tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+    for x in subjects_li:
+        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
        
 
-        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x['sub_name'], tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
         
         
         if total_marks_subwise == 0:
@@ -669,7 +698,7 @@ def student_analysis_view(request):
         else:
             average_marks_subwise = round((obtained_marks_subwise/total_marks_subwise)*100,2)
         
-        final_average_marks_subwise.append({'subject_name':x['sub_name'], 'average_marks_subwise':average_marks_subwise})
+        final_average_marks_subwise.append({'subject_name':x.sub_name, 'average_marks_subwise':average_marks_subwise})
 
     # ====================Average Test Result=================================
     overall_results = [i['overall_result'] for i in overall_attendance_li]
@@ -783,6 +812,3 @@ def today_study_page(request):
         'todays_study_data':todays_study_data
     }
     return render(request, 'studentpanel/today-study.html', context)
-
-
-

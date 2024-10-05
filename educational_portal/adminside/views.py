@@ -780,6 +780,18 @@ def show_faculties(request):
         'title': 'Faculties'
     }
 
+    if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            faculty_data = Faculties.objects.filter(
+            Q(fac_name__icontains=searchhh) |
+            Q(fac_number__icontains=searchhh) |
+            Q(fac_email__icontains=searchhh) |
+            Q(fac_address__icontains=searchhh) |
+            Q(Subjects__icontains=searchhh))
+            faculty_data = paginatoorrr(faculty_data, request)
+            context.update({'faculty_data':faculty_data,'searchhh':searchhh})  
+
     return render(request, 'show_faculties.html', context)
 
 @admin_login_required
@@ -1049,6 +1061,22 @@ def show_attendance(request):
     combined_data = zip(subject_wise_attendance, subjects)
 
     context.update({'combined_data': combined_data})
+
+    if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            data = Attendance.objects.filter(
+            Q(atten_timetable__tt_day__icontains=searchhh) |
+            Q(atten_timetable__tt_time1__icontains=searchhh) |
+            Q(atten_timetable__tt_subject1__sub_name__icontains=searchhh) |
+            Q(atten_timetable__tt_tutor1__fac_name__icontains=searchhh) |
+            Q(atten_present__icontains=searchhh) |
+            Q(atten_student__stud_name__icontains=searchhh) |
+            Q(atten_student__stud_lastname__icontains=searchhh) |
+            Q(atten_date__icontains=searchhh)).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = paginatoorrr(data, request)
+            context.update({'data':data,'searchhh':searchhh})  
+
     return render(request, 'show_attendance.html',context)
 
 
@@ -1130,6 +1158,16 @@ def show_tests(request):
             data = paginatoorrr(data, request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
+
+    if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            data = Chepterwise_test.objects.filter(
+            Q(test_name__icontains=searchhh) |
+            Q(test_sub__sub_name__icontains=searchhh) |
+            Q(test_std__std_name__icontains=searchhh)).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
+            data = paginatoorrr(data, request)
+            context.update({'data':data,'searchhh':searchhh}) 
 
     return render(request, 'show_tests.html',context)
 
@@ -1325,6 +1363,7 @@ def show_test_questions_admin(request):
             'title' : 'Tests',
         }
         return render(request, 'show_test_questions_admin.html',context)
+    
     else:
         return redirect('admin_tests') 
 
@@ -1384,9 +1423,19 @@ def show_packages(request):
             data = Packs.objects.prefetch_related('pack_subjects').filter(pack_std__std_id = get_std)
             data = paginatoorrr(data, request)
             get_std = Std.objects.get(std_id = get_std)
-            context.update({'data':data,'get_std':get_std})     
-    return render(request, 'show_packages.html',context)
+            context.update({'data':data,'get_std':get_std})  
 
+    if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            data = Packs.objects.filter(
+            Q(pack_name__icontains=searchhh) |
+            Q(pack_subjects__sub_name__icontains=searchhh) |
+            Q(pack_fees__icontains=searchhh) |
+            Q(pack_std__std_name__icontains=searchhh)).prefetch_related('pack_subjects')
+            data = paginatoorrr(data, request)
+            context.update({'data':data,'searchhh':searchhh})  
+    return render(request, 'show_packages.html',context)
 
 
 
@@ -1407,7 +1456,7 @@ def insert_update_packages(request):
         context.update({'get_std ':get_std,'std_data':std_data, 'subjects_data':subjects_data}) 
 
 
-   
+    
 
  # ================update Logic============================
     if request.GET.get('pk'):
@@ -1529,6 +1578,35 @@ def show_students(request):
             'batch_data': batch_data,
         })
 
+    if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            data = Students.objects.filter(
+            Q(stud_name__icontains=searchhh) |
+            Q(stud_lastname__icontains=searchhh) |
+            Q(stud_username__icontains=searchhh) |
+            Q(stud_contact__icontains=searchhh) |
+            Q(stud_email__icontains=searchhh) |
+            Q(stud_dob__icontains=searchhh) |
+            Q(stud_std__std_name__icontains=searchhh) |
+            Q(stud_std__std_board__brd_name__icontains=searchhh) |
+            Q(stud_batch__batch_name__icontains=searchhh) |
+            Q(stud_pack__pack_name__icontains=searchhh) |
+            Q(stud_guardian_email__icontains=searchhh) |
+            Q(stud_guardian_name__icontains=searchhh) |
+            Q(stud_guardian_number__icontains=searchhh) |
+            Q(stud_address__icontains=searchhh) |
+            Q(stud_guardian_profession__icontains=searchhh) |
+            Q(stud_gender__icontains=searchhh)).values(
+            'stud_id', 'stud_name', 'stud_lastname', 'stud_username', 'stud_contact', 
+            'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
+            'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
+            'stud_pack__pack_name', 'stud_guardian_email', 'stud_guardian_name', 
+            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
+            )
+            data = paginatoorrr(data, request)
+            context.update({'data':data,'searchhh':searchhh})  
+
     return render(request, 'show_students.html', context)
 
 
@@ -1566,7 +1644,7 @@ def insert_update_students(request):
             form = student_form(request.POST, instance=instance)
             if form.is_valid():
                 form.save()
-                messages.success(request, 'Insert student successfully')
+                messages.success(request, 'Student updated successfully')
                 return redirect('students_dataAdmin')
             else:
                 filled_data = form.data
@@ -2042,8 +2120,47 @@ def fees_collection_admin(request):
         'total_fees_amount_after_discount':total_fees_amount_after_discount,
         'total_pending_fees':total_pending_fees,
         'students_data':students_data,
-   
     })
+    
+    model_name = request.GET.get('model_name')
+    get_standard = request.GET.get('get_standard')
+    if model_name == 'fees_collection':
+        payment_data = []
+        if get_standard:
+            data = Fees_Collection.objects.filter(stud_std__std_id=get_standard)
+        else:
+            data = Fees_Collection.objects.all()
+        field_names = ['Student Name','Student Standard','Total Payable Amount','Discount Fees','Amount Paid','Remaining Amount']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'student_name':x.fees_stud_id.stud_name,
+                              'student_lastname':x.fees_stud_id.stud_name,
+                              'student_standard':x.fees_stud_id.stud_std,
+                              'total_payable_amount':total_amount_fees_paid,
+                              'discount_fees':total_discount_amount,
+                              'amount_paid':total_fees_amount,
+                              'remaining_amount':total_pending_fees,})
+            payment_data.append(temp_data)
+        Context.update({'payment_data':payment_data,'field_names':field_names})
+        return render(request, 'export_data.html', Context)
+
+
+    if request.GET.get('searchhh'):
+        searchhh = request.GET['searchhh']
+        if searchhh:
+            students_data = Students.objects.filter(
+            Q(stud_std__std_name__icontains=searchhh) |
+            Q(stud_name__icontains=searchhh) |
+            Q(stud_lastname__icontains=searchhh) |
+            Q(stud_pack__pack_fees__icontains=searchhh)).annotate(
+                amount_paid=Coalesce(Sum('fees_collection__fees_paid'), Value(0)),
+                discountt=Case(
+                    When(discount__discount_amount=None, then=Value(0)),
+                    default=F('discount__discount_amount'),output_field=IntegerField()
+                )).values('stud_id','amount_paid','discountt','stud_std__std_name','stud_std__std_board__brd_name','stud_name','stud_lastname','stud_pack__pack_fees')
+            students_data = paginatoorrr(students_data, request)
+            Context.update({'students_data':students_data,'searchhh':searchhh}) 
+
     return render(request, 'fees_collection_admin.html', Context)
 
 def add_cheques_admin(request):
@@ -2228,26 +2345,8 @@ def export_data(request):
             student_data.append(temp_data)
         Context.update({'data':student_data,'field_names':field_names})
 
-
-
-    if model_name == 'Students':
-        student_data = []
-        if get_std:
-            data = Students.objects.filter(stud_std__std_id=get_std)
-        elif get_batch:
-            data = Students.objects.filter(stud_batch__batch_id=get_batch)
-        else:
-            data = Students.objects.all()
-
-        field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
-        for x in data:
-            temp_data = {}
-            temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
-            student_data.append(temp_data)
-        Context.update({'data':student_data,'field_names':field_names})
-
     if model_name == 'attendance':
-        all_data = []
+        attendance_data = []
         if get_std:
             data = Attendance.objects.filter(atten_student__stud_std__std_id=get_std)
         elif get_batch:
@@ -2255,12 +2354,25 @@ def export_data(request):
         else:
             data = Attendance.objects.all()
 
-        field_names = ['Date','Student Roll No','Student Name','Subject','Time','Tutor','Attendance','Batch','Std','Board']
+        field_names = ['Date','Student Roll No','Student Name','Subject','Tutor','Attendance','Batch','Std','Board']
         for x in data:
             temp_data = {}
-            temp_data.update({'Date':x.atten_date,'student_roll_no':x.stud_lastname,'Student_name':x.stud_contact,'subject':x.stud_contact,'time':x.stud_dob,'tutor':x.stud_gender,'Attendance':x.stud_admission_no,'Batch':x.stud_roll_no,'Std':x.stud_enrollment_no,'Board':x.stud_guardian_name})
-            student_data.append(temp_data)
-        Context.update({'data':student_data,'field_names':field_names})   
+            if x.atten_present == True:
+                atten_present = "Present"
+            else:
+                atten_present = "Absent"
+            temp_data.update({'Date':x.atten_date,
+            'student_roll_no':x.atten_student.stud_roll_no,
+            'Student_name':x.atten_student.stud_name,
+            'subject':x.atten_timetable.tt_subject1.sub_name,
+            'tutor':x.atten_timetable.tt_tutor1.fac_name,
+            'Attendance': atten_present,
+            'Batch':x.atten_student.stud_batch.batch_name,
+            'Std':x.atten_student.stud_std.std_name,
+            'Board':x.atten_student.stud_std.std_board.brd_name})
+
+            attendance_data.append(temp_data)
+        Context.update({'attendance_data':attendance_data,'field_names':field_names})   
         
     return render(request, 'export_data.html',Context)
 

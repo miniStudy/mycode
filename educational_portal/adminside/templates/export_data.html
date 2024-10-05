@@ -94,6 +94,55 @@
           {% endfor %}
       </tbody>
   </table>
+  {% elif attendance_data %}
+  <table id="data-table" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            {% for field_name in field_names %}
+                <th>{{ field_name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for student_value in attendance_data %}
+        <tr>
+            <td>{{ student_value.Date }}</td>
+            <td>{{ student_value.student_roll_no }}</td>
+            <td>{{ student_value.Student_name }}</td>
+            <td>{{ student_value.subject }}</td>
+            <td>{{ student_value.tutor }}</td>
+            <td>{{ student_value.Attendance }}</td>
+            <td>{{ student_value.Batch }}</td>
+            <td>{{ student_value.Std }}</td>
+            <td>{{ student_value.Board }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+  {% elif payment_data %}
+  <table id="data-table" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            {% for field_name in field_names %}
+                <th>{{ field_name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for student_value in payment_data %}
+        <tr>
+            <td>{{ student_value.student_name }} {{ student_value.student_lastname }}</td>
+            <td>{{ student_value.student_standard }}</td>
+            <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ student_value.total_payable_amount }}</td>
+            <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ student_value.discount_fees }}</td>
+            <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ student_value.amount_paid }}</td>
+            <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ student_value.remaining_amount }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
   {% else %}
       <p>No data available for {{ title }}</p>
   {% endif %}
