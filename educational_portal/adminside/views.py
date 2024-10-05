@@ -25,12 +25,51 @@ from django.db.models.functions import Coalesce
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_GET
 import requests
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
+def send_whatsapp_message_test_marks(request):
+    # User details
+    api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDBlYTNjODQ4NGQ2MGI4NDhhZDczMiIsIm5hbWUiOiJtaW5pU3R1ZHlfd2hhdHNhcHAiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjY5ZTMwOGZmYmE3OTE3ZjE1MGRmNTMyIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3MjgxMTMyMTJ9.aZSCryj6KAkD5ETSkYsmiGwOzs87-wwz70fs6D9kBcg'  # Replace with your actual API key
+    campaign_name = 'miniStudy_test'  # Replace with your campaign name
+    destination = '+917285818382'  # User's phone number
+    user_name = 'Ajay Patel'  # Name of the user
+    source = 'MiniStudy'  # e.g., 'MiniStudy' or any other identifier
+    template_params = ['Ajay Patel', 'MiniStudy', '05-10-2024', 'Polynomials', '20', '25']  # Dynamic template parameters
+    media = {
+        "url": "https://metrofoods.co.nz/logoo.png",  # Optional: URL for media (if needed)
+        "filename": "1nobg.png"  # Optional: Filename for the media
+    }
+
+    # Prepare the payload for the request
+    data = {
+        "apiKey": api_key,
+        "campaignName": campaign_name,
+        "destination": destination,
+        "userName": user_name,
+        "source": source,
+        "media": media,
+        "templateParams": template_params,
+    }
+
+    # AiSensy API endpoint
+    url = 'https://backend.aisensy.com/campaign/t1/api/v2'
+    # Make the POST request to the AiSensy API
+    response = requests.post(url, json=data)
+
+    # Check the response and handle accordingly
+    if response.status_code == 200:
+        return HttpResponse("WhatsApp message sent successfully!")
+    else:
+        error_message = f"Failed to send WhatsApp message: {response.text}"
+        return HttpResponse(error_message, status=response.status_code)
 
 
 
 
 
 
+    
 
 
 
