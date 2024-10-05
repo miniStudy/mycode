@@ -241,6 +241,20 @@ def home(request):
     piechart_data = [all_male,all_female,all_other]
     stds = Std.objects.all().order_by('-std_board')
 
+
+    #-----------------------Inquires-----------------------------------------
+    total_inquiries = Inquiries.objects.values('inq_email').count()
+    inquiries = Inquiries.objects.values('inq_email')
+
+    count = 0
+    for email in inquiries:
+        count_st = Students.objects.filter(stud_email = email['inq_email'])
+        if count_st:
+            count += 1
+    
+    conversion = round(((count/total_inquiries) * 100), 2)
+    lead = round((100 - conversion), 2)
+
     std_list = []
     students_for_that_std = []
     for x in stds:
@@ -296,7 +310,9 @@ def home(request):
         'get_std': get_std,
         'std_list':std_list,
         'students_for_that_std':students_for_that_std,
-        'std_data':std_data
+        'std_data':std_data,
+        'conversion': conversion,
+        'lead': lead,
     })
     return render(request, 'index.html',context)
 
@@ -498,7 +514,6 @@ def insert_update_announcements(request):
             form = announcement_form(request.POST, instance=instance)       
             if form.is_valid():
                 form.save()
-
                 return redirect('admin_announcements')
             else:
                 filled_data = form.data
@@ -511,8 +526,7 @@ def insert_update_announcements(request):
             # ---------------------sendmail Logic===================================
             students_email_list = []
             for x in students_for_mail:
-                students_email_list.append(x.stud_email)
-            print(students_email_list)    
+                students_email_list.append(x.stud_email)   
             announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
          
             return redirect('admin_announcements')
@@ -948,8 +962,7 @@ def insert_update_timetable(request):
             # ---------------------sendmail Logic===================================
             tt_students_email_list = []
             for x in tt_students_for_mail:
-                tt_students_email_list.append(x.stud_email)
-            print(tt_students_email_list)    
+                tt_students_email_list.append(x.stud_email)   
             timetable_mail(tt_students_email_list)
             return redirect('admin_timetable')
     
