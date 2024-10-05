@@ -18,7 +18,7 @@
 <form action="{% url 'save_offline_marks' %}" method="post"> 
     {% csrf_token %}    
     <input type="hidden" name="test_id" value="{{test_id}}">
-    <input type="date" name="tau_date" class="form-control w-auto">
+    <input type="date" name="tau_date" class="form-control w-auto" required>
 
     <div class="card-datatable table-responsive pt-0 mt-3">
         <table class="display table table-bordered" style="width:100%">
@@ -33,7 +33,7 @@
                 <tr>
                     <input type="hidden" name="student_id" value="{{data.stud_id}}">
                     <td>{{data.stud_name}} {{data.stud_lastname}}</td>
-                    <td><input type="number" class="form-control" name="marks" id="marks" style="width:150px"></td>
+                    <td><input type="number" class="form-control" name="marks" value="0" id="marks" style="width:150px"></td>
                 </tr>
                 {% endfor %}
             </tbody>

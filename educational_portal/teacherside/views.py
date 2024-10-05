@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.db.models.functions import TruncHour, TruncMinute, TruncDate
 from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
+from teacherside.send_mail import *
 
 import random
 from django.http import Http404,JsonResponse
@@ -466,12 +467,20 @@ def handle_attendance(request):
         students_all = Students.objects.filter(stud_batch__batch_id = batch_data, stud_std__std_id = std_data)
         if selected_items:
           selected_ids = [int(id) for id in selected_items]
+        
+        students_for_mail = Students.objects.filter(stud_id__in = selected_ids)
+        present_list = []
+        absent_list = []
         for i in students_all:
             if i.stud_id in selected_ids:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1)
+                present_list.append(i.stud_email)
             else:
-                Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0) 
+                Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0)
+                absent_list.append(i.stud_email)
 
+        date = datetime.now()
+        attendance_student_present_mail('present', date, present_list)
         messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
 
