@@ -477,11 +477,8 @@ def handle_attendance(request):
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0)
                 absent_list.append(i.stud_email)
 
-        students_email_list = []
-        for x in students_for_mail:
-            students_email_list.append(x.stud_email)   
-        attendance_mail(x.stud_name,students_email_list)
-
+        date = datetime.now()
+        attendance_student_present_mail('present', date, present_list)
         messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
 
