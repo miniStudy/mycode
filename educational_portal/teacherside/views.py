@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404,redirect
+from django.shortcuts import render,get_object_or_404,redirect, HttpResponse
 from adminside.models import *
 from django.contrib import messages
 from django.urls import reverse
@@ -19,6 +19,8 @@ from adminside.form import *
 from teacherside.forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 from django.core.paginator import Paginator
+import requests
+from django.views.decorators.csrf import csrf_exempt
 
 import fitz  # PyMuPDF
 from PIL import Image
@@ -1598,3 +1600,163 @@ def delete_test_question_answer_teacher(request):
 
         url = '/teacherside/show_test_questions_teacher/?test_id={}'.format(request.GET['test_id'])
     return redirect(url)
+
+
+
+@csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
+def send_whatsapp_message_test_marks(user_name, phone, campaign_name='miniStudy_test', source='MiniStudy', template_params=None):
+    # Default template parameters if none are provided
+    if template_params is None:
+        template_params = ['Trushal Patel', 'MiniStudy', '05-10-2024', 'Polynomials', '20', '25']  # Default values
+
+    # User details
+    api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDBlYTNjODQ4NGQ2MGI4NDhhZDczMiIsIm5hbWUiOiJtaW5pU3R1ZHlfd2hhdHNhcHAiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjY5ZTMwOGZmYmE3OTE3ZjE1MGRmNTMyIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3MjgxMTMyMTJ9.aZSCryj6KAkD5ETSkYsmiGwOzs87-wwz70fs6D9kBcg' # Replace with your actual API key
+    
+    # Media details
+    media = {
+        "url": "https://metrofoods.co.nz/logoo.png",  # Optional: URL for media (if needed)
+        "filename": "1nobg.png"  # Optional: Filename for the media
+    }
+
+    # Prepare the payload for the request
+    data = {
+        "apiKey": api_key,
+        "campaignName": campaign_name,
+        "destination": phone,
+        "userName": user_name,
+        "source": source,
+        "media": media,
+        "templateParams": template_params,
+    }
+
+    # AiSensy API endpoint
+    url = 'https://backend.aisensy.com/campaign/t1/api/v2'
+    # Make the POST request to the AiSensy API
+    response = requests.post(url, json=data)
+
+    # Check the response and handle accordingly
+    if response.status_code == 200:
+        return HttpResponse("WhatsApp message sent successfully!")
+    else:
+        error_message = f"Failed to send WhatsApp message: {response.text}"
+        return HttpResponse(error_message, status=response.status_code)
+
+
+
+@csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
+def send_whatsapp_message_announcement(user_name, phone, campaign_name='miniStudy_announcement', source='MiniStudy', template_params=None):
+    # Default template parameters if none are provided
+    if template_params is None:
+        template_params = ['Trushal Patel', 'This is announcement for you']  # Default values
+
+    # User details
+    api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDBlYTNjODQ4NGQ2MGI4NDhhZDczMiIsIm5hbWUiOiJtaW5pU3R1ZHlfd2hhdHNhcHAiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjY5ZTMwOGZmYmE3OTE3ZjE1MGRmNTMyIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3MjgxMTMyMTJ9.aZSCryj6KAkD5ETSkYsmiGwOzs87-wwz70fs6D9kBcg' # Replace with your actual API key
+    
+    # Media details
+    media = {
+        "url": "https://metrofoods.co.nz/logoo.png",  # Optional: URL for media (if needed)
+        "filename": "1nobg.png"  # Optional: Filename for the media
+    }
+
+    # Prepare the payload for the request
+    data = {
+        "apiKey": api_key,
+        "campaignName": campaign_name,
+        "destination": phone,
+        "userName": user_name,
+        "source": source,
+        "media": media,
+        "templateParams": template_params,
+    }
+
+    # AiSensy API endpoint
+    url = 'https://backend.aisensy.com/campaign/t1/api/v2'
+    # Make the POST request to the AiSensy API
+    response = requests.post(url, json=data)
+
+    # Check the response and handle accordingly
+    if response.status_code == 200:
+        return HttpResponse("WhatsApp message sent successfully!")
+    else:
+        error_message = f"Failed to send WhatsApp message: {response.text}"
+        return HttpResponse(error_message, status=response.status_code)
+
+
+
+@csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
+def send_whatsapp_message_payment(user_name, phone, campaign_name='miniStudy_payment', source='MiniStudy', template_params=None):
+    # Default template parameters if none are provided
+    if template_params is None:
+        template_params = ['Trushal Patel', 'UPI', '5000', '25-10-2024']  # Default values
+
+    # User details
+    api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDBlYTNjODQ4NGQ2MGI4NDhhZDczMiIsIm5hbWUiOiJtaW5pU3R1ZHlfd2hhdHNhcHAiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjY5ZTMwOGZmYmE3OTE3ZjE1MGRmNTMyIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3MjgxMTMyMTJ9.aZSCryj6KAkD5ETSkYsmiGwOzs87-wwz70fs6D9kBcg' # Replace with your actual API key
+    
+    # Media details
+    media = {
+        "url": "https://metrofoods.co.nz/logoo.png",  # Optional: URL for media (if needed)
+        "filename": "1nobg.png"  # Optional: Filename for the media
+    }
+
+    # Prepare the payload for the request
+    data = {
+        "apiKey": api_key,
+        "campaignName": campaign_name,
+        "destination": phone,
+        "userName": user_name,
+        "source": source,
+        "media": media,
+        "templateParams": template_params,
+    }
+
+    # AiSensy API endpoint
+    url = 'https://backend.aisensy.com/campaign/t1/api/v2'
+    # Make the POST request to the AiSensy API
+    response = requests.post(url, json=data)
+
+    # Check the response and handle accordingly
+    if response.status_code == 200:
+        return HttpResponse("WhatsApp message sent successfully!")
+    else:
+        error_message = f"Failed to send WhatsApp message: {response.text}"
+        return HttpResponse(error_message, status=response.status_code)
+
+
+
+@csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
+def send_whatsapp_message_event(user_name, phone, campaign_name='miniStudy_event', source='MiniStudy', template_params=None):
+    # Default template parameters if none are provided
+    if template_params is None:
+        template_params = ['Trushal Patel', 'Event Name', '12-10-2024']  # Default values
+
+    # User details
+    api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDBlYTNjODQ4NGQ2MGI4NDhhZDczMiIsIm5hbWUiOiJtaW5pU3R1ZHlfd2hhdHNhcHAiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjY5ZTMwOGZmYmE3OTE3ZjE1MGRmNTMyIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3MjgxMTMyMTJ9.aZSCryj6KAkD5ETSkYsmiGwOzs87-wwz70fs6D9kBcg' # Replace with your actual API key
+    
+    # Media details
+    media = {
+        "url": "https://metrofoods.co.nz/logoo.png",  # Optional: URL for media (if needed)
+        "filename": "1nobg.png"  # Optional: Filename for the media
+    }
+
+    # Prepare the payload for the request
+    data = {
+        "apiKey": api_key,
+        "campaignName": campaign_name,
+        "destination": phone,
+        "userName": user_name,
+        "source": source,
+        "media": media,
+        "templateParams": template_params,
+    }
+
+    # AiSensy API endpoint
+    url = 'https://backend.aisensy.com/campaign/t1/api/v2'
+    # Make the POST request to the AiSensy API
+    response = requests.post(url, json=data)
+
+    # Check the response and handle accordingly
+    if response.status_code == 200:
+        return HttpResponse("WhatsApp message sent successfully!")
+    else:
+        error_message = f"Failed to send WhatsApp message: {response.text}"
+        return HttpResponse(error_message, status=response.status_code)
