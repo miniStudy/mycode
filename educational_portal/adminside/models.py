@@ -254,6 +254,7 @@ class Chepterwise_test(models.Model):
     test_sub = models.ForeignKey(Subject, on_delete=models.CASCADE,null=True,blank=True)
     test_sem = models.CharField(choices=sem_choices, max_length=50)
     test_time = models.CharField(null=True,blank=True,max_length=200)
+    
 
     def __str__(self):
         return f"Name : {self.test_name}  Time : {self.test_time}"
@@ -296,6 +297,7 @@ class Test_attempted_users(models.Model):
     tau_correct_ans = models.IntegerField(null=True,blank=True)
     tau_total_marks = models.FloatField()
     tau_obtained_marks = models.FloatField(null=True,blank=True)
+    tau_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.tau_test_id} - {self.tau_completion_time}"

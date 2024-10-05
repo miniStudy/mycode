@@ -673,6 +673,7 @@ def teacher_save_offline_marks(request):
         student_ids = request.POST.getlist('student_id')
         test_id = request.POST.get('test_id')
         marks = request.POST.getlist('marks')
+        date = request.POST.get('tau_date')
         test_data = Test_questions_answer.objects.filter(tq_name__test_id = test_id)
         test_id = Chepterwise_test.objects.get(test_id=test_id)
         sum = 0
@@ -690,7 +691,8 @@ def teacher_save_offline_marks(request):
                 tau_attempted_questions=count,  # Update with actual number of attempted questions
                 tau_correct_ans=0,  # Update with actual number of correct answers
                 tau_total_marks=sum,  # Update with actual total marks
-                tau_obtained_marks=mark
+                tau_obtained_marks=mark,
+                tau_date = date,
             )
             test_attempt.save()
     messages.success(request, 'Marks have been successfully saved.')

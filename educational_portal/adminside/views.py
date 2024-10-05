@@ -1636,7 +1636,7 @@ def insert_update_students(request):
             form = student_form(request.POST, instance=instance)
             if form.is_valid():
                 form.save()
-                messages.success(request, 'Insert student successfully')
+                messages.success(request, 'Student updated successfully')
                 return redirect('students_dataAdmin')
             else:
                 filled_data = form.data
