@@ -480,8 +480,8 @@ def handle_attendance(request):
                 absent_list.append(i.stud_email)
 
         date = datetime.now()
-        attendance_student_present_mail('present', date, present_list)
-        attendance_student_absent_mail('Absent', date, absent_list)
+        attendance_student_present_mail('present', date, present_list,1)
+        attendance_student_absent_mail('Absent', date, absent_list,1)
         messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
 
