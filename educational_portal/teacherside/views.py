@@ -468,22 +468,31 @@ def handle_attendance(request):
         if selected_items:
           selected_ids = [int(id) for id in selected_items]
         
-        students_for_mail = Students.objects.filter(stud_id__in = selected_ids)
         present_list = []
         absent_list = []
+        parent_present_li = []
+        parent_absent_li = []
         for i in students_all:
             if i.stud_id in selected_ids:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1)
                 present_list.append(i.stud_email)
+                parent_present_li.append(i.stud_guardian_email)
+
             else:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0)
                 absent_list.append(i.stud_email)
+                parent_absent_li.append(i.stud_guardian_email)
 
         date = datetime.now()
+        num = 1
         attendance_student_present_mail('present', date, present_list)
         attendance_student_absent_mail('Absent', date, absent_list)
+    
+        attendance_parent_present_mail('present', date, parent_present_li)
+        attendance_parent_absent_mail('Absent', date, parent_absent_li, num)
         messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
+
 
 @teacher_login_required
 def edit_handle_attendance(request):
