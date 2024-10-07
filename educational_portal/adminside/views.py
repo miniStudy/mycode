@@ -878,7 +878,6 @@ def insert_update_faculties(request):
     context = {
         'title': 'Faculties',
     }
-
     # Update Logic
     if request.GET.get('pk'):
         if request.method == 'POST':
@@ -906,7 +905,13 @@ def insert_update_faculties(request):
                 if check >= 1:
                     messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
                 else:
-                    form.save()
+                    instance = form.save()
+
+                    fac_password = instance.fac_password
+                    fac_name = form.cleaned_data['fac_name']
+                    fac_email = [form.cleaned_data['fac_email']]
+                    faculty_email(fac_name, fac_email, fac_password)
+
                     return redirect('admin_faculties')
             else:
                 filled_data = form.data

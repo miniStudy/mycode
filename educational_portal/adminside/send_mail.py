@@ -70,3 +70,16 @@ def cheque_update_mail(bank, amount, date, student_email):
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+
+def faculty_email(fac_name, fac_email, fac_password):
+    sub = 'Login Details!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = fac_email
+    htmly = get_template('Email/faculty.html')
+    d = {'fac_name':fac_name, 'fac_email':fac_email[0], 'fac_password':fac_password}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
