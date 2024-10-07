@@ -27,6 +27,8 @@
       <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_fees_collection_admin' %}{% if update_data %}?pk={{update_data.fees_id}}{% endif %}">
         {% csrf_token %} 
 
+        
+
         <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
           <label for="defaultSelect" class="form-label">Student</label>
           <select id="defaultSelect" class="form-select" name="fees_stud_id">
@@ -38,6 +40,8 @@
               {% endfor %}
           </select>
         </div>
+
+        <input type="hidden" name="stud_id" value="{{ stud_id }}">
 
         <div class="col-sm-12">
           <label class="form-label mb-2">Amount</label>

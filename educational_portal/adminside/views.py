@@ -7,6 +7,7 @@ from django.conf import settings
 import math
 import statistics
 import random
+from datetime import datetime
 from django.http import Http404,JsonResponse
 from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
 from django.core.files.storage import FileSystemStorage
@@ -2019,7 +2020,6 @@ def adminside_report_card(request):
         
         # ===================SubjectsWise Attendance============================
         subjects_li = Subject.objects.filter(sub_std__std_id = student_std, sub_id__in = pack_subject_list).values('sub_name').distinct()
-        print(subjects_li)
         overall_attendance_subwise = []
         for x in subjects_li:
             x = x['sub_name']
@@ -2307,6 +2307,11 @@ def add_fees_collection_admin(request):
             form = fees_collection_form(request.POST)
             if form.is_valid():   
                 form.save()
+                student_name = form.cleaned_data['fees_stud_id']
+                email = [student_name.stud_email]
+                date = datetime.today()
+                payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],email)
+               
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2317,7 +2322,6 @@ def add_fees_collection_admin(request):
 def admin_fees_collection_delete(request):
     if request.GET.get('delete_payment'):
         del_id = request.GET['delete_payment']
-        print(del_id)
         try:
             fees_data = Fees_Collection.objects.get(fees_id=del_id)
             fees_data.delete()

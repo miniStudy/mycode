@@ -32,3 +32,15 @@ def timetable_mail(list_of_receivers):
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+def payment_mail(mode, date, amount, student_email):
+    sub = 'Payment Update!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = student_email
+    htmly = get_template('Email/payment.html')
+    d = {'mode':mode, 'amount':amount, 'date':date}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()

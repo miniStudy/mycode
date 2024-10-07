@@ -288,7 +288,7 @@ def teacher_attendance(request):
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
-     data = Attendance.objects.all().values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+     data = Attendance.objects.all().values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
      data = paginatoorrr(data,request)
      std_data = Std.objects.filter(std_id__in = std_access_list)   
      batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
@@ -330,7 +330,7 @@ def teacher_attendance(request):
           if get_std == 0:
                pass
           else:    
-               data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+               data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
                data = paginatoorrr(data,request)
                batch_data = batch_data.filter(batch_std__std_id = get_std)
                stud_data = stud_data.filter(stud_std__std_id = get_std)
@@ -343,7 +343,7 @@ def teacher_attendance(request):
         if get_batch == 0:
             pass
         else:
-            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
             data = paginatoorrr(data,request)
             stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
             get_batch = Batches.objects.get(batch_id = get_batch)
@@ -392,7 +392,7 @@ def teacher_attendance(request):
             Q(atten_present__icontains=searchhh) |
             Q(atten_student__stud_name__icontains=searchhh) |
             Q(atten_student__stud_lastname__icontains=searchhh) |
-            Q(atten_date__icontains=searchhh)).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            Q(atten_date__icontains=searchhh)).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh})  
 
@@ -446,9 +446,9 @@ def insert_update_attendance(request):
           'batch_data':batch_data,
           'students_data':students_data,
           'timetable_data':timetable_data,
-          'title': 'Insert Attendence',
-     
-          }
+          'title': 'Insert Attendence',    
+        }
+
      else:
         messages.error(request, "Please! Select Standard And Batch")
         return redirect('teacher_attendance')  
@@ -479,6 +479,7 @@ def handle_attendance(request):
 
         date = datetime.now()
         attendance_student_present_mail('present', date, present_list)
+        attendance_student_absent_mail('Absent', date, absent_list)
         messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
 
