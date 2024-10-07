@@ -490,6 +490,8 @@ def handle_attendance(request):
     
         attendance_parent_present_mail('present', date, parent_present_li)
         attendance_parent_absent_mail('Absent', date, parent_absent_li, num)
+        attendance_student_present_mail('present', date, present_list,1)
+        attendance_student_absent_mail('Absent', date, absent_list,1)
         messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
 

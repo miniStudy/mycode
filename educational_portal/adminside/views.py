@@ -2239,10 +2239,12 @@ def add_cheques_admin(request):
                     fees_mode = 'CHECK'
                     cheque_date = form.cleaned_data['cheque_date']
                     abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date)
-                    print(abcd)
-                    
 
                 form.save()
+                student_name = form.cleaned_data['cheque_stud_id']
+                student_email = [student_name.stud_email]
+                date = datetime.today()
+                cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2260,6 +2262,11 @@ def add_cheques_admin(request):
                     messages.error(request,'{} is already Exists'.format(form.data['cheque_number']))
                 else:    
                     form.save()
+                    student_name = form.cleaned_data['cheque_stud_id']
+                    student_email = [student_name.stud_email]
+                    date = datetime.today()
+                    cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
+
                     return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2308,9 +2315,9 @@ def add_fees_collection_admin(request):
             if form.is_valid():   
                 form.save()
                 student_name = form.cleaned_data['fees_stud_id']
-                email = [student_name.stud_email]
+                student_email = [student_name.stud_email]
                 date = datetime.today()
-                payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],email)
+                payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
                
                 return redirect('fees_collection_admin')
             else:

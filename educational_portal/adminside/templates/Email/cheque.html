@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cheque Status Update - miniStudy</title>
+    <style>
+        body {
+            font-family: Lato, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background-color: #1C222F;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .title {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        
+        .details {
+            margin-bottom: 20px;
+        }
+        
+        .details dt {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .details dd {
+            margin-bottom: 10px;
+        }
+        
+        .button {
+            background-color: #1C222F;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            background-color: #3e8e41;
+        }
+        
+        .footer {
+            background-color: #1C222F;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="https://ministudy.in/"><img src="https://metrofoods.co.nz/1nobg.png" alt="miniStudy logo" style="width: 50%;" /></a>
+        </div>
+        <div class="content">
+            <h2 class="title">Cheque Paid!</h2>
+            <p>Dear Student,</p>
+            <p>Your cheque of ₹{{amount}} from {{bank}} has been successfully processed.</p>
+            <p>Date: {{date}}</p>
+            <button class="button"><a href="https://api.ministudy.in" style="color: white; text-decoration: none;">View Cheque Details</a></button>
+            <br>
+            <p>Best regards,</p>
+            <p>miniStudy Team</p>
+        </div>
+        <div class="footer">
+            <p><a href="https://ministudy.in/"><img src="https://metrofoods.co.nz/2nobg.png" alt="footer logo" width="25%" /></a></p>
+            <p style="padding:10px;">
+                <span style="float: left;"><a href="mailto:mail@ministudy.in" style="color: white; text-decoration: none;">mail@ministudy.in</a></span>
+                <span style="float: right;"><a href="tel:8511962611" style="color: white; text-decoration: none;">+91 8511962611</a></span>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -34,11 +34,37 @@ def timetable_mail(list_of_receivers):
     msg.send()
 
 def payment_mail(mode, date, amount, student_email):
-    sub = 'Payment Update!'
+    sub = 'Payment Satus!'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = student_email
     htmly = get_template('Email/payment.html')
     d = {'mode':mode, 'amount':amount, 'date':date}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
+def cheque_mail(bank, amount, date, student_email):
+    sub = 'Cheque Satus!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = student_email
+    htmly = get_template('Email/cheque.html')
+    d = {'bank': bank, 'amount':amount, 'date':date}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
+def cheque_update_mail(bank, amount, date, student_email):
+    sub = 'Cheque Withdraw!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = student_email
+    htmly = get_template('Email/cheque_update.html')
+    d = {'bank': bank, 'amount':amount, 'date':date}
     text_content = ''
     html_content = htmly.render(d)
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
