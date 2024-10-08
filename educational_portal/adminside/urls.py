@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', adminview.home, name='Admin Home'),
-    path('webhook/', adminview.telegram_webhook, name='telegram_webhook'),
+    path('webhook/', adminview.telegram_webhook, name='webhook'),
 
 
     path('test_whatsapp/',adminview.send_whatsapp_message_test_marks, name="test_whatsapp"),

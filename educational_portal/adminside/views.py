@@ -89,26 +89,38 @@ def telegram_webhook(request):
             # Save the phone number or take any necessary actions
             print(f"Phone number received: {phone_number} from user ID: {user_id}")
             
-            student_number = get_object_or_404(Students, stud_contact = phone_number)
-            parent_number = get_object_or_404(Students, stud_guardian_number = phone_number)
-
-            if student_number:
-                student_number.stud_telegram_studentchat_id = chat_id
-                student_number.save()
-
-            if parent_number:
-                parent_number.stud_telegram_parentschat_id = chat_id
-                parent_number.save()
+            set_msg = 0
+            count = Students.objects.filter(stud_guardian_number=phone_number).count()
+            stud_count = Students.objects.filter(stud_contact=phone_number).count()
             
-            welcome_message = (
-                "🌟 *Welcome to miniStudy on Telegram!* 🌟\n\n"
-                "Hi there! We're thrilled to have you join our miniStudy community. 🎉\n\n"
-                "To make the experience even better, please share your phone number so we can send you personalized updates.\n"
-                "Click the button below to share your contact details.\n\n"
-                "If you have any questions, feel free to reach out at *mail@ministudy.in* or visit us at [api.ministudy.in](https://api.ministudy.in). We're always happy to assist you.\n\n"
-                "Thank you for choosing miniStudy – let’s make learning an incredible experience together! 🎓"
-            )
-            send_telegram_message(chat_id, welcome_message)
+            if count == 1:
+                parent_number = Students.objects.get(stud_guardian_number = phone_number)
+                print(parent_number)
+                if parent_number:
+                    parent_number.stud_telegram_parentschat_id = chat_id
+                    parent_number.save()
+                    set_msg=1
+
+            elif stud_count == 1:
+                student_number = get_object_or_404(Students, stud_contact = phone_number)
+                print(student_number)    
+                if student_number:
+                    student_number.stud_telegram_studentchat_id = chat_id
+                    student_number.save()
+                    set_msg = 1
+            
+            if set_msg == 1:
+                welcome_message = (
+                    "🌟 *Welcome to miniStudy on Telegram!* 🌟\n\n"
+                    "Hi there! We're thrilled to have you join our miniStudy community. 🎉\n\n"
+                    "To make the experience even better, please share your phone number so we can send you personalized updates.\n"
+                    "Click the button below to share your contact details.\n\n"
+                    "If you have any questions, feel free to reach out at *mail@ministudy.in* or visit us at [api.ministudy.in](https://api.ministudy.in). We're always happy to assist you.\n\n"
+                    "Thank you for choosing miniStudy – let’s make learning an incredible experience together! 🎓"
+                )
+                send_telegram_message(chat_id, welcome_message)
+            else:
+                send_telegram_message(chat_id, 'Verification Failed, Please check that the phone number on your miniStudy account matches your Telegram number. Both should be the same. Try again!')    
         else:
             pass    
         return JsonResponse({'status': 'ok'})
