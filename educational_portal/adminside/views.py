@@ -7,7 +7,7 @@ from django.conf import settings
 import math
 import statistics
 import random
-from django.http import Http404,JsonResponse
+from django.http import Http404,JsonResponse,HttpResponse
 from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
 from django.core.files.storage import FileSystemStorage
 from adminside.send_mail import *
@@ -26,6 +26,96 @@ from django.core.paginator import Paginator
 from django.views.decorators.http import require_GET
 import requests
 from django.views.decorators.csrf import csrf_exempt
+import json
+
+
+# curl -X POST "https://api.telegram.org/bot7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U/setWebhook?url=https://aadd-2401-4900-5774-145c-80b4-b65f-5a8e-c0f8.ngrok-free.app/adminside/webhook/"
+
+BOT_TOKEN = '7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U' 
+
+def texting_telegram(request):
+    send_telegram_message('6088267823', "HELLO WOLRD HOW ARE YOU WE ARE FROM MINISTUDY, HOW CAN WE HELP YOU TO SOLVE DOUBTS..?")
+    return HttpResponse("DOne")
+
+
+
+# Function to request user's phone number
+def request_phone_number(chat_id):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    # Create a keyboard button that requests contact
+    keyboard = {
+        "keyboard": [
+            [{"text": "Share your contact", "request_contact": True}]
+        ],
+        "one_time_keyboard": True,
+        "resize_keyboard": True
+    }
+
+    # Message data including the custom keyboard
+    data = {
+        "chat_id": chat_id,
+        "text": "For Getting Updates, Please share your phone number by clicking the button below:",
+        "reply_markup": json.dumps(keyboard)
+    }
+
+    # Send the message
+    requests.post(url, json=data)
+
+# Function to send messages
+def send_telegram_message(chat_id, text):
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+    data = {
+        'chat_id': chat_id,
+        'text': text,
+        'parse_mode': 'Markdown'
+    }
+    requests.post(url, json=data)
+
+@csrf_exempt
+def telegram_webhook(request):
+    if request.method == 'POST':
+        update = json.loads(request.body)  # Parse incoming JSON
+        message = update.get('message', {})
+        chat_id = message['chat']['id']  # Get the user's chat ID
+        text = message.get('text', '')  # Get the text sent by the user
+
+        # Handle the '/start' command
+        if text.lower() == '/start':
+            request_phone_number(chat_id)
+        elif 'contact' in message:
+            phone_number = message['contact']['phone_number']
+            user_id = message['contact']['user_id']
+            # Save the phone number or take any necessary actions
+            print(f"Phone number received: {phone_number} from user ID: {user_id}")
+            
+            welcome_message = (
+                "🌟 *Welcome to miniStudy on Telegram!* 🌟\n\n"
+                "Hi there! We're thrilled to have you join our miniStudy community. 🎉\n\n"
+                "To make the experience even better, please share your phone number so we can send you personalized updates.\n"
+                "Click the button below to share your contact details.\n\n"
+                "If you have any questions, feel free to reach out at *mail@ministudy.in* or visit us at [api.ministudy.in](https://api.ministudy.in). We're always happy to assist you.\n\n"
+                "Thank you for choosing miniStudy – let’s make learning an incredible experience together! 🎓"
+            )
+            send_telegram_message(chat_id, welcome_message)
+        else:
+            pass    
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
@@ -315,39 +405,39 @@ def home(request):
 
     if request.GET.get('get_std'):
         get_std = request.GET.get('get_std')
-
-        get_std = Std.objects.get(std_id = get_std)
-        students_li = Students.objects.filter(stud_std = get_std).values('stud_id','stud_name','stud_lastname')
-        overall_attendance_li = []
-        for x in students_li:
-            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
-            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
-            if total_attendence_studentwise > 0:
-                overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
-            else:
-                overall_attendence_studentwise = 0
-            
-
-            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
-            
-            
-            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
-            
-
-            if total_marks == 0:
-                overall_result = 0
-            else:
-                overall_result = round((obtained_marks/total_marks)*100,2)
-
-            overall_attendance_li.append({'stud_name':x['stud_name'], 'stud_lastname':x['stud_lastname'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
-
-        overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
-        overall_attendance_li = overall_attendance_li[:5]   
-        context.update({'overall_attendance_li':overall_attendance_li})     
     else:
-        get_std = 0
-        msg = "Please! Select standard for data"
-        context.update({'msg':msg})
+        get_std = 13
+        
+
+    get_std = Std.objects.get(std_id = get_std)
+    students_li = Students.objects.filter(stud_std = get_std).values('stud_id','stud_name','stud_lastname')
+    overall_attendance_li = []
+    for x in students_li:
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
+        if total_attendence_studentwise > 0:
+            overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+        else:
+            overall_attendence_studentwise = 0
+        
+
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        
+        
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        
+
+        if total_marks == 0:
+            overall_result = 0
+        else:
+            overall_result = round((obtained_marks/total_marks)*100,2)
+
+        overall_attendance_li.append({'stud_name':x['stud_name'], 'stud_lastname':x['stud_lastname'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
+    overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+    overall_attendance_li = overall_attendance_li[:5]   
+    context.update({'overall_attendance_li':overall_attendance_li})     
+    
 
     context.update({
         'title' : 'Home',

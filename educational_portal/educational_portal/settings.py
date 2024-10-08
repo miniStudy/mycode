@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'website',
     'api',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -169,3 +170,8 @@ SUMMERNOTE_CONFIG = {
         # 'height': '300px',  # Set the height of the Summernote editor
     },
 }
+
+
+CRONJOBS = [
+    ('*/5 * * * *', 'adminside.cron.my_scheduled_job')
+]
