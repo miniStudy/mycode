@@ -59,6 +59,19 @@ def cheque_mail(bank, amount, date, student_email):
     msg.send()
 
 
+def parent_cheque_mail(bank, amount, date, parent_email):
+    sub = 'Cheque Satus!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = parent_email
+    htmly = get_template('Email/cheque.html')
+    d = {'bank': bank, 'amount':amount, 'date':date}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
 def cheque_update_mail(bank, amount, date, student_email):
     sub = 'Cheque Withdraw!'
     email_from = 'miniStudy <mail@ministudy.in>'

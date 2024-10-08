@@ -2243,7 +2243,9 @@ def add_cheques_admin(request):
                 form.save()
                 student_name = form.cleaned_data['cheque_stud_id']
                 student_email = [student_name.stud_email]
+                parent_email = [student_name.stud_gaurdian_email]
                 date = datetime.today()
+                parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                 cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
                 return redirect('fees_collection_admin')
             else:
@@ -2264,7 +2266,9 @@ def add_cheques_admin(request):
                     form.save()
                     student_name = form.cleaned_data['cheque_stud_id']
                     student_email = [student_name.stud_email]
+                    parent_email = [student_name.stud_gaurdian_email]
                     date = datetime.today()
+                    parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                     cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
 
                     return redirect('fees_collection_admin')
