@@ -160,6 +160,8 @@ class Students(models.Model):
     stud_pack = models.ForeignKey(Packs, on_delete = models.CASCADE, related_name='packages')
     stud_pass = models.TextField(null=True, blank=True,default='12345678')
     stud_otp = models.CharField(blank=True,null=True,max_length=10)
+    stud_telegram_studentchat_id = models.CharField(blank=True,null=True,max_length=20)
+    stud_telegram_parentschat_id = models.CharField(blank=True,null=True,max_length=20)
 
     def __str__(self):
         return f"{self.stud_name} {self.stud_lastname}"

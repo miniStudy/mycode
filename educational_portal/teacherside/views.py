@@ -700,13 +700,23 @@ def teacher_save_offline_marks(request):
         date = request.POST.get('tau_date')
         test_data = Test_questions_answer.objects.filter(tq_name__test_id = test_id)
         test_id = Chepterwise_test.objects.get(test_id=test_id)
+<<<<<<< HEAD
         
 
+=======
+        selected_items = request.POST.getlist('marks')
+        student_all = Students.objects.all()
+        if selected_items:
+          selected_ids = [int(id) for id in selected_items]
+>>>>>>> f1f66bc03c1d2850a3e68c64679933b3e6a82357
         sum = 0
         count = 0
         for x in test_data:
             sum = sum + x.tq_weightage
             count += 1
+
+        student_li = []
+        student_marks_list = []
 
         for student_id, mark in zip(student_ids, marks):
             student = Students.objects.get(pk=student_id)
@@ -720,6 +730,7 @@ def teacher_save_offline_marks(request):
                 tau_obtained_marks=mark,
                 tau_date = date,
             )
+<<<<<<< HEAD
             test_attempt.save()
 
         email_ids = []
@@ -744,6 +755,9 @@ def teacher_save_offline_marks(request):
         else:
             print("No test found for the given test ID.")
 
+=======
+            test_attempt.save()        
+>>>>>>> f1f66bc03c1d2850a3e68c64679933b3e6a82357
     messages.success(request, 'Marks have been successfully saved.')
     return redirect('teacher_test')
 

@@ -21,6 +21,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', adminview.home, name='Admin Home'),
+    path('webhook/', adminview.telegram_webhook, name='telegram_webhook'),
+
+
     path('test_whatsapp/',adminview.send_whatsapp_message_test_marks, name="test_whatsapp"),
     path('send_mail/', adminview.mail_send, name='send_mail'),
     path('send_report_card/', adminview.send_report_card, name='send_report_card'),

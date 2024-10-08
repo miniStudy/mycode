@@ -194,7 +194,18 @@
       labels: {
         colors: '#FFFFFF' // White color for legend labels
       }
-    }
+    },
+    responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 400
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
   };
 
   var students_chart = new ApexCharts(document.querySelector("#students_chart"), options);
@@ -202,13 +213,12 @@
 </script>
 
 
-
 <script>
   var options = {
     series: {{ piechart_data|safe }},
     chart: {
       width: 380,
-      type: 'pie',
+      type: 'donut',  // Changed from 'pie' to 'donut'
       background: 'transparent',
     },
     labels: {{ piechart_category|safe }},
@@ -226,7 +236,7 @@
       breakpoint: 480,
       options: {
         chart: {
-          width: 200
+          width: 300
         },
         legend: {
           position: 'bottom',

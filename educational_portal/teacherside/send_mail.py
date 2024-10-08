@@ -35,7 +35,7 @@ def attendance_student_absent_mail(status,date,list_of_receivers):
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = list_of_receivers
     # send_mail(sub,mess,email_from,recp_list)
-    htmly = get_template('Email/attendance_student.html')
+    htmly = get_template('teacherpanel/Email/attendance_student.html')
     d = {'status': status,'date':date,'user':"Student",'to':"Your"}
     text_content = ''
     html_content = htmly.render(d)
@@ -48,7 +48,7 @@ def attendance_parent_absent_mail(status,date,list_of_receivers, num):
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = list_of_receivers
     # send_mail(sub,mess,email_from,recp_list)
-    htmly = get_template('Email/attendance_student.html')
+    htmly = get_template('teacherpanel/Email/attendance_student.html')
     d = {'status': status,'date':date,'user':"Parents",'to':"Your Child's"}
     text_content = ''
     html_content = htmly.render(d)
@@ -63,7 +63,7 @@ def timetable_mail(list_of_receivers):
     msg = 'Your time table has been updated!'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = list_of_receivers
-    htmly = get_template('Email/timetable.html')
+    htmly = get_template('teacherpanel/Email/timetable.html')
     d = {'title':title, 'msg':msg}
     text_content = ''
     html_content = htmly.render(d)
@@ -71,6 +71,7 @@ def timetable_mail(list_of_receivers):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
+<<<<<<< HEAD
 # def marks_mail(marks, email_ids):
 #     sub = 'Test Marks Result'
 #     email_from = 'miniStudy <mail@ministudy.in>'
@@ -124,3 +125,5 @@ def marks_mail(marks, email_ids, test_name, total_marks, test_date):
       
         messages.append(msg)
     connection.send_messages(messages)
+=======
+>>>>>>> f1f66bc03c1d2850a3e68c64679933b3e6a82357
