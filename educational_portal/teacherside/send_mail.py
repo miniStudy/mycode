@@ -71,7 +71,6 @@ def timetable_mail(list_of_receivers):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
-<<<<<<< HEAD
 # def marks_mail(marks, email_ids):
 #     sub = 'Test Marks Result'
 #     email_from = 'miniStudy <mail@ministudy.in>'
@@ -125,5 +124,4 @@ def marks_mail(marks, email_ids, test_name, total_marks, test_date):
       
         messages.append(msg)
     connection.send_messages(messages)
-=======
->>>>>>> f1f66bc03c1d2850a3e68c64679933b3e6a82357
+
