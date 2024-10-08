@@ -1,7 +1,9 @@
 {% extends 'master.html' %}
  
 {% block contentsection %}
-  <div class="mb-4"><h4>Add Cheques</h4></div> 
+  <div class="mb-4"><h4>Add Cheques</h4></div>
+  
+  {% include "message_show.html" %}
    
   <div class="erroes">
     {% if errors %}

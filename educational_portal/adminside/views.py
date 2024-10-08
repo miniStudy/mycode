@@ -8,6 +8,7 @@ import math
 import statistics
 import random
 from django.http import Http404,JsonResponse,HttpResponse
+from datetime import datetime
 from django.db.models import Count,Sum, F, Case, When, Value, IntegerField
 from django.core.files.storage import FileSystemStorage
 from adminside.send_mail import *
@@ -967,7 +968,6 @@ def insert_update_faculties(request):
     context = {
         'title': 'Faculties',
     }
-
     # Update Logic
     if request.GET.get('pk'):
         if request.method == 'POST':
@@ -995,7 +995,13 @@ def insert_update_faculties(request):
                 if check >= 1:
                     messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
                 else:
-                    form.save()
+                    instance = form.save()
+
+                    fac_password = instance.fac_password
+                    fac_name = form.cleaned_data['fac_name']
+                    fac_email = [form.cleaned_data['fac_email']]
+                    faculty_email(fac_name, fac_email, fac_password)
+
                     return redirect('admin_faculties')
             else:
                 filled_data = form.data
@@ -2109,7 +2115,6 @@ def adminside_report_card(request):
         
         # ===================SubjectsWise Attendance============================
         subjects_li = Subject.objects.filter(sub_std__std_id = student_std, sub_id__in = pack_subject_list).values('sub_name').distinct()
-        print(subjects_li)
         overall_attendance_subwise = []
         for x in subjects_li:
             x = x['sub_name']
@@ -2329,10 +2334,14 @@ def add_cheques_admin(request):
                     fees_mode = 'CHECK'
                     cheque_date = form.cleaned_data['cheque_date']
                     abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date)
-                    print(abcd)
-                    
 
                 form.save()
+                student_name = form.cleaned_data['cheque_stud_id']
+                student_email = [student_name.stud_email]
+                parent_email = [student_name.stud_gaurdian_email]
+                date = datetime.today()
+                parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
+                cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2350,6 +2359,13 @@ def add_cheques_admin(request):
                     messages.error(request,'{} is already Exists'.format(form.data['cheque_number']))
                 else:    
                     form.save()
+                    student_name = form.cleaned_data['cheque_stud_id']
+                    student_email = [student_name.stud_email]
+                    parent_email = [student_name.stud_gaurdian_email]
+                    date = datetime.today()
+                    parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
+                    cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
+
                     return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2397,6 +2413,11 @@ def add_fees_collection_admin(request):
             form = fees_collection_form(request.POST)
             if form.is_valid():   
                 form.save()
+                student_name = form.cleaned_data['fees_stud_id']
+                student_email = [student_name.stud_email]
+                date = datetime.today()
+                payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
+               
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2407,7 +2428,6 @@ def add_fees_collection_admin(request):
 def admin_fees_collection_delete(request):
     if request.GET.get('delete_payment'):
         del_id = request.GET['delete_payment']
-        print(del_id)
         try:
             fees_data = Fees_Collection.objects.get(fees_id=del_id)
             fees_data.delete()

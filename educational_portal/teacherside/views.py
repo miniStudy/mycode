@@ -290,7 +290,7 @@ def teacher_attendance(request):
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
-     data = Attendance.objects.all().values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+     data = Attendance.objects.all().values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
      data = paginatoorrr(data,request)
      std_data = Std.objects.filter(std_id__in = std_access_list)   
      batch_data = Batches.objects.filter(batch_id__in = batch_access_list)
@@ -332,7 +332,7 @@ def teacher_attendance(request):
           if get_std == 0:
                pass
           else:    
-               data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+               data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
                data = paginatoorrr(data,request)
                batch_data = batch_data.filter(batch_std__std_id = get_std)
                stud_data = stud_data.filter(stud_std__std_id = get_std)
@@ -345,7 +345,7 @@ def teacher_attendance(request):
         if get_batch == 0:
             pass
         else:
-            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
             data = paginatoorrr(data,request)
             stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
             get_batch = Batches.objects.get(batch_id = get_batch)
@@ -394,7 +394,7 @@ def teacher_attendance(request):
             Q(atten_present__icontains=searchhh) |
             Q(atten_student__stud_name__icontains=searchhh) |
             Q(atten_student__stud_lastname__icontains=searchhh) |
-            Q(atten_date__icontains=searchhh)).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            Q(atten_date__icontains=searchhh)).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh})  
 
@@ -448,9 +448,9 @@ def insert_update_attendance(request):
           'batch_data':batch_data,
           'students_data':students_data,
           'timetable_data':timetable_data,
-          'title': 'Insert Attendence',
-     
-          }
+          'title': 'Insert Attendence',    
+        }
+
      else:
         messages.error(request, "Please! Select Standard And Batch")
         return redirect('teacher_attendance')  
@@ -468,21 +468,33 @@ def handle_attendance(request):
         if selected_items:
           selected_ids = [int(id) for id in selected_items]
         
-        students_for_mail = Students.objects.filter(stud_id__in = selected_ids)
         present_list = []
         absent_list = []
+        parent_present_li = []
+        parent_absent_li = []
         for i in students_all:
             if i.stud_id in selected_ids:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1)
                 present_list.append(i.stud_email)
+                parent_present_li.append(i.stud_guardian_email)
+
             else:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0)
                 absent_list.append(i.stud_email)
+                parent_absent_li.append(i.stud_guardian_email)
 
         date = datetime.now()
+        num = 1
         attendance_student_present_mail('present', date, present_list)
+        attendance_student_absent_mail('Absent', date, absent_list)
+    
+        attendance_parent_present_mail('present', date, parent_present_li)
+        attendance_parent_absent_mail('Absent', date, parent_absent_li, num)
+        attendance_student_present_mail('present', date, present_list,1)
+        attendance_student_absent_mail('Absent', date, absent_list,1)
         messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
+
 
 @teacher_login_required
 def edit_handle_attendance(request):
@@ -687,11 +699,18 @@ def teacher_save_offline_marks(request):
         date = request.POST.get('tau_date')
         test_data = Test_questions_answer.objects.filter(tq_name__test_id = test_id)
         test_id = Chepterwise_test.objects.get(test_id=test_id)
+        selected_items = request.POST.getlist('marks')
+        student_all = Students.objects.all()
+        if selected_items:
+          selected_ids = [int(id) for id in selected_items]
         sum = 0
         count = 0
         for x in test_data:
             sum = sum + x.tq_weightage
             count += 1
+
+        student_li = []
+        student_marks_list = []
 
         for student_id, mark in zip(student_ids, marks):
             student = Students.objects.get(pk=student_id)
@@ -705,7 +724,7 @@ def teacher_save_offline_marks(request):
                 tau_obtained_marks=mark,
                 tau_date = date,
             )
-            test_attempt.save()
+            test_attempt.save()        
     messages.success(request, 'Marks have been successfully saved.')
     return redirect('teacher_test')
 

@@ -32,3 +32,67 @@ def timetable_mail(list_of_receivers):
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+def payment_mail(mode, date, amount, student_email):
+    sub = 'Payment Satus!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = student_email
+    htmly = get_template('Email/payment.html')
+    d = {'mode':mode, 'amount':amount, 'date':date}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
+def cheque_mail(bank, amount, date, student_email):
+    sub = 'Cheque Satus!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = student_email
+    htmly = get_template('Email/cheque.html')
+    d = {'bank': bank, 'amount':amount, 'date':date}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
+def parent_cheque_mail(bank, amount, date, parent_email):
+    sub = 'Cheque Satus!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = parent_email
+    htmly = get_template('Email/cheque.html')
+    d = {'bank': bank, 'amount':amount, 'date':date}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
+def cheque_update_mail(bank, amount, date, student_email):
+    sub = 'Cheque Withdraw!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = student_email
+    htmly = get_template('Email/cheque_update.html')
+    d = {'bank': bank, 'amount':amount, 'date':date}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
+def faculty_email(fac_name, fac_email, fac_password):
+    sub = 'Login Details!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = fac_email
+    htmly = get_template('Email/faculty.html')
+    d = {'fac_name':fac_name, 'fac_email':fac_email[0], 'fac_password':fac_password}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
