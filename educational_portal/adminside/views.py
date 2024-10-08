@@ -89,6 +89,12 @@ def telegram_webhook(request):
             # Save the phone number or take any necessary actions
             print(f"Phone number received: {phone_number} from user ID: {user_id}")
             
+            student_number = get_object_or_404(Students, stud_contact = phone_number)
+            if student_number:
+                student_number.stud_telegram_studentchat_id = chat_id
+                student_number.save()
+
+            
             welcome_message = (
                 "🌟 *Welcome to miniStudy on Telegram!* 🌟\n\n"
                 "Hi there! We're thrilled to have you join our miniStudy community. 🎉\n\n"
