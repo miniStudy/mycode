@@ -688,6 +688,7 @@ def teacher_insert_offline_marks(request):
         batch_id = Batches.objects.get(batch_id=batch_id)
         context.update({'students_data':students_data, 'batch_id':batch_id})
     
+    
     return render(request, 'teacherpanel/offline_marks.html',context)
 
 @teacher_login_required
@@ -699,18 +700,13 @@ def teacher_save_offline_marks(request):
         date = request.POST.get('tau_date')
         test_data = Test_questions_answer.objects.filter(tq_name__test_id = test_id)
         test_id = Chepterwise_test.objects.get(test_id=test_id)
-        selected_items = request.POST.getlist('marks')
-        student_all = Students.objects.all()
-        if selected_items:
-          selected_ids = [int(id) for id in selected_items]
+
+
         sum = 0
         count = 0
         for x in test_data:
             sum = sum + x.tq_weightage
             count += 1
-
-        student_li = []
-        student_marks_list = []
 
         for student_id, mark in zip(student_ids, marks):
             student = Students.objects.get(pk=student_id)
@@ -724,6 +720,31 @@ def teacher_save_offline_marks(request):
                 tau_obtained_marks=mark,
                 tau_date = date,
             )
+
+            test_attempt.save()
+
+        email_ids = []
+        student_marks = []
+
+        if not date:
+            date = datetime.now().date() 
+            
+        test = Test_attempted_users.objects.filter(tau_test_id__test_id=test_id.test_id).first()
+
+        if test:
+            test_name = test.tau_test_id.test_name
+            total_marks = test.tau_total_marks
+            
+
+            for i, stud_id in enumerate(student_ids):
+                student_email = Students.objects.get(stud_id=stud_id)
+                email_ids.append(student_email.stud_email)
+                student_marks.append(marks[i])
+
+            marks_mail(student_marks, email_ids, test_name, total_marks, date)
+        else:
+            print("No test found for the given test ID.")
+
             test_attempt.save()        
     messages.success(request, 'Marks have been successfully saved.')
     return redirect('teacher_test')
