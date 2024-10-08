@@ -10,7 +10,11 @@
 
 {% include "message_show.html" %}
 
+{% if cusrrent_student.stud_telegram_studentchat_id %}
 
+{% else %}
+      Dont have telegram chatid
+{% endif %}
 
 <div class="row">
   <div class="col-md-3 mb-4">
