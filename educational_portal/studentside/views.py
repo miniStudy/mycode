@@ -26,8 +26,10 @@ from django.utils.timezone import now
 @student_login_required
 def student_home(request):
     std_id = request.session['stud_std']
+    stud_id = request.session['stud_id']
     today = datetime.today()
-
+    cusrrent_student = Students.objects.get(stud_id=stud_id)
+    
     day = today - timedelta(days=7)
     last_7_days=(day.strftime('%Y-%m-%d'))
 
@@ -96,6 +98,7 @@ def student_home(request):
         'test_result_list':test_result_list,
         'test_name_list': test_name_list,
         'test_counts':test_counts,
+        'cusrrent_student':cusrrent_student,
     }
     return render(request, 'studentpanel/index.html',context)
 
