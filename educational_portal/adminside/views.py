@@ -683,14 +683,16 @@ def insert_update_announcements(request):
         # ===================insert_logic===========================
         form = announcement_form(request.POST)
         if form.is_valid():
-            form.save()
-            # ---------------------sendmail Logic===================================
             students_email_list = []
             for x in students_for_mail:
-                students_email_list.append(x.stud_email)      
-                send_telegram_message(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'])
+                students_email_list.append(x.stud_email)  
+                if x.stud_telegram_studentchat_id:    
+                    send_telegram_message(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'])
             announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
 
+            form.save()
+            # ---------------------sendmail Logic===================================
+            
             
             return redirect('admin_announcements')
         else:
