@@ -1,7 +1,15 @@
 from django.core.mail import send_mail
+# from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
+import requests
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import *
+
+
+
 
 def announcement_mail(title,msg,list_of_receivers):
     print(list_of_receivers)
@@ -96,3 +104,88 @@ def faculty_email(fac_name, fac_email, fac_password):
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+# -----------------------------------------Telegram------------------------------------------------------------------------------
+
+# Function to send messages
+# curl -X POST "https://api.telegram.org/bot7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U/setWebhook?url=https://aadd-2401-4900-5774-145c-80b4-b65f-5a8e-c0f8.ngrok-free.app/adminside/webhook/"
+
+BOT_TOKEN = '7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U' 
+
+
+# Function to request user's phone number
+def request_phone_number(chat_id):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    # Create a keyboard button that requests contact
+    keyboard = {
+        "keyboard": [
+            [{"text": "Share your contact", "request_contact": True}]
+        ],
+        "one_time_keyboard": True,
+        "resize_keyboard": True
+    }
+
+    # Message data including the custom keyboard
+    data = {
+        "chat_id": chat_id,
+        "text": "For Getting Updates, Please share your phone number by clicking the button below:",
+        "reply_markup": json.dumps(keyboard)
+    }
+
+    # Send the message
+    requests.post(url, json=data)
+
+def send_telegram_message(chat_id, text):
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+    data = {
+        'chat_id': chat_id,
+        'text': text,
+        'parse_mode': 'Markdown'
+    }
+    requests.post(url, json=data)
+
+@csrf_exempt
+def telegram_webhook(request):
+    if request.method == 'POST':
+        update = json.loads(request.body)  # Parse incoming JSON
+        message = update.get('message', {})
+        chat_id = message['chat']['id']  # Get the user's chat ID
+        text = message.get('text', '')  # Get the text sent by the user
+
+        # Handle the '/start' command
+        if text.lower() == '/start':
+            request_phone_number(chat_id)
+        elif 'contact' in message:
+            phone_number = message['contact']['phone_number']
+            user_id = message['contact']['user_id']
+            # Save the phone number or take any necessary actions
+            print(f"Phone number received: {phone_number} from user ID: {user_id}")
+            
+            student_number = get_object_or_404(Students, stud_contact = phone_number)
+            parent_number = get_object_or_404(Students, stud_guardian_number = phone_number)
+
+            if student_number:
+                student_number.stud_telegram_studentchat_id = chat_id
+                student_number.save()
+
+            if parent_number:
+                parent_number.stud_telegram_parentschat_id = chat_id
+                parent_number.save()
+            
+            welcome_message = (
+                "🌟 *Welcome to miniStudy on Telegram!* 🌟\n\n"
+                "Hi there! We're thrilled to have you join our miniStudy community. 🎉\n\n"
+                "To make the experience even better, please share your phone number so we can send you personalized updates.\n"
+                "Click the button below to share your contact details.\n\n"
+                "If you have any questions, feel free to reach out at *mail@ministudy.in* or visit us at [api.ministudy.in](https://api.ministudy.in). We're always happy to assist you.\n\n"
+                "Thank you for choosing miniStudy – let’s make learning an incredible experience together! 🎓"
+            )
+            send_telegram_message(chat_id, welcome_message)
+        else:
+            pass    
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+def telegram_announcement_adminside(student_chatid, announcement_mesage):
+    send_telegram_message(student_chatid, announcement_mesage)
