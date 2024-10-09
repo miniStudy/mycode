@@ -29,6 +29,65 @@ from django.core.mail import send_mail
 from adminside.send_mail import *
 
 
+# curl -X POST "https://api.telegram.org/bot7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U/setWebhook?url=https://aadd-2401-4900-5774-145c-80b4-b65f-5a8e-c0f8.ngrok-free.app/adminside/webhook/"
+
+BOT_TOKEN = '7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U' 
+logo_image_url = 'https://metrofoods.co.nz/logoo.png'
+
+
+def texting_telegram(request):
+    send_telegram_message('6088267823', "HELLO WOLRD HOW ARE YOU WE ARE FROM MINISTUDY, HOW CAN WE HELP YOU TO SOLVE DOUBTS..?")
+    return HttpResponse("DOne")
+
+
+
+# Function to request user's phone number
+def request_phone_number(chat_id):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    # Create a keyboard button that requests contact
+    keyboard = {
+        "keyboard": [
+            [{"text": "Share your contact", "request_contact": True}]
+        ],
+        "one_time_keyboard": True,
+        "resize_keyboard": True
+    }
+
+    # Message data including the custom keyboard
+    data = {
+        "chat_id": chat_id,
+        "text": "For Getting Updates, Please share your phone number by clicking the button below:",
+        "reply_markup": json.dumps(keyboard)
+    }
+
+    # Send the message
+    requests.post(url, json=data)
+
+# Function to send messages
+def send_telegram_message(chat_id, text):
+    title = "<b>Wishing You a Bright and Joyous Diwali!</b>"
+    message = (
+        f"{title}\n\n"
+        "As the festival of lights illuminates our lives, may your home be filled with joy, prosperity, and happiness. "
+        "Let this Diwali bring new beginnings, cherished memories, and endless opportunities.\n\n"
+        "May the lights of Diwali guide you on the path to success and may your days be filled with peace and joy.\n\n"
+        "🪔 Happy Diwali to you and your loved ones! 🪔"
+    )
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
+    data = {
+        'chat_id': chat_id,
+        'photo': logo_image_url,
+        'caption': message, 
+        'parse_mode': 'Markdown'
+    }
+    response = requests.post(url, json=data)
+
+   
+
+
+
+
+
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
     # User details
@@ -563,15 +622,12 @@ def insert_update_announcements(request):
         # ===================insert_logic===========================
         form = announcement_form(request.POST)
         if form.is_valid():
-            form.save()
-            # ---------------------sendmail Logic===================================
             students_email_list = []
             for x in students_for_mail:
                 students_email_list.append(x.stud_email)      
                 telegram_announcement_adminside(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'])
             announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
-
-            
+            form.save()            
             return redirect('admin_announcements')
         else:
             filled_data = form.data
