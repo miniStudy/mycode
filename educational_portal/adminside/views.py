@@ -33,6 +33,8 @@ import json
 # curl -X POST "https://api.telegram.org/bot7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U/setWebhook?url=https://aadd-2401-4900-5774-145c-80b4-b65f-5a8e-c0f8.ngrok-free.app/adminside/webhook/"
 
 BOT_TOKEN = '7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U' 
+logo_image_url = 'https://metrofoods.co.nz/logoo.png'
+
 
 def texting_telegram(request):
     send_telegram_message('6088267823', "HELLO WOLRD HOW ARE YOU WE ARE FROM MINISTUDY, HOW CAN WE HELP YOU TO SOLVE DOUBTS..?")
@@ -64,13 +66,25 @@ def request_phone_number(chat_id):
 
 # Function to send messages
 def send_telegram_message(chat_id, text):
-    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+    title = "<b>Wishing You a Bright and Joyous Diwali!</b>"
+    message = (
+        f"{title}\n\n"
+        "As the festival of lights illuminates our lives, may your home be filled with joy, prosperity, and happiness. "
+        "Let this Diwali bring new beginnings, cherished memories, and endless opportunities.\n\n"
+        "May the lights of Diwali guide you on the path to success and may your days be filled with peace and joy.\n\n"
+        "🪔 Happy Diwali to you and your loved ones! 🪔"
+    )
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
     data = {
         'chat_id': chat_id,
-        'text': text,
+        'photo': logo_image_url,
+        'caption': message, 
         'parse_mode': 'Markdown'
     }
-    requests.post(url, json=data)
+    response = requests.post(url, json=data)
+
+   
+
 
 @csrf_exempt
 def telegram_webhook(request):
