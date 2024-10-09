@@ -566,8 +566,9 @@ def insert_update_announcements(request):
         if form.is_valid():
             students_email_list = []
             for x in students_for_mail:
-                students_email_list.append(x.stud_email)      
-                telegram_announcement_adminside(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'])
+                students_email_list.append(x.stud_email)  
+                if x.stud_telegram_studentchat_id:    
+                    telegram_announcement_adminside(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
             announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
             form.save()            
             return redirect('admin_announcements')

@@ -1,5 +1,12 @@
 from django.views.decorators.csrf import csrf_exempt
+import requests
+import json
+from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives
+from django.http import Http404, JsonResponse, HttpResponse
+from adminside.models import *
 
+logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 
 def announcement_mail(title,msg,list_of_receivers):
     print(list_of_receivers)
@@ -125,15 +132,10 @@ def request_phone_number(chat_id):
     requests.post(url, json=data)
 
 # Function to send messages
-def send_telegram_message(chat_id, text):
-    title = "<b>Wishing You a Bright and Joyous Diwali!</b>"
+def send_telegram_message(chat_id, text, title=''):
+    
     message = (
-        f"{title}\n\n"
-        "As the festival of lights illuminates our lives, may your home be filled with joy, prosperity, and happiness. "
-        "Let this Diwali bring new beginnings, cherished memories, and endless opportunities.\n\n"
-        "May the lights of Diwali guide you on the path to success and may your days be filled with peace and joy.\n\n"
-        "🪔 Happy Diwali to you and your loved ones! 🪔"
-    )
+        f"{title}\n\n{text}")
     url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
     data = {
         'chat_id': chat_id,
@@ -199,5 +201,5 @@ def telegram_webhook(request):
     return JsonResponse({'status': 'error'}, status=400)
 
 
-def telegram_announcement_adminside(student_chatid, announcement_mesage):
-    send_telegram_message(student_chatid, announcement_mesage)
+def telegram_announcement_adminside(student_chatid, announcement_mesage,announcement_title):
+    send_telegram_message(student_chatid, announcement_mesage,announcement_title)
