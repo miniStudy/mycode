@@ -6,6 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.http import Http404, JsonResponse, HttpResponse
 from adminside.models import *
 
+# changes done
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 
 def announcement_mail(title,msg,list_of_receivers):
