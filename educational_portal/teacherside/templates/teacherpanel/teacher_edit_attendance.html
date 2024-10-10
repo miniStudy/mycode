@@ -21,6 +21,8 @@
             {% csrf_token %}
             <input type="hidden" name="get_hour" value="{{get_hour}}">
             <input type="hidden" name="get_date" value="{{get_date}}">
+            <input type="hidden" name="get_std" value="{{std_data.std_id}}">
+            <input type="hidden" name="get_batch" value="{{batch_data.batch_id}}">
             <label for="atten_timetable">Days</label>
             <select class="form-select" name="atten_timetable" id="atten_timetable" required>
                 <option value="">----</option>
