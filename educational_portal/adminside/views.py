@@ -402,7 +402,6 @@ def insert_update_boards(request):
             return redirect('boards')
         else:
             filled_data = form.data
-            print(filled_data)
             return render(request, 'insert_update/boards.html', {'errors': form.errors,'filled_data':filled_data})
     return render(request, 'insert_update/boards.html',context)
 
@@ -466,7 +465,6 @@ def insert_update_stds(request):
             return redirect('stds')
         else:
             filled_data = form.data
-            print(filled_data)
             return render(request, 'insert_update/stds.html', {'errors': form.errors,'filled_data':filled_data})
     return render(request, 'insert_update/stds.html',context)
 
@@ -563,14 +561,15 @@ def insert_update_announcements(request):
 
         # ===================insert_logic===========================
         form = announcement_form(request.POST)
-        if form.is_valid():
-            students_email_list = []
+        if form.is_valid():            
+            form.save()
+            students_email_list = []  
             for x in students_for_mail:
                 students_email_list.append(x.stud_email)  
                 if x.stud_telegram_studentchat_id:    
-                    telegram_announcement_adminside(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
-            announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
-            form.save()            
+                    announcement_telegram_message_student(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
+                    announcement_telegram_message_parent(x.stud_telegram_parentschat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
+            announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)         
             return redirect('admin_announcements')
         else:
             filled_data = form.data
@@ -595,10 +594,6 @@ def delete_announcements(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('admin_announcements')
-
-
-
-
 
 
 
@@ -974,30 +969,45 @@ def insert_update_timetable(request):
         'DaysChoice': Timetable.DaysChoice,
     }
 
-    print(Timetable.DaysChoice)
-
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id=get_std)
         subject_data = Subject.objects.filter(sub_std__std_id = get_std)
         batch_data = batch_data.filter(batch_std__std_id=get_std)
         tt_students_for_mail = tt_students_for_mail.filter(stud_std=get_std)
-        context.update({'get_std': get_std, 'std_data': std_data, 'batch_data': batch_data, 'subject_data':subject_data}) 
+        context.update({'get_std': get_std, 'std_data': std_data, 'batch_data': batch_data, 'subject_data':subject_data, 'tt_students_for_mail':tt_students_for_mail})
+        
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         batch_data = batch_data.filter(batch_id=get_batch)
         tt_students_for_mail = tt_students_for_mail.filter(stud_batch=get_batch)
-        context.update({'get_batch': get_batch, 'batch_data': batch_data})
+        context.update({'get_batch': get_batch, 'batch_data': batch_data, 'tt_students_for_mail':tt_students_for_mail})
 
+     
+  
     if request.method == 'POST':
         # Update logic
+        tt_batch = request.POST.get('tt_batch')
+        url = '/adminside/admin_timetable/?get_batch={}'.format(tt_batch)
         if request.GET.get('pk'):
             instance = get_object_or_404(Timetable, pk=request.GET['pk'])
             form = timetable_form(request.POST, instance=instance)
             if form.is_valid():
                 form.save()
-                return redirect('admin_timetable')
+                # ---------------------sendmail Logic===================================
+                tt_students_email_list = []
+                student_chat_ids = []
+                parent_chat_ids = []
+                for x in tt_students_for_mail:
+                    tt_students_email_list.append(x.stud_email)
+                    student_chat_ids.append(x.stud_telegram_studentchat_id)
+                    parent_chat_ids.append(x.stud_telegram_parentschat_id)              
+                timetable_mail(tt_students_email_list)
+                # ------------------------ Telegram Message -------------------------------
+                timetable_telegram_message_student(student_chat_ids)
+                timetable_telegram_message_parent(parent_chat_ids)
+                return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
@@ -1006,13 +1016,7 @@ def insert_update_timetable(request):
         form = timetable_form(request.POST)
         if form.is_valid():
             form.save()
-            # ---------------------sendmail Logic===================================
-            tt_students_email_list = []
-            for x in tt_students_for_mail:
-                tt_students_email_list.append(x.stud_email)   
-            timetable_mail(tt_students_email_list)
-            return redirect('admin_timetable')
-    
+            return redirect(url)
         else:
             filled_data = form.data
             context.update({'filled_data': filled_data, 'errors': form.errors})
@@ -1137,6 +1141,7 @@ def show_events(request):
     events = Event.objects.all().values('event_id', 'event_name')
     events_imgs = Event_Image.objects.all()
     selected_events = Event.objects.first()
+ 
     context = {
         'events':events,
         'events_imgs':events_imgs,
@@ -1158,9 +1163,23 @@ def insert_events(request):
         event_date = request.POST.get('event_date')
         event_desc = request.POST.get('event_desc')
         event_images = request.FILES.getlist('event_img')
-        print(event_images)
         event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
         event.save()
+
+
+        from django.utils.dateformat import format
+        from django.utils.dateparse import parse_date
+
+        event_date_parsed = parse_date(event_date)
+        formatted_event_date = format(event_date_parsed, 'F j, Y')
+
+        #------------------Telegram and Mail Message----------------------------------------------
+        student_chat_ids = Students.objects.values_list('stud_telegram_studentchat_id', flat=True)
+        student_email_ids = Students.objects.values_list('stud_email', flat=True)
+        
+        event_telegram_message_student(event_name,formatted_event_date, student_chat_ids)
+        event_telegram_message_parent(event_name,formatted_event_date, student_email_ids)
+        #-------------------------End-------------------------------------------------------------
         
         fs = FileSystemStorage(location='media/uploads/events/')
         for image in event_images:
@@ -1458,7 +1477,6 @@ def insert_update_test_questions(request):
 def show_packages(request):
     data = Packs.objects.prefetch_related('pack_subjects').all()
     std_data = Std.objects.all()
-    print(data)
     data = paginatoorrr(data, request)
 
     context ={
@@ -1705,7 +1723,13 @@ def insert_update_students(request):
         # ===================insert_logic===========================
         form = student_form(request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.save()
+            # ----------Mail Send-------------------------------------------
+            student_name = instance.stud_name
+            student_email = [instance.stud_email]
+            student_password = instance.stud_pass
+            student_email_send(student_name, student_email, student_password)
+
             return redirect('students_dataAdmin')
         else:
             filled_data = form.data
@@ -2282,7 +2306,6 @@ def add_cheques_admin(request):
 def delete_cheques_admin(request):
     if request.GET.get('delete_cheque'):
         del_id = request.GET['delete_cheque']
-        print(del_id)
         try:
             check_data = Cheque_Collection.objects.get(cheque_id=del_id)
             check_data.delete()
@@ -2317,11 +2340,15 @@ def add_fees_collection_admin(request):
             form = fees_collection_form(request.POST)
             if form.is_valid():   
                 form.save()
+                # -------------Mail Send----------------------------------------------------------------------
                 student_name = form.cleaned_data['fees_stud_id']
                 student_email = [student_name.stud_email]
                 date = datetime.today()
                 payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
                
+                # -------------Telegram Send-------------------------------------------------------------------
+               
+                payment_telegram_message(student_name.stud_name, student_name.stud_telegram_studentchat_id, form.cleaned_data['fees_mode'],form.cleaned_data['fees_paid'])
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2546,7 +2573,6 @@ def delete_question_bank(request):
 def delete_test_question_answer(request):
     if request.GET.get('delete_id'):
         del_id = request.GET['delete_id']
-        print(del_id)
         try:
             data = Test_questions_answer.objects.get(tq_id=del_id)
             data.delete()
@@ -2556,9 +2582,6 @@ def delete_test_question_answer(request):
 
         url = '/adminside/show_test_questions_admin/?test_id={}'.format(request.GET['test_id'])
     return redirect(url)
-
-
-
 
 from django.template.loader import render_to_string
 from django.http import HttpResponse

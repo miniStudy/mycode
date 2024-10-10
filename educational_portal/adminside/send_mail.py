@@ -1,10 +1,12 @@
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 import requests
 import json
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.http import Http404, JsonResponse, HttpResponse
 from adminside.models import *
+
 
 # changes done
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
@@ -103,6 +105,18 @@ def faculty_email(fac_name, fac_email, fac_password):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
+def student_email_send(student_name, student_email, student_password):
+    sub = 'Login Details!'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = student_email
+    htmly = get_template('Email/student.html')
+    d = {'student_name':student_name, 'student_email':student_email[0], 'student_password':student_password}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
 # -----------------------------------------Telegram------------------------------------------------------------------------------
 
 # curl -X POST "https://api.telegram.org/bot7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U/setWebhook?url=https://aadd-2401-4900-5774-145c-80b4-b65f-5a8e-c0f8.ngrok-free.app/adminside/webhook/"
@@ -134,7 +148,6 @@ def request_phone_number(chat_id):
 
 # Function to send messages
 def send_telegram_message(chat_id, text, title=''):
-    
     message = (
         f"{title}\n\n{text}")
     url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
@@ -170,15 +183,13 @@ def telegram_webhook(request):
             
             if count == 1:
                 parent_number = Students.objects.get(stud_guardian_number = phone_number)
-                print(parent_number)
                 if parent_number:
                     parent_number.stud_telegram_parentschat_id = chat_id
                     parent_number.save()
                     set_msg=1
 
             elif stud_count == 1:
-                student_number = get_object_or_404(Students, stud_contact = phone_number)
-                print(student_number)    
+                student_number = get_object_or_404(Students, stud_contact = phone_number)  
                 if student_number:
                     student_number.stud_telegram_studentchat_id = chat_id
                     student_number.save()
@@ -202,5 +213,82 @@ def telegram_webhook(request):
     return JsonResponse({'status': 'error'}, status=400)
 
 
-def telegram_announcement_adminside(student_chatid, announcement_mesage,announcement_title):
+
+def announcement_telegram_message_student(student_chatid, announcement_mesage,announcement_title):
     send_telegram_message(student_chatid, announcement_mesage,announcement_title)
+
+
+def announcement_telegram_message_parent(parent_chat_ids, announcement_mesage,announcement_title):
+    send_telegram_message(parent_chat_ids, announcement_mesage,announcement_title)
+
+
+def payment_telegram_message(stud_name, student_chatid, mode, amount):
+    title = "Payment Confirmation"
+    message = (
+        f"Dear {stud_name},\n\n"
+        f"We would like to inform you that your payment of ₹{amount} has been successfully received.\n"
+        f"Payment Method: {mode}\n\n"
+        f"If you have any questions or need further assistance, feel free to contact us.\n\n"
+        f"Thank you for your prompt payment.\n"
+        f"Best regards,\n"
+        f"MiniStudy"
+        f"[Click here for more info](http://api.ministudy.in/)"
+    )
+    send_telegram_message(student_chatid, message, title)
+
+
+def timetable_telegram_message_student(chat_ids):
+    title = "Timetable Updated"
+    for i in chat_ids:
+        message = (
+            f"Dear Student,\n\n"
+            f"Your time has been updated!\n"
+            f"If you have any questions or need further assistance, feel free to contact us.\n\n"
+            f"Best regards,\n"
+            f"MiniStudy"
+            f"[Click here for more info](http://api.ministudy.in/)"
+        )
+        send_telegram_message(i, message, title)
+
+
+def timetable_telegram_message_parent(chat_ids):
+    title = "Timetable Updated"
+    for i in chat_ids:
+        message = (
+            f"Dear Student,\n\n"
+            f"Your student time has been updated!\n"
+            f"If you have any questions or need further assistance, feel free to contact us.\n\n"
+            f"Best regards,\n"
+            f"MiniStudy"
+            f"[Click here for more info](http://api.ministudy.in/)"
+        )
+        send_telegram_message(i, message, title)
+
+
+def event_telegram_message_student(event_name, event_date, student_chat_ids):
+    title = "New Event Update"
+    for chat_id in student_chat_ids:
+        message = (
+        f"Dear Student,\n\n"
+        f"We are pleased to inform you that our recent event, *{event_name}*, which was held on {event_date}, has successfully concluded.\n"
+        f"We trust that you found the event both enjoyable and enriching.\n\n"
+        f"To explore event highlights, including photos and key moments, we encourage you to check out out portal for further details.\n"
+        f"Warm regards,\n"
+        f"MiniStudy\n\n"
+        f"[Click here for more info](http://api.ministudy.in/)")
+        send_telegram_message(chat_id, message, title)
+
+
+def event_telegram_message_parent(event_name, event_date, student_email_ids):
+    title = "Event Update"
+    for email in student_email_ids:
+        message = (
+            f"Dear Parent,\n\n"
+            f"We are happy to inform you that the event, *{event_name}*, which took place on {event_date}, was a great success.\n"
+            f"We hope your child enjoyed participating in the event!\n\n"
+            f"For more details and event highlights, please check out our portal.\n"
+            f"Best regards,\n"
+            f"MiniStudy\n\n"
+            f"[Click here for more info](http://api.ministudy.in/)"
+        )
+        send_telegram_message(email, message, title)

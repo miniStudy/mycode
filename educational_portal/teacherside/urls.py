@@ -22,7 +22,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', teacherview.teacher_home, name='teacher_home'),
     path('teacher_events/', teacherview.teacher_events, name='teacher_events'),
-    path('teacher_test/', teacherview.teacher_test, name='teacher_test'),
     path('teacher_timetable/', teacherview.teacher_timetable, name='teacher_timetable'),
     path('teacher_attendance/', teacherview.teacher_attendance, name='teacher_attendance'),
     path('teacher_edit_attendance/', teacherview.teacher_edit_attendance, name='teacher_edit_attendance'),

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Faculty Login Details - miniStudy</title>
+    <style>
+        body {
+            font-family: Lato, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background-color: #1C222F;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .title {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        
+        .details {
+            margin-bottom: 20px;
+        }
+        
+        .details dt {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .details dd {
+            margin-bottom: 10px;
+        }
+        
+        .button {
+            background-color: #1C222F;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            background-color: #3e8e41;
+        }
+        
+        .footer {
+            background-color: #1C222F;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="https://ministudy.in/"><img src="https://metrofoods.co.nz/1nobg.png" style="width: 50%;" /></a>
+        </div>
+        <div class="content">
+            <h2 class="title">Welcome to miniStudy!</h2>
+            <p>Dear {{student_name}},</p>
+            <p>We are excited to welcome you to miniStudy. Below are your login credentials:</p>
+            <p><strong>Email:</strong> {{student_email}}</p>
+            <p><strong>Default Password:</strong> {{student_password}}</p>
+            <p>We recommend that you log in and change your password immediately to ensure your account remains secure.</p>
+            <button class="button"><a href="https://ministudy.in/login" style="color: white; text-decoration: none;">Login to Your Account</a></button>
+            <br>
+            <p>Best regards,</p>
+            <p>miniStudy Team</p>
+        </div>
+        <div class="footer">
+            <p><a href="https://ministudy.in/"><img src="https://metrofoods.co.nz/2nobg.png" alt="footer logo" width="25%" /></a></p>
+            <p style="padding:10px;">
+                <span style="float: left;"><a href="mailto:mail@ministudy.in" style="color: white; text-decoration: none;">mail@ministudy.in</a></span>
+                <span style="float: right;"><a href="tel:8511962611" style="color: white; text-decoration: none;">+91 8511962611</a></span>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
