@@ -77,7 +77,6 @@ urlpatterns = [
     path('delete_timetable/', adminview.delete_timetable, name='delete_timetable'),
 
     # ============================= adminside Attendence============================================
-
     path('admin_attendance/', adminview.show_attendance, name='admin_attendance'),
 
     # ==========================add events =========================================================
@@ -95,7 +94,8 @@ urlpatterns = [
     path('insert_update_test_question_admin/', adminview.insert_update_test_questions, name='insert_update_test_question_admin'),
     path('show_events/', adminview.show_events, name='show_events'),
     path('delete_test_question_answer/',adminview.delete_test_question_answer,name="delete_test_question_answer"),
-    # ========================== Students and Faculty Data show ======================================
+
+    # ========================== Students ===========================================================
     path('students_dataAdmin/', adminview.show_students, name='students_dataAdmin'),
     path('insert_update_students/',adminview.insert_update_students,name='insert_update_students'),
     path('delete_students/', adminview.delete_students, name='delete_students'),
@@ -108,10 +108,12 @@ urlpatterns = [
     path('admin_packages/', adminview.show_packages, name="admin_packages"),
     path('insert_update_packages/', adminview.insert_update_packages, name="insert_update_packages"),
     path('delete_package/', adminview.delete_admin_package, name="delete_package"),
+
     # =========================================Batches ===============================================
     path('admin_batches/', adminview.show_batches, name="admin_batches"),
     path('insert_update_batches/', adminview.insert_update_batches, name="insert_update_batches"),
     path('delete_batches/', adminview.delete_admin_batches, name="delete_batches"),
+
     # =========================================Materials =============================================
     path('admin_materials/', adminview.show_admin_materials, name="admin_materials"),
 

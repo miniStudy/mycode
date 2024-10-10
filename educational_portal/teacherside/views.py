@@ -472,26 +472,42 @@ def handle_attendance(request):
         absent_list = []
         parent_present_li = []
         parent_absent_li = []
+        telegram_student_present_list = []
+        telegram_student_absent_list = []
+        telegram_parent_present_list = []
+        telegram_parent_absent_list = []
+
         for i in students_all:
             if i.stud_id in selected_ids:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1)
                 present_list.append(i.stud_email)
                 parent_present_li.append(i.stud_guardian_email)
 
+                telegram_student_present_list.append(i.stud_telegram_studentchat_id)
+                telegram_parent_present_list.append(i.stud_telegram_parentschat_id)
             else:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0)
                 absent_list.append(i.stud_email)
                 parent_absent_li.append(i.stud_guardian_email)
 
+                telegram_student_absent_list.append(i.stud_telegram_studentchat_id)
+                telegram_parent_absent_list.append(i.stud_telegram_studentchat_id)
+        
         date = datetime.now()
-        num = 1
         attendance_student_present_mail('present', date, present_list)
         attendance_student_absent_mail('Absent', date, absent_list)
     
         attendance_parent_present_mail('present', date, parent_present_li)
-        attendance_parent_absent_mail('Absent', date, parent_absent_li, num)
-        attendance_student_present_mail('present', date, present_list,1)
-        attendance_student_absent_mail('Absent', date, absent_list,1)
+        attendance_parent_absent_mail('Absent', date, parent_absent_li)
+
+
+        #------------------------- Telegram Message -----------------------------------------
+        attendance_telegram_message_student('Present', date, telegram_student_present_list)
+        attendance_telegram_message_student('Absent', date, telegram_student_absent_list)
+
+        attendance_telegram_message_parent('Present', date, telegram_parent_present_list)
+        attendance_telegram_message_parent('Absent', date, telegram_parent_absent_list)
+
         messages.success(request, "Attendance has been submitted!")    
      return redirect('teacher_attendance')
 
