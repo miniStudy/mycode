@@ -929,7 +929,7 @@ def insert_update_tests(request):
                                 tq_optionc=question.qb_optionc,
                                 tq_optiond=question.qb_optiond
                             )
-                    return redirect('teacher_test')
+                    return redirect('teacher_tests')
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
@@ -948,7 +948,7 @@ def delete_tests(request):
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
-    return redirect('teacher_test')
+    return redirect('teacher_tests')
 
 @teacher_login_required
 def show_test_questions_teacher(request):
