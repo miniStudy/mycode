@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import timedelta
 from django_summernote.fields import SummernoteTextField
-
+import random
 
 class AdminData(models.Model):
     admin_id = models.BigAutoField(primary_key=True)
@@ -162,6 +162,19 @@ class Students(models.Model):
     stud_otp = models.CharField(blank=True,null=True,max_length=10)
     stud_telegram_studentchat_id = models.CharField(blank=True,null=True,max_length=20)
     stud_telegram_parentschat_id = models.CharField(blank=True,null=True,max_length=20)
+    unique_code = models.CharField(max_length=20, editable=False, blank=True)
+
+
+    def save(self, *args, **kwargs):
+        if not self.unique_code:
+            self.unique_code = self.generate_unique_code()
+        super().save(*args, **kwargs)
+
+    def generate_unique_code(self):
+        """Generate a 20-digit random unique code."""
+        while True:
+            code = str(random.randint(10**19, 10**20 - 1))
+            return code
 
     def __str__(self):
         return f"{self.stud_name} {self.stud_lastname}"
