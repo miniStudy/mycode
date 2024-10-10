@@ -1043,6 +1043,8 @@ def announcements_insert_update_teacher(request):
         'title':'Announcements',
     }
     
+
+
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id = get_std)
@@ -1050,15 +1052,18 @@ def announcements_insert_update_teacher(request):
         students_for_mail = students_for_mail.filter(stud_std=get_std)
         context.update({'get_std ':get_std,'std_data':std_data,'batch_data':batch_data}) 
         
-    
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         batch_data = batch_data.filter(batch_id = get_batch)
         students_for_mail = students_for_mail.filter(stud_batch=get_batch)
         context.update({'get_batch ':get_batch,'batch_data':batch_data})
+        
+    
 
     if request.method == 'POST':
-
+        announce_std = request.POST.get('announce_std')
+        announce_batch = request.POST.get('announce_batch')
+        url = '/teacherside/teacher_announcement/?get_std={}&get_batch={}'.format(announce_std, announce_batch)
         # ================update Logic============================
         if request.GET.get('pk'):
             instance = get_object_or_404(Announcements, pk=request.GET['pk'])
@@ -1066,7 +1071,7 @@ def announcements_insert_update_teacher(request):
             if form.is_valid():
                 form.save()
 
-                return redirect('teacher_announcement')
+                return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -1082,7 +1087,7 @@ def announcements_insert_update_teacher(request):
             print(students_email_list)    
             # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
          
-            return redirect('teacher_announcement')
+            return redirect(url)
         else:
             filled_data = form.data
             context.update({'filled_data ':filled_data,'errors':form.errors})
