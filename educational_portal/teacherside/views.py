@@ -705,7 +705,7 @@ def teacher_insert_offline_marks(request):
         context.update({'std_id':std_id, 'batch_data':batch_data, 'students_data':students_data})
     else:
         messages.error(request, 'Please! Select Standard')
-        return redirect('teacher_test')
+        return redirect('teacher_tests')
     
     if request.GET.get('batch_id'):
         batch_id = request.GET.get('batch_id')
@@ -835,6 +835,9 @@ def insert_update_tests(request):
 
     else:
         if request.method == 'POST':
+            test_std = request.POST.get('test_std')
+            test_sub = request.POST.get('test_sub')
+            url = '/teacherside/teacher_tests/?get_std={}&get_subject={}'.format(test_std, test_sub)
             form = tests_form(request.POST, request.FILES)
             if form.is_valid():
                 check = Chepterwise_test.objects.filter(
@@ -852,7 +855,7 @@ def insert_update_tests(request):
                         two_mark_count = int(request.POST.get('two_mark_questions', 0))
                         three_mark_count = int(request.POST.get('three_mark_questions', 0))
                         four_mark_count = int(request.POST.get('four_mark_questions', 0))
-                        chap_object = Chepter.objects.filter(chep_id = request.POST.get('test_chap'))
+                        chap_object = Chepter.objects.get(chep_id = request.POST.get('test_chap'))
 
                         # Function to get questions by weightage
                         def get_questions_by_weightage(weightage, count):
@@ -863,7 +866,7 @@ def insert_update_tests(request):
 
                         # Retrieve questions based on weightage
                         one_mark_questions = get_questions_by_weightage(1, one_mark_count)
-                        print(one_mark_questions)
+                        print(one_mark_questions, "------------------------------------------")
                         two_mark_questions = get_questions_by_weightage(2, two_mark_count)
                         three_mark_questions = get_questions_by_weightage(3, three_mark_count)
                         four_mark_questions = get_questions_by_weightage(4, four_mark_count)
@@ -929,7 +932,7 @@ def insert_update_tests(request):
                                 tq_optionc=question.qb_optionc,
                                 tq_optiond=question.qb_optiond
                             )
-                    return redirect('teacher_tests')
+                    return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
