@@ -29,6 +29,7 @@ from django.core.mail import send_mail
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 
+global_domain = None
 
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
@@ -274,6 +275,7 @@ def admin_logout(request):
 @admin_login_required
 def home(request):
     context = {}
+    domain = request.get_host()
     all_students= Students.objects.filter().count()
 
     all_male=Students.objects.filter(stud_gender='Male').count()
@@ -355,6 +357,7 @@ def home(request):
         'std_data':std_data,
         'conversion': conversion,
         'lead': lead,
+        'domain':domain,
     })
     return render(request, 'index.html',context)
 
@@ -398,6 +401,7 @@ def insert_update_boards(request):
     if request.method == "POST":
         form = brd_form(request.POST)
         if form.is_valid():
+            form.instance.domain_name = '127.0.0.1:8000'
             form.save()
             return redirect('boards')
         else:
