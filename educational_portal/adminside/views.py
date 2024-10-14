@@ -283,7 +283,7 @@ def home(request):
     all_other=Students.objects.filter(stud_gender='Other', domain_name = domain).count()
     piechart_category = ['Male','Female','Other']
     piechart_data = [all_male,all_female,all_other]
-    stds = Std.objects.all().order_by('-std_board')
+    stds = Std.objects.filter(domain_name = domain).order_by('-std_board')
 
 
     #-----------------------Inquires-----------------------------------------
@@ -296,19 +296,23 @@ def home(request):
         if count_st:
             count += 1
     
-    conversion = round(((count/total_inquiries) * 100), 2)
-    lead = round((100 - conversion), 2)
+    if total_inquiries == 0:
+        conversion = 0.0
+        lead = 0.0
+    else:
+        conversion = round((count / total_inquiries) * 100, 2)
+        lead = round(100 - conversion, 2)
 
     std_list = []
     students_for_that_std = []
     for x in stds:
         n = (x.std_name+' '+x.std_board.brd_name)
         std_list.append(n)
-        noss = Students.objects.filter(stud_std__std_id=x.std_id).count()
+        noss = Students.objects.filter(stud_std__std_id=x.std_id, domain_name = domain).count()
         students_for_that_std.append(noss)
 
     # Performance of all standards
-    std_data = Std.objects.all()
+    std_data = Std.objects.filter(domain_name = domain)
 
     if request.GET.get('get_std'):
         get_std = request.GET.get('get_std')
@@ -317,21 +321,21 @@ def home(request):
         
 
     get_std = Std.objects.get(std_id = get_std)
-    students_li = Students.objects.filter(stud_std = get_std).values('stud_id','stud_name','stud_lastname')
+    students_li = Students.objects.filter(stud_std = get_std, domain_name = domain).values('stud_id','stud_name','stud_lastname')
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
         else:
             overall_attendence_studentwise = 0
         
 
-        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
         
         
-        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
         
 
         if total_marks == 0:
@@ -363,7 +367,8 @@ def home(request):
 
 @admin_login_required
 def show_boards(request):
-    data = Boards.objects.all()
+    domain = request.get_host()
+    data = Boards.objects.filter(domain_name = domain)
     context ={
         'data' : data,
         'title' : 'Boards',
@@ -373,6 +378,7 @@ def show_boards(request):
 
 @admin_login_required
 def insert_update_boards(request):
+    domain = request.get_host()
     context = {
         'title' : 'Boards',
     }
@@ -382,6 +388,7 @@ def insert_update_boards(request):
         if request.method == "POST":
             form = brd_form(request.POST, instance=instance)
             if form.is_valid():
+                form.instance.domain_name = domain
                 form.save()
                 return redirect('boards')
             else:
@@ -390,7 +397,7 @@ def insert_update_boards(request):
     
     if request.GET.get('update_id'):
         update_id = request.GET['update_id']
-        update_data = Boards.objects.get(brd_id = update_id)
+        update_data = Boards.objects.get(brd_id = update_id, domain_name = domain)
         context2 = {
             'update_data' : update_data
 
@@ -411,12 +418,13 @@ def insert_update_boards(request):
 
 @admin_login_required
 def delete_boards(request):
+    domain  = request.get_host()
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
-                Boards.objects.filter(brd_id__in=selected_ids).delete()
+                Boards.objects.filter(brd_id__in=selected_ids, domain_name = domain).delete()
                 messages.success(request, '<div class="bg-success text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-regular fa-circle-check me-2"></i> Items Deleted Successfully.</div>')
             except Exception as e:
                 messages.error(request, f'<div class="bg-danger text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)} </div>')
@@ -427,7 +435,8 @@ def delete_boards(request):
 
 @admin_login_required
 def show_stds(request):
-    data = Std.objects.all()
+    domain = request.get_host()
+    data = Std.objects.filter(domain_name = domain)
     context ={
         'data' : data,
         'title' : 'Stds',
@@ -435,7 +444,8 @@ def show_stds(request):
     return render(request, 'show_stds.html',context)
 
 def insert_update_stds(request):
-    brddata = Boards.objects.all()
+    domain = request.get_host()
+    brddata = Boards.objects.filter(domain_name = domain)
     context = {
         'title' : 'Stds',
         'brddata':brddata,
@@ -454,7 +464,7 @@ def insert_update_stds(request):
     
     if request.GET.get('update_id'):
         update_id = request.GET['update_id']
-        update_data = Std.objects.get(std_id = update_id)
+        update_data = Std.objects.get(std_id = update_id, domain_name = domain)
         context2 = {
             'update_data' : update_data
 
@@ -465,6 +475,7 @@ def insert_update_stds(request):
     if request.method == "POST":
         form = std_form(request.POST)
         if form.is_valid():
+            form.instance.domain_name = domain
             form.save()
             return redirect('stds')
         else:
@@ -474,12 +485,13 @@ def insert_update_stds(request):
 
 
 def delete_stds(request):
+    domain = request.get_host()
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
-                Std.objects.filter(std_id__in=selected_ids).delete()
+                Std.objects.filter(std_id__in=selected_ids, domain_name = domain).delete()
                 messages.success(request, '<div class="bg-success text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-regular fa-circle-check me-2"></i> Items Deleted Successfully.</div>')
             except Exception as e:
                 messages.error(request, f'<div class="bg-danger text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)} </div>')
@@ -490,9 +502,10 @@ def delete_stds(request):
 
 @admin_login_required
 def show_announcements(request):
-    data = Announcements.objects.all().order_by('-pk')
-    std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
+    domain = request.get_host()
+    data = Announcements.objects.filter(domain_name = domain).order_by('-pk')
+    std_data = Std.objects.filter(domain_name = domain)
+    batch_data = Batches.objects.filter(domain_name = domain)
    
     context ={
         'data' : data,
@@ -525,10 +538,11 @@ def show_announcements(request):
 
 
 def insert_update_announcements(request):
-    std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
+    domain = request.get_host()
+    std_data = Std.objects.filter(domain_name = domain)
+    batch_data = Batches.objects.filter(domain_name = domain)
     # ------------getting students for mail------------------
-    students_for_mail = Students.objects.all()
+    students_for_mail = Students.objects.filter(domain_name = domain)
 
     context = {
         'title' : 'Announcements',
@@ -567,9 +581,10 @@ def insert_update_announcements(request):
 
         # ===================insert_logic===========================
         form = announcement_form(request.POST)
-        if form.is_valid():            
+        if form.is_valid():
+            form.instance.domain_name = domain            
             form.save()
-            students_email_list = []  
+            students_email_list = []
             for x in students_for_mail:
                 students_email_list.append(x.stud_email)  
                 if x.stud_telegram_studentchat_id:    
@@ -589,12 +604,13 @@ def insert_update_announcements(request):
 
 
 def delete_announcements(request):
+    domain = request.get_host()
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
-                Announcements.objects.filter(announce_id__in=selected_ids).delete()
+                Announcements.objects.filter(announce_id__in=selected_ids, domain_name = domain).delete()
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
@@ -605,8 +621,9 @@ def delete_announcements(request):
 
 @admin_login_required
 def show_subjects(request):
-    data = Subject.objects.all().values('sub_id','sub_name','sub_std__std_name','sub_std__std_board__brd_name')
-    std_data = Std.objects.all()
+    domain = request.get_host()
+    data = Subject.objects.filter(domain_name = domain).values('sub_id','sub_name','sub_std__std_name','sub_std__std_board__brd_name')
+    std_data = Std.objects.filter(domain_name = domain)
    
     context ={
         'data' : data,
@@ -631,7 +648,8 @@ def show_subjects(request):
 
 
 def insert_update_subjects(request):
-    std_data = Std.objects.all()
+    domain = request.get_host()
+    std_data = Std.objects.filter(domain_name = domain)
     
     context = {
         'title' : 'Insert Subjects',
@@ -674,7 +692,8 @@ def insert_update_subjects(request):
                 check = Subject.objects.filter(sub_name = form.data['sub_name'], sub_std__std_id = form.data['sub_std']).count()
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['sub_name']))
-                else:    
+                else:  
+                    form.instance.domain_name = domain  
                     form.save()
                     return redirect(url)
             else:
@@ -685,12 +704,13 @@ def insert_update_subjects(request):
     return render(request, 'insert_update/subjects.html',context)                     
 
 def delete_subjects(request):
+    domain = request.get_host()
     if request.method == 'POST': 
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
-                Subject.objects.filter(sub_id__in=selected_ids).delete()
+                Subject.objects.filter(sub_id__in=selected_ids, domain_name = domain).delete()
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
@@ -699,9 +719,10 @@ def delete_subjects(request):
 
 @admin_login_required
 def show_chepters(request):
-    data = Chepter.objects.all().values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
-    std_data = Std.objects.all()
-    subject_data = Subject.objects.all()
+    domain = request.get_host()
+    data = Chepter.objects.filter(domain_name = domain).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
+    std_data = Std.objects.filter(domain_name = domain)
+    subject_data = Subject.objects.filter(domain_name = domain)
 
     data = paginatoorrr(data, request)
     context ={
@@ -715,7 +736,7 @@ def show_chepters(request):
         if get_std == 0:
             pass
         else:    
-            data = Chepter.objects.filter(chep_sub__sub_std__std_id = get_std).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
+            data = Chepter.objects.filter(chep_sub__sub_std__std_id = get_std, domain_name = domain).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
             data = paginatoorrr(data, request)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
@@ -727,7 +748,7 @@ def show_chepters(request):
         if get_subject == 0:
             pass
         else:    
-            data =  Chepter.objects.filter(chep_sub__sub_id = get_subject).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
+            data =  Chepter.objects.filter(chep_sub__sub_id = get_subject, domain_name = domain).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
             data = paginatoorrr(data, request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
@@ -739,7 +760,7 @@ def show_chepters(request):
             data = Chepter.objects.filter(
             Q(chep_name__icontains=searchhh) |
             Q(chep_sub__sub_name__icontains=searchhh) |
-            Q(chep_sub__sub_std__std_name__icontains=searchhh)).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
+            Q(chep_sub__sub_std__std_name__icontains=searchhh), domain_name = domain).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name','chep_sub__sub_std__std_id')
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh})      
 
@@ -748,8 +769,9 @@ def show_chepters(request):
 
 
 def insert_update_chepters(request):
-    std_data = Std.objects.all()
-    subject_data = Subject.objects.all()
+    domain = request.get_host()
+    std_data = Std.objects.filter(domain_name = domain)
+    subject_data = Subject.objects.filter(domain_name = domain)
     context = {
         'title' : 'Chepters',
         'std_data':std_data,
@@ -779,7 +801,7 @@ def insert_update_chepters(request):
 
             instance = get_object_or_404(Chepter, pk=request.GET['pk'])
             form = chepter_form(request.POST,request.FILES, instance=instance)
-            check = Chepter.objects.filter(chep_name = form.data['chep_name'], chep_std__std_id = form.data['chep_std']).count()
+            check = Chepter.objects.filter(chep_name = form.data['chep_name'], chep_std__std_id = form.data['chep_std'], domain_name = domain).count()
             if check >= 1:
                 messages.error(request,'{} is already Exists'.format(form.data['chep_name']))
             else:
@@ -803,10 +825,11 @@ def insert_update_chepters(request):
             url = '/adminside/admin_chepters/?get_std={}&get_subject={}'.format(chep_std, chep_sub)
             form = chepter_form(request.POST, request.FILES)
             if form.is_valid():
-                check = Chepter.objects.filter(chep_name = form.data['chep_name'], chep_std__std_id = form.data['chep_std']).count()
+                check = Chepter.objects.filter(chep_name = form.data['chep_name'], chep_std__std_id = form.data['chep_std'], domain_name = domain).count()
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['chep_name']))
                 else:    
+                    form.instance.domain_name = domain
                     form.save()
                     return redirect(url)
             else:
@@ -820,12 +843,13 @@ def insert_update_chepters(request):
         
 
 def delete_chepters(request):
+    domain = request.get_host()
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
-                Chepter.objects.filter(chep_id__in=selected_ids).delete()
+                Chepter.objects.filter(chep_id__in=selected_ids, domain_name = domain).delete()
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
@@ -837,10 +861,11 @@ def delete_chepters(request):
 
 @admin_login_required
 def show_faculties(request):
-    faculties = Faculties.objects.all()
+    domain = request.get_host()
+    faculties = Faculties.objects.filter(domain_name = domain)
     faculties = paginatoorrr(faculties,request)
-    faculty_data = Faculties.objects.all()
-    faculty_access_data = Faculty_Access.objects.all()
+    faculty_data = Faculties.objects.filter(domain_name = domain)
+    faculty_access_data = Faculty_Access.objects.filter(domain_name = domain)
     context = {
         'faculty_data':faculty_data,
         'faculty_access_data':faculty_access_data,
@@ -855,7 +880,7 @@ def show_faculties(request):
             Q(fac_number__icontains=searchhh) |
             Q(fac_email__icontains=searchhh) |
             Q(fac_address__icontains=searchhh) |
-            Q(Subjects__icontains=searchhh))
+            Q(Subjects__icontains=searchhh), domain_name = domain)
             faculty_data = paginatoorrr(faculty_data, request)
             context.update({'faculty_data':faculty_data,'searchhh':searchhh})  
 
@@ -863,10 +888,11 @@ def show_faculties(request):
 
 @admin_login_required
 def view_faculty_access(request):
+    domain = request.get_host()
     if request.GET.get('fac_id'):
         fac_id = request.GET.get('fac_id')
         faculty_data = Faculties.objects.get(fac_id = fac_id)
-        faculty_access_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+        faculty_access_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
         context = {
             'faculty_data':faculty_data,
             'faculty_access_data':faculty_access_data,
@@ -888,6 +914,7 @@ def delete_faculty_access(request):
 
 @admin_login_required
 def insert_update_faculties(request):
+    domain = request.get_host()
     context = {
         'title': 'Faculties',
     }
@@ -896,7 +923,7 @@ def insert_update_faculties(request):
         if request.method == 'POST':
             instance = get_object_or_404(Faculties, pk=request.GET['pk'])
             form = faculty_form(request.POST, instance=instance)
-            check = Faculties.objects.filter(fac_email=form.data['fac_email']).exclude(pk=request.GET['pk']).count()
+            check = Faculties.objects.filter(fac_email=form.data['fac_email']).exclude(pk=request.GET['pk'], domain_name = domain).count()
             if check >= 1:
                 messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
             else:
@@ -918,6 +945,7 @@ def insert_update_faculties(request):
                 if check >= 1:
                     messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
                 else:
+                    form.instance.domain_name = domain
                     instance = form.save()
 
                     fac_password = instance.fac_password
@@ -950,9 +978,10 @@ def delete_faculties(request):
 
 @admin_login_required
 def show_timetable(request):
-    data = Timetable.objects.all()
-    std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
+    domain = request.get_host()
+    data = Timetable.objects.filter(domain_name = domain)
+    std_data = Std.objects.filter(domain_name = domain)
+    batch_data = Batches.objects.filter(domain_name = domain)
 
     context = {
         'data': data,
@@ -978,11 +1007,13 @@ def show_timetable(request):
     return render(request, 'show_timetable.html', context)
 
 def insert_update_timetable(request):
-    std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
-    faculty_data = Faculties.objects.all()
-    subject_data = Subject.objects.all()
-    tt_students_for_mail = Students.objects.all()
+    domain = request.get_host()
+    std_data = Std.objects.filter(domain_name = domain)
+
+    batch_data = Batches.objects.filter(domain_name = domain)
+    faculty_data = Faculties.objects.filter(domain_name = domain)
+    subject_data = Subject.objects.filter(domain_name = domain)
+    tt_students_for_mail = Students.objects.filter(domain_name = domain)
 
     context = {
         'title': 'Timetable',
@@ -998,14 +1029,14 @@ def insert_update_timetable(request):
         std_data = std_data.filter(std_id=get_std)
         subject_data = Subject.objects.filter(sub_std__std_id = get_std)
         batch_data = batch_data.filter(batch_std__std_id=get_std)
-        tt_students_for_mail = tt_students_for_mail.filter(stud_std=get_std)
+        tt_students_for_mail = tt_students_for_mail.filter(stud_std=get_std, domain_name = domain)
         context.update({'get_std': get_std, 'std_data': std_data, 'batch_data': batch_data, 'subject_data':subject_data, 'tt_students_for_mail':tt_students_for_mail})
         
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         batch_data = batch_data.filter(batch_id=get_batch)
-        tt_students_for_mail = tt_students_for_mail.filter(stud_batch=get_batch)
+        tt_students_for_mail = tt_students_for_mail.filter(stud_batch=get_batch, domain_name = domain)
         context.update({'get_batch': get_batch, 'batch_data': batch_data, 'tt_students_for_mail':tt_students_for_mail})
 
      
@@ -1039,6 +1070,7 @@ def insert_update_timetable(request):
         # Insert logic
         form = timetable_form(request.POST)
         if form.is_valid():
+            form.instance.domain_name = domain
             form.save()
             return redirect(url)
         else:
@@ -1068,11 +1100,12 @@ def delete_timetable(request):
 
 @admin_login_required
 def show_attendance(request):
-    data = Attendance.objects.all().values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
-    std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
-    stud_data = Students.objects.all()
-    subj_data = Subject.objects.all()
+    domain = request.get_host()
+    data = Attendance.objects.filter(domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+    std_data = Std.objects.filter(domain_name = domain)
+    batch_data = Batches.objects.filter(domain_name = domain)
+    stud_data = Students.objects.filter(domain_name = domain)
+    subj_data = Subject.objects.filter(domain_name = domain)
     
     data = paginatoorrr(data, request)
     context ={
@@ -1089,21 +1122,21 @@ def show_attendance(request):
         if get_std == 0:
             pass
         else:    
-            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             batch_data = batch_data.filter(batch_std__std_id = get_std)
             stud_data = stud_data.filter(stud_std__std_id = get_std)
             subj_data = subj_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'batch_data':batch_data,'get_std':get_std,'stud_data':stud_data,'sub_data':subj_data})
-            
+           
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         if get_batch == 0:
             pass
         else:
-            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
             get_batch = Batches.objects.get(batch_id = get_batch)
@@ -1114,25 +1147,25 @@ def show_attendance(request):
         if get_student == 0:
             pass
         else:
-            data = Attendance.objects.filter(atten_student__stud_id = get_student).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = Attendance.objects.filter(atten_student__stud_id = get_student, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             get_student = Students.objects.get(stud_id = get_student)
             context.update({'data':data,'get_student':get_student})                     
 
 
-    attendance_present = Attendance.objects.filter(atten_present = True).count()
-    attendance_all = Attendance.objects.all().count()
+    attendance_present = Attendance.objects.filter(atten_present = True, domain_name = domain).count()
+    attendance_all = Attendance.objects.filter(domain_name = domain).count()
     if attendance_all>0:
         overall_attendance = round((attendance_present/attendance_all) * 100,2)
         context.update({'overall_attendance':overall_attendance})
 
-    sub_list = subj_data.all().values('sub_name').distinct()
+    sub_list = subj_data.filter(domain_name = domain).values('sub_name').distinct()
     subject_wise_attendance = []
     subjects = []
     for x in sub_list:
         sub_name = x['sub_name']
-        sub_one = Attendance.objects.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name).count()
-        sub_all = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = sub_name).count()
+        sub_one = Attendance.objects.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name, domain_name = domain).count()
+        sub_all = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = sub_name, domain_name = domain).count()
         if sub_all>0:
             sub_attendance = round((sub_one/sub_all) * 100, 2)
             subject_wise_attendance.append(sub_attendance)
@@ -1153,7 +1186,7 @@ def show_attendance(request):
             Q(atten_present__icontains=searchhh) |
             Q(atten_student__stud_name__icontains=searchhh) |
             Q(atten_student__stud_lastname__icontains=searchhh) |
-            Q(atten_date__icontains=searchhh)).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            Q(atten_date__icontains=searchhh), domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh})  
 
@@ -1162,8 +1195,9 @@ def show_attendance(request):
 
 @admin_login_required
 def show_events(request):
-    events = Event.objects.all().values('event_id', 'event_name')
-    events_imgs = Event_Image.objects.all()
+    domain = request.get_host()
+    events = Event.objects.filter(domain_name = domain).values('event_id', 'event_name')
+    events_imgs = Event_Image.objects.filter(domain_name = domain)
     selected_events = Event.objects.first()
  
     context = {
@@ -1181,13 +1215,14 @@ def show_events(request):
 
 @admin_login_required
 def insert_events(request):
+    domain = request.get_host()
     title = 'Insert Events'
     if request.method == 'POST':
         event_name = request.POST.get('event_name')
         event_date = request.POST.get('event_date')
         event_desc = request.POST.get('event_desc')
         event_images = request.FILES.getlist('event_img')
-        event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc)
+        event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc, domain_name = domain)
         event.save()
 
 
@@ -1198,8 +1233,8 @@ def insert_events(request):
         formatted_event_date = format(event_date_parsed, 'F j, Y')
 
         #------------------Telegram and Mail Message----------------------------------------------
-        student_chat_ids = Students.objects.values_list('stud_telegram_studentchat_id', flat=True)
-        student_email_ids = Students.objects.values_list('stud_email', flat=True)
+        student_chat_ids = Students.objects.filter(domain_name = domain).values_list('stud_telegram_studentchat_id', flat=True)
+        student_email_ids = Students.objects.filter(domain_name = domain).values_list('stud_email', flat=True)
         
         event_telegram_message_student(event_name,formatted_event_date, student_chat_ids)
         event_telegram_message_parent(event_name,formatted_event_date, student_email_ids)
@@ -1208,7 +1243,7 @@ def insert_events(request):
         fs = FileSystemStorage(location='media/uploads/events/')
         for image in event_images:
             filename = fs.save(image.name, image)
-            Event_Image.objects.create(event=event, event_img=filename)
+            Event_Image.objects.create(event=event, event_img=filename, domain_name = domain)
         return redirect('show_events')
     return render(request, 'insert_update/events_insert_admin.html', {'title':title})
 
@@ -1222,9 +1257,10 @@ def delete_event(request):
 
 @admin_login_required
 def show_tests(request):
-    data = Chepterwise_test.objects.annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
-    std_data = Std.objects.all()
-    subject_data = Subject.objects.all()
+    domain = request.get_host()
+    data = Chepterwise_test.objects.filter(domain_name = domain).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
+    std_data = Std.objects.filter(domain_name = domain)
+    subject_data = Subject.objects.filter(domain_name = domain)
     data = paginatoorrr(data, request)
     context ={
         'data' : data,
@@ -1237,7 +1273,7 @@ def show_tests(request):
         if get_std == 0:
             pass
         else:    
-            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
+            data = Chepterwise_test.objects.filter(test_sub__sub_std__std_id = get_std, domain_name = domain).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
             data = paginatoorrr(data, request)
             subject_data = subject_data.filter(sub_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
@@ -1249,7 +1285,7 @@ def show_tests(request):
         if get_subject == 0:
             pass
         else:    
-            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
+            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject, domain_name = domain).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
             data = paginatoorrr(data, request)
             get_subject = Subject.objects.get(sub_id = get_subject)
             context.update({'data':data,'subject_data':subject_data,'get_subject':get_subject}) 
@@ -1260,7 +1296,7 @@ def show_tests(request):
             data = Chepterwise_test.objects.filter(
             Q(test_name__icontains=searchhh) |
             Q(test_sub__sub_name__icontains=searchhh) |
-            Q(test_std__std_name__icontains=searchhh)).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
+            Q(test_std__std_name__icontains=searchhh), domain_name = domain).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage')).values('test_sub__sub_name','num_questions','total_marks','test_std__std_name','test_std__std_board__brd_name','test_name','test_id')
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh}) 
 
@@ -1268,9 +1304,10 @@ def show_tests(request):
 
 
 def insert_update_tests(request):
-    std_data = Std.objects.all()
-    subject_data = Subject.objects.all()
-    chap_data = Chepter.objects.all().values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
+    domain = request.get_host()
+    std_data = Std.objects.filter(domain_name = domain)
+    subject_data = Subject.objects.filter(domain_name = domain)
+    chap_data = Chepter.objects.filter(domain_name = domain).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
     context = {
         'title': 'Tests',
         'std_data': std_data,
@@ -1282,13 +1319,13 @@ def insert_update_tests(request):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id=get_std)
         subject_data = subject_data.filter(sub_std__std_id=get_std)
-        chap_data = Chepter.objects.filter(chep_std__std_id = get_std).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
+        chap_data = Chepter.objects.filter(chep_std__std_id = get_std, domain_name = domain).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
         context.update({'get_std': get_std, 'std_data': std_data,'subject_data':subject_data,'chap_data':chap_data})
 
     if request.GET.get('get_subject'):
         get_subject = int(request.GET['get_subject'])
         subject_data = subject_data.filter(sub_id=get_subject)
-        chap_data = Chepter.objects.filter(chep_sub__sub_id = get_subject).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
+        chap_data = Chepter.objects.filter(chep_sub__sub_id = get_subject, domain_name = domain).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
 
         context.update({'get_subject': get_subject, 'subject_data': subject_data,'chap_data':chap_data})
 
@@ -1297,9 +1334,7 @@ def insert_update_tests(request):
         if request.method == 'POST':
             instance = get_object_or_404(Chepterwise_test, pk=request.GET['pk'])
             form = tests_form(request.POST, instance=instance)
-            check = Chepterwise_test.objects.filter(
-                test_name=form.data['test_name'], test_std__std_id=form.data['test_std']
-            ).count()
+            check = Chepterwise_test.objects.filter(test_name=form.data['test_name'], test_std__std_id=form.data['test_std'], domain_name = domain).count()
             if check >= 1:
                 messages.error(request, '{} already exists'.format(form.data['test_name']))
             else:
@@ -1324,6 +1359,7 @@ def insert_update_tests(request):
                 if check >= 1:
                     messages.error(request, '{} already exists'.format(form.data['test_name']))
                 else:
+                    form.instance.domain_name = domain
                     test_instance = form.save()
 
                     # Check for auto-generate test
@@ -1338,7 +1374,8 @@ def insert_update_tests(request):
                         def get_questions_by_weightage(weightage, count):
                             return question_bank.objects.filter(
                                 qb_chepter=chap_object,
-                                qb_weightage=weightage
+                                qb_weightage=weightage,
+                                domain_name = domain,
                             ).order_by('?')[:count]
 
                         # Retrieve questions based on weightage
@@ -1360,7 +1397,8 @@ def insert_update_tests(request):
                                 tq_optiona=question.qb_optiona,
                                 tq_optionb=question.qb_optionb,
                                 tq_optionc=question.qb_optionc,
-                                tq_optiond=question.qb_optiond
+                                tq_optiond=question.qb_optiond,
+                                domain_name = domain,
                             )
 
                         for question in two_mark_questions:
@@ -1375,7 +1413,8 @@ def insert_update_tests(request):
                                 tq_optiona=question.qb_optiona,
                                 tq_optionb=question.qb_optionb,
                                 tq_optionc=question.qb_optionc,
-                                tq_optiond=question.qb_optiond
+                                tq_optiond=question.qb_optiond,
+                                domain_name = domain
                             )
 
                         for question in three_mark_questions:
@@ -1390,7 +1429,8 @@ def insert_update_tests(request):
                                 tq_optiona=question.qb_optiona,
                                 tq_optionb=question.qb_optionb,
                                 tq_optionc=question.qb_optionc,
-                                tq_optiond=question.qb_optiond
+                                tq_optiond=question.qb_optiond,
+                                domain_name = domain
                             )
 
                         for question in four_mark_questions:
@@ -1405,7 +1445,8 @@ def insert_update_tests(request):
                                 tq_optiona=question.qb_optiona,
                                 tq_optionb=question.qb_optionb,
                                 tq_optionc=question.qb_optionc,
-                                tq_optiond=question.qb_optiond
+                                tq_optiond=question.qb_optiond,
+                                domain_name = domain
                             )
 
                     return redirect('admin_tests')
@@ -1431,11 +1472,12 @@ def delete_tests(request):
 
     return redirect('admin_tests')
 
+
 @admin_login_required
 def show_test_questions_admin(request):
+    domain = request.get_host()
     if request.GET.get('test_id'):
-        
-        Test_Questions_data = Test_questions_answer.objects.filter(tq_name = request.GET['test_id'])
+        Test_Questions_data = Test_questions_answer.objects.filter(tq_name = request.GET['test_id'], domain_name = domain)
         No_of_q = Test_Questions_data.count()
         total_marks = 0
         for x in Test_Questions_data:
@@ -1444,9 +1486,9 @@ def show_test_questions_admin(request):
 
         if request.GET.get('que_id'):
             que_id = request.GET.get('que_id')
-            test_question = Test_questions_answer.objects.filter(tq_id = que_id) 
+            test_question = Test_questions_answer.objects.filter(tq_id = que_id, domain_name = domain) 
         else:
-            test_question = Test_questions_answer.objects.filter(tq_name__test_id = request.GET['test_id'])[:1]
+            test_question = Test_questions_answer.objects.filter(tq_name__test_id = request.GET['test_id'], domain_name = domain)[:1]
 
 
         context = {
@@ -1464,7 +1506,8 @@ def show_test_questions_admin(request):
 
 @admin_login_required
 def insert_update_test_questions(request):
-    chep_data = Chepter.objects.all()
+    domain = request.get_host()
+    chep_data = Chepter.objects.filter(domain_name = domain)
     context = {
         'chep_data': chep_data,
         'que_type': Test_questions_answer.que_type,
@@ -1499,8 +1542,9 @@ def insert_update_test_questions(request):
 # ============================================packages logic====================================
 @admin_login_required
 def show_packages(request):
-    data = Packs.objects.prefetch_related('pack_subjects').all()
-    std_data = Std.objects.all()
+    domain = request.get_host()
+    data = Packs.objects.prefetch_related('pack_subjects').filter(domain_name = domain)
+    std_data = Std.objects.filter(domain_name = domain)
     data = paginatoorrr(data, request)
 
     context ={
@@ -1514,7 +1558,7 @@ def show_packages(request):
         if get_std == 0:
             pass
         else:    
-            data = Packs.objects.prefetch_related('pack_subjects').filter(pack_std__std_id = get_std)
+            data = Packs.objects.prefetch_related('pack_subjects').filter(pack_std__std_id = get_std, domain_name = domain)
             data = paginatoorrr(data, request)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'get_std':get_std})  
@@ -1526,7 +1570,7 @@ def show_packages(request):
             Q(pack_name__icontains=searchhh) |
             Q(pack_subjects__sub_name__icontains=searchhh) |
             Q(pack_fees__icontains=searchhh) |
-            Q(pack_std__std_name__icontains=searchhh)).prefetch_related('pack_subjects')
+            Q(pack_std__std_name__icontains=searchhh), domain_name = domain).prefetch_related('pack_subjects')
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh})  
     return render(request, 'show_packages.html',context)
@@ -1534,8 +1578,9 @@ def show_packages(request):
 
 
 def insert_update_packages(request):
-    std_data = Std.objects.all()
-    subjects_data = Subject.objects.all()
+    domain = request.get_host()
+    std_data = Std.objects.filter(domain_name = domain)
+    subjects_data = Subject.objects.filter(domain_name = domain)
 
     context = {
         'title' : 'Packages',
@@ -1559,7 +1604,7 @@ def insert_update_packages(request):
             url = '/adminside/admin_packages/?get_std={}'.format(pack_std)
             instance = get_object_or_404(Packs, pk=request.GET['pk'])
             form = pack_form(request.POST, instance=instance)
-            check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std']).count()
+            check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std'], domain_name = domain).count()
             if check >= 1:
                 messages.error(request,'{} is already Exists'.format(form.data['pack_name']))
             else:
@@ -1579,7 +1624,7 @@ def insert_update_packages(request):
             url = '/adminside/admin_packages/?get_std={}'.format(pack_std)
             form = pack_form(request.POST)
             if form.is_valid():
-                check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std']).count()
+                check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std'], domain_name = domain).count()
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['pack_name']))
                 else:    
@@ -1611,13 +1656,14 @@ def delete_admin_package(request):
 @admin_login_required
 @require_GET  # Ensure that only GET requests are allowed
 def show_students(request):
+    domain = request.get_host()
     context = {'title': 'Students'}
-    std_data = Std.objects.all()
+    std_data = Std.objects.filter(domain_name = domain)
     get_std_id = request.GET.get('get_std')
     get_batch_id = request.GET.get('get_batch')
 
     if get_std_id and get_batch_id:
-        data = Students.objects.filter(stud_batch__batch_id=get_batch_id).values(
+        data = Students.objects.filter(stud_batch__batch_id=get_batch_id, domain_name = domain).values(
             'stud_id', 'stud_name', 'stud_lastname', 'stud_username', 'stud_contact', 
             'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
             'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
@@ -1625,7 +1671,7 @@ def show_students(request):
             'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
         )
 
-        batch_data = Batches.objects.filter(batch_std__std_id=get_std_id)
+        batch_data = Batches.objects.filter(batch_std__std_id=get_std_id, domain_name = domain)
         get_batch = Batches.objects.get(batch_id=get_batch_id)
         get_std = Std.objects.get(std_id=get_std_id)
 
@@ -1639,7 +1685,7 @@ def show_students(request):
         })
 
     elif get_std_id:
-        data = Students.objects.filter(stud_std__std_id=get_std_id).values(
+        data = Students.objects.filter(stud_std__std_id=get_std_id, domain_name = domain).values(
             'stud_id', 'stud_name', 'stud_lastname', 'stud_username', 'stud_contact', 
             'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
             'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
@@ -1647,7 +1693,7 @@ def show_students(request):
             'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
         )
 
-        batch_data = Batches.objects.filter(batch_std__std_id=get_std_id)
+        batch_data = Batches.objects.filter(batch_std__std_id=get_std_id, domain_name = domain)
         get_std = Std.objects.get(std_id=get_std_id)
 
         data = paginatoorrr(data,request)
@@ -1659,7 +1705,7 @@ def show_students(request):
         })
 
     else:
-        data = Students.objects.values(
+        data = Students.objects.filter(domain_name = domain).values(
             'stud_id', 'stud_name', 'stud_lastname', 'stud_username', 'stud_contact', 
             'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
             'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
@@ -1667,7 +1713,7 @@ def show_students(request):
             'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
         )
         
-        batch_data = Batches.objects.all()
+        batch_data = Batches.objects.filter(domain_name = domain)
         data = paginatoorrr(data,request)
         
         context.update({
@@ -1695,7 +1741,7 @@ def show_students(request):
             Q(stud_guardian_number__icontains=searchhh) |
             Q(stud_address__icontains=searchhh) |
             Q(stud_guardian_profession__icontains=searchhh) |
-            Q(stud_gender__icontains=searchhh)).values(
+            Q(stud_gender__icontains=searchhh), domain_name = domain).values(
             'stud_id', 'stud_name', 'stud_lastname', 'stud_username', 'stud_contact', 
             'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
             'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
@@ -1710,9 +1756,10 @@ def show_students(request):
 
 
 def insert_update_students(request):
-    std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
-    pack_data = Packs.objects.all()
+    domain = request.get_host()
+    std_data = Std.objects.filter(domain_name = domain)
+    batch_data = Batches.objects.filter(domain_name = domain)
+    pack_data = Packs.objects.filter(domain_name = domain)
 
     context = {
         'title' : 'Students',
@@ -1755,6 +1802,7 @@ def insert_update_students(request):
         # ===================insert_logic===========================
         form = student_form(request.POST)
         if form.is_valid():
+            form.instance.domain_name = domain
             instance = form.save()
             # ----------Mail Send-------------------------------------------
             student_name = instance.stud_name
@@ -1802,8 +1850,9 @@ def delete_students(request):
 
 @admin_login_required
 def show_inquiries(request):
+    domain = request.get_host()
     title = "Inquiries"
-    inquiries_data = Inquiries.objects.all()
+    inquiries_data = Inquiries.objects.filter(domain_name = domain)
 
     context = {
         "title":title,
@@ -1816,8 +1865,9 @@ def show_inquiries(request):
 
 @admin_login_required
 def show_batches(request):
-    data = Batches.objects.all()
-    std_data = Std.objects.all()
+    domain = request.get_host()
+    data = Batches.objects.filter(domain_name = domain)
+    std_data = Std.objects.filter(domain_name = domain)
     data = paginatoorrr(data, request)
     context ={
         'data' : data,
@@ -1829,7 +1879,7 @@ def show_batches(request):
         if get_std == 0:
             pass
         else:    
-            data = Batches.objects.filter(batch_std__std_id = get_std)
+            data = Batches.objects.filter(batch_std__std_id = get_std, domain_name = domain)
             data = paginatoorrr(data, request)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'get_std':get_std})     
@@ -1838,7 +1888,8 @@ def show_batches(request):
 
 @admin_login_required
 def insert_update_batches(request):
-    std_data = Std.objects.all()
+    domain = request.get_host()
+    std_data = Std.objects.filter(domain_name = domain)
     
     context = {
         'title' : 'Batches',
@@ -1858,7 +1909,7 @@ def insert_update_batches(request):
         if request.method == 'POST':
             instance = get_object_or_404(Batches, pk=request.GET['pk'])
             form = batch_form(request.POST, instance=instance)
-            check = Batches.objects.filter(batch_name = form.data['batch_name'], batch_std__std_id = form.data['batch_std']).count()
+            check = Batches.objects.filter(batch_name = form.data['batch_name'], batch_std__std_id = form.data['batch_std'], domain_name = domain).count()
             if check >= 1:
                 messages.error(request,'{} is already Exists'.format(form.data['batch_name']))
             else:
@@ -1878,12 +1929,12 @@ def insert_update_batches(request):
         if request.method == 'POST':
             form = batch_form(request.POST)
             if form.is_valid():
-                check = Batches.objects.filter(batch_name = form.data['batch_name'], batch_std__std_id = form.data['batch_std']).count()
+                check = Batches.objects.filter(batch_name = form.data['batch_name'], batch_std__std_id = form.data['batch_std'], domain_name = domain).count()
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['batch_name']))
-                else:    
+                else:
+                    form.instance.domain_name = domain    
                     form.save()
-
                     std_name = request.POST.get('batch_std')
                     url = '/adminside/admin_batches/?get_std={}'.format(std_name)
                     return redirect(url)
@@ -1914,31 +1965,32 @@ def delete_admin_batches(request):
 
 
 def show_admin_materials(request):
-    standard_data = Std.objects.all()
-    subjects_data = Subject.objects.all()
-    materials = Chepterwise_material.objects.all().values('cm_id','cm_filename','cm_chepter__chep_sub__sub_id','cm_file','cm_file_icon','cm_chepter__chep_sub__sub_std__std_id')
+    domain = request.get_host()
+    standard_data = Std.objects.filter(domain_name = domain)
+    subjects_data = Subject.objects.filter(domain_name = domain)
+    materials = Chepterwise_material.objects.filter(domain_name = domain).values('cm_id','cm_filename','cm_chepter__chep_sub__sub_id','cm_file','cm_file_icon','cm_chepter__chep_sub__sub_std__std_id')
     selected_sub=None
 
     context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, 'title' : 'Materials',}
     if request.GET.get('std_id'):
         std_id = int(request.GET.get('std_id'))
-        subjects_data = Subject.objects.filter(sub_std__std_id = std_id)
+        subjects_data = Subject.objects.filter(sub_std__std_id = std_id, domain_name = domain)
         materials = [material for material in materials if material['cm_chepter__chep_sub__sub_std__std_id'] == std_id]
         selected_std = Std.objects.get(std_id=std_id)
         context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_id,'selected_std':selected_std})
 
     if request.GET.get('sub_id'):
         sub_id = request.GET.get('sub_id')
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id)
+        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id, domain_name = domain)
         selected_sub = Subject.objects.get(sub_id=sub_id)
         context.update({'materials': materials, 'selected_sub':selected_sub})
-
     return render(request, 'show_materials.html', context)
 
 
 
 def show_admin_profile(request):
-    admin_data = AdminData.objects.all()
+    domain = request.get_host()
+    admin_data = AdminData.objects.filter(domain_name = domain)
     context = {
         'admin_data':admin_data,
         'title' : 'Profile',
