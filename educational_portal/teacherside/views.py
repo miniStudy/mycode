@@ -458,9 +458,13 @@ def insert_update_attendance(request):
 
 @teacher_login_required
 def handle_attendance(request):
+     url = '/teacherside/teacher_attendance/'
      if request.method == 'POST':
         std_data = request.POST.get('std_data')
         batch_data = request.POST.get('batch_data')
+
+        url = '/teacherside/teacher_attendance/?get_std={}&get_batch={}'.format(std_data, batch_data)
+
         atten_timetable = request.POST.get('atten_timetable')
         atten_tt = Timetable.objects.get(tt_id = atten_timetable)
         selected_items = request.POST.getlist('selection_attendance')
@@ -472,33 +476,54 @@ def handle_attendance(request):
         absent_list = []
         parent_present_li = []
         parent_absent_li = []
+        telegram_student_present_list = []
+        telegram_student_absent_list = []
+        telegram_parent_present_list = []
+        telegram_parent_absent_list = []
+
         for i in students_all:
             if i.stud_id in selected_ids:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1)
                 present_list.append(i.stud_email)
                 parent_present_li.append(i.stud_guardian_email)
 
+                telegram_student_present_list.append(i.stud_telegram_studentchat_id)
+                telegram_parent_present_list.append(i.stud_telegram_parentschat_id)
             else:
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0)
                 absent_list.append(i.stud_email)
                 parent_absent_li.append(i.stud_guardian_email)
 
+                telegram_student_absent_list.append(i.stud_telegram_studentchat_id)
+                telegram_parent_absent_list.append(i.stud_telegram_studentchat_id)
+        
         date = datetime.now()
-        num = 1
         attendance_student_present_mail('present', date, present_list)
         attendance_student_absent_mail('Absent', date, absent_list)
     
         attendance_parent_present_mail('present', date, parent_present_li)
-        attendance_parent_absent_mail('Absent', date, parent_absent_li, num)
-        attendance_student_present_mail('present', date, present_list,1)
-        attendance_student_absent_mail('Absent', date, absent_list,1)
+        attendance_parent_absent_mail('Absent', date, parent_absent_li)
+
+
+        #------------------------- Telegram Message -----------------------------------------
+        attendance_telegram_message_student('Present', date, telegram_student_present_list)
+        attendance_telegram_message_student('Absent', date, telegram_student_absent_list)
+
+        attendance_telegram_message_parent('Present', date, telegram_parent_present_list)
+        attendance_telegram_message_parent('Absent', date, telegram_parent_absent_list)
+
         messages.success(request, "Attendance has been submitted!")    
-     return redirect('teacher_attendance')
+     return redirect(url)
 
 
 @teacher_login_required
 def edit_handle_attendance(request):
+     url = '/teacherside/teacher_attendance/'
      if request.method == 'POST':
+        get_std = request.POST.get('get_std')
+        get_batch = request.POST.get('get_batch')
+
+        url = '/teacherside/teacher_attendance/?get_std={}&get_batch={}'.format(get_std, get_batch)
         get_date = request.POST.get('get_date')
         get_hour = request.POST.get('get_hour')
         get_date = datetime.strptime(get_date, '%Y-%m-%d')
@@ -519,7 +544,7 @@ def edit_handle_attendance(request):
                 instance.save()
 
         messages.success(request, "Attendance has been updated!")
-     return redirect('teacher_attendance')
+     return redirect(url)
 
 
 @teacher_login_required
@@ -680,7 +705,7 @@ def teacher_insert_offline_marks(request):
         context.update({'std_id':std_id, 'batch_data':batch_data, 'students_data':students_data})
     else:
         messages.error(request, 'Please! Select Standard')
-        return redirect('teacher_test')
+        return redirect('teacher_tests')
     
     if request.GET.get('batch_id'):
         batch_id = request.GET.get('batch_id')
@@ -810,6 +835,9 @@ def insert_update_tests(request):
 
     else:
         if request.method == 'POST':
+            test_std = request.POST.get('test_std')
+            test_sub = request.POST.get('test_sub')
+            url = '/teacherside/teacher_tests/?get_std={}&get_subject={}'.format(test_std, test_sub)
             form = tests_form(request.POST, request.FILES)
             if form.is_valid():
                 check = Chepterwise_test.objects.filter(
@@ -827,7 +855,7 @@ def insert_update_tests(request):
                         two_mark_count = int(request.POST.get('two_mark_questions', 0))
                         three_mark_count = int(request.POST.get('three_mark_questions', 0))
                         four_mark_count = int(request.POST.get('four_mark_questions', 0))
-                        chap_object = Chepter.objects.filter(chep_id = request.POST.get('test_chap'))
+                        chap_object = Chepter.objects.get(chep_id = request.POST.get('test_chap'))
 
                         # Function to get questions by weightage
                         def get_questions_by_weightage(weightage, count):
@@ -838,7 +866,7 @@ def insert_update_tests(request):
 
                         # Retrieve questions based on weightage
                         one_mark_questions = get_questions_by_weightage(1, one_mark_count)
-                        print(one_mark_questions)
+                        print(one_mark_questions, "------------------------------------------")
                         two_mark_questions = get_questions_by_weightage(2, two_mark_count)
                         three_mark_questions = get_questions_by_weightage(3, three_mark_count)
                         four_mark_questions = get_questions_by_weightage(4, four_mark_count)
@@ -904,7 +932,7 @@ def insert_update_tests(request):
                                 tq_optionc=question.qb_optionc,
                                 tq_optiond=question.qb_optiond
                             )
-                    return redirect('teacher_test')
+                    return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
@@ -923,7 +951,7 @@ def delete_tests(request):
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
-    return redirect('teacher_test')
+    return redirect('teacher_tests')
 
 @teacher_login_required
 def show_test_questions_teacher(request):
@@ -1043,6 +1071,8 @@ def announcements_insert_update_teacher(request):
         'title':'Announcements',
     }
     
+
+
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         std_data = std_data.filter(std_id = get_std)
@@ -1050,15 +1080,18 @@ def announcements_insert_update_teacher(request):
         students_for_mail = students_for_mail.filter(stud_std=get_std)
         context.update({'get_std ':get_std,'std_data':std_data,'batch_data':batch_data}) 
         
-    
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         batch_data = batch_data.filter(batch_id = get_batch)
         students_for_mail = students_for_mail.filter(stud_batch=get_batch)
         context.update({'get_batch ':get_batch,'batch_data':batch_data})
+        
+    
 
     if request.method == 'POST':
-
+        announce_std = request.POST.get('announce_std')
+        announce_batch = request.POST.get('announce_batch')
+        url = '/teacherside/teacher_announcement/?get_std={}&get_batch={}'.format(announce_std, announce_batch)
         # ================update Logic============================
         if request.GET.get('pk'):
             instance = get_object_or_404(Announcements, pk=request.GET['pk'])
@@ -1066,7 +1099,7 @@ def announcements_insert_update_teacher(request):
             if form.is_valid():
                 form.save()
 
-                return redirect('teacher_announcement')
+                return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -1082,7 +1115,7 @@ def announcements_insert_update_teacher(request):
             print(students_email_list)    
             # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
          
-            return redirect('teacher_announcement')
+            return redirect(url)
         else:
             filled_data = form.data
             context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -1575,6 +1608,9 @@ def today_learning_insert_update(request):
             context.update({'get_batch':get_batch}) 
 
     if request.method == 'POST':
+        today_teaching_batches_id = request.POST.get('today_teaching_batches_id')
+        get_std = request.POST.get('get_std')
+        url = '/teacherside/today_learning/?get_std={}&get_batch={}'.format(get_std or '', today_teaching_batches_id)
         # ================update Logic============================
         if request.GET.get('pk'):
             instance = get_object_or_404(Today_Teaching, pk=request.GET['pk'])
@@ -1582,7 +1618,7 @@ def today_learning_insert_update(request):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Updated Sucessfully!')
-                return redirect('today_learning')
+                return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -1592,7 +1628,7 @@ def today_learning_insert_update(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Add Sucessfully!')
-            return redirect('today_learning')
+            return redirect(url)
         else:
             filled_data = form.data
             context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -1608,7 +1644,11 @@ def today_learning_insert_update(request):
 
 
 def today_learning_delete(request):
+    url = '/teacherside/today_learning/'
     if request.method == 'POST':
+        get_std = request.POST.get('get_std')
+        get_batch = request.POST.get('get_batch')
+        url = '/teacherside/today_learning/?get={}&get_batch={}'.format(get_std, get_batch)
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
@@ -1617,7 +1657,7 @@ def today_learning_delete(request):
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
-    return redirect('today_learning')
+    return redirect(url)
 
 
 def show_question_paper(request):

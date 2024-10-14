@@ -45,7 +45,7 @@
       </ul>
       <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&get_sub={{ get_subject.sub_id }}?model_name=chepterwise_material"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
       </div>
-      <form method="get" action="{% url 'teacher_test' %}">
+      <form method="get" action="{% url 'teacher_tests' %}">
         <div class="input-group mt-2">
           <input type="text" id="" name="searchhh" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
           <input type="hidden" name="get_std" value="{{get_std.std_id}}" />
