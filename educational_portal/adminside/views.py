@@ -321,7 +321,7 @@ def home(request):
         total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
         present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
         if total_attendence_studentwise > 0:
-            overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+            overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
         else:
             overall_attendence_studentwise = 0
         
@@ -2039,7 +2039,7 @@ def adminside_report_card(request):
         absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
         
         if total_attendence > 0:
-            overall_attendence = (present_attendence/total_attendence)*100
+            overall_attendence = round((present_attendence/total_attendence)*100,2)
         else:
             overall_attendence = 0
 
@@ -2053,7 +2053,7 @@ def adminside_report_card(request):
             present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
             # print("==============================================",total_attendence_studentwise)
             if total_attendence_studentwise > 0:
-                overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+                overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
             else:
                 overall_attendence_studentwise = 0
             
@@ -2086,7 +2086,7 @@ def adminside_report_card(request):
             present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
 
             if total_attendence_subwise > 0:
-                attendance_subwise = (present_attendence_subwise/total_attendence_subwise)*100
+                attendance_subwise = round((present_attendence_subwise/total_attendence_subwise)*100,2)
             else:
                 attendance_subwise = 0
             overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
