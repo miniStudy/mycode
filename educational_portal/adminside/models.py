@@ -9,6 +9,7 @@ class AdminData(models.Model):
     admin_pass = models.CharField(max_length=100)
     admin_email = models.EmailField(unique=True)
     admin_otp = models.IntegerField(blank=True,null=True)
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
 
     def __str__(self):
         return f"{self.admin_email}"
@@ -20,6 +21,7 @@ class AdminData(models.Model):
 class Boards(models.Model):
     brd_id = models.BigAutoField(primary_key=True)
     brd_name = models.CharField(max_length=20,unique=True)
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
     
     def __str__(self):
         return f"{self.brd_name}"

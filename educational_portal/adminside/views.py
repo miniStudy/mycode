@@ -29,6 +29,7 @@ from django.core.mail import send_mail
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 
+global_domain = None
 
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
@@ -274,6 +275,7 @@ def admin_logout(request):
 @admin_login_required
 def home(request):
     context = {}
+    domain = request.get_host()
     all_students= Students.objects.filter().count()
 
     all_male=Students.objects.filter(stud_gender='Male').count()
@@ -355,6 +357,7 @@ def home(request):
         'std_data':std_data,
         'conversion': conversion,
         'lead': lead,
+        'domain':domain,
     })
     return render(request, 'index.html',context)
 
@@ -398,6 +401,7 @@ def insert_update_boards(request):
     if request.method == "POST":
         form = brd_form(request.POST)
         if form.is_valid():
+            form.instance.domain_name = '127.0.0.1:8000'
             form.save()
             return redirect('boards')
         else:
@@ -494,7 +498,7 @@ def show_announcements(request):
         'data' : data,
         'title' : 'Announcements',
         'std_data' : std_data,
-        'batch_data':batch_data,
+        'batch_data': batch_data,
     }
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
@@ -547,14 +551,16 @@ def insert_update_announcements(request):
         context.update({'get_batch ':get_batch,'batch_data':batch_data})
 
     if request.method == 'POST':
-
+        std_name = request.POST.get('announce_std')
+        batch_name = request.POST.get('announce_batch')
+        url = '/adminside/announcements/?get_std={}&get_batch={}'.format(std_name,batch_name)
         # ================update Logic============================
         if request.GET.get('pk'):
             instance = get_object_or_404(Announcements, pk=request.GET['pk'])
             form = announcement_form(request.POST, instance=instance)       
             if form.is_valid():
                 form.save()
-                return redirect('admin_announcements')
+                return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -569,8 +575,8 @@ def insert_update_announcements(request):
                 if x.stud_telegram_studentchat_id:    
                     announcement_telegram_message_student(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
                     announcement_telegram_message_parent(x.stud_telegram_parentschat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
-            announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)         
-            return redirect('admin_announcements')
+            announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)           
+            return redirect(url)         
         else:
             filled_data = form.data
             context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -947,7 +953,7 @@ def show_timetable(request):
     data = Timetable.objects.all()
     std_data = Std.objects.all()
     batch_data = Batches.objects.all()
-   
+
     context = {
         'data': data,
         'title': 'Timetable',
@@ -2281,7 +2287,7 @@ def add_cheques_admin(request):
         'title' : 'Add Cheques',
         'students':students,
         'banks':banks,    
-             }   
+    }   
 
  # ================update Logic==================================
     if request.GET.get('pk'):
@@ -2355,14 +2361,23 @@ def add_fees_collection_admin(request):
         'title' : 'Add Fees',
         'students':students,    
     }
+
+    if request.GET.get('get_std'):
+        get_std = request.GET.get('get_std')
+        students = Students.objects.filter(stud_std__std_id = get_std)
+        context.update({'get_std':get_std,'students':students})
+        
+    
     # ================update Logic==================================
     if request.GET.get('pk'):
         if request.method == 'POST':
+            get_std = request.POST.get('get_std')
+            url = '/adminside/fees_collection_admin/?get_std={}'.format(get_std)
             instance = get_object_or_404(Fees_Collection, pk=request.GET['pk'])
             form = fees_collection_form(request.POST, instance=instance)
             if form.is_valid():
                 form.save()
-                return redirect('fees_collection_admin')
+                return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -2372,6 +2387,9 @@ def add_fees_collection_admin(request):
     else:
         # ===================insert_logic===========================
         if request.method == 'POST':
+            print(request.POST.get('get_std'))
+            get_std = request.POST.get('get_std')
+            url = '/adminside/fees_collection_admin/?get_std={}'.format(get_std)
             form = fees_collection_form(request.POST)
             if form.is_valid():   
                 form.save()
@@ -2384,7 +2402,7 @@ def add_fees_collection_admin(request):
                 # -------------Telegram Send-------------------------------------------------------------------
                
                 payment_telegram_message(student_name.stud_name, student_name.stud_telegram_studentchat_id, form.cleaned_data['fees_mode'],form.cleaned_data['fees_paid'])
-                return redirect('fees_collection_admin')
+                return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data ':filled_data,'errors':form.errors})
@@ -2535,7 +2553,7 @@ def bulk_upload_questions(request):
                 qb_optionc=options_c[i] if q_types[i] == 'MCQ' else None,
                 qb_optiond=options_d[i] if q_types[i] == 'MCQ' else None,
             )
-
+    
         return redirect('show_question_bank')  # Redirect to the same page after submission
     chap_data = Chepter.objects.filter(chep_std__std_id = 13).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name')
     que_type_choices = question_bank.que_type.choices
@@ -2643,3 +2661,21 @@ def generate_payment_slip(request):
     }
     pdf = render_to_pdf('payment_slip.html', context)
     return HttpResponse(pdf, content_type='application/pdf')
+
+
+def time_slot_function(request):
+    faculty_records = Faculties.objects.values('fac_id', 'fac_name')
+    faculty_data = []
+
+    for record in faculty_records:
+        fac_id = record['fac_id']
+        fac_name = record['fac_name']
+        access_data = Faculty_Access.objects.filter(fa_faculty__fac_id=fac_id)
+
+        if access_data:
+            faculty_data.append({
+                'faculty_name': fac_name,
+                'access_details': list(access_data.values('fa_id', 'fa_subject__sub_name', 'fa_batch__batch_name', 'fa_batch__batch_std__std_name')),
+            })
+    return render(request, 'time_slot.html', {'faculty_data': faculty_data})
+

@@ -1,10 +1,9 @@
 
-<!-- <script>
+<script>
   var options = {
     series: [{
-      name: 'Tests',
-      data: {{test_result_list|safe}},
-
+      name: 'No of Students',
+      data: [20,30,40,50,60,70],
     }],
     chart: {
       type: 'bar',
@@ -15,11 +14,11 @@
       }
     },
     grid: {
-        borderColor: '#626567', // Dark grey grid lines
-      },
+      borderColor: '#626567', // Dark grey grid lines
+    },
     plotOptions: {
       bar: {
-        horizontal: true,
+        horizontal: false,
         columnWidth: '55%',
         endingShape: 'rounded'
       },
@@ -33,7 +32,7 @@
       colors: ['transparent']
     },
     xaxis: {
-      categories: {{test_name_list|safe}},
+      categories: ['std9','std10','std11','std12','std13','std14'],
       labels: {
         style: {
           colors: '#FFFFFF'
@@ -46,19 +45,19 @@
         color: '#FFFFFF'
       },
       title: {
-        text: 'Test Names',
+        text: 'STDS',
         style: {
           color: '#FFFFFF', // White color for x-axis title
-          fontSize: 15,
+          fontSize: 12,
         }
       }
     },
     yaxis: {
       title: {
-        text: 'Obtained Marks',
+        text: 'No of Students',
         style: {
           color: '#FFFFFF', // White color for y-axis title
-          fontSize: 15,
+          fontSize: 12,
         }
       },
       labels: {
@@ -79,7 +78,7 @@
     tooltip: {
       y: {
         formatter: function (val) {
-          return  val
+          return val
         }
       }
     },
@@ -87,66 +86,20 @@
       labels: {
         colors: '#FFFFFF' // White color for legend labels
       }
-    }
+    },
+    responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 400
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
   };
 
   var students_chart = new ApexCharts(document.querySelector("#students_chart"), options);
   students_chart.render();
-</script> -->
-
-
-<script>
-          var options = {
-          series: [
-          {
-            name: "",
-            data: {{test_result_list|safe}},
-          },
-        ],
-          chart: {
-          type: 'bar',
-          height: 350,
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 0,
-            horizontal: true,
-            distributed: true,
-            barHeight: '80%',
-            isFunnel: true,
-          },
-        },
-        colors: [
-          '#F44F5E',
-          '#E55A89',
-          '#D863B1',
-          '#CA6CD8',
-          '#B57BED',
-          '#8D95EB',
-          '#62ACEA',
-          '#4BC3E6',
-        ],
-        dataLabels: {
-          enabled: true,
-          formatter: function (val, opt) {
-            return opt.w.globals.labels[opt.dataPointIndex] 
-          },
-          dropShadow: {
-            enabled: true,
-          },
-        },
-        title: {
-          text: '',
-          align: 'middle',
-        },
-        xaxis: {
-          categories: {{test_name_list|safe}},
-        },
-        legend: {
-          show: false,
-        },
-        };
-
-        var chart = new ApexCharts(document.querySelector("#students_chart"), options);
-        chart.render();
 </script>

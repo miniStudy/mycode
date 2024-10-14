@@ -223,7 +223,7 @@ def student_logout(request):
 
 @student_login_required
 def student_info_update(request):
-    title = 'Update Info'
+    title = 'Update Profile'
     student_id = request.session['stud_id']
     student_obj = Students.objects.get(stud_id = student_id)
     if request.method == 'POST':
