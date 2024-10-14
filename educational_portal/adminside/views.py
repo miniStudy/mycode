@@ -274,25 +274,25 @@ def admin_logout(request):
 # -----------------------------------auth End -------------------------
 @admin_login_required
 def home(request):
-    context = {}
     domain = request.get_host()
-    all_students= Students.objects.filter().count()
+    context = {}
+    all_students= Students.objects.filter(domain_name = domain).count()
 
-    all_male=Students.objects.filter(stud_gender='Male').count()
-    all_female=Students.objects.filter(stud_gender='Female').count()
-    all_other=Students.objects.filter(stud_gender='Other').count()
+    all_male=Students.objects.filter(stud_gender='Male', domain_name = domain).count()
+    all_female=Students.objects.filter(stud_gender='Female', domain_name = domain).count()
+    all_other=Students.objects.filter(stud_gender='Other', domain_name = domain).count()
     piechart_category = ['Male','Female','Other']
     piechart_data = [all_male,all_female,all_other]
     stds = Std.objects.all().order_by('-std_board')
 
 
     #-----------------------Inquires-----------------------------------------
-    total_inquiries = Inquiries.objects.values('inq_email').count()
-    inquiries = Inquiries.objects.values('inq_email')
+    total_inquiries = Inquiries.objects.filter(domain_name = domain).values('inq_email').count()
+    inquiries = Inquiries.objects.filter(domain_name = domain).values('inq_email')
 
     count = 0
     for email in inquiries:
-        count_st = Students.objects.filter(stud_email = email['inq_email'])
+        count_st = Students.objects.filter(stud_email = email['inq_email'], domain_name = domain)
         if count_st:
             count += 1
     
