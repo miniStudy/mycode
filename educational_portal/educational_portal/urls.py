@@ -27,6 +27,7 @@ urlpatterns = [
     path('studentside/', include('studentside.urls')),
     path('teacherside/', include('teacherside.urls')),
     path('parentsside/', include('parentsside.urls')),
+    path('team_ministudy/', include('team_ministudy.urls')),
     path('api/', include('api.apiurls')),]
 
 

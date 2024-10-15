@@ -30,7 +30,6 @@ logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 
 global_domain = None
-print("hello")
 
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
@@ -2000,17 +1999,17 @@ def show_admin_profile(request):
 
 
 def Student_doubts_adminside(request):
+    domain = request.get_host()
+    Total_doubts = Doubt_section.objects.filter(domain_name = domain).count()
+    Total_solutions = Doubt_solution.objects.filter(domain_name = domain).count()
 
-    Total_doubts = Doubt_section.objects.count()
-    Total_solutions = Doubt_solution.objects.count()
-
-    unverified_doubts_count = Doubt_section.objects.annotate(
+    unverified_doubts_count = Doubt_section.objects.filter(domain_name = domain).annotate(
     verified_solution_count=Count('doubt_solution', filter=Q(doubt_solution__solution_verified=True))
     ).filter(verified_solution_count = 0).count()
 
-    verified_doubts_count = Doubt_solution.objects.filter(solution_verified=1).count()
+    verified_doubts_count = Doubt_solution.objects.filter(solution_verified=1, domain_name = domain).count()
 
-    doubts_zero_solution = Doubt_section.objects.annotate(
+    doubts_zero_solution = Doubt_section.objects.filter(domain_name = domain).annotate(
         zero_solution_count = Count('doubt_solution')
     ).filter(zero_solution_count=0).count()
 
@@ -2026,11 +2025,12 @@ def Student_doubts_adminside(request):
 
 
 def adminside_report_card(request):
-    data = Attendance.objects.all()
-    std_data = Std.objects.all()
-    batch_data = Batches.objects.all()
-    stud_data = Students.objects.all()
-    subj_data = Subject.objects.all()
+    domain = request.get_host()
+    data = Attendance.objects.filter(domain_name = domain)
+    std_data = Std.objects.filter(domain_name = domain)
+    batch_data = Batches.objects.filter(domain_name = domain)
+    stud_data = Students.objects.filter(domain_name = domain)
+    subj_data = Subject.objects.filter(domain_name = domain)
 
     context ={
         'data' : data,
@@ -2054,7 +2054,6 @@ def adminside_report_card(request):
             context.update({'data':data,'batch_data':batch_data,'get_std':get_std,'stud_data':stud_data,'sub_data':subj_data})
             student_std = get_std.std_name
         student_std = get_std.std_id
-        print(student_std) 
     
     
     if request.GET.get('get_batch'):
@@ -2076,12 +2075,10 @@ def adminside_report_card(request):
         else:
             data = data.filter(atten_student__stud_id = get_student)
             get_student = Students.objects.get(stud_id = get_student)
-            my_package = Packs.objects.prefetch_related('pack_subjects').get(pack_id = get_student.stud_pack.pack_id)
+            my_package = Packs.objects.filter(domain_name = domain).prefetch_related('pack_subjects').get(pack_id = get_student.stud_pack.pack_id)
             pack_subject_list = []
             for subject in my_package.pack_subjects.all():
                 pack_subject_list.append(subject.sub_id)
-                print(subject.sub_id)
-            print(pack_subject_list)
             context.update({'data':data,'get_student':get_student})
 
         student_id = get_student.stud_id
@@ -2091,11 +2088,11 @@ def adminside_report_card(request):
 
         # student_data = Students.objects.filter(stud_std__std_id = student_std)
         # print(student_data)
-        total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
+        total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, domain_name = domain).count()
         
-        present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
+        present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True, domain_name = domain).count()
 
-        absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
+        absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False, domain_name = domain).count()
         
         if total_attendence > 0:
             overall_attendence = round((present_attendence/total_attendence)*100,2)
@@ -2105,11 +2102,11 @@ def adminside_report_card(request):
 
 
         # ==================Test Report and Attendance Report============
-        students_li = Students.objects.filter(stud_std__std_id = student_std)
+        students_li = Students.objects.filter(stud_std__std_id = student_std, domain_name = domain)
         overall_attendance_li = []
         for x in students_li:
-            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id).count()
-            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True).count()
+            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, domain_name = domain).count()
+            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True, domain_name = domain).count()
             # print("==============================================",total_attendence_studentwise)
             if total_attendence_studentwise > 0:
                 overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
@@ -2117,10 +2114,10 @@ def adminside_report_card(request):
                 overall_attendence_studentwise = 0
             
 
-            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id, domain_name = domain).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
             
             
-            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id, domain_name = domain).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
             
 
             if total_marks == 0:
@@ -2136,13 +2133,13 @@ def adminside_report_card(request):
         overall_attendance_li = overall_attendance_li[:5]
         
         # ===================SubjectsWise Attendance============================
-        subjects_li = Subject.objects.filter(sub_std__std_id = student_std, sub_id__in = pack_subject_list).values('sub_name').distinct()
+        subjects_li = Subject.objects.filter(sub_std__std_id = student_std, sub_id__in = pack_subject_list, domain_name = domain).values('sub_name').distinct()
         overall_attendance_subwise = []
         for x in subjects_li:
             x = x['sub_name']
-            total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
+            total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id, domain_name = domain).count()
 
-            present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
+            present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id, domain_name = domain).count()
 
             if total_attendence_subwise > 0:
                 attendance_subwise = round((present_attendence_subwise/total_attendence_subwise)*100,2)
@@ -2151,13 +2148,13 @@ def adminside_report_card(request):
             overall_attendance_subwise.append({'sub_name': x, 'attendance_subwise':attendance_subwise})
 
         # ======================SubjectWise TestResult==============================
-        subjects_data = Subject.objects.filter(sub_std=student_std, sub_id__in = pack_subject_list )
+        subjects_data = Subject.objects.filter(sub_std=student_std, sub_id__in = pack_subject_list, domain_name = domain)
         final_average_marks_subwise = []
         for x in subjects_data:
-            total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+            total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id, domain_name = domain).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
         
 
-            obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+            obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id, domain_name = domain).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
             
             
             if total_marks_subwise == 0:
@@ -2174,16 +2171,16 @@ def adminside_report_card(request):
         else:
             class_average_result = 0
 
-        total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+        total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id, domain_name = domain).count()
 
-        absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0).count()
+        absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0, domain_name = domain).count()
 
 
         # =============Doubts and Solution Counts================================
 
-        doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).count()
+        doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id, domain_name = domain).count()
 
-        solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).annotate(verified_solution=Count(
+        solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id, domain_name = domain).annotate(verified_solution=Count(
             Case(
                 When(doubt_solution__solution_verified=True, then=1),
                 output_field=IntegerField(),
@@ -2196,7 +2193,7 @@ def adminside_report_card(request):
             else:
                 print("no verified")
 
-        doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
+        doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True, domain_name = domain).count()
         # print(student_data)
         context.update({
             'title': 'Report-Card',
@@ -2225,11 +2222,12 @@ def adminside_report_card(request):
 
 
 def fees_collection_admin(request):
-    cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False)
-    std_data = Std.objects.all()
+    domain = request.get_host()
+    cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False, domain_name = domain)
+    std_data = Std.objects.filter(domain_name = domain)
     Context = {'std_data':std_data}
              
-    students_data = Students.objects.annotate(
+    students_data = Students.objects.filter(domain_name = domain).annotate(
     amount_paid=Coalesce(Sum('fees_collection__fees_paid'), Value(0)),
     discountt=Case(
         When(discount__discount_amount=None, then=Value(0)),
@@ -2243,7 +2241,7 @@ def fees_collection_admin(request):
         if get_std == 0:
             pass
         else:    
-            students_data = Students.objects.filter(stud_std__std_id = get_std).annotate(
+            students_data = Students.objects.filter(stud_std__std_id = get_std, domain_name = domain).annotate(
             amount_paid=Coalesce(Sum('fees_collection__fees_paid'), Value(0)),
             discountt=Case(
                 When(discount__discount_amount=None, then=Value(0)),
@@ -2255,7 +2253,7 @@ def fees_collection_admin(request):
     # ------------------end filter-------------------------------------
 
     #=================Total Amount Fees Paid============================================
-    total_amount_fees_paid = Fees_Collection.objects.all().aggregate(total_amu_paid = Sum('fees_paid'))
+    total_amount_fees_paid = Fees_Collection.objects.filter(domain_name = domain).aggregate(total_amu_paid = Sum('fees_paid'))
     
     if total_amount_fees_paid['total_amu_paid'] != None:
         total_amount_fees_paid = total_amount_fees_paid['total_amu_paid']
@@ -2263,13 +2261,13 @@ def fees_collection_admin(request):
         total_amount_fees_paid = 0
 
     #==================Total Fees Amount After Discount=================================
-    total_discount_amount = Discount.objects.all().aggregate(discount_amount=Sum('discount_amount'))
+    total_discount_amount = Discount.objects.filter(domain_name = domain).aggregate(discount_amount=Sum('discount_amount'))
     if total_discount_amount['discount_amount'] != None:
         total_discount_amount = total_discount_amount['discount_amount']
     else:
         total_discount_amount = 0
 
-    total_fees_amount = Students.objects.all().aggregate(fees_amount=Sum('stud_pack__pack_fees'))
+    total_fees_amount = Students.objects.filter(domain_name = domain).aggregate(fees_amount=Sum('stud_pack__pack_fees'))
     if total_fees_amount['fees_amount'] != None:
         total_fees_amount = total_fees_amount['fees_amount']
     else:
@@ -2296,9 +2294,9 @@ def fees_collection_admin(request):
     if model_name == 'fees_collection':
         payment_data = []
         if get_standard:
-            data = Fees_Collection.objects.filter(stud_std__std_id=get_standard)
+            data = Fees_Collection.objects.filter(stud_std__std_id=get_standard, domain_name = domain)
         else:
-            data = Fees_Collection.objects.all()
+            data = Fees_Collection.objects.filter(domain_name = domain)
         field_names = ['Student Name','Student Standard','Total Payable Amount','Discount Fees','Amount Paid','Remaining Amount']
         for x in data:
             temp_data = {}
@@ -2321,7 +2319,7 @@ def fees_collection_admin(request):
             Q(stud_std__std_name__icontains=searchhh) |
             Q(stud_name__icontains=searchhh) |
             Q(stud_lastname__icontains=searchhh) |
-            Q(stud_pack__pack_fees__icontains=searchhh)).annotate(
+            Q(stud_pack__pack_fees__icontains=searchhh), domain_name = domain).annotate(
                 amount_paid=Coalesce(Sum('fees_collection__fees_paid'), Value(0)),
                 discountt=Case(
                     When(discount__discount_amount=None, then=Value(0)),
@@ -2333,8 +2331,9 @@ def fees_collection_admin(request):
     return render(request, 'fees_collection_admin.html', Context)
 
 def add_cheques_admin(request):
-    students = Students.objects.all()
-    banks = Banks.objects.all()
+    domain = request.get_host()
+    students = Students.objects.filter(domain_name = domain)
+    banks = Banks.objects.filter(domain_name = domain)
 
     context={
         'title' : 'Add Cheques',
@@ -2355,8 +2354,7 @@ def add_cheques_admin(request):
                     cheque_amt = form.cleaned_data['cheque_amount']
                     fees_mode = 'CHECK'
                     cheque_date = form.cleaned_data['cheque_date']
-                    abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date)
-
+                    abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date, domain_name = domain)
                 form.save()
                 student_name = form.cleaned_data['cheque_stud_id']
                 student_email = [student_name.stud_email]
@@ -2376,10 +2374,11 @@ def add_cheques_admin(request):
         if request.method == 'POST':
             form = Cheque_Collection_form(request.POST)
             if form.is_valid():
-                check = Cheque_Collection.objects.filter(cheque_number = form.data['cheque_number']).count()
+                check = Cheque_Collection.objects.filter(cheque_number = form.data['cheque_number'], domain_name = domain).count()
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['cheque_number']))
-                else:    
+                else:
+                    form.instance.domain_name = domain    
                     form.save()
                     student_name = form.cleaned_data['cheque_stud_id']
                     student_email = [student_name.stud_email]
@@ -2409,7 +2408,8 @@ def delete_cheques_admin(request):
 
 
 def add_fees_collection_admin(request):
-    students = Students.objects.all()
+    domain = request.get_host()
+    students = Students.objects.filter(domain_name = domain)
     context={
         'title' : 'Add Fees',
         'students':students,    
@@ -2417,7 +2417,7 @@ def add_fees_collection_admin(request):
 
     if request.GET.get('get_std'):
         get_std = request.GET.get('get_std')
-        students = Students.objects.filter(stud_std__std_id = get_std)
+        students = Students.objects.filter(stud_std__std_id = get_std, domain_name = domain)
         context.update({'get_std':get_std,'students':students})
         
     
@@ -2444,7 +2444,8 @@ def add_fees_collection_admin(request):
             get_std = request.POST.get('get_std')
             url = '/adminside/fees_collection_admin/?get_std={}'.format(get_std)
             form = fees_collection_form(request.POST)
-            if form.is_valid():   
+            if form.is_valid(): 
+                form.instance.domain_name = domain  
                 form.save()
                 # -------------Mail Send----------------------------------------------------------------------
                 student_name = form.cleaned_data['fees_stud_id']
@@ -2475,17 +2476,19 @@ def admin_fees_collection_delete(request):
     return redirect('fees_collection_admin') 
 
 def payments_history_admin(request):
-    fees_collections_data = Fees_Collection.objects.all()
+    domain = request.get_host()
+    fees_collections_data = Fees_Collection.objects.filter(domain_name = domain)
     context = {
         'fees_collections_data':fees_collections_data,
     }
     return render(request, 'payments_history_admin.html', context)
 
 def faculty_access_show(request):
-    standard_data = Std.objects.all()
-    batch_data = Batches.objects.all()
-    subject_data = Subject.objects.all()
-    teachers_names = Faculties.objects.all()
+    domain = request.get_host()
+    standard_data = Std.objects.filter(domain_name = domain)
+    batch_data = Batches.objects.filter(domain_name = domain)
+    subject_data = Subject.objects.filter(domain_name = domain)
+    teachers_names = Faculties.objects.filter(domain_name = domain)
     context = {
         'standard_data':standard_data,
         'batch_data':batch_data,
@@ -2495,8 +2498,8 @@ def faculty_access_show(request):
     }
     if request.GET.get('get_std'):
         get_std = request.GET.get('get_std')
-        batch_data = Batches.objects.filter(batch_std__std_id = get_std)
-        subject_data = Subject.objects.filter(sub_std__std_id = get_std)
+        batch_data = Batches.objects.filter(batch_std__std_id = get_std, domain_name = domain)
+        subject_data = Subject.objects.filter(sub_std__std_id = get_std, domain_name = domain)
         selected_standard = Std.objects.get(std_id = get_std)
         context.update({'batch_data':batch_data, 'subject_data':subject_data, 'selected_standard':selected_standard})
 
@@ -2511,7 +2514,7 @@ def faculty_access_show(request):
             batch = form.cleaned_data['fa_batch']
             for x in selected_subjects:
                 x_obj = Subject.objects.get(sub_id=x)
-                Faculty_Access.objects.create(fa_faculty=fac, fa_batch=batch, fa_subject=x_obj)
+                Faculty_Access.objects.create(fa_faculty=fac, fa_batch=batch, fa_subject=x_obj, domain_name = domain)
             messages.success(request, "Access given successfully")
             return redirect('faculty_access')
     else:
@@ -2522,6 +2525,7 @@ def faculty_access_show(request):
 
 
 def export_data(request):
+    domain = request.get_host()
     model_name = request.GET.get('model_name')
     Context={'title':model_name}
     get_std = request.GET.get('get_std')
@@ -2531,11 +2535,11 @@ def export_data(request):
     if model_name == 'Students':
         student_data = []
         if get_std:
-            data = Students.objects.filter(stud_std__std_id=get_std)
+            data = Students.objects.filter(stud_std__std_id=get_std, domain_name = domain)
         elif get_batch:
-            data = Students.objects.filter(stud_batch__batch_id=get_batch)
+            data = Students.objects.filter(stud_batch__batch_id=get_batch, domain_name = domain)
         else:
-            data = Students.objects.all()
+            data = Students.objects.filter(domain_name = domain)
 
         field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
         for x in data:
@@ -2547,11 +2551,11 @@ def export_data(request):
     if model_name == 'attendance':
         attendance_data = []
         if get_std:
-            data = Attendance.objects.filter(atten_student__stud_std__std_id=get_std)
+            data = Attendance.objects.filter(atten_student__stud_std__std_id=get_std, domain_name = domain)
         elif get_batch:
-            data = Attendance.objects.filter(atten_student__stud_batch__batch_id=get_batch)
+            data = Attendance.objects.filter(atten_student__stud_batch__batch_id=get_batch, domain_name = domain)
         else:
-            data = Attendance.objects.all()
+            data = Attendance.objects.filter(domain_name = domain)
 
         field_names = ['Date','Student Roll No','Student Name','Subject','Tutor','Attendance','Batch','Std','Board']
         for x in data:
@@ -2610,17 +2614,18 @@ def bulk_upload_questions(request):
         return redirect('show_question_bank')  # Redirect to the same page after submission
     chap_data = Chepter.objects.filter(chep_std__std_id = 13).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name')
     que_type_choices = question_bank.que_type.choices
-    Context={'chap_data':chap_data,'que_type_choices':que_type_choices}
-    return render(request, 'insert_update/bulk_upload_test_questions.html',Context)
+    context={'chap_data':chap_data,'que_type_choices':que_type_choices}
+    return render(request, 'insert_update/bulk_upload_test_questions.html',context)
 
 
 
 
 
 def show_question_bank(request):
+    domain = request.get_host()
     # Fetch all questions from the question_bank model
-    questions = question_bank.objects.all().values('qb_id','qb_chepter__chep_name','qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
-    total_questions = question_bank.objects.count()
+    questions = question_bank.objects.filter(domain_name = domain).values('qb_id','qb_chepter__chep_name','qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
+    total_questions = question_bank.objects.filter(domain_name = domain).count()
     questions = paginatoorrr(questions,request)
     return render(request, 'show_question_bank.html', {'questions': questions, 'total_questions':total_questions})
 
@@ -2656,7 +2661,7 @@ def edit_question_bankk(request):
         return redirect('show_question_bank')  # Redirect back to the question list page
 
     # Render edit form with existing question data
-    chap_data = Chepter.objects.filter(chep_sub__sub_std__std_id = 13).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name')
+    chap_data = Chepter.objects.filter(chep_sub__sub_std__std_id = 13, domain_name = domain).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name')
     que_type_choices = question_bank.que_type.choices
     context = {
         'question': question,
@@ -2717,13 +2722,14 @@ def generate_payment_slip(request):
 
 
 def time_slot_function(request):
+    domain = request.get_host()
     faculty_records = Faculties.objects.values('fac_id', 'fac_name')
     faculty_data = []
 
     for record in faculty_records:
         fac_id = record['fac_id']
         fac_name = record['fac_name']
-        access_data = Faculty_Access.objects.filter(fa_faculty__fac_id=fac_id)
+        access_data = Faculty_Access.objects.filter(fa_faculty__fac_id=fac_id, domain_name = domain)
 
         if access_data:
             faculty_data.append({

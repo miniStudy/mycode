@@ -21,24 +21,26 @@ from django.core.mail import EmailMultiAlternatives
 
 @parent_login_required
 def parent_home(request):
+    domain = request.get_host()
     student_id = request.session['parent_id']
     student = Students.objects.get(stud_id = student_id)
     student_std = student.stud_std.std_id
-    students_li = Students.objects.filter(stud_std__std_id = student_std).values('stud_id', 'stud_name', 'stud_lastname')
+    students_li = Students.objects.filter(stud_std__std_id = student_std, domain_name = domain).values('stud_id', 'stud_name', 'stud_lastname')
     overall_attendance_li = []
+    current_student_overall_test_result = None
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
         else:
             overall_attendence_studentwise = 0
         
 
-        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
         
         
-        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
         
 
         if total_marks == 0:
@@ -56,9 +58,9 @@ def parent_home(request):
 
 
         #=============== Test Result Dashboard ===============================================================
-    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).values('tau_obtained_marks', 'tau_test_id__test_name').order_by('-pk')
+    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id, domain_name = domain).values('tau_obtained_marks', 'tau_test_id__test_name').order_by('-pk')
 
-    test_counts = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+    test_counts = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id, domain_name = domain).count()
 
     test_result_list = []
     test_name_list = []
@@ -85,12 +87,13 @@ def parent_login_page(request):
           return render(request, 'parentpanel/master_auth.html',{'login_set':login, 'title':title})
 
 def parent_login_handle(request):
+    domain = request.get_host()
     if request.method == "POST":
         email = request.POST['email']
         password = request.POST['password']
-        val = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password).count()
+        val = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password, domain_name = domain).count()
         if val==1:
-            Data = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password)
+            Data = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password, domain_name = domain)
             for item in Data:
                request.session['parent_id'] = item.stud_id
                request.session['parent_name'] = item.stud_guardian_name
@@ -121,9 +124,10 @@ def parent_forget_password(request):
           return render(request, 'parentpanel/master_auth.html',{'login_set':login, 'title':title})
     
 def parent_handle_forget_password(request):
+     domain = request.get_host()
      if request.method == "POST":
           email2 = request.POST['email']
-          val = AdminData.objects.filter(admin_email=email2).count()
+          val = AdminData.objects.filter(admin_email=email2, domain_name = domain).count()
           if val!=1:
             messages.error(request, "Email is Wrong")
             url = f"{reverse('parent_forget_password')}?email={email2}"
@@ -152,16 +156,18 @@ def parent_set_new_password(request):
     return render(request, 'parentpanel/master_auth.html',{'login_set':login})
 
 def parent_handle_set_new_password(request):
+     domain = request.get_host()
      if request.method == "POST":
         otp = int(request.POST['otp'])
         password = request.POST['password']
         conf_password = request.POST['confirm_password']
         if password == conf_password:
-             obj = Students.objects.filter(stud_guardian_otp = otp).count()
+             obj = Students.objects.filter(stud_guardian_otp = otp, domain_name = domain).count()
              if obj == 1:
                   data = Students.objects.get(stud_guardian_otp = otp)
                   data.stud_guardian_password = password
                   data.stud_guardian_otp = None
+                  data.domain_name = domain
                   data.save()
                   response = redirect("parent_login")
                   response.set_cookie('stud_guardian_password', password)
@@ -191,9 +197,10 @@ def parent_logout_page(request):
 
 @parent_login_required
 def show_parent_events(request):
-    event_data = Event.objects.all().values('event_id', 'event_name')
-    event_imgs = Event_Image.objects.all()
-    selected_events = Event.objects.first()
+    domain = request.get_host()
+    event_data = Event.objects.filter(domain_name = domain).values('event_id', 'event_name')
+    event_imgs = Event_Image.objects.filter(domain_name = domain)
+    selected_events = Event.objects.filter(domain_name = domain).first()
     context={
         'event_data':event_data,
         'event_imgs':event_imgs,
@@ -203,32 +210,34 @@ def show_parent_events(request):
     if request.GET.get('event_id'):
         event_id = request.GET['event_id']
         selected_events = Event.objects.get(event_id = event_id)
-        event_imgs = Event_Image.objects.filter(event__event_id = event_id)
+        event_imgs = Event_Image.objects.filter(event__event_id = event_id, domain_name = domain)
         context.update({'selected_events':selected_events, 'event_imgs':event_imgs})
     return render(request, 'parentpanel/events.html', context)
 
 @parent_login_required
 def show_parent_profile(request):
+    domain = request.get_host()
     title = 'Profile'
     parent_id = request.session['parent_id']
-    parent_profile = Students.objects.filter(stud_id = parent_id)
+    parent_profile = Students.objects.filter(stud_id = parent_id, domain_name = domain)
     return render(request, 'parentpanel/parent_profile.html', {'parent_profile':parent_profile, 'title':title})
 
 
 
 @parent_login_required
 def show_parentside_report_card(request):
+    domain = request.get_host()
     student_id = request.session['parent_id']
 
     # ===============Overall Attendance==================
     student = Students.objects.get(stud_id = student_id)
     student_std = student.stud_std.std_id
 
-    total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id).count()
+    total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, domain_name = domain).count()
     
-    present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True).count()
+    present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True, domain_name = domain).count()
 
-    absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False).count()
+    absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False, domain_name = domain).count()
     
     if total_attendence > 0:
         overall_attendence = round((present_attendence/total_attendence)*100,2)
@@ -238,21 +247,21 @@ def show_parentside_report_card(request):
 
 
     # ==================Test Report and Attendance Report============
-    students_li = Students.objects.filter(stud_std__std_id = student_std).values('stud_id', 'stud_name')
+    students_li = Students.objects.filter(stud_std__std_id = student_std, domain_name = domain).values('stud_id', 'stud_name')
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id']).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
         else:
             overall_attendence_studentwise = 0
         
 
-        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
         
         
-        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
         
 
         if total_marks == 0:
@@ -271,14 +280,14 @@ def show_parentside_report_card(request):
 
 
    # ===================SubjectsWise Attendance============================
-    subjects_li = Subject.objects.filter(sub_std__std_id = student_std).values('sub_name').distinct()
+    subjects_li = Subject.objects.filter(sub_std__std_id = student_std, domain_name = domain).values('sub_name').distinct()
     overall_attendance_subwise = []
 
     for x in subjects_li:
         x = x['sub_name']
-        total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id).count()
+        total_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_student__stud_id=student_id, domain_name = domain).count()
 
-        present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id).count()
+        present_attendence_subwise = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = x, atten_present=True,atten_student__stud_id=student_id, domain_name = domain).count()
 
         if total_attendence_subwise > 0:
             attendance_subwise = round((present_attendence_subwise/total_attendence_subwise)*100,2)
@@ -288,14 +297,14 @@ def show_parentside_report_card(request):
     
     # ======================SubjectWise TestResult==============================
 
-    subjects_data = Subject.objects.filter(sub_std=student_std)
+    subjects_data = Subject.objects.filter(sub_std=student_std, domain_name = domain)
     final_average_marks_subwise = []
 
     for x in subjects_data:
-        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
+        total_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id, domain_name = domain).aggregate(total_sum_marks_subwise=Sum('tau_total_marks'))['total_sum_marks_subwise'] or 0
        
 
-        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
+        obtained_marks_subwise = Test_attempted_users.objects.filter(tau_test_id__test_sub__sub_name = x.sub_name, tau_stud_id__stud_id=student_id, domain_name = domain).aggregate(obtained_sum_marks_subwise=Sum('tau_obtained_marks'))['obtained_sum_marks_subwise'] or 0
         
         
         if total_marks_subwise == 0:
@@ -310,16 +319,16 @@ def show_parentside_report_card(request):
     class_average_result = round(statistics.mean(overall_results),2)
     
 
-    total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id).count()
+    total_test_conducted = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id, domain_name = domain).count()
 
-    absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0).count()
+    absent_in_test = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id,tau_obtained_marks = 0, domain_name = domain).count()
 
 
     # =============Doubts and Solution Counts================================
 
-    doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).count()
+    doubt_asked = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id, domain_name = domain).count()
 
-    solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id).annotate(verified_solution=Count(
+    solutions_gives = Doubt_section.objects.filter(doubt_stud_id__stud_id = student_id, domain_name = domain).annotate(verified_solution=Count(
         Case(
             When(doubt_solution__solution_verified=True, then=1),
             output_field=IntegerField(),
@@ -332,7 +341,7 @@ def show_parentside_report_card(request):
         else:
             print("no verified")
 
-    doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True).count()
+    doubt_solved_byme = Doubt_solution.objects.filter(solution_stud_id__stud_id = student_id, solution_verified = True, domain_name = domain).count()
 
     
 
@@ -362,10 +371,11 @@ def show_parentside_report_card(request):
 
 @parent_login_required
 def show_parentside_payment(request):
+    domain = request.get_host()
     student_id = request.session['parent_id']
     student_data = Students.objects.get(stud_id = student_id)
 
-    discount_amount = Discount.objects.filter(discount_stud_id__stud_id = student_id) 
+    discount_amount = Discount.objects.filter(discount_stud_id__stud_id = student_id, domain_name = domain) 
     if discount_amount:
         fees_to_paid = int(student_data.stud_pack.pack_fees) - int(discount_amount[0].discount_amount)
     else:
@@ -373,9 +383,9 @@ def show_parentside_payment(request):
 
     # ===========================Paid Fees========================================
 
-    fees_collection = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).values('fees_stud_id__stud_name', 'fees_stud_id__stud_lastname', 'fees_paid', 'fees_date', 'fees_mode')
+    fees_collection = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id, domain_name = domain).values('fees_stud_id__stud_name', 'fees_stud_id__stud_lastname', 'fees_paid', 'fees_date', 'fees_mode')
     if fees_collection:
-        paid_fees = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id).aggregate(tol_amount=Sum('fees_paid'))
+        paid_fees = Fees_Collection.objects.filter(fees_stud_id__stud_id = student_id, domain_name = domain).aggregate(tol_amount=Sum('fees_paid'))
         paid_fees = int(paid_fees['tol_amount'])
     else:
         paid_fees = 0
@@ -386,7 +396,7 @@ def show_parentside_payment(request):
    
     # ===========================Cheque Fees======================================
 
-    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid = False).values('cheque_paid', 'cheque_amount', 'cheque_date', 'cheque_expiry', 'cheque_paid', 'cheque_bounce')
+    cheque_data = Cheque_Collection.objects.filter(cheque_stud_id__stud_id = student_id, cheque_paid = False, domain_name = domain).values('cheque_paid', 'cheque_amount', 'cheque_date', 'cheque_expiry', 'cheque_paid', 'cheque_bounce')
 
     context = {
         'title': 'Payments',
@@ -403,21 +413,23 @@ def show_parentside_payment(request):
 
 @parent_login_required
 def show_parentside_announcement(request):
+    domain = request.get_host()
     title = 'Announcement'
     student_id = request.session['parent_id']
     student = Students.objects.get(stud_id = student_id)
     announcements_data = Announcements.objects.filter(
     Q(announce_std=None, announce_batch=None) |
     Q(announce_std__std_id=student.stud_std.std_id, announce_batch=None) |
-    Q(announce_std__std_id=student.stud_std.std_id, announce_batch__batch_id=student.stud_batch.batch_id)
+    Q(announce_std__std_id=student.stud_std.std_id, announce_batch__batch_id=student.stud_batch.batch_id), domain_name = domain
 ).order_by('-pk')[:50].values('announce_title','announce_id','announce_msg','announce_date')
 
     return render(request, 'parentpanel/announcement.html', {"announcements_data":announcements_data, 'title':title})
 
 @parent_login_required
 def show_parentside_timetable(request):
+    domain = request.get_host()
     student_id = request.session['parent_id']
     student = Students.objects.get(stud_id = student_id)
     title = 'Timetable'
-    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student.stud_batch.batch_id).values('tt_day','tt_subject1','tt_time1','tt_tutor1__fac_name')
+    timetable_data = Timetable.objects.filter(tt_batch__batch_id = student.stud_batch.batch_id, domain_name = domain).values('tt_day','tt_subject1','tt_time1','tt_tutor1__fac_name')
     return render(request, 'parentpanel/timetable.html', {'timetable_data':timetable_data, 'title':title})

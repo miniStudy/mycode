@@ -544,8 +544,6 @@ class Today_Teaching(models.Model):
 
 
 
-
-
 class question_bank(models.Model):
     class que_type(models.TextChoices):
         Question_Answer = 'Question_Answer', 'Question_Answer'

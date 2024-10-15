@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'website',
     'api',
     'django_crontab',
+    'team_ministudy',
 ]
 
 MIDDLEWARE = [
