@@ -30,6 +30,7 @@ logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 
 global_domain = None
+print("hello")
 
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
