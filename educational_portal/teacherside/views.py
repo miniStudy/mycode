@@ -960,13 +960,12 @@ def insert_update_tests(request):
 
 @teacher_login_required
 def delete_tests(request):
-    domain = request.get_host()
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
-                Chepterwise_test.objects.filter(test_id__in=selected_ids, domain_name = domain).delete()
+                Chepterwise_test.objects.filter(test_id__in=selected_ids).delete()
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
@@ -1154,13 +1153,12 @@ def announcements_insert_update_teacher(request):
 
 @teacher_login_required
 def announcements_delete_teacher(request):
-    domain = request.get_host()
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
-                Announcements.objects.filter(announce_id__in=selected_ids, domain_name = domain).delete()
+                Announcements.objects.filter(announce_id__in=selected_ids).delete()
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
@@ -1696,6 +1694,8 @@ def today_learning_delete(request):
 
 def show_question_paper(request):
     domain = request.get_host()
+    tests_data = None  # Initialize with a default value
+    questions_data = None 
     if request.GET.get('test_id'):
         test_id = request.GET.get('test_id')
         tests_data = Chepterwise_test.objects.filter(test_id = test_id, domain_name = domain).annotate(total_marks=Sum('test_questions_answer__tq_weightage'))
