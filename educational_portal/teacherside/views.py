@@ -646,7 +646,7 @@ def teacher_events(request):
 
 @teacher_login_required
 def teacher_test(request):
-    domain = request.get_host
+    domain = request.get_host()
     fac_id = request.session['fac_id']
     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
     subjects_list = []
