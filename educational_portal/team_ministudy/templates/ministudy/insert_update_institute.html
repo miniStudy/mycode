@@ -9,27 +9,47 @@
   <body>
     <div class="container mt-5">
       <h2>Add New Institution</h2>
-      <form action="{% url 'insert_update_institute' %}?pk={{institute_id}}" method="POST" enctype="multipart/form-data">
+      <form action="{% url 'insert_update_institute' %}{% if update_data %}?pk={{update_data.institute_id}}{% endif %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3 mt-3">
           <label for="name" class="form-label">Institute Name:</label>
-          <input type="text" name="institute_name" {% if update_form %} value="{{update_form.institute_name}}" {% endif %} class="form-control" id="name" required>
+          <input type="text" name="institute_name" {% if update_data %} value="{{update_data.institute_name}}" {% endif %} class="form-control" id="name" required>
         </div>
         <div class="mb-3">
           <label for="email" class="form-label">Email:</label>
-          <input type="email" name="institute_email" class="form-control" id="email" required>
+          <input type="email" name="institute_email" {% if update_data %} value="{{update_data.institute_email}}" {% endif %} class="form-control" id="email" required>
         </div>
         <div class="mb-3">
           <label for="contact" class="form-label">Contact:</label>
-          <input type="text" name="institute_contact" class="form-control" id="contact" required>
+          <input type="text" name="institute_contact" {% if update_data %} value="{{update_data.institute_contact}}" {% endif %} class="form-control" id="contact" required>
         </div>
         <div class="mb-3">
           <label for="domain" class="form-label">Institute Domain:</label>
-          <input type="text" name="institute_domain" class="form-control" id="domain" required>
+          <input type="text" name="institute_domain" {% if update_data %} value="{{update_data.institute_domain}}" {% endif %} class="form-control" id="domain" required>
+        </div>
+        <div class="mb-3">
+          <label for="institute_lock" class="form-label">Institute Lock:</label>
+          <input 
+            type="checkbox" 
+            name="institute_lock" 
+            id="institute_lock" 
+            class="form-check-input"
+            {% if update_data and update_data.institute_lock %} checked {% endif %}
+          >
         </div>
         <div class="mb-3">
           <label for="logo" class="form-label">Institute Logo:</label>
-          <input type="file" name="institute_logo" class="form-control" id="logo" required>
+          {% if update_data and update_data.institute_logo %}
+            <div class="mb-2">
+              <img src="{{ update_data.institute_logo.url }}" alt="Current Logo" width="150" height="150" />
+            </div>
+          {% endif %}
+          <input 
+            type="file" 
+            name="institute_logo" 
+            class="form-control" 
+            id="logo" 
+            {% if not update_data %} required {% endif %}>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>

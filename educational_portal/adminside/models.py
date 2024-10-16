@@ -378,7 +378,7 @@ class Inquiries(models.Model):
     inq_last_std_and_marks = models.CharField(max_length=20)
     inq_howuknow = models.CharField(max_length=100)
     stud_nationality = models.CharField(null=True, blank=True, max_length=255, default='India')
-    stud_pack = models.ForeignKey(Packs, on_delete = models.CASCADE)
+    inq_subjects = models.CharField(max_length=300, null=True, blank=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
 
     def __str__(self):
