@@ -20,6 +20,7 @@ from django.core.mail import EmailMultiAlternatives
 from studentside.decorators import student_login_required
 from datetime import datetime, timedelta
 from django.utils.timezone import now
+from team_ministudy.models import *
 # Create your views here.
 
 
@@ -136,7 +137,10 @@ def student_login_handle(request):
             
             messages.success(request, 'Logged In Successfully')
             
-            return redirect('Student_home')
+            if NewInstitution.objects.get(institute_lock = False):
+                return redirect('Student_home')
+            else:
+                return redirect('Lock_Page')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('Student_Login')
@@ -512,17 +516,31 @@ def student_inquiries_data(request):
     domain = request.get_host()
     standard_data = Std.objects.filter(domain_name = domain)
     package_data = Packs.objects.filter(domain_name = domain)
+    subjects = Subject.objects.filter(domain_name=domain)
+    unique_subjects = {subject.sub_name: subject for subject in subjects}.values()
+    subjects_data = list(unique_subjects)
+
     if request.method == 'POST':
         form = student_inquiries(request.POST)
         if form.is_valid():
+            selected_subjects = request.POST.getlist('stud_pack[]')
+            form.instance.inq_subjects = ', '.join(selected_subjects)
             form.instance.domain_name = domain
             form.save()
+            messages.success(request, "Inquiry saved successfully!")
+            return redirect('Student_Inquiries')
         else:
             messages.error(request, "Form is not valid!")
             return redirect('Student_Inquiries')
+
     else:
         form = student_inquiries()
-    return render(request, 'studentpanel/inquiries.html', {'form':form, 'standard_data':standard_data, 'package_data':package_data})
+
+    return render(
+        request, 
+        'studentpanel/inquiries.html', 
+        {'form': form, 'standard_data': standard_data, 'package_data': package_data, 'subjects_data': subjects_data}
+    )
 
 @student_login_required
 def student_profile(request):

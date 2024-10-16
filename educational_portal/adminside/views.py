@@ -275,8 +275,7 @@ def admin_logout(request):
 @admin_login_required
 def home(request):
     domain = request.get_host()
-    context = {}
-    all_students= Students.objects.filter(domain_name = domain).count()
+    all_students = Students.objects.filter(domain_name = domain).count()
 
     all_male=Students.objects.filter(stud_gender='Male', domain_name = domain).count()
     all_female=Students.objects.filter(stud_gender='Female', domain_name = domain).count()
@@ -284,7 +283,6 @@ def home(request):
     piechart_category = ['Male','Female','Other']
     piechart_data = [all_male,all_female,all_other]
     stds = Std.objects.filter(domain_name = domain).order_by('-std_board')
-
 
     #-----------------------Inquires-----------------------------------------
     total_inquiries = Inquiries.objects.filter(domain_name = domain).values('inq_email').count()
@@ -313,19 +311,24 @@ def home(request):
 
     # Performance of all standards
     std_data = Std.objects.filter(domain_name = domain)
+    subject_data = Subject.objects.filter(domain_name = domain)
+    context = {'std_data': std_data, 'subject_data': subject_data}
 
-    if request.GET.get('get_std'):
-        get_std = request.GET.get('get_std')
+    
+    get_std = request.GET.get('get_std')
+    if get_std:
+        subject_data = Subject.objects.filter(sub_std__std_id = get_std)
+        context.update({'subject_data': subject_data})
     else:
-        get_std = 13
-        
+        get_std = None
 
-    get_std = Std.objects.get(std_id = get_std)
+    get_subject = request.GET.get('get_subject')
+
     students_li = Students.objects.filter(stud_std = get_std, domain_name = domain).values('stud_id','stud_name','stud_lastname')
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
         else:
@@ -358,7 +361,6 @@ def home(request):
         'get_std': get_std,
         'std_list':std_list,
         'students_for_that_std':students_for_that_std,
-        'std_data':std_data,
         'conversion': conversion,
         'lead': lead,
         'domain':domain,
@@ -2254,6 +2256,8 @@ def fees_collection_admin(request):
 
     #=================Total Amount Fees Paid============================================
     total_amount_fees_paid = Fees_Collection.objects.filter(domain_name = domain).aggregate(total_amu_paid = Sum('fees_paid'))
+    total_cheque_amount = Cheque_Collection.objects.filter(domain_name = domain, cheque_paid=False).aggregate(total_che_paid = Sum('cheque_amount'))
+    total_cheque_amount_paid = total_cheque_amount['total_che_paid']
     
     if total_amount_fees_paid['total_amu_paid'] != None:
         total_amount_fees_paid = total_amount_fees_paid['total_amu_paid']
@@ -2278,6 +2282,10 @@ def fees_collection_admin(request):
     #===================Total Pending Fees==============================================
     total_pending_fees = total_fees_amount_after_discount - total_amount_fees_paid
     
+    if total_pending_fees >= total_cheque_amount_paid:
+        final_pending_fees_after_cheque_amount = total_pending_fees - total_cheque_amount_paid
+    else:
+        final_pending_fees_after_cheque_amount = 0
 
     Context.update({
         'title':'Payments',
@@ -2287,6 +2295,9 @@ def fees_collection_admin(request):
         'total_fees_amount_after_discount':total_fees_amount_after_discount,
         'total_pending_fees':total_pending_fees,
         'students_data':students_data,
+        'total_cheque_amount_paid': total_cheque_amount_paid,
+        'final_pending_fees_after_cheque_amount': final_pending_fees_after_cheque_amount,
+
     })
     
     model_name = request.GET.get('model_name')

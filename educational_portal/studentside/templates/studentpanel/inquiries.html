@@ -109,15 +109,25 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="stud_pack" class="form-label">Package</label>
-                    <select name="stud_pack" class="form-select" id="stud_pack">
-                      {% for pack in package_data %}
-                      <option value="{{pack.pack_id}}">{{pack.pack_name}}</option>
+                    <label class="form-label">Select Subjects</label>
+                    <div>
+                      {% for sub in subjects_data %}
+                      <div class="form-check">
+                        <input 
+                          class="form-check-input" 
+                          type="checkbox" 
+                          name="stud_pack[]" 
+                          value="{{ sub.sub_name }}" 
+                          id="pack_{{ sub.sub_id }}">
+                        <label class="form-check-label" for="pack_{{ sub.sub_id }}">
+                          {{ sub.sub_name }}
+                        </label>
+                      </div>
                       {% endfor %}
-                    </select> 
+                    </div>
                   </div>
-
-
+                  
+                  
                   <div class="mb-3">
                     <label for="inq_guardian_name" class="form-label" required>Guardian Name</label>
                     <input type="text" class="form-control" id="inq_guardian_name" name="inq_guardian_name"

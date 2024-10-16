@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from team_ministudy.models import *
 from team_ministudy.forms import *
+from datetime import timedelta
+from django.utils.timezone import now
 
 # Create your views here.
 
@@ -20,9 +22,16 @@ def insert_update_institute_function(request):
                 form.save()
                 return redirect('show_institute')
             else:
-                form = form.data
-                return render(request, 'ministudy/insert_update_institute.html', {'update_form': form})
+                return render(request, 'ministudy/insert_update_institute.html')
+        else:
+            return render(request, 'ministudy/insert_update_institute.html')
 
+    if request.GET.get('update_id'):
+        update_id = request.GET.get('update_id')
+        update_data = get_object_or_404(NewInstitution, institute_id=update_id)
+        context = {'update_data': update_data}
+        return render(request, 'ministudy/insert_update_institute.html', context)
+    
     if request.method == 'POST':
         institute_name = request.POST['institute_name']
         institute_email = request.POST['institute_email']
@@ -34,3 +43,19 @@ def insert_update_institute_function(request):
         return redirect('show_institute')
     return render(request, 'ministudy/insert_update_institute.html')
 
+def show_ministudy_payment_function(request):
+    return render(request, 'show_ministudy_pay.html')
+
+def insert_update_ministudy_payment_function(request):
+    return render(request, 'insert_update_ministudy_pay.html')
+
+
+def institute_lock_function():
+    unlocked_institutes = NewInstitution.objects.filter(institute_lock=False)
+
+    for institute in unlocked_institutes:
+        lock_date = institute.institute_joining_date + timedelta(days=15)
+        
+        if now() >= lock_date:
+            institute.institute_lock = True
+            institute.save()

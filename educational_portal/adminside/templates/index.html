@@ -164,13 +164,25 @@
 
   <div class="card-body">
     <div class="btn-group mb-3">
-      <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button>
-      <ul class="dropdown-menu">
+      <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button> <ul class="dropdown-menu">
         {% for x in std_data %}
         <li><a class="dropdown-item" href="{% url 'Admin Home' %}?get_std={{x.std_id}}">{{x.std_name}} {{x.std_board}}</a></li>
         {% endfor %}
       </ul>
     </div>
+
+    <div class="btn-group mb-3 ms-3">
+      <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_subject %}{{get_subject.sub_name}}{% else %}Subject{% endif %}</button>
+      <ul class="dropdown-menu">
+        {% for x in subject_data %}
+        <li><a class="dropdown-item" href="{% url 'Admin Home' %}?get_std={{get_std}}&get_subject={{x.sub_id}}">
+          {{x.sub_name}}
+        </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
     <div class="table-responsive text-nowrap">
       <table class="table table-bordered">
         {% if get_std %}

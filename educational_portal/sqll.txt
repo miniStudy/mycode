@@ -18,7 +18,6 @@ INSERT INTO `chepter`(`chep_name`, `chep_sem`, `chep_icon`, `chep_std_id`, `chep
 ('Probability','1','','13','5'),;
 
 
-<<<<<<< HEAD
 
 
 
