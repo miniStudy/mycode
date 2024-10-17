@@ -1,12 +1,57 @@
 {% extends 'master.html' %}
  
 {% block contentsection %}
-  <div class="mb-4"><h4>Inquiry</h4></div> 
+  <div class="mb-4"><h4>Leads</h4></div> 
   
 
 {% for message in messages %}
  {{message|safe}}
 {% endfor %}
+
+<div class="row">
+  <div class="col-sm-12 col-lg-4 mb-4">
+    <div class="card card-border-shadow-warning h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-warning"><i class="fa-solid fa-clipboard-question"></i></span>
+          </div>
+          <h4 class="ms-1 mb-0"> {{total_inquiries}}</h4>
+        </div>
+        <p class="mb-1">Total Leads</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-lg-4 mb-4">
+    <div class="card card-border-shadow-primary h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-primary"><i class="fa-regular fa-square-check"></i></span>
+          </div>
+          <h4 class="ms-1 mb-0"> {{total_conversion}}</h4>
+        </div>
+        <p class="mb-1">Total Admission</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-lg-4 mb-4">
+    <div class="card card-border-shadow-primary h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-primary"><i class="fa-regular fa-square-check"></i></span>
+          </div>
+          <h4 class="ms-1 mb-0"> {{percentage}}</h4>
+        </div>
+        <p class="mb-1">Percentage</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- DataTable with Buttons -->
 <div class="card">
   <div class="card-body">
