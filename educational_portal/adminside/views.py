@@ -1871,11 +1871,13 @@ def delete_students(request):
 def show_inquiries(request):
     domain = request.get_host()
     title = "Inquiries"
+    email_ids = list(Students.objects.values_list('stud_email', flat=True))
     inquiries_data = Inquiries.objects.filter(domain_name = domain)
 
     context = {
         "title":title,
-        "inquiries_data":inquiries_data
+        "inquiries_data":inquiries_data,
+        'email_ids': email_ids
     }
     return render(request, 'show_inquiries.html', context)
 
