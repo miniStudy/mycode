@@ -395,6 +395,7 @@ def show_test(request):
 @student_login_required
 def show_test_questions(request, id):
     domain = request.get_host()
+    domain = None
     student_id = Students.objects.get(stud_id=request.session['stud_id'])
     test = Chepterwise_test.objects.get(test_id=id)
 
