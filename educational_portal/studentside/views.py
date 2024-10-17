@@ -151,9 +151,9 @@ def student_Forgot_Password(request):
     login=2
     if request.COOKIES.get("student_email"):
             cookie_email = request.COOKIES['stud_email']
-            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email, 'title':'Forgot Password'})
+            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email, 'title':'Forget Password'})
     else:
-            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':'Forgot Password'})
+            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':'Forget Password'})
     
 def student_handle_forgot_password(request):
     domain = request.get_host()
@@ -182,7 +182,7 @@ def student_handle_forgot_password(request):
         return redirect('Student_Forgot_Password')
     
 def student_Set_New_Password(request):
-    title = 'New Password'  
+    title = 'New Password'
     login=3      
     if request.GET.get('email'):
          foremail = request.GET['email']
@@ -238,6 +238,7 @@ def student_info_update(request):
     if request.method == 'POST':
         form = update_form(request.POST, instance=student_obj)
         if form.is_valid():
+            form.instance.domain_name = domain
             form.save()
             messages.success(request, 'Your information updated successfully')
             return redirect('Student_Profile')
@@ -647,6 +648,7 @@ def Student_edit_solution(request,id):
     if request.POST.get('solution'):
         form = solution_form(request.POST, instance=solution_id)
         if form.is_valid():
+            form.instance.domain_name = domain
             form.save()
             return redirect('Student_Doubt')
     else:

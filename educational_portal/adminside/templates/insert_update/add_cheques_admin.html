@@ -34,9 +34,7 @@
           <select id="defaultSelect" class="form-select" name="cheque_stud_id">
             <option value="">--</option>
             {% for x in students %}
-            
               <option value="{{x.stud_id}}"  {% if filled_data.cheque_stud_id.stud_id == x.stud_id %} selected {% endif %} {% if x.stud_id == update_data.cheque_stud_id.stud_id %} selected {% endif %} >{{x.stud_name}} {{x.stud_lastname}}</option>
-            
               {% endfor %}
           </select>
         </div>

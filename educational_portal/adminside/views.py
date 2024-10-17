@@ -158,9 +158,9 @@ def admin_login_page(request):
     if request.COOKIES.get("admin_email"):
             cookie_email = request.COOKIES['admin_email']
             cookie_pass = request.COOKIES['admin_password']
-            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass})
+            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':'login'})
     else:
-            return render(request, 'master_auth.html',{'login_set':login})
+            return render(request, 'master_auth.html',{'login_set':login, 'title':'login'})
 
 
 def admin_login_handle(request):
@@ -196,9 +196,9 @@ def admin_Forgot_Password(request):
     login=2
     if request.COOKIES.get("admin_email"):
             cookie_email = request.COOKIES['admin_email']
-            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email})
+            return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email, 'title': 'Forget Password'})
     else:
-            return render(request, 'master_auth.html',{'login_set':login})
+            return render(request, 'master_auth.html',{'login_set':login, 'title': 'Forget Passoword'})
     
 def admin_handle_forgot_password(request):
      if request.method == "POST":
@@ -228,7 +228,7 @@ def admin_Set_New_Password(request):
     login=3      
     if request.GET['email']:
          foremail = request.GET['email']
-    return render(request, 'master_auth.html',{'login_set':login,'email':foremail})
+    return render(request, 'master_auth.html',{'login_set':login,'email':foremail, 'title': 'New Password'})
 
 def admin_handle_set_new_password(request):
      if request.method == "POST":
@@ -419,7 +419,7 @@ def insert_update_boards(request):
     if request.method == "POST":
         form = brd_form(request.POST)
         if form.is_valid():
-            form.instance.domain_name = '127.0.0.1:8000'
+            form.instance.domain_name = domain
             form.save()
             return redirect('boards')
         else:
@@ -467,6 +467,7 @@ def insert_update_stds(request):
         if request.method == "POST":
             form = std_form(request.POST, instance=instance)
             if form.is_valid():
+                form.instance.domain_name = domain
                 form.save()
                 return redirect('stds')
             else:
@@ -584,6 +585,7 @@ def insert_update_announcements(request):
             instance = get_object_or_404(Announcements, pk=request.GET['pk'])
             form = announcement_form(request.POST, instance=instance)       
             if form.is_valid():
+                form.instance.domain_name = domain
                 form.save()
                 return redirect(url)
             else:
@@ -685,7 +687,9 @@ def insert_update_subjects(request):
                 messages.error(request,'{} is already Exists'.format(form.data['sub_name']))
             else:
                 if form.is_valid():
+                    form.instance.domain_name = domain
                     form.save()
+                    form.instance.domain_name = domain
                     return redirect(url)
                 else:
                     filled_data = form.data
@@ -817,7 +821,9 @@ def insert_update_chepters(request):
                 messages.error(request,'{} is already Exists'.format(form.data['chep_name']))
             else:
                 if form.is_valid():
+                    form.instance.domain_name = domain
                     form.save()
+                    form.instance.domain_name = domain
                     return redirect(url)
                 else:
                     filled_data = form.data
@@ -939,6 +945,7 @@ def insert_update_faculties(request):
                 messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
             else:
                 if form.is_valid():
+                    form.instance.domain_name = domain
                     form.save()
                     return redirect('admin_faculties')
                 else:
@@ -1037,30 +1044,32 @@ def insert_update_timetable(request):
 
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
-        std_data = std_data.filter(std_id=get_std)
-        subject_data = Subject.objects.filter(sub_std__std_id = get_std)
-        batch_data = batch_data.filter(batch_std__std_id=get_std)
+        std_data = std_data.filter(std_id=get_std, domain_name = domain)
+        subject_data = Subject.objects.filter(sub_std__std_id = get_std, domain_name = domain)
+        batch_data = batch_data.filter(batch_std__std_id=get_std, domain_name = domain)
         tt_students_for_mail = tt_students_for_mail.filter(stud_std=get_std, domain_name = domain)
         context.update({'get_std': get_std, 'std_data': std_data, 'batch_data': batch_data, 'subject_data':subject_data, 'tt_students_for_mail':tt_students_for_mail})
         
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
-        batch_data = batch_data.filter(batch_id=get_batch)
+        batch_data = batch_data.filter(batch_id=get_batch, domain_name = domain)
         tt_students_for_mail = tt_students_for_mail.filter(stud_batch=get_batch, domain_name = domain)
         context.update({'get_batch': get_batch, 'batch_data': batch_data, 'tt_students_for_mail':tt_students_for_mail})
 
-     
-  
-    if request.method == 'POST':
-        # Update logic
-        tt_batch = request.POST.get('tt_batch')
-        url = '/adminside/admin_timetable/?get_batch={}'.format(tt_batch)
-        if request.GET.get('pk'):
-            instance = get_object_or_404(Timetable, pk=request.GET['pk'])
+
+    
+    # Update logic
+    if request.GET.get('pk'):
+        instance = get_object_or_404(Timetable, pk=request.GET['pk'])
+        print(instance)
+        if request.method == 'POST':
+            tt_batch = request.POST.get('tt_batch')
+            url = '/adminside/admin_timetable/?get_batch={}'.format(tt_batch)
             form = timetable_form(request.POST, instance=instance)
             if form.is_valid():
-                form.save()
+                form.instance.domain_name = domain
+                form.save()               
                 # ---------------------sendmail Logic===================================
                 tt_students_email_list = []
                 student_chat_ids = []
@@ -1069,16 +1078,24 @@ def insert_update_timetable(request):
                     tt_students_email_list.append(x.stud_email)
                     student_chat_ids.append(x.stud_telegram_studentchat_id)
                     parent_chat_ids.append(x.stud_telegram_parentschat_id)              
-                timetable_mail(tt_students_email_list)
+                # timetable_mail(tt_students_email_list)
+
                 # ------------------------ Telegram Message -------------------------------
-                timetable_telegram_message_student(student_chat_ids)
-                timetable_telegram_message_parent(parent_chat_ids)
+                # timetable_telegram_message_student(student_chat_ids)
+                # timetable_telegram_message_parent(parent_chat_ids)
                 return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
 
-        # Insert logic
+
+    if request.GET.get('pk'):
+        update_data = Timetable.objects.get(tt_id=request.GET['pk'])
+        context.update({'update_data': update_data})
+        return render(request, 'insert_update/timetable.html', context)
+
+    # Insert logic
+    if request.method == 'POST':
         form = timetable_form(request.POST)
         if form.is_valid():
             form.instance.domain_name = domain
@@ -1089,12 +1106,7 @@ def insert_update_timetable(request):
             context.update({'filled_data': filled_data, 'errors': form.errors})
             return render(request, 'insert_update/timetable.html', context)
 
-    if request.GET.get('pk'):
-        update_data = Timetable.objects.get(tt_id=request.GET['pk'])
-        context.update({'update_data': update_data})
-    return render(request, 'insert_update/timetable.html', context)
-
-
+    
 
 def delete_timetable(request):
     if request.method == 'POST':
@@ -1350,6 +1362,7 @@ def insert_update_tests(request):
                 messages.error(request, '{} already exists'.format(form.data['test_name']))
             else:
                 if form.is_valid():
+                    form.instance.domain_name = domain
                     form.save()
                     return redirect('admin_tests')
                 else:
@@ -1538,6 +1551,7 @@ def insert_update_test_questions(request):
             chep_id = form.cleaned_data['tq_chepter']
             testt_id = testt_id.test_id
             chep_id = chep_id.chep_id
+            form.instance.domain_name = domain
             form.save()
             url = '/adminside/insert_update_test_question_admin/?test_id={}&chep_id={}'.format(testt_id,chep_id)
             return redirect(url) 
@@ -1620,6 +1634,7 @@ def insert_update_packages(request):
                 messages.error(request,'{} is already Exists'.format(form.data['pack_name']))
             else:
                 if form.is_valid():
+                    form.instance.domain_name = domain
                     form.save()
                     return redirect(url)
                 else:
@@ -1638,7 +1653,8 @@ def insert_update_packages(request):
                 check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std'], domain_name = domain).count()
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['pack_name']))
-                else:    
+                else:
+                    form.instance.domain_name = domain    
                     form.save()
                     return redirect(url)
             else:
@@ -1799,6 +1815,7 @@ def insert_update_students(request):
             instance = get_object_or_404(Students, pk=request.GET['pk'])
             form = student_form(request.POST, instance=instance)
             if form.is_valid():
+                form.instance.domain_name = domain
                 form.save()
                 student_std = request.POST.get('stud_std')
                 student_batch = request.POST.get('stud_batch')
@@ -1925,6 +1942,7 @@ def insert_update_batches(request):
                 messages.error(request,'{} is already Exists'.format(form.data['batch_name']))
             else:
                 if form.is_valid():
+                    form.instance.domain_name = domain
                     form.save()
                     std_name = request.POST.get('batch_std')
                     url = '/adminside/admin_batches/?get_std={}'.format(std_name)
@@ -2361,6 +2379,11 @@ def add_cheques_admin(request):
         'banks':banks,    
     }   
 
+    if request.GET.get('get_std'):
+        get_std = request.GET.get('get_std')
+        students = Students.objects.filter(stud_std__std_id = get_std)
+        context.update({'students':students})
+
  # ================update Logic==================================
     if request.GET.get('pk'):
         if request.method == 'POST':
@@ -2375,10 +2398,11 @@ def add_cheques_admin(request):
                     fees_mode = 'CHECK'
                     cheque_date = form.cleaned_data['cheque_date']
                     abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date, domain_name = domain)
+                form.instance.domain_name = domain
                 form.save()
                 student_name = form.cleaned_data['cheque_stud_id']
                 student_email = [student_name.stud_email]
-                parent_email = [student_name.stud_gaurdian_email]
+                parent_email = [student_name.stud_guardian_email]
                 date = datetime.today()
                 parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                 cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
@@ -2402,7 +2426,7 @@ def add_cheques_admin(request):
                     form.save()
                     student_name = form.cleaned_data['cheque_stud_id']
                     student_email = [student_name.stud_email]
-                    parent_email = [student_name.stud_gaurdian_email]
+                    parent_email = [student_name.stud_guardian_email]
                     date = datetime.today()
                     parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                     cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
@@ -2449,6 +2473,7 @@ def add_fees_collection_admin(request):
             instance = get_object_or_404(Fees_Collection, pk=request.GET['pk'])
             form = fees_collection_form(request.POST, instance=instance)
             if form.is_valid():
+                form.instance.domain_name = domain
                 form.save()
                 return redirect(url)
             else:

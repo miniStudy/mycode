@@ -77,7 +77,7 @@ def parent_home(request):
     return render(request, 'parentpanel/index.html', context)
 
 def parent_login_page(request):
-    title = 'Login' 
+    title = 'login' 
     login=1
     if request.COOKIES.get("stud_guardian_email"):
           cookie_email = request.COOKIES['stud_guardian_email']
@@ -153,7 +153,7 @@ def parent_set_new_password(request):
     login=3      
     # if request.GET.get('email'):
     #     foremail = request.GET['email']
-    return render(request, 'parentpanel/master_auth.html',{'login_set':login})
+    return render(request, 'parentpanel/master_auth.html',{'login_set':login, 'title': 'New Password'})
 
 def parent_handle_set_new_password(request):
      domain = request.get_host()
