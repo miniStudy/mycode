@@ -44,10 +44,37 @@ def insert_update_institute_function(request):
     return render(request, 'ministudy/insert_update_institute.html')
 
 def show_ministudy_payment_function(request):
-    return render(request, 'show_ministudy_pay.html')
+    ministudy_payment_data = MinistudyPayment.objects.all()
+    context = {'ministudy_payment_data': ministudy_payment_data}
+    return render(request, 'ministudy/show_ministudy_pay.html', context)
 
 def insert_update_ministudy_payment_function(request):
-    return render(request, 'insert_update_ministudy_pay.html')
+    students_data = Students.objects.all()
+    update_data = None
+    if request.GET.get('pk'):
+        instance = get_object_or_404(MinistudyPayment, pk=request.GET['pk'])
+        if request.method == 'POST':
+            form = Ministudy_Payment_Form(request.POST, instance=instance)
+            if form.is_valid():
+                form.save()
+                return redirect('show_ministudy_payment')
+            else:
+                return render(request, 'ministudy/insert_update_ministudy_pay.html')
+
+    if request.GET.get('update_id'):
+        update_id = request.GET.get('update_id')
+        update_data = MinistudyPayment.objects.get(ministudypay_id = update_id)
+        return render(request, 'ministudy/insert_update_ministudy_pay.html', {'update_data': update_data, 'students_data': students_data})
+    else:
+        if request.method == 'POST':
+            form = Ministudy_Payment_Form(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('show_ministudy_payment')
+            else:
+                return render(request, 'ministudy/insert_update_ministudy_pay.html')
+    return render(request, 'ministudy/insert_update_ministudy_pay.html', {'students_data': students_data, 'update_data': update_data})
+
 
 
 def institute_lock_function():

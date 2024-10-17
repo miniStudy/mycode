@@ -1879,12 +1879,25 @@ def delete_students(request):
 @admin_login_required
 def show_inquiries(request):
     domain = request.get_host()
+    title = "Leads"
     title = "Inquiries"
+    email_ids = list(Students.objects.values_list('stud_email', flat=True))
     inquiries_data = Inquiries.objects.filter(domain_name = domain)
+    total_inquiries = inquiries_data.count()
+    students_email = Students.objects.filter(domain_name = domain).values('stud_email')
+    matching_inquiries = Inquiries.objects.filter(domain_name = domain, inq_email__in=students_email)
+    total_conversion = matching_inquiries.count()
+    percentage = round((total_conversion/total_inquiries)*100,2)
+
 
     context = {
         "title":title,
-        "inquiries_data":inquiries_data
+        "inquiries_data":inquiries_data,
+        "total_inquiries":total_inquiries,
+        "total_conversion":total_conversion,
+        "matching_inquiries":matching_inquiries,
+        "percentage":percentage,
+        'email_ids': email_ids
     }
     return render(request, 'show_inquiries.html', context)
 

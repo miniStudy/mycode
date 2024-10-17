@@ -1,12 +1,57 @@
 {% extends 'master.html' %}
  
 {% block contentsection %}
-  <div class="mb-4"><h4>Inquiry</h4></div> 
+  <div class="mb-4"><h4>Leads</h4></div> 
   
 
 {% for message in messages %}
  {{message|safe}}
 {% endfor %}
+
+<div class="row">
+  <div class="col-sm-12 col-lg-4 mb-4">
+    <div class="card card-border-shadow-warning h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-warning"><i class="fa-solid fa-clipboard-question"></i></span>
+          </div>
+          <h4 class="ms-1 mb-0"> {{total_inquiries}}</h4>
+        </div>
+        <p class="mb-1">Total Leads</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-lg-4 mb-4">
+    <div class="card card-border-shadow-primary h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-primary"><i class="fa-regular fa-square-check"></i></span>
+          </div>
+          <h4 class="ms-1 mb-0"> {{total_conversion}}</h4>
+        </div>
+        <p class="mb-1">Total Admission</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-lg-4 mb-4">
+    <div class="card card-border-shadow-primary h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2 pb-1">
+          <div class="avatar me-2">
+            <span class="avatar-initial rounded bg-label-primary"><i class="fa-regular fa-square-check"></i></span>
+          </div>
+          <h4 class="ms-1 mb-0"> {{percentage}}</h4>
+        </div>
+        <p class="mb-1">Percentage</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- DataTable with Buttons -->
 <div class="card">
   <div class="card-body">
@@ -54,27 +99,33 @@
                 </tr>
             </thead>
             <tbody>
-                {% for data in inquiries_data %}
-                <tr>
-                    <td><input type="checkbox" class="form-check-input" value="{{data.stud_id}}" name="selection" /></td>
-                    <td>{{data.inq_name}} {{data.inq_lastname}}</td>
-                    <td>{{data.inq_contact}}</td>
-                    <td>{{data.inq_subjects}}</td>
-                    <td>{{data.inq_std}}</td>
-                    <td>{{data.inq_guardian_number}}</td>
-                    <td>{{data.inq_email}}</td>
-                    <td>{{data.inq_dob}}</td>
-                    <td>{{data.inq_gender}}</td>                   
-                    <td>{{data.inq_schoolname}}</td>
-                    <td>{{data.inq_last_std_and_marks}}</td>
-                    <td>{{data.inq_guardian_name}}</td>
-                    <td>{{data.inq_guardian_email}}</td>
-                    <td>{{data.inq_guardian_profession}}</td>
-                    <td>{{data.inq_address}}</td>
-                    <td>{{data.inq_howuknow}}</td>
-                    <td><a href="{% url 'insert_update_students' %}?inq_id={{data.inq_id}}">Admission</a></td>
-                </tr>
-                {% endfor %}
+              {% for data in inquiries_data %}
+              <tr>
+                  <td><input type="checkbox" class="form-check-input" value="{{ data.stud_id }}" name="selection" /></td>
+                  <td>{{ data.inq_name }} {{ data.inq_lastname }}</td>
+                  <td>{{ data.inq_contact }}</td>
+                  <td>{{ data.inq_subjects }}</td>
+                  <td>{{ data.inq_std }}</td>
+                  <td>{{ data.inq_guardian_number }}</td>
+                  <td>{{ data.inq_email }}</td>
+                  <td>{{ data.inq_dob }}</td>
+                  <td>{{ data.inq_gender }}</td>
+                  <td>{{ data.inq_schoolname }}</td>
+                  <td>{{ data.inq_last_std_and_marks }}</td>
+                  <td>{{ data.inq_guardian_name }}</td>
+                  <td>{{ data.inq_guardian_email }}</td>
+                  <td>{{ data.inq_guardian_profession }}</td>
+                  <td>{{ data.inq_address }}</td>
+                  <td>{{ data.inq_howuknow }}</td>
+                  <td>
+                      {% if data.inq_email in email_ids %}
+                          <p>Done</p>
+                      {% else %}
+                          <a href="{% url 'insert_update_students' %}?inq_id={{ data.inq_id }}">Admission</a>
+                      {% endif %}
+                  </td>
+              </tr>
+              {% endfor %}              
             </tbody>
         </table>
     </div>  
