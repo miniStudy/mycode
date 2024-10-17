@@ -841,6 +841,7 @@ def insert_update_tests(request):
                 messages.error(request, '{} is already Exists'.format(form.data['test_name']))
             else:
                 if form.is_valid():
+                    form.instance.domain_name = domain
                     form.save()
                     return redirect('teacher_test')
                 else:
@@ -1021,6 +1022,7 @@ def insert_update_test_questions_teacher(request):
     if request.method == 'POST':
         form = TestQuestionsAnswerForm(request.POST, request.FILES)
         if form.is_valid():
+            form.instance.domain_name = domain
             form.save()
             return redirect('teacher_test')  # Replace 'success_url' with your actual success URL
         else:
@@ -1120,8 +1122,8 @@ def announcements_insert_update_teacher(request):
             instance = get_object_or_404(Announcements, pk=request.GET['pk'])
             form = announcement_form(request.POST, instance=instance)       
             if form.is_valid():
+                form.instance.domain_name = domain
                 form.save()
-
                 return redirect(url)
             else:
                 filled_data = form.data
@@ -1326,12 +1328,13 @@ def teacher_view_profile(request):
 
 @teacher_login_required
 def teacher_profile_update(request):
+    domain = request.get_host()
     teacher_id = request.session['fac_id']
     teacher_obj = Faculties.objects.get(fac_id = teacher_id)
     if request.method == 'POST':
         form = teacher_update_form(request.POST, instance=teacher_obj)
-        print(form)
         if form.is_valid():
+            form.instance.domain_name = domain
             form.save()
             messages.success(request, 'Your information updated successfully')
             return redirect('teacher_profile')
@@ -1647,6 +1650,7 @@ def today_learning_insert_update(request):
             instance = get_object_or_404(Today_Teaching, pk=request.GET['pk'])
             form = teacher_todaylearn_form(request.POST, instance=instance)
             if form.is_valid():
+                form.instance.domain_name = domain
                 form.save()
                 messages.success(request, 'Updated Sucessfully!')
                 return redirect(url)
