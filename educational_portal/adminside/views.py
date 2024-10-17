@@ -317,18 +317,27 @@ def home(request):
     
     get_std = request.GET.get('get_std')
     if get_std:
-        subject_data = Subject.objects.filter(sub_std__std_id = get_std)
-        context.update({'subject_data': subject_data})
+        subject_data = Subject.objects.filter(sub_std__std_id = int(get_std))
+        get_std = Std.objects.get(std_id = get_std)
+        context.update({'subject_data': subject_data, 'get_std':get_std})
     else:
-        get_std = None
+        get_std = Std.objects.first()
+        subject_data = Subject.objects.filter(sub_std__std_id = get_std.std_id)
+        context.update({'subject_data': subject_data, 'get_std':get_std})
 
     get_subject = request.GET.get('get_subject')
+    if get_subject:
+        get_subject = Subject.objects.get(sub_id = get_subject)
+        context.update({'get_subject':get_subject})
+    else:
+        get_subject = Subject.objects.filter(sub_std__std_id = get_std.std_id).first()
+        context.update({'get_subject':get_subject})  
 
     students_li = Students.objects.filter(stud_std = get_std, domain_name = domain).values('stud_id','stud_name','stud_lastname')
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject.sub_id).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject.sub_id).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
         else:
@@ -1871,6 +1880,8 @@ def delete_students(request):
 def show_inquiries(request):
     domain = request.get_host()
     title = "Leads"
+    title = "Inquiries"
+    email_ids = list(Students.objects.values_list('stud_email', flat=True))
     inquiries_data = Inquiries.objects.filter(domain_name = domain)
     total_inquiries = inquiries_data.count()
     students_email = Students.objects.filter(domain_name = domain).values('stud_email')
@@ -1885,7 +1896,8 @@ def show_inquiries(request):
         "total_inquiries":total_inquiries,
         "total_conversion":total_conversion,
         "matching_inquiries":matching_inquiries,
-        "percentage":percentage
+        "percentage":percentage,
+        'email_ids': email_ids
     }
     return render(request, 'show_inquiries.html', context)
 

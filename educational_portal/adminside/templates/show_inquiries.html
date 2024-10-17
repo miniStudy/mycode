@@ -99,27 +99,33 @@
                 </tr>
             </thead>
             <tbody>
-                {% for data in inquiries_data %}
-                <tr>
-                    <td><input type="checkbox" class="form-check-input" value="{{data.stud_id}}" name="selection" /></td>
-                    <td>{{data.inq_name}} {{data.inq_lastname}}</td>
-                    <td>{{data.inq_contact}}</td>
-                    <td>{{data.inq_subjects}}</td>
-                    <td>{{data.inq_std}}</td>
-                    <td>{{data.inq_guardian_number}}</td>
-                    <td>{{data.inq_email}}</td>
-                    <td>{{data.inq_dob}}</td>
-                    <td>{{data.inq_gender}}</td>                   
-                    <td>{{data.inq_schoolname}}</td>
-                    <td>{{data.inq_last_std_and_marks}}</td>
-                    <td>{{data.inq_guardian_name}}</td>
-                    <td>{{data.inq_guardian_email}}</td>
-                    <td>{{data.inq_guardian_profession}}</td>
-                    <td>{{data.inq_address}}</td>
-                    <td>{{data.inq_howuknow}}</td>
-                    <td><a href="{% url 'insert_update_students' %}?inq_id={{data.inq_id}}">Admission</a></td>
-                </tr>
-                {% endfor %}
+              {% for data in inquiries_data %}
+              <tr>
+                  <td><input type="checkbox" class="form-check-input" value="{{ data.stud_id }}" name="selection" /></td>
+                  <td>{{ data.inq_name }} {{ data.inq_lastname }}</td>
+                  <td>{{ data.inq_contact }}</td>
+                  <td>{{ data.inq_subjects }}</td>
+                  <td>{{ data.inq_std }}</td>
+                  <td>{{ data.inq_guardian_number }}</td>
+                  <td>{{ data.inq_email }}</td>
+                  <td>{{ data.inq_dob }}</td>
+                  <td>{{ data.inq_gender }}</td>
+                  <td>{{ data.inq_schoolname }}</td>
+                  <td>{{ data.inq_last_std_and_marks }}</td>
+                  <td>{{ data.inq_guardian_name }}</td>
+                  <td>{{ data.inq_guardian_email }}</td>
+                  <td>{{ data.inq_guardian_profession }}</td>
+                  <td>{{ data.inq_address }}</td>
+                  <td>{{ data.inq_howuknow }}</td>
+                  <td>
+                      {% if data.inq_email in email_ids %}
+                          <p>Done</p>
+                      {% else %}
+                          <a href="{% url 'insert_update_students' %}?inq_id={{ data.inq_id }}">Admission</a>
+                      {% endif %}
+                  </td>
+              </tr>
+              {% endfor %}              
             </tbody>
         </table>
     </div>  

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add / Update Payment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    input, select {
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .btn-submit {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-submit:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">{% if update_data %}Update Payment{% else %}Add Payment{% endif %}</h1>
+    <form 
+      action="{% url 'insert_update_ministudy_payment' %}?pk={{update_data.ministudypay_id}}"  method="POST">
+      {% csrf_token %}
+
+      <label for="student">Student</label>
+      <select name="ministudypay_student_id" required>
+        <option value="" disabled selected>Select Student</option>
+        {% for student in students_data %}
+          <option value="{{ student.stud_id }}"
+            {% if update_data and student.stud_id == update_data.ministudypay_student_id.stud_id %}
+              selected
+            {% endif %}>
+            {{ student.stud_name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="amount">Amount (₹)</label>
+      <input 
+        type="number" 
+        name="ministudypay_amount" 
+        required 
+        {% if update_data %} value="{{ update_data.ministudypay_amount }}" {% endif %} 
+      />
+
+      <label for="paid">Paid</label>
+      <input 
+        type="checkbox" 
+        name="ministudypay_paid" 
+        {% if update_data and update_data.ministudypay_paid %}checked{% endif %} 
+      />
+
+      <button type="submit" class="btn-submit">Save Payment</button>
+    </form>
+  </div>
+</body>
+</html>
