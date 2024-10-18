@@ -218,6 +218,7 @@ def admin_login_handle(request):
                 try:
                     admin = AdminData.objects.get(admin_email=email)
                     admin.admin_onesignal_player_id = admin_onesignal_player_id
+                    print(admin)
                     admin.save()
                 except AdminData.DoesNotExist:
                     messages.error(request, "Admin with this OneSignal player ID does not exist.")
@@ -1189,6 +1190,8 @@ def insert_update_timetable(request):
     if request.method == 'POST':
         form = timetable_form(request.POST)
         if form.is_valid():
+            tt_batch = request.POST.get('tt_batch')
+            url = '/adminside/admin_timetable/?get_batch={}'.format(tt_batch)
             form.instance.domain_name = domain
             form.save()
             return redirect(url)
@@ -1196,6 +1199,7 @@ def insert_update_timetable(request):
             filled_data = form.data
             context.update({'filled_data': filled_data, 'errors': form.errors})
             return render(request, 'insert_update/timetable.html', context)
+    return render(request, 'insert_update/timetable.html', context)
 
     
 
