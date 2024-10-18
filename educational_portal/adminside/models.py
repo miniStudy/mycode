@@ -10,6 +10,7 @@ class AdminData(models.Model):
     admin_email = models.EmailField(unique=True)
     admin_otp = models.IntegerField(blank=True,null=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
+    admin_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return f"{self.admin_email}"
@@ -164,6 +165,7 @@ class Students(models.Model):
     stud_guardian_profession = models.CharField(max_length=50,null=True,blank=True)
     stud_guardian_password = models.CharField(max_length=100, null=True, blank=True, default='123456')
     stud_guardian_otp = models.CharField(blank=True,null=True,max_length=10)
+    guardian_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
     stud_address = models.TextField(blank=True, null=True)
     stud_std = models.ForeignKey(Std, on_delete = models.CASCADE)
     stud_batch = models.ForeignKey(Batches, on_delete = models.CASCADE)
@@ -203,6 +205,7 @@ class Faculties(models.Model):
     fac_password = models.CharField(max_length=100,null=True, blank=True,default='12345678')
     fac_otp = models.IntegerField(blank=True,null=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
+    fac_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return f"{self.fac_name}"
