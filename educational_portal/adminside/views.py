@@ -213,6 +213,13 @@ def admin_login_handle(request):
         password = request.POST['password']
         val = AdminData.objects.filter(admin_email=email,admin_pass=password).count()
         if val==1:
+            admin_onesignal_player_id = request.session.get('deviceId', 'Error')
+            if admin_onesignal_player_id != 'Error':
+                try:
+                    admin = AdminData.objects.get(admin_onesignal_player_id=admin_onesignal_player_id)
+                    admin.save()
+                except AdminData.DoesNotExist:
+                    messages.error(request, "Admin with this OneSignal player ID does not exist.")
             Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
             for item in Data:
                 request.session['admin_id'] = item.admin_id
@@ -1990,7 +1997,10 @@ def show_inquiries(request):
     students_email = Students.objects.filter(domain_name = domain).values('stud_email')
     matching_inquiries = Inquiries.objects.filter(domain_name = domain, inq_email__in=students_email)
     total_conversion = matching_inquiries.count()
-    percentage = round((total_conversion/total_inquiries)*100,2)
+    if total_inquiries != 0:
+        percentage = round((total_conversion/total_inquiries)*100,2)
+    else:
+        percentage = 0
 
 
     context = {
