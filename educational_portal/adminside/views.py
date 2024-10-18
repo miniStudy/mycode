@@ -401,6 +401,7 @@ def insert_update_boards(request):
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
+                messages.success(request, 'Board Updated Successfully')
                 return redirect('boards')
             else:
                 filled_data = form.data
@@ -421,6 +422,7 @@ def insert_update_boards(request):
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
+            messages.success(request, 'Board Added Successfully')
             return redirect('boards')
         else:
             filled_data = form.data
@@ -436,7 +438,7 @@ def delete_boards(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Boards.objects.filter(brd_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, '<div class="bg-success text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-regular fa-circle-check me-2"></i> Items Deleted Successfully.</div>')
+                messages.success(request, 'Board Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'<div class="bg-danger text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)} </div>')
 
@@ -469,6 +471,7 @@ def insert_update_stds(request):
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
+                messages.success(request, 'Standard Updated Successfully')
                 return redirect('stds')
             else:
                 filled_data = form.data
@@ -489,6 +492,7 @@ def insert_update_stds(request):
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
+            messages.success(request, 'Standard Added Successfully')
             return redirect('stds')
         else:
             filled_data = form.data
@@ -504,7 +508,7 @@ def delete_stds(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Std.objects.filter(std_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, '<div class="bg-success text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-regular fa-circle-check me-2"></i> Items Deleted Successfully.</div>')
+                messages.success(request, 'Standard Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'<div class="bg-danger text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)} </div>')
 
@@ -688,6 +692,7 @@ def insert_update_subjects(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
+                    messages.success(request, 'Subject Updated Successfully')
                     form.save()
                     form.instance.domain_name = domain
                     return redirect(url)
@@ -709,6 +714,7 @@ def insert_update_subjects(request):
                     messages.error(request,'{} is already Exists'.format(form.data['sub_name']))
                 else:  
                     form.instance.domain_name = domain  
+                    messages.success(request, 'Subject Added Successfully')
                     form.save()
                     return redirect(url)
             else:
@@ -726,7 +732,7 @@ def delete_subjects(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Subject.objects.filter(sub_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Subjects Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
     return redirect('admin_subjects')
@@ -822,8 +828,8 @@ def insert_update_chepters(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
+                    messages.success(request, 'Chapter Updated Successfully')
                     form.save()
-                    form.instance.domain_name = domain
                     return redirect(url)
                 else:
                     filled_data = form.data
@@ -847,6 +853,7 @@ def insert_update_chepters(request):
                     messages.error(request,'{} is already Exists'.format(form.data['chep_name']))
                 else:    
                     form.instance.domain_name = domain
+                    messages.success(request, 'Chapter Added Successfully')
                     form.save()
                     return redirect(url)
             else:
@@ -867,7 +874,7 @@ def delete_chepters(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Chepter.objects.filter(chep_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Chapters Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
@@ -1869,7 +1876,6 @@ def delete_students(request):
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
-
     return redirect('students_dataAdmin')
 
 
@@ -1900,6 +1906,20 @@ def show_inquiries(request):
         'email_ids': email_ids
     }
     return render(request, 'show_inquiries.html', context)
+
+
+def delete_inquiries(request):
+    if request.method == 'POST':
+        domain  = request.get_host()
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Inquiries.objects.filter(inq_id__in=selected_ids, domain_name = domain).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+    return redirect('inquiry_data')
 
 
 # ------------------------------------------batches data-----------------------------------------
