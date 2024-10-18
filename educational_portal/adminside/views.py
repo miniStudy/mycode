@@ -3,6 +3,7 @@ from adminside.form import *
 from adminside.models import *
 from django.contrib import messages
 from django.urls import reverse
+import pandas as pd
 from django.conf import settings
 import math
 import statistics
@@ -28,6 +29,8 @@ import json
 from django.core.mail import send_mail
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
+from django.core.exceptions import ObjectDoesNotExist
+
 
 global_domain = None
 
@@ -476,6 +479,7 @@ def insert_update_boards(request):
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
+                messages.success(request, 'Board Updated Successfully')
                 return redirect('boards')
             else:
                 filled_data = form.data
@@ -496,6 +500,7 @@ def insert_update_boards(request):
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
+            messages.success(request, 'Board Added Successfully')
             return redirect('boards')
         else:
             filled_data = form.data
@@ -511,7 +516,7 @@ def delete_boards(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Boards.objects.filter(brd_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, '<div class="bg-success text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-regular fa-circle-check me-2"></i> Items Deleted Successfully.</div>')
+                messages.success(request, 'Board Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'<div class="bg-danger text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)} </div>')
 
@@ -544,6 +549,7 @@ def insert_update_stds(request):
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
+                messages.success(request, 'Standard Updated Successfully')
                 return redirect('stds')
             else:
                 filled_data = form.data
@@ -564,6 +570,7 @@ def insert_update_stds(request):
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
+            messages.success(request, 'Standard Added Successfully')
             return redirect('stds')
         else:
             filled_data = form.data
@@ -579,7 +586,7 @@ def delete_stds(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Std.objects.filter(std_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, '<div class="bg-success text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-regular fa-circle-check me-2"></i> Items Deleted Successfully.</div>')
+                messages.success(request, 'Standard Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'<div class="bg-danger text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)} </div>')
 
@@ -763,6 +770,7 @@ def insert_update_subjects(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
+                    messages.success(request, 'Subject Updated Successfully')
                     form.save()
                     form.instance.domain_name = domain
                     return redirect(url)
@@ -784,6 +792,7 @@ def insert_update_subjects(request):
                     messages.error(request,'{} is already Exists'.format(form.data['sub_name']))
                 else:  
                     form.instance.domain_name = domain  
+                    messages.success(request, 'Subject Added Successfully')
                     form.save()
                     return redirect(url)
             else:
@@ -801,7 +810,7 @@ def delete_subjects(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Subject.objects.filter(sub_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Subjects Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
     return redirect('admin_subjects')
@@ -897,8 +906,8 @@ def insert_update_chepters(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
+                    messages.success(request, 'Chapter Updated Successfully')
                     form.save()
-                    form.instance.domain_name = domain
                     return redirect(url)
                 else:
                     filled_data = form.data
@@ -922,6 +931,7 @@ def insert_update_chepters(request):
                     messages.error(request,'{} is already Exists'.format(form.data['chep_name']))
                 else:    
                     form.instance.domain_name = domain
+                    messages.success(request, 'Chapter Added Successfully')
                     form.save()
                     return redirect(url)
             else:
@@ -942,7 +952,7 @@ def delete_chepters(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Chepter.objects.filter(chep_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Chapters Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
@@ -1199,11 +1209,12 @@ def delete_timetable(request):
 @admin_login_required
 def show_attendance(request):
     domain = request.get_host()
-    data = Attendance.objects.filter(domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+    data = Attendance.objects.filter(domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
     std_data = Std.objects.filter(domain_name = domain)
     batch_data = Batches.objects.filter(domain_name = domain)
     stud_data = Students.objects.filter(domain_name = domain)
     subj_data = Subject.objects.filter(domain_name = domain)
+    date_data = Attendance.objects.filter(domain_name = domain)
     
     data = paginatoorrr(data, request)
     context ={
@@ -1213,14 +1224,17 @@ def show_attendance(request):
         'batch_data':batch_data,
         'stud_data':stud_data,
         'sub_data':subj_data,
+        'date_data': date_data,
     }
+
+    
 
     if request.GET.get('get_std'):
         get_std = int(request.GET['get_std'])
         if get_std == 0:
             pass
         else:    
-            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             batch_data = batch_data.filter(batch_std__std_id = get_std)
             stud_data = stud_data.filter(stud_std__std_id = get_std)
@@ -1234,7 +1248,7 @@ def show_attendance(request):
         if get_batch == 0:
             pass
         else:
-            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
             get_batch = Batches.objects.get(batch_id = get_batch)
@@ -1245,11 +1259,27 @@ def show_attendance(request):
         if get_student == 0:
             pass
         else:
-            data = Attendance.objects.filter(atten_student__stud_id = get_student, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            data = Attendance.objects.filter(atten_student__stud_id = get_student, domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
             data = paginatoorrr(data, request)
             get_student = Students.objects.get(stud_id = get_student)
-            context.update({'data':data,'get_student':get_student})                     
 
+            context.update({'data':data,'get_student':get_student})      
+
+    if request.GET.get('atten_date'):
+        atten_date = request.GET.get('atten_date')
+        get_std = int(request.GET['get_std'])
+        get_batch = int(request.GET['get_batch'])
+        context.update({'atten_date':atten_date})
+        if atten_date:
+            atten_date = datetime.strptime(atten_date, '%Y-%m-%d').date()
+            data = Attendance.objects.filter(atten_date__date=atten_date, atten_timetable__tt_batch__batch_id = get_batch, domain_name=domain).values('atten_id', 'atten_timetable__tt_day', 'atten_timetable__tt_time1', 'atten_date', 'atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name', 'atten_present', 'atten_student__stud_name', 'atten_student__stud_lastname')
+            data = paginatoorrr(data, request)
+            try:
+                atten_obj = Attendance.objects.get(atten_date=atten_date)
+                get_date = atten_obj.atten_date
+            except ObjectDoesNotExist:
+                get_date = None
+            context.update({'data': data, 'get_date': get_date})               
 
     attendance_present = Attendance.objects.filter(atten_present = True, domain_name = domain).count()
     attendance_all = Attendance.objects.filter(domain_name = domain).count()
@@ -1944,7 +1974,6 @@ def delete_students(request):
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
-
     return redirect('students_dataAdmin')
 
 
@@ -1955,7 +1984,6 @@ def delete_students(request):
 def show_inquiries(request):
     domain = request.get_host()
     title = "Leads"
-    title = "Inquiries"
     email_ids = list(Students.objects.values_list('stud_email', flat=True))
     inquiries_data = Inquiries.objects.filter(domain_name = domain)
     total_inquiries = inquiries_data.count()
@@ -1972,9 +2000,23 @@ def show_inquiries(request):
         "total_conversion":total_conversion,
         "matching_inquiries":matching_inquiries,
         "percentage":percentage,
-        'email_ids': email_ids
+        'email_ids': email_ids,
     }
     return render(request, 'show_inquiries.html', context)
+
+
+def delete_inquiries(request):
+    if request.method == 'POST':
+        domain  = request.get_host()
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Inquiries.objects.filter(inq_id__in=selected_ids, domain_name = domain).delete()
+                messages.success(request, 'Items Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+    return redirect('inquiry_data')
 
 
 # ------------------------------------------batches data-----------------------------------------
@@ -2636,7 +2678,12 @@ def faculty_access_show(request):
         selected_standard = Std.objects.get(std_id = get_std)
         context.update({'batch_data':batch_data, 'subject_data':subject_data, 'selected_standard':selected_standard})
 
-
+    if request.GET.get('fac_id'):
+        fac_id = int(request.GET.get('fac_id'))
+        faculty_access_subject = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
+        sub_access_list = [sub.fa_subject for sub in faculty_access_subject]
+        subjects_not_accessible = subject_data.exclude(sub_id__in=[sub.sub_id for sub in sub_access_list])
+        context.update({'fac_id': fac_id, 'subject_data': subjects_not_accessible})
 
     selected_subjects = request.POST.getlist('fa_subject')
     
@@ -2764,6 +2811,7 @@ def show_question_bank(request):
 
 
 def edit_question_bankk(request):
+    domain = request.get_host()
     # Fetch the specific question to edit
     updateid = request.GET.get('updateid')
     question = get_object_or_404(question_bank, qb_id=updateid)
@@ -2853,12 +2901,10 @@ def generate_payment_slip(request):
     pdf = render_to_pdf('payment_slip.html', context)
     return HttpResponse(pdf, content_type='application/pdf')
 
-
 def time_slot_function(request):
     domain = request.get_host()
     faculty_records = Faculties.objects.values('fac_id', 'fac_name')
     faculty_data = []
-
     for record in faculty_records:
         fac_id = record['fac_id']
         fac_name = record['fac_name']
@@ -2871,3 +2917,19 @@ def time_slot_function(request):
             })
     return render(request, 'time_slot.html', {'faculty_data': faculty_data})
 
+
+def institute_main_send_function(request):
+    if request.method == 'POST':
+        excel_file = request.FILES['excel_file']
+        try:
+            df = pd.read_excel(excel_file, engine='openpyxl')
+        except Exception as e:
+            return render(request, 'institute_mail_send.html', {'error': f"Error reading file: {str(e)}"})
+
+        if 'institute_email' not in df.columns:
+            return render(request, 'institute_mail_send.html', {'error': 'Excel file must contain "institute email" column.'})
+        email_list = df['institute_email'].dropna().tolist()
+        institute_send_mail(email_list)
+
+        return render(request, 'institute_mail_send.html', {'emails': email_list})
+    return render(request, 'institute_mail_send.html')

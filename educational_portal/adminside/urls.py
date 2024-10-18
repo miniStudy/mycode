@@ -99,7 +99,9 @@ urlpatterns = [
     path('students_dataAdmin/', adminview.show_students, name='students_dataAdmin'),
     path('insert_update_students/',adminview.insert_update_students,name='insert_update_students'),
     path('delete_students/', adminview.delete_students, name='delete_students'),
+
     path('inquiry_data/', adminview.show_inquiries, name='inquiry_data'),
+    path('delete_inquiry/', adminview.delete_inquiries, name='delete_inquiry'),
     
     # =========================================packages ==============================================
     path('admin_packages', adminview.show_packages, name="admin_packages"),
@@ -149,4 +151,5 @@ urlpatterns = [
     path('generate_payment_slip/',adminview.generate_payment_slip, name='generate_payment_slip'),
 
     path('time_slot/', adminview.time_slot_function, name='time_slot'),
+    path('institute_main_send/', adminview.institute_main_send_function, name='institute_main_send'),
 ]
