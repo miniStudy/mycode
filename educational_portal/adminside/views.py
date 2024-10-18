@@ -676,6 +676,7 @@ def insert_update_announcements(request):
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
+                messages.success(request, 'Announcement Updated Successfully')
                 return redirect(url)
             else:
                 filled_data = form.data
@@ -684,8 +685,9 @@ def insert_update_announcements(request):
         # ===================insert_logic===========================
         form = announcement_form(request.POST)
         if form.is_valid():
-            form.instance.domain_name = domain            
+            form.instance.domain_name = domain 
             form.save()
+            messages.success(request, 'Announcement Added Successfully')           
             students_email_list = []
             for x in students_for_mail:
                 students_email_list.append(x.stud_email)  
@@ -713,7 +715,7 @@ def delete_announcements(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Announcements.objects.filter(announce_id__in=selected_ids, domain_name = domain).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Announcements Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
@@ -777,8 +779,8 @@ def insert_update_subjects(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
-                    messages.success(request, 'Subject Updated Successfully')
                     form.save()
+                    messages.success(request, 'Subject Updated Successfully')
                     form.instance.domain_name = domain
                     return redirect(url)
                 else:
@@ -799,8 +801,8 @@ def insert_update_subjects(request):
                     messages.error(request,'{} is already Exists'.format(form.data['sub_name']))
                 else:  
                     form.instance.domain_name = domain  
-                    messages.success(request, 'Subject Added Successfully')
                     form.save()
+                    messages.success(request, 'Subject Added Successfully')
                     return redirect(url)
             else:
                 filled_data = form.data
@@ -913,8 +915,8 @@ def insert_update_chepters(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
-                    messages.success(request, 'Chapter Updated Successfully')
                     form.save()
+                    messages.success(request, 'Chapter Updated Successfully')
                     return redirect(url)
                 else:
                     filled_data = form.data
@@ -938,8 +940,8 @@ def insert_update_chepters(request):
                     messages.error(request,'{} is already Exists'.format(form.data['chep_name']))
                 else:    
                     form.instance.domain_name = domain
-                    messages.success(request, 'Chapter Added Successfully')
                     form.save()
+                    messages.success(request, 'Chapter Added Successfully')
                     return redirect(url)
             else:
                 filled_data = form.data
@@ -1039,6 +1041,7 @@ def insert_update_faculties(request):
                 if form.is_valid():
                     form.instance.domain_name = domain
                     form.save()
+                    messages.success(request, 'Faculty Updated Successfully')
                     return redirect('admin_faculties')
                 else:
                     filled_data = form.data
@@ -1062,7 +1065,7 @@ def insert_update_faculties(request):
                     fac_name = form.cleaned_data['fac_name']
                     fac_email = [form.cleaned_data['fac_email']]
                     faculty_email(fac_name, fac_email, fac_password)
-
+                    messages.success(request, 'Faculty Added Successfully')
                     return redirect('admin_faculties')
             else:
                 filled_data = form.data
@@ -1080,7 +1083,7 @@ def delete_faculties(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Faculties.objects.filter(fac_id__in=selected_ids).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Faculties Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
@@ -1359,6 +1362,7 @@ def insert_events(request):
         event_images = request.FILES.getlist('event_img')
         event = Event(event_name=event_name, event_date=event_date, event_desc=event_desc, domain_name = domain)
         event.save()
+        messages.success(request, 'Event Added Successfully')
 
 
         from django.utils.dateformat import format
@@ -1732,7 +1736,6 @@ def insert_update_packages(request):
         context.update({'get_std ':get_std,'std_data':std_data, 'subjects_data':subjects_data}) 
 
 
-    
 
  # ================update Logic============================
     if request.GET.get('pk'):
@@ -1741,17 +1744,14 @@ def insert_update_packages(request):
             url = '/adminside/admin_packages/?get_std={}'.format(pack_std)
             instance = get_object_or_404(Packs, pk=request.GET['pk'])
             form = pack_form(request.POST, instance=instance)
-            check = Packs.objects.filter(pack_name = form.data['pack_name'], pack_std__std_id = form.data['pack_std'], domain_name = domain).count()
-            if check >= 1:
-                messages.error(request,'{} is already Exists'.format(form.data['pack_name']))
+            if form.is_valid():
+                form.instance.domain_name = domain
+                form.save()
+                messages.success(request, 'Package Updated Successfully')
+                return redirect(url)
             else:
-                if form.is_valid():
-                    form.instance.domain_name = domain
-                    form.save()
-                    return redirect(url)
-                else:
-                    filled_data = form.data
-                    context.update({'filled_data ':filled_data,'errors':form.errors})
+                filled_data = form.data
+                context.update({'filled_data ':filled_data,'errors':form.errors})
         
         update_data = Packs.objects.get(pack_id = request.GET['pk'])
         context.update({'update_data':update_data})  
@@ -1766,8 +1766,9 @@ def insert_update_packages(request):
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['pack_name']))
                 else:
-                    form.instance.domain_name = domain    
+                    form.instance.domain_name = domain   
                     form.save()
+                    messages.success(request, 'Package Added Successfully') 
                     return redirect(url)
             else:
                 filled_data = form.data
@@ -1785,8 +1786,8 @@ def delete_admin_package(request):
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
             try:
-                Packs.objects.filter(batch_id__in=selected_ids).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                Packs.objects.filter(pack_id__in=selected_ids).delete()
+                messages.success(request, 'Packages Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
@@ -2081,8 +2082,8 @@ def insert_update_batches(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
-                    messages.success(request, 'Batch Updated Successfully')
                     form.save()
+                    messages.success(request, 'Batch Updated Successfully')
                     std_name = request.POST.get('batch_std')
                     url = '/adminside/admin_batches/?get_std={}'.format(std_name)
                     return redirect(url)
@@ -2102,8 +2103,8 @@ def insert_update_batches(request):
                     messages.error(request,'{} is already Exists'.format(form.data['batch_name']))
                 else:
                     form.instance.domain_name = domain
-                    messages.success(request, 'Batch Added Successfully')    
                     form.save()
+                    messages.success(request, 'Batch Added Successfully')    
                     std_name = request.POST.get('batch_std')
                     url = '/adminside/admin_batches/?get_std={}'.format(std_name)
                     return redirect(url)
