@@ -217,7 +217,7 @@ def admin_login_handle(request):
             if admin_onesignal_player_id != 'Error':      
                 admin = AdminData.objects.get(admin_email=email)
                 admin.admin_onesignal_player_id = admin_onesignal_player_id
-                return redirect('faculty_access')
+                admin.save()
             Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
             for item in Data:
                 request.session['admin_id'] = item.admin_id
