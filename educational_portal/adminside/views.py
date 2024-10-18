@@ -2060,8 +2060,6 @@ def insert_update_batches(request):
         context.update({'get_std ':get_std,'std_data':std_data}) 
 
 
-   
-
  # ================update Logic============================
     if request.GET.get('pk'):
         if request.method == 'POST':
@@ -2073,6 +2071,7 @@ def insert_update_batches(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
+                    messages.success(request, 'Batch Updated Successfully')
                     form.save()
                     std_name = request.POST.get('batch_std')
                     url = '/adminside/admin_batches/?get_std={}'.format(std_name)
@@ -2092,7 +2091,8 @@ def insert_update_batches(request):
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['batch_name']))
                 else:
-                    form.instance.domain_name = domain    
+                    form.instance.domain_name = domain
+                    messages.success(request, 'Batch Added Successfully')    
                     form.save()
                     std_name = request.POST.get('batch_std')
                     url = '/adminside/admin_batches/?get_std={}'.format(std_name)
@@ -2114,7 +2114,7 @@ def delete_admin_batches(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Batches.objects.filter(batch_id__in=selected_ids).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Batches Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
