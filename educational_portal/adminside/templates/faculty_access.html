@@ -16,9 +16,9 @@
           Select Standard
         {% endif %}</button>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="{% url 'faculty_access' %}">ALL</a></li>
+        <li><a class="dropdown-item" href="{% url 'faculty_access' %}?fac_id={{fac_id}}">ALL</a></li>
         {% for x in standard_data %}
-        <li><a class="dropdown-item" href="{% url 'faculty_access' %}?get_std={{x.std_id}}">{{ x }}</a></li>
+        <li><a class="dropdown-item" href="{% url 'faculty_access' %}?fac_id={{fac_id}}&get_std={{x.std_id}}">{{ x }}</a></li>
         {% endfor %}
       </ul>
     </div>
@@ -26,12 +26,10 @@
 <hr>
     <form action="{% url 'faculty_access' %}"  method="POST">
         {% csrf_token %}
-        
-        
         <div class="row">
           <div class="col-md-6"><select name="fa_faculty" class="form-select" required>
             {% for data in teachers_names %}
-            <option value="{{data.fac_id}}">{{data.fac_name}}</option>
+            <option value="{{data.fac_id}}" {% if data.fac_id == fac_id %} selected {% endif %}>{{data.fac_name}}</option>
             {% endfor %}
         </select></div>
         <div class="col-md-6">

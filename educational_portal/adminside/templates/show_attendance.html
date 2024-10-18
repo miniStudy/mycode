@@ -82,8 +82,26 @@
             </ul>
             <a href="{% url 'export_data' %}?get_std={{ get_std.std_id }}&get_batch={{ get_batch.batch_id }}&model_name=attendance"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
           </div>
+
           <form method="get" action="{% url 'admin_attendance' %}">
             <div class="input-group mt-2">
+              <input 
+                type="date" 
+                name="atten_date" 
+                class="form-control btn-outline-primary"
+                {% if atten_date %} value="{{ atten_date }}" {% endif %} 
+                style="padding: 2px; width: 120px !important;" aria-label="Input group example"
+                aria-describedby="btnGroupAddon"
+              />
+              <button id="searchButton" class="input-group-text btn-outline-primary" id="btnGroupAddon" type="submit"><i class="fa-regular fa-calendar-check"></i></button>
+              <input type="hidden" name="get_std" value="{{ get_std.std_id }}" />
+              <input type="hidden" name="get_batch" value="{{ get_batch.batch_id }}" />
+            </div>
+          </form>
+          
+
+          <form method="get" action="{% url 'admin_attendance' %}">
+            <div class="input-group mt-2 ms-2">
               <input type="text" id="" name="searchhh" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
               <input type="hidden" name="get_std" value="{{get_std.std_id}}" />
               <input type="hidden" name="get_batch" value="{{get_batch.batch_id}}" />
@@ -111,9 +129,9 @@
             <tr>
                 <td>{{ x.atten_timetable__tt_day }}</td>
                 <td>{{ x.atten_timetable__tt_time1 }}  {{x.atten_date|date:"d-m-Y"}}</td>
-                <td>{{ x.atten_timetable__tt_subject1 }}</td>
+                <td>{{ x.atten_timetable__tt_subject1__sub_name }}</td>
                 <td>{{ x.atten_timetable__tt_tutor1__fac_name }}</td>
-                <td>{% if x.atten_present %}Present{% else %}Absent{% endif %}</td>
+                <td>{% if x.atten_present %}<i class="fa-solid fa-square-check text-success"></i>{% else %}<i class="fa-solid fa-square-xmark text-danger"></i>{% endif %}</td>
                 <td>{{ x.atten_student__stud_name }} {{ x.atten_student__stud_lastname }}</td>
             </tr>
             {% endfor %}

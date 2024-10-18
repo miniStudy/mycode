@@ -6,6 +6,7 @@ from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.http import Http404, JsonResponse, HttpResponse
 from adminside.models import *
+import datetime
 
 
 # changes done
@@ -78,6 +79,19 @@ def parent_cheque_mail(bank, amount, date, parent_email):
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+def institute_send_mail(email_list): 
+    sub = 'Team Ministudy Marketing'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = email_list
+    htmly = get_template('Email/institute.html')
+    d = {'current_year': datetime.datetime.now().year}
+    text_content = ''
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
 
 
 def cheque_update_mail(bank, amount, date, student_email):
