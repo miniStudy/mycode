@@ -213,10 +213,10 @@ def admin_login_handle(request):
         password = request.POST['password']
         val = AdminData.objects.filter(admin_email=email,admin_pass=password).count()
         if val==1:
-            admin_onesignal_player_id = request.session.get('deviceId', 'Error')
-            if admin_onesignal_player_id != 'Error':      
+            admin_onesignal_player = request.session.get('deviceId', 'Error')
+            if admin_onesignal_player != 'Error':      
                 admin = AdminData.objects.get(admin_email=email)
-                admin.admin_onesignal_player_id = admin_onesignal_player_id
+                admin.admin_onesignal_player_id = admin_onesignal_player
                 admin.save()
             Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
             for item in Data:
