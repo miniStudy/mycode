@@ -34,8 +34,49 @@ from django.core.exceptions import ObjectDoesNotExist
 
 global_domain = None
 
+
+
+# =================================================
+import requests
+import json
+
+url = "https://onesignal.com/api/v1/notifications"
+
+payload = json.dumps({
+  "app_id": "9d720639-6e9a-466a-9c95-be085af75a7f",
+  "include_player_ids": [
+    "67ff26ab-494c-4401-82f9-bad346a4b7ab"
+  ],
+  "data": {
+    "key": "value"
+  },
+  "contents": {
+    "en": "This is a notification message"
+  }
+})
+headers = {
+  'Cookie': '__cf_bm=536.mIQOyZqwoH2Md12MW9_sMJYL32pWpSRwuOrnhxs-1729177405-1.0.1.1-epZtYVG8IBmhhrDnWrlcskZf5tNZSAT4byzbP4Z0xHErFwDn5c40uRkxJEJCUmXyH2H7L7mxrR3fkJFtaSqguw',
+  'Content-Type': 'text/plain',
+  'Authorization': 'Basic  ZTA1ZmU1MDktOTNmMy00NDBjLWE3ZWEtNWQ3Njc3ZTA1YWEz',
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)
+# ==================================================
+
+
+
+
+
+
+
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
+
+
+
     # User details
     api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDBlYTNjODQ4NGQ2MGI4NDhhZDczMiIsIm5hbWUiOiJtaW5pU3R1ZHlfd2hhdHNhcHAiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjY5ZTMwOGZmYmE3OTE3ZjE1MGRmNTMyIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3MjgxMTMyMTJ9.aZSCryj6KAkD5ETSkYsmiGwOzs87-wwz70fs6D9kBcg'  # Replace with your actual API key
     campaign_name = 'miniStudy_test'  # Replace with your campaign name
@@ -278,6 +319,39 @@ def admin_logout(request):
 @admin_login_required
 def home(request):
     domain = request.get_host()
+
+
+    # =================================================================
+    # sending push Notification
+    onesignal_player_id = request.session.get('deviceId', 'Error')
+
+    import requests
+    import json
+
+    url = "https://onesignal.com/api/v1/notifications"
+
+    payload = json.dumps({
+    "app_id": "9d720639-6e9a-466a-9c95-be085af75a7f",
+    "include_player_ids": [
+        onesignal_player_id
+    ],
+    "data": {
+        "key": "value"
+    },
+    "contents": {
+        "en": "This is a notification message"
+    }
+    })
+    headers = {
+    'Cookie': '__cf_bm=536.mIQOyZqwoH2Md12MW9_sMJYL32pWpSRwuOrnhxs-1729177405-1.0.1.1-epZtYVG8IBmhhrDnWrlcskZf5tNZSAT4byzbP4Z0xHErFwDn5c40uRkxJEJCUmXyH2H7L7mxrR3fkJFtaSqguw',
+    'Content-Type': 'text/plain',
+    'Authorization': 'Basic  ZTA1ZmU1MDktOTNmMy00NDBjLWE3ZWEtNWQ3Njc3ZTA1YWEz',
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print(response.text)
+    # ----------------------------------------------------------------
     all_students = Students.objects.filter(domain_name = domain).count()
 
     all_male=Students.objects.filter(stud_gender='Male', domain_name = domain).count()
@@ -315,9 +389,10 @@ def home(request):
     # Performance of all standards
     std_data = Std.objects.filter(domain_name = domain)
     subject_data = Subject.objects.filter(domain_name = domain)
-    context = {'std_data': std_data, 'subject_data': subject_data}
+    context = {'std_data': std_data, 'subject_data': subject_data}    
 
-    
+
+
     get_std = request.GET.get('get_std')
     if get_std:
         subject_data = Subject.objects.filter(sub_std__std_id = int(get_std))
