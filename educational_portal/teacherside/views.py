@@ -173,6 +173,13 @@ def teacher_login_handle(request):
         password = request.POST['password']
         val = Faculties.objects.filter(fac_email=email,fac_password=password).count()
         if val==1:
+            fac_onesignal_player_id = request.session.get('deviceId', 'Error')
+            if fac_onesignal_player_id != 'Error':
+                try:
+                    faculty = Faculties.objects.get(fac_onesignal_player_id=fac_onesignal_player_id)
+                    faculty.save()
+                except Faculties.DoesNotExist:
+                    messages.error(request, "Faculties with this OneSignal player ID does not exist.")
             Data = Faculties.objects.filter(fac_email=email,fac_password=password)
             for item in Data:
                request.session['fac_id'] = item.fac_id

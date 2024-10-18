@@ -213,6 +213,13 @@ def admin_login_handle(request):
         password = request.POST['password']
         val = AdminData.objects.filter(admin_email=email,admin_pass=password).count()
         if val==1:
+            admin_onesignal_player_id = request.session.get('deviceId', 'Error')
+            if admin_onesignal_player_id != 'Error':
+                try:
+                    admin = AdminData.objects.get(admin_onesignal_player_id=admin_onesignal_player_id)
+                    admin.save()
+                except AdminData.DoesNotExist:
+                    messages.error(request, "Admin with this OneSignal player ID does not exist.")
             Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
             for item in Data:
                 request.session['admin_id'] = item.admin_id
@@ -1988,7 +1995,10 @@ def show_inquiries(request):
     students_email = Students.objects.filter(domain_name = domain).values('stud_email')
     matching_inquiries = Inquiries.objects.filter(domain_name = domain, inq_email__in=students_email)
     total_conversion = matching_inquiries.count()
-    percentage = round((total_conversion/total_inquiries)*100,2)
+    if total_inquiries != 0:
+        percentage = round((total_conversion/total_inquiries)*100,2)
+    else:
+        percentage = 0
 
 
     context = {
@@ -2058,8 +2068,6 @@ def insert_update_batches(request):
         context.update({'get_std ':get_std,'std_data':std_data}) 
 
 
-   
-
  # ================update Logic============================
     if request.GET.get('pk'):
         if request.method == 'POST':
@@ -2071,6 +2079,7 @@ def insert_update_batches(request):
             else:
                 if form.is_valid():
                     form.instance.domain_name = domain
+                    messages.success(request, 'Batch Updated Successfully')
                     form.save()
                     std_name = request.POST.get('batch_std')
                     url = '/adminside/admin_batches/?get_std={}'.format(std_name)
@@ -2090,7 +2099,8 @@ def insert_update_batches(request):
                 if check >= 1:
                     messages.error(request,'{} is already Exists'.format(form.data['batch_name']))
                 else:
-                    form.instance.domain_name = domain    
+                    form.instance.domain_name = domain
+                    messages.success(request, 'Batch Added Successfully')    
                     form.save()
                     std_name = request.POST.get('batch_std')
                     url = '/adminside/admin_batches/?get_std={}'.format(std_name)
@@ -2112,7 +2122,7 @@ def delete_admin_batches(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Batches.objects.filter(batch_id__in=selected_ids).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Batches Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
