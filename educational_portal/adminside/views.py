@@ -214,14 +214,10 @@ def admin_login_handle(request):
         val = AdminData.objects.filter(admin_email=email,admin_pass=password).count()
         if val==1:
             admin_onesignal_player_id = request.session.get('deviceId', 'Error')
-            if admin_onesignal_player_id != 'Error':
-                try:
-                    admin = AdminData.objects.get(admin_email=email)
-                    admin.admin_onesignal_player_id = admin_onesignal_player_id
-                    print(admin)
-                    admin.save()
-                except AdminData.DoesNotExist:
-                    messages.error(request, "Admin with this OneSignal player ID does not exist.")
+            if admin_onesignal_player_id != 'Error':      
+                admin = AdminData.objects.get(admin_email=email)
+                admin.admin_onesignal_player_id = admin_onesignal_player_id
+                return redirect('faculty_access')
             Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
             for item in Data:
                 request.session['admin_id'] = item.admin_id
