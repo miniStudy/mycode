@@ -12,7 +12,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
             <div class="myheadfont">{{ title }} Data</div>   
-            <a href="{% url 'faculty_access' %}">
+            <a href="{% url 'faculty_access' %}?fac_id={{faculty_data.fac_id}}">
                 <button class="btn btn-primary">
                     <i class="fa-solid fa-plus me-2"></i> ADD
                 </button>

@@ -151,4 +151,5 @@ urlpatterns = [
     path('generate_payment_slip/',adminview.generate_payment_slip, name='generate_payment_slip'),
 
     path('time_slot/', adminview.time_slot_function, name='time_slot'),
+    path('institute_main_send/', adminview.institute_main_send_function, name='institute_main_send'),
 ]
