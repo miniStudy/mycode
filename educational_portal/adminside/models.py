@@ -172,8 +172,8 @@ class Students(models.Model):
     stud_otp = models.CharField(blank=True,null=True,max_length=10)
     stud_telegram_studentchat_id = models.CharField(blank=True,null=True,max_length=20)
     stud_telegram_parentschat_id = models.CharField(blank=True,null=True,max_length=20)
-    stud_unique_code = models.CharField(max_length=20, editable=False, blank=True)
-    stud_domain_name = models.CharField(blank=True,null=True,max_length=100)
+    unique_code = models.CharField(max_length=20, editable=False, blank=True)
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
     stud_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
 
     def save(self, *args, **kwargs):
