@@ -208,6 +208,7 @@ def admin_login_page(request):
 
 
 def admin_login_handle(request):
+    new_var = {}
     if request.method == "POST":
         email = request.POST['email']
         password = request.POST['password']
@@ -218,6 +219,7 @@ def admin_login_handle(request):
                 admin = AdminData.objects.get(admin_email=email)
                 admin.admin_onesignal_player_id = admin_onesignal_player
                 admin.save()
+                new_var.update({'hello': 'Hello hai'})
             Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
             for item in Data:
                 request.session['admin_id'] = item.admin_id
@@ -231,8 +233,8 @@ def admin_login_handle(request):
                 return response
             
             messages.success(request, 'Logged In Successfully')
-            
-            return redirect('Admin Home')
+            url = '/adminside/?{}'.format(new_var['hello'])
+            return redirect(url)
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('Admin Login')
