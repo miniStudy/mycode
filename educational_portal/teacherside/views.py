@@ -176,7 +176,8 @@ def teacher_login_handle(request):
             fac_onesignal_player_id = request.session.get('deviceId', 'Error')
             if fac_onesignal_player_id != 'Error':
                 try:
-                    faculty = Faculties.objects.get(fac_onesignal_player_id=fac_onesignal_player_id)
+                    faculty = Faculties.objects.get(fac_email=email)
+                    faculty.fac_onesignal_player_id = fac_onesignal_player_id
                     faculty.save()
                 except Faculties.DoesNotExist:
                     messages.error(request, "Faculties with this OneSignal player ID does not exist.")

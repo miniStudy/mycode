@@ -93,13 +93,14 @@ def parent_login_handle(request):
         password = request.POST['password']
         val = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password, domain_name = domain).count()
         if val==1:
-            stud_onesignal_player_id = request.session.get('deviceId', 'Error')
-            if stud_onesignal_player_id != 'Error':
+            guardian_onesignal_player_id = request.session.get('deviceId', 'Error')
+            if guardian_onesignal_player_id != 'Error':
                 try:
-                    student = Students.objects.get(stud_onesignal_player_id=stud_onesignal_player_id)
-                    student.save()
+                    parent = Students.objects.get(stud_guardian_email=email)
+                    parent.guardian_onesignal_player_id = guardian_onesignal_player_id
+                    parent.save()
                 except Students.DoesNotExist:
-                    messages.error(request, "Student with this OneSignal player ID does not exist.")
+                    messages.error(request, "Parent with this OneSignal player ID does not exist.")
             Data = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password, domain_name = domain)
             for item in Data:
                request.session['parent_id'] = item.stud_id

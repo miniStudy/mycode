@@ -216,7 +216,8 @@ def admin_login_handle(request):
             admin_onesignal_player_id = request.session.get('deviceId', 'Error')
             if admin_onesignal_player_id != 'Error':
                 try:
-                    admin = AdminData.objects.get(admin_onesignal_player_id=admin_onesignal_player_id)
+                    admin = AdminData.objects.get(admin_email=email)
+                    admin.admin_onesignal_player_id = admin_onesignal_player_id
                     admin.save()
                 except AdminData.DoesNotExist:
                     messages.error(request, "Admin with this OneSignal player ID does not exist.")

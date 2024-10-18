@@ -123,7 +123,8 @@ def student_login_handle(request):
             guardian_onesignal_player_id = request.session.get('deviceId', 'Error')
             if guardian_onesignal_player_id != 'Error':
                 try:
-                    student = Students.objects.get(guardian_onesignal_player_id=guardian_onesignal_player_id)
+                    student = Students.objects.get(stud_email=email)
+                    student.guardian_onesignal_player_id = guardian_onesignal_player_id
                     student.save()
                 except Students.DoesNotExist:
                     messages.error(request, "Parent with this OneSignal player ID does not exist.")
