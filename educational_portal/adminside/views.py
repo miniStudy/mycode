@@ -319,8 +319,6 @@ def admin_logout(request):
 @admin_login_required
 def home(request):
     domain = request.get_host()
-
-
     # =================================================================
     # sending push Notification
     onesignal_player_id = request.session.get('deviceId', 'Error')

@@ -174,7 +174,7 @@ class Students(models.Model):
     stud_telegram_parentschat_id = models.CharField(blank=True,null=True,max_length=20)
     unique_code = models.CharField(max_length=20, editable=False, blank=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
-
+    
 
     def save(self, *args, **kwargs):
         if not self.unique_code:
