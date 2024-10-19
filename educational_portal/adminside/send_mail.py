@@ -310,7 +310,7 @@ def event_telegram_message_parent(event_name, event_date, student_email_ids):
 
 
 
-def send_notification(playerid,message):
+def send_notification(playerid,title,message):
     url = "https://onesignal.com/api/v1/notifications"
 
     payload = json.dumps({
@@ -323,7 +323,10 @@ def send_notification(playerid,message):
     },
     "contents": {
         "en": message
-    }
+    },
+    "headings": {
+        "en": title
+    },
     })
     headers = {
     'Cookie': '__cf_bm=536.mIQOyZqwoH2Md12MW9_sMJYL32pWpSRwuOrnhxs-1729177405-1.0.1.1-epZtYVG8IBmhhrDnWrlcskZf5tNZSAT4byzbP4Z0xHErFwDn5c40uRkxJEJCUmXyH2H7L7mxrR3fkJFtaSqguw',

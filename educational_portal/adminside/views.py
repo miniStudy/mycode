@@ -300,7 +300,10 @@ def home(request):
         # logger.error("============================databaseplayerid:{}".format(admindata.admin_onesignal_player_id))
         admindata.save()
     mess = 'Welcome To miniStudy Admin Dashboard'
-    send_notification(onesignal_player_id,mess)
+    title = 'MiniStudy'
+
+    
+    send_notification(onesignal_player_id,title,mess)
     
     # ----------------------------------------------------------------
     all_students = Students.objects.filter(domain_name = domain).count()
