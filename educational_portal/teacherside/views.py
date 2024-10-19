@@ -535,7 +535,6 @@ def handle_attendance(request):
             status = 'Present' if student.stud_id in selected_ids else 'Absent'
             if student.stud_onesignal_player_id:
                 mess = f"Your attendance status for {noti_date} is {status}."
-                send_notification(student.stud_onesignal_player_id, title, mess)
                 for player_id in onesignal_player_id_list:
                     send_notification(player_id,title,mess)
         messages.success(request, "Attendance has been submitted!")    
