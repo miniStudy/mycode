@@ -1262,6 +1262,7 @@ def teacher_insert_update_materials(request):
                         chap_obj.chep_sub.sub_std.std_id,
                         chap_obj.chep_sub.sub_id
                     )
+                    messages.success(request, 'Material Updated Successfully')
                     return redirect(url)
                 else:
                     filled_data = form.data
@@ -1303,6 +1304,7 @@ def teacher_insert_update_materials(request):
                         save=False
                     )
                     material.save()
+                    messages.success(request, 'Material Added Successfully')
                     return redirect(url)
             else:
                 filled_data = form.data
@@ -1319,7 +1321,7 @@ def materials_delete_teacher(request):
         if selected_items:
             try:
                 Chepterwise_material.objects.get(cm_id=selected_items).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Materials Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
