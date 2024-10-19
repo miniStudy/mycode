@@ -1171,7 +1171,7 @@ def announcements_insert_update_teacher(request):
             title = '📢 New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
             for player_id in onesignal_player_id_list:
-                send_notification(player_id,title,mess)
+                send_notification(player_id,title,mess, request)
             return redirect(url)
         else:
             filled_data = form.data

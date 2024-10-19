@@ -301,7 +301,7 @@ def home(request):
         admindata.save()
     mess = 'Welcome To miniStudy Admin Dashboard'
     title = 'MiniStudy'
-    send_notification(onesignal_player_id,title,mess)
+    send_notification(onesignal_player_id,title,mess, request)
     
     # ----------------------------------------------------------------
     all_students = Students.objects.filter(domain_name = domain).count()

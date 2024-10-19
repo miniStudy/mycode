@@ -310,7 +310,7 @@ def event_telegram_message_parent(event_name, event_date, student_email_ids):
 
 
 
-def send_notification(playerid,title,message):
+def send_notification(playerid,title,message, request):
     url = "https://onesignal.com/api/v1/notifications"
 
     payload = json.dumps({
