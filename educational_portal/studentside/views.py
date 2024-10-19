@@ -13,6 +13,7 @@ from .forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 # Create your views here.
 # mail integration 
+from .send_mail import *
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
@@ -524,6 +525,7 @@ def show_syllabus(request):
     return render(request, 'studentpanel/syllabus.html', context)
 
 def student_inquiries_data(request):
+    title = 'Inquiries'
     domain = request.get_host()
     standard_data = Std.objects.filter(domain_name = domain)
     package_data = Packs.objects.filter(domain_name = domain)
@@ -537,20 +539,23 @@ def student_inquiries_data(request):
             selected_subjects = request.POST.getlist('stud_pack[]')
             form.instance.inq_subjects = ', '.join(selected_subjects)
             form.instance.domain_name = domain
+            student_name = form.cleaned_data['inq_name']
+            student_email = form.cleaned_data['inq_email']
             form.save()
+            admin_emails = AdminData.objects.values_list('admin_email', flat=True)
+            admin_email_send(admin_emails, student_name, student_email, selected_subjects)
             messages.success(request, "Inquiry saved successfully!")
             return redirect('Student_Inquiries')
         else:
             messages.error(request, "Form is not valid!")
             return redirect('Student_Inquiries')
-
     else:
         form = student_inquiries()
 
     return render(
         request, 
         'studentpanel/inquiries.html', 
-        {'form': form, 'standard_data': standard_data, 'package_data': package_data, 'subjects_data': subjects_data}
+        {'form': form, 'standard_data': standard_data, 'package_data': package_data, 'subjects_data': subjects_data, 'title': title}
     )
 
 @student_login_required
