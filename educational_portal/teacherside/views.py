@@ -784,6 +784,7 @@ def teacher_save_offline_marks(request):
             test_attempt.save()
 
         email_ids = []
+        onesignal_player_ids = []
         student_marks = []
 
         if not date:
@@ -799,9 +800,20 @@ def teacher_save_offline_marks(request):
             for i, stud_id in enumerate(student_ids):
                 student_email = Students.objects.get(stud_id=stud_id)
                 email_ids.append(student_email.stud_email)
+                onesignal_player_ids.append(student_email.stud_onesignal_player_id)
                 student_marks.append(marks[i])
 
             marks_mail(student_marks, email_ids, test_name, total_marks, date)
+
+            title = "📢 Marks Update"
+            for index, player_id in enumerate(onesignal_player_ids):
+                student_name = Students.objects.get(stud_id=student_ids[index]).stud_name
+                student_score = student_marks[index]
+                mess = (
+                f"Dear {student_name}, your score for the test '{test_name}' is {student_score}/{total_marks}. "
+                f"Keep up the hard work! Exam date: {date}.")
+                send_notification(player_id, title, mess, request)
+
         else:
             print("No test found for the given test ID.")
 
