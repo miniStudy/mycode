@@ -12,6 +12,7 @@ from django.db.models.functions import TruncHour, TruncMinute, TruncDate
 from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
 from teacherside.send_mail import *
+from teacherside.send_mail import send_notification
 
 import random
 from django.http import Http404,JsonResponse
