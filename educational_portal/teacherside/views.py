@@ -1148,6 +1148,7 @@ def announcements_insert_update_teacher(request):
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
+                messages.success(request, 'Announcement Updated Successfully')
                 return redirect(url)
             else:
                 filled_data = form.data
@@ -1158,6 +1159,7 @@ def announcements_insert_update_teacher(request):
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
+            messages.success(request, 'Announcement Added Successfully')
             # ---------------------sendmail Logic===================================
             students_email_list = []
             onesignal_player_id_list = []
@@ -1190,7 +1192,7 @@ def announcements_delete_teacher(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Announcements.objects.filter(announce_id__in=selected_ids).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Announcements Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 

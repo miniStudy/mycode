@@ -72,7 +72,7 @@
 
    <!-- Pagination -->
    {% for x in data.paginator.page_range %}
-   <a href="?page={{x}}&get_std={{get_std.std_id}}&get_subject={{get_subject.sub_id}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>
+   <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>
    {% endfor %}
 
 <!-- Modal -->
