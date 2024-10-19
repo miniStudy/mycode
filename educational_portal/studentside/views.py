@@ -126,6 +126,8 @@ def student_login_handle(request):
                 student = Students.objects.get(stud_email=email,stud_pass=password)
                 student.stud_onesignal_player_id = student_onesignal_player_id
                 student.save()
+
+                
             Data = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain)
             for item in Data:
                 request.session['stud_id'] = item.stud_id
