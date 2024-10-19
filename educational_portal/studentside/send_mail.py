@@ -15,7 +15,7 @@ def admin_email_send(admin_emails, student_name, student_email, selected_subject
     subject = 'New Student Inquiry - miniStudy'
     email_from = 'miniStudy <mail@ministudy.in>'
     
-    htmly = get_template('Emails/admin.html')
+    htmly = get_template('Emails/admin_inquiry_mail.html')
     context = {
         'student_name': student_name,
         'student_email': student_email,
