@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Student Inquiry - miniStudy</title>
+    <style>
+        body {
+            font-family: Lato, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #1C222F;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .details {
+            margin-bottom: 20px;
+        }
+
+        .details dt {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .details dd {
+            margin-bottom: 10px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 20px auto;
+            background-color: #1C222F;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background-color: #3e8e41;
+        }
+
+        .footer {
+            background-color: #1C222F;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .footer img {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="https://ministudy.in/">
+                <img src="https://metrofoods.co.nz/1nobg.png" style="width: 50%;" alt="miniStudy Logo" />
+            </a>
+        </div>
+        <div class="content">
+            <h2 style="text-align: center;">New Student Inquiry Received!</h2>
+            <p>Dear Admin,</p>
+            <p>A new inquiry has been submitted by a student. Below are the details:</p>
+            <dl class="details">
+                <dt>Student Name:</dt>
+                <dd>{{ student_name }}</dd>
+                <dt>Email:</dt>
+                <dd>{{ student_email }}</dd>
+                <dt>Subjects Interested:</dt>
+                <dd>{{ selected_subjects }}</dd>
+            </dl>
+            <a href="https://ministudy.in/admin" class="button">View in Admin Panel</a>
+            <p>Best regards,</p>
+            <p>miniStudy Team</p>
+        </div>
+        <div class="footer">
+            <p>
+                <a href="https://ministudy.in/">
+                    <img src="https://metrofoods.co.nz/2nobg.png" alt="miniStudy Footer Logo" width="25%" />
+                </a>
+            </p>
+            <p>
+                <a href="mailto:mail@ministudy.in" style="color: white; text-decoration: none;">mail@ministudy.in</a> |
+                <a href="tel:8511962611" style="color: white; text-decoration: none;">+91 8511962611</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
