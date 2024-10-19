@@ -39,7 +39,7 @@ from django.core.mail import EmailMultiAlternatives
 from teacherside.decorators import *
 
 def paginatoorrr(queryset,request):
-    paginator = Paginator(queryset, 5)
+    paginator = Paginator(queryset, 30)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
     return page_obj
@@ -302,7 +302,7 @@ def teacher_attendance(request):
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
-     data = Attendance.objects.filter(domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+     data = Attendance.objects.filter(domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date').order_by('-atten_date')
      data = paginatoorrr(data,request)
      std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)   
      batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
@@ -784,6 +784,7 @@ def teacher_save_offline_marks(request):
             test_attempt.save()
 
         email_ids = []
+        onesignal_player_ids = []
         student_marks = []
 
         if not date:
@@ -799,9 +800,20 @@ def teacher_save_offline_marks(request):
             for i, stud_id in enumerate(student_ids):
                 student_email = Students.objects.get(stud_id=stud_id)
                 email_ids.append(student_email.stud_email)
+                onesignal_player_ids.append(student_email.stud_onesignal_player_id)
                 student_marks.append(marks[i])
 
             marks_mail(student_marks, email_ids, test_name, total_marks, date)
+
+            title = "📢 Marks Update"
+            for index, player_id in enumerate(onesignal_player_ids):
+                student_name = Students.objects.get(stud_id=student_ids[index]).stud_name
+                student_score = student_marks[index]
+                mess = (
+                f"Dear {student_name}, your score for the test '{test_name}' is {student_score}/{total_marks}. "
+                f"Keep up the hard work! Exam date: {date}.")
+                send_notification(player_id, title, mess, request)
+
         else:
             print("No test found for the given test ID.")
 
@@ -1069,7 +1081,7 @@ def teacher_announcement(request):
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
-    data = Announcements.objects.filter(domain_name = domain).values('announce_id','announce_title','announce_msg','announce_date')
+    data = Announcements.objects.filter(domain_name = domain).values('announce_id','announce_title','announce_msg','announce_date').order_by('-announce_id')
     data = paginatoorrr(data,request)
     std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)
     batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
@@ -1085,7 +1097,7 @@ def teacher_announcement(request):
         if get_std == 0:
             pass
         else:    
-            data = Announcements.objects.filter(announce_std__std_id = get_std, domain_name = domain).values('announce_id','announce_title','announce_msg','announce_date')
+            data = Announcements.objects.filter(announce_std__std_id = get_std, domain_name = domain).values('announce_id','announce_title','announce_msg','announce_date').order_by('-announce_id')
             data = paginatoorrr(data,request)
             batch_data = batch_data.filter(batch_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
@@ -1097,7 +1109,7 @@ def teacher_announcement(request):
         if get_batch == 0:
             pass
         else:
-            data = Announcements.objects.filter(announce_batch__batch_id = get_batch, domain_name = domain).values('announce_id','announce_title','announce_msg','announce_date')
+            data = Announcements.objects.filter(announce_batch__batch_id = get_batch, domain_name = domain).values('announce_id','announce_title','announce_msg','announce_date').order_by('-announce_id')
             data = paginatoorrr(data,request)
             get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'data':data,'get_batch':get_batch})        
@@ -1607,7 +1619,7 @@ def today_learning_show(request):
     standard_access_data = Std.objects.filter(std_id__in = std_access, domain_name = domain)
     batch_access_data = Batches.objects.filter(batch_id__in = batch_access, domain_name = domain)
 
-    today_learn_data = Today_Teaching.objects.filter(today_teaching_batches_id__batch_id__in = batch_access, today_teaching_batches_id__batch_std__std_id__in = std_access, domain_name = domain)
+    today_learn_data = Today_Teaching.objects.filter(today_teaching_batches_id__batch_id__in = batch_access, today_teaching_batches_id__batch_std__std_id__in = std_access, domain_name = domain).order_by('-today_teaching_id')
 
     context = {
         'today_learn_data':today_learn_data,
@@ -1654,7 +1666,6 @@ def today_learning_insert_update(request):
     chepters_data = Chepter.objects.filter(chep_sub__sub_id__in = subject_access, domain_name = domain)
     standard_access_data = Std.objects.filter(std_id__in = std_access, domain_name = domain)
     batch_access_data = Batches.objects.filter(batch_id__in = batch_access, domain_name = domain)
-    print(chepters_data)
 
     context = {
         'standard_access_data':standard_access_data,
@@ -1692,7 +1703,7 @@ def today_learning_insert_update(request):
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
-                messages.success(request, 'Today learning updated sucessfully!')
+                messages.success(request, 'Today learning Updated sucessfully!')
                 return redirect(url)
             else:
                 filled_data = form.data
@@ -1703,7 +1714,7 @@ def today_learning_insert_update(request):
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
-            messages.success(request, 'Today learning added Sucessfully!')
+            messages.success(request, 'Today learning Added Sucessfully!')
             return redirect(url)
         else:
             filled_data = form.data
@@ -1726,7 +1737,7 @@ def today_learning_delete(request):
             selected_ids = [int(id) for id in selected_items]
             try:
                 Today_Teaching.objects.filter(today_teaching_id__in=selected_ids).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Today learning Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
     return redirect('today_learning')

@@ -1127,15 +1127,24 @@ def insert_update_timetable(request):
                 tt_students_email_list = []
                 student_chat_ids = []
                 parent_chat_ids = []
+                onesignal_player_id_list = []
                 for x in tt_students_for_mail:
                     tt_students_email_list.append(x.stud_email)
                     student_chat_ids.append(x.stud_telegram_studentchat_id)
-                    parent_chat_ids.append(x.stud_telegram_parentschat_id)              
-                # timetable_mail(tt_students_email_list)
+                    parent_chat_ids.append(x.stud_telegram_parentschat_id)
+                    if x.stud_onesignal_player_id:
+                        onesignal_player_id_list.append(x.stud_onesignal_player_id)
+                timetable_mail(tt_students_email_list)
 
                 # ------------------------ Telegram Message -------------------------------
-                # timetable_telegram_message_student(student_chat_ids)
-                # timetable_telegram_message_parent(parent_chat_ids)
+                timetable_telegram_message_student(student_chat_ids)
+                timetable_telegram_message_parent(parent_chat_ids)
+
+                # ------------------------ Notification Updated --------------------------
+                mess = 'Your timetable has been updated.'
+                title = 'Timetable Updated!'
+                for palayer_id in onesignal_player_id_list:
+                    send_notification(palayer_id,title,mess, request)
                 return redirect(url)
             else:
                 filled_data = form.data
@@ -2522,11 +2531,15 @@ def add_cheques_admin(request):
                     form.save()
                     student_name = form.cleaned_data['cheque_stud_id']
                     student_email = [student_name.stud_email]
+                    onesignal_player_id = [student_name.stud_onesignal_player_id]
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.today()
                     parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                     cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
 
+                    title = "📢 Cheque Payment Update"
+                    mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
+                    send_notification(onesignal_player_id,title,mess, request)
                     return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2597,6 +2610,10 @@ def add_fees_collection_admin(request):
                 # -------------Telegram Send-------------------------------------------------------------------
                
                 payment_telegram_message(student_name.stud_name, student_name.stud_telegram_studentchat_id, form.cleaned_data['fees_mode'],form.cleaned_data['fees_paid'])
+
+                title = "📢 Payment Update"
+                mess = f"Dear {student_name.stud_name}, your payment of ₹{form.cleaned_data['fees_paid']} "f"via {form.cleaned_data['fees_mode']} has been successfully processed on {date}."
+                send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                 return redirect(url)
             else:
                 filled_data = form.data
