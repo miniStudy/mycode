@@ -33,6 +33,10 @@ from adminside.send_mail import *
 from django.core.exceptions import ObjectDoesNotExist
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 global_domain = None
 
 
@@ -209,18 +213,12 @@ def admin_login_page(request):
 
 
 def admin_login_handle(request):
-    new_var = {}
+
     if request.method == "POST":
         email = request.POST['email']
         password = request.POST['password']
         val = AdminData.objects.filter(admin_email=email,admin_pass=password).count()
         if val==1:
-            admin_onesignal_player = request.session.get('deviceId', 'Error')
-            if admin_onesignal_player != 'Error':      
-                admin = AdminData.objects.get(admin_email=email)
-                admin.admin_onesignal_player_id = admin_onesignal_player
-                admin.save()
-                new_var.update({'hello': 'Hello hai'})
             Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
             for item in Data:
                 request.session['admin_id'] = item.admin_id
@@ -234,7 +232,7 @@ def admin_login_handle(request):
                 return response
             
             messages.success(request, 'Logged In Successfully')
-            url = '/adminside/?{}'.format(new_var['hello'])
+            url = '/adminside/'
             return redirect(url)
         else:
             messages.error(request, "Invalid Username & Password.")
@@ -330,9 +328,12 @@ def home(request):
     # =================================================================
     # sending push Notification
     onesignal_player_id = request.session.get('deviceId', 'Error')
-
-    import requests
-    import json
+    if onesignal_player_id != 'Error':      
+        admindata = AdminData.objects.get(admin_id=1)
+        admindata.admin_onesignal_player_id = onesignal_player_id
+        # logger.error("============================databaseplayerid:{}".format(admindata.admin_onesignal_player_id))
+        admindata.save()
+        
 
     url = "https://onesignal.com/api/v1/notifications"
 

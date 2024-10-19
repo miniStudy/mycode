@@ -173,6 +173,7 @@ SUMMERNOTE_CONFIG = {
 }
 
 
-CRONJOBS = [
-    ('*/5 * * * *', 'adminside.cron.my_scheduled_job')
-]
+
+
+
+
