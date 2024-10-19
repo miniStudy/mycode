@@ -10,10 +10,44 @@
     <meta name="description" content="Educational Portal" />
     <meta name="keywords" content="Educational Portal">
     {% include 'links.html' %}
+
+    <style>
+      .loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+  z-index: 9999; /* Ensures the loader appears on top */
+  display: flex; /* Initially visible */
+  align-items: center; /* Center the loader */
+  justify-content: center;
+}
+
+/* Spinner inside the loader */
+.spinner {
+  border: 16px solid #f3f3f3; /* Light gray */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+    </style>
     
 </head>
 
 <body>
+  <div id="loader" class="loader-overlay">
+    <div class="spinner"></div>
+  </div>
   <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar  ">
   <div class="layout-container">
@@ -75,6 +109,29 @@
 
 {% include 'charts.html' %}
 {% include 'scripts.html' %}
+
+
+<script>
+  function startLoading() {
+  console.log('Start Loading...');  // You can replace this with any action like showing a loader
+  // You can also show a loader or any visual indication that loading has started
+  document.getElementById("loader").style.display = "flex";
+}
+
+// Function to log or show 'End Loading'
+function endLoading() {
+  console.log('End Loading...');  // You can replace this with any action like hiding a loader
+  // You can also hide the loader or any visual indication that loading has ended
+  document.getElementById("loader").style.display = "none";
+}
+
+startLoading();
+// Detect when the entire page has finished loading (including images, CSS, etc.)
+window.addEventListener("load", function() {
+  endLoading();  // This will fire when the entire page is fully loaded
+});
+
+</script>
 
 </body>
 </html>
