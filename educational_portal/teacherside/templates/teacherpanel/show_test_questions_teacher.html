@@ -36,7 +36,7 @@
                 <div style="font-size: 18px;">
                     {% for x in test_question %}
                         <span>Que</span><hr> {{x.tq_question|safe}}
-                        {% if x.tq_q_type == 'MCQ' %}
+                        {% if x.tq_q_type == 'MCQ' %}<br>
                     <input type="radio" name="ans" id="tq_optiona" value="A">
                     <label for="tq_optiona">{{x.tq_optiona}} </label><br>
                     <input type="radio" name="ans" id="tq_optionb" value="B">

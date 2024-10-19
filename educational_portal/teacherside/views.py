@@ -795,7 +795,7 @@ def teacher_save_offline_marks(request):
 
             test_attempt.save()        
     messages.success(request, 'Marks have been successfully saved.')
-    return redirect('teacher_test')
+    return redirect('teacher_tests')
 
 @teacher_login_required
 def view_attemp_students(request):
@@ -1030,9 +1030,13 @@ def insert_update_test_questions_teacher(request):
     if request.method == 'POST':
         form = TestQuestionsAnswerForm(request.POST, request.FILES)
         if form.is_valid():
+            testt_id = form.cleaned_data['tq_name']
+            testt_id = testt_id.test_id
             form.instance.domain_name = domain
             form.save()
-            return redirect('teacher_test')  # Replace 'success_url' with your actual success URL
+            url = '/teacherside/show_test_questions_teacher/?test_id={}'.format(testt_id)
+            messages.success(request, 'Question Added Successfully')
+            return redirect(url)  # Replace 'success_url' with your actual success URL
         else:
             context.update({'form': form,'errors':form.errors})
             return render(request, 'teacherpanel/insert_update_add_test_questions.html', context)
