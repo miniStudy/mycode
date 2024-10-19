@@ -122,7 +122,7 @@
                 <td>{{ x.atten_timetable__tt_time1 }}  {{x.atten_date|date:"d-m-Y"}}</td>
                 <td>{{ x.atten_timetable__tt_subject1__sub_name }}</td>
                 <td>{{ x.atten_timetable__tt_tutor1__fac_name }}</td>
-                <td>{% if x.atten_present %}Present{% else %}Absent{% endif %}</td>
+                <td>{% if x.atten_present %}<i class="fa-solid fa-square-check text-success"></i>{% else %}<i class="fa-solid fa-square-xmark text-danger"></i>{% endif %}</td>
                 <td>{{ x.atten_student__stud_name }} {{ x.atten_student__stud_lastname }}</td>
             </tr>
             {% endfor %}
