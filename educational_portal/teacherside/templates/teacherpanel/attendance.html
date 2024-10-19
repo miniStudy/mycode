@@ -6,6 +6,56 @@
 
 {% include 'message_show.html' %}
 <!-- DataTable with Buttons -->
+
+{% if overall_attendance %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="avatar">
+                    <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
+                  </div>
+                  <div class="card-info">
+                    <h5 class="card-title mb-0 me-2">{{overall_attendance}}%</h5>
+                    <small class="text-muted">Overall Attendance</small>
+                  </div>
+                </div>
+                <div id="conversationChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+{% endif %} 
+
+
+<div class="row">
+  {% for x, y in combined_data %}
+  <div class="col-md-3 mb-4">
+      <div class="card">
+          <div class="card-body">
+              <div class="d-flex justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                      <div class="avatar">
+                          <span class="avatar-initial bg-label-primary rounded-circle">
+                              <i class="bx bx-user fs-4"></i>
+                          </span>
+                      </div>
+                      <div class="card-info">
+                          <h5 class="card-title mb-0 me-2">{{ x }}%</h5>
+                          <small class="text-muted">{{ y }}</small>
+                      </div>
+                  </div>
+                  <div id="conversationChart"></div>
+              </div>
+          </div>
+      </div>
+  </div>
+{% endfor %}
+</div>
+
 <div class="card">
     
     <div class="card-body">
@@ -89,57 +139,6 @@
 {% endfor %}
     </div>
 </div>
-
-<br>
-{% if overall_attendance %}
-<div class="row">
-    <div class="col-md-12 mb-4">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                  <div class="avatar">
-                    <span class="avatar-initial bg-label-primary rounded-circle"><i class="bx bx-user fs-4"></i></span>
-                  </div>
-                  <div class="card-info">
-                    <h5 class="card-title mb-0 me-2">{{overall_attendance}}%</h5>
-                    <small class="text-muted">Overall Attendance</small>
-                  </div>
-                </div>
-                <div id="conversationChart"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-{% endif %}  
-
-
-<div class="row">
-    {% for x, y in combined_data %}
-    <div class="col-md-3 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="avatar">
-                            <span class="avatar-initial bg-label-primary rounded-circle">
-                                <i class="bx bx-user fs-4"></i>
-                            </span>
-                        </div>
-                        <div class="card-info">
-                            <h5 class="card-title mb-0 me-2">{{ x }}%</h5>
-                            <small class="text-muted">{{ y }}</small>
-                        </div>
-                    </div>
-                    <div id="conversationChart"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endfor %}
-
-        </div>
 
 
 
