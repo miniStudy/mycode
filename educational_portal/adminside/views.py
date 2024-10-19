@@ -2511,7 +2511,7 @@ def add_cheques_admin(request):
                 student_name = form.cleaned_data['cheque_stud_id']
                 student_email = [student_name.stud_email]
                 parent_email = [student_name.stud_guardian_email]
-                date = datetime.today()
+                date = datetime.datetime.today()
                 parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                 cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
                 return redirect('fees_collection_admin')
@@ -2536,7 +2536,7 @@ def add_cheques_admin(request):
                     student_email = [student_name.stud_email]
                     onesignal_player_id = [student_name.stud_onesignal_player_id]
                     parent_email = [student_name.stud_guardian_email]
-                    date = datetime.today()
+                    date = datetime.datetime.today()
                     parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                     cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
 
