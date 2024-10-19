@@ -535,7 +535,6 @@ def handle_attendance(request):
             status = 'Present' if student.stud_id in selected_ids else 'Absent'
             if student.stud_onesignal_player_id:
                 mess = f"Your attendance status for {noti_date} is {status}."
-                send_notification(student.stud_onesignal_player_id, title, mess)
                 for player_id in onesignal_player_id_list:
                     send_notification(player_id,title,mess)
         messages.success(request, "Attendance has been submitted!")    
@@ -1279,6 +1278,7 @@ def teacher_insert_update_materials(request):
                         chap_obj.chep_sub.sub_std.std_id,
                         chap_obj.chep_sub.sub_id
                     )
+                    messages.success(request, 'Material Updated Successfully')
                     return redirect(url)
                 else:
                     filled_data = form.data
@@ -1320,6 +1320,7 @@ def teacher_insert_update_materials(request):
                         save=False
                     )
                     material.save()
+                    messages.success(request, 'Material Added Successfully')
                     return redirect(url)
             else:
                 filled_data = form.data
@@ -1336,7 +1337,7 @@ def materials_delete_teacher(request):
         if selected_items:
             try:
                 Chepterwise_material.objects.get(cm_id=selected_items).delete()
-                messages.success(request, 'Items Deleted Successfully')
+                messages.success(request, 'Materials Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
 
