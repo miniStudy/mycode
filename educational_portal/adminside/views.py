@@ -2389,7 +2389,10 @@ def fees_collection_admin(request):
     #=================Total Amount Fees Paid============================================
     total_amount_fees_paid = Fees_Collection.objects.filter(domain_name = domain).aggregate(total_amu_paid = Sum('fees_paid'))
     total_cheque_amount = Cheque_Collection.objects.filter(domain_name = domain, cheque_paid=False).aggregate(total_che_paid = Sum('cheque_amount'))
-    total_cheque_amount_paid = total_cheque_amount['total_che_paid']
+    if total_cheque_amount['total_che_paid'] == 0 or total_cheque_amount['total_che_paid'] == None:
+        total_cheque_amount_paid = 0
+    else:
+        total_cheque_amount_paid = total_cheque_amount['total_che_paid']
     
     if total_amount_fees_paid['total_amu_paid'] != None:
         total_amount_fees_paid = total_amount_fees_paid['total_amu_paid']
@@ -2414,7 +2417,7 @@ def fees_collection_admin(request):
     #===================Total Pending Fees==============================================
     total_pending_fees = total_fees_amount_after_discount - total_amount_fees_paid
     
-    if total_pending_fees >= total_cheque_amount_paid:
+    if (total_pending_fees >= total_cheque_amount_paid):
         final_pending_fees_after_cheque_amount = total_pending_fees - total_cheque_amount_paid
     else:
         final_pending_fees_after_cheque_amount = 0
@@ -2508,7 +2511,7 @@ def add_cheques_admin(request):
                 student_name = form.cleaned_data['cheque_stud_id']
                 student_email = [student_name.stud_email]
                 parent_email = [student_name.stud_guardian_email]
-                date = datetime.today()
+                date = datetime.datetime.today()
                 parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                 cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
                 return redirect('fees_collection_admin')
@@ -2531,15 +2534,14 @@ def add_cheques_admin(request):
                     form.save()
                     student_name = form.cleaned_data['cheque_stud_id']
                     student_email = [student_name.stud_email]
-                    onesignal_player_id = [student_name.stud_onesignal_player_id]
                     parent_email = [student_name.stud_guardian_email]
-                    date = datetime.today()
+                    date = datetime.datetime.today()
                     parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                     cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
 
-                    title = "📢 Cheque Payment Update"
+                    title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
-                    send_notification(onesignal_player_id,title,mess, request)
+                    send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                     return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2611,7 +2613,7 @@ def add_fees_collection_admin(request):
                
                 payment_telegram_message(student_name.stud_name, student_name.stud_telegram_studentchat_id, form.cleaned_data['fees_mode'],form.cleaned_data['fees_paid'])
 
-                title = "📢 Payment Update"
+                title = "Payment Update"
                 mess = f"Dear {student_name.stud_name}, your payment of ₹{form.cleaned_data['fees_paid']} "f"via {form.cleaned_data['fees_mode']} has been successfully processed on {date}."
                 send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                 return redirect(url)
