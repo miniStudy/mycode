@@ -307,3 +307,31 @@ def event_telegram_message_parent(event_name, event_date, student_email_ids):
             f"[Click here for more info](http://api.ministudy.in/)"
         )
         send_telegram_message(email, message, title)
+
+
+
+def send_notification(playerid,title,message):
+    url = "https://onesignal.com/api/v1/notifications"
+
+    payload = json.dumps({
+    "app_id": "9d720639-6e9a-466a-9c95-be085af75a7f",
+    "include_player_ids": [
+        playerid
+    ],
+    "data": {
+        "key": "value"
+    },
+    "contents": {
+        "en": message
+    },
+    "headings": {
+        "en": title
+    },
+    })
+    headers = {
+    'Cookie': '__cf_bm=536.mIQOyZqwoH2Md12MW9_sMJYL32pWpSRwuOrnhxs-1729177405-1.0.1.1-epZtYVG8IBmhhrDnWrlcskZf5tNZSAT4byzbP4Z0xHErFwDn5c40uRkxJEJCUmXyH2H7L7mxrR3fkJFtaSqguw',
+    'Content-Type': 'text/plain',
+    'Authorization': 'Basic  ZTA1ZmU1MDktOTNmMy00NDBjLWE3ZWEtNWQ3Njc3ZTA1YWEz',
+    'Content-Type': 'application/json'
+    }        
+    response = requests.request("POST", url, headers=headers, data=payload)

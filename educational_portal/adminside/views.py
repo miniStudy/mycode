@@ -42,40 +42,6 @@ global_domain = None
 
 
 # =================================================
-import requests
-import json
-
-url = "https://onesignal.com/api/v1/notifications"
-
-payload = json.dumps({
-  "app_id": "9d720639-6e9a-466a-9c95-be085af75a7f",
-  "include_player_ids": [
-    "67ff26ab-494c-4401-82f9-bad346a4b7ab"
-  ],
-  "data": {
-    "key": "value"
-  },
-  "contents": {
-    "en": "This is a notification message"
-  }
-})
-headers = {
-  'Cookie': '__cf_bm=536.mIQOyZqwoH2Md12MW9_sMJYL32pWpSRwuOrnhxs-1729177405-1.0.1.1-epZtYVG8IBmhhrDnWrlcskZf5tNZSAT4byzbP4Z0xHErFwDn5c40uRkxJEJCUmXyH2H7L7mxrR3fkJFtaSqguw',
-  'Content-Type': 'text/plain',
-  'Authorization': 'Basic  ZTA1ZmU1MDktOTNmMy00NDBjLWE3ZWEtNWQ3Njc3ZTA1YWEz',
-  'Content-Type': 'application/json'
-}
-
-response = requests.request("POST", url, headers=headers, data=payload)
-
-print(response.text)
-# ==================================================
-
-
-
-
-
-
 
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
@@ -333,31 +299,12 @@ def home(request):
         admindata.admin_onesignal_player_id = onesignal_player_id
         # logger.error("============================databaseplayerid:{}".format(admindata.admin_onesignal_player_id))
         admindata.save()
-        
+    mess = 'Welcome To miniStudy Admin Dashboard'
+    title = 'MiniStudy'
 
-    url = "https://onesignal.com/api/v1/notifications"
-
-    payload = json.dumps({
-    "app_id": "9d720639-6e9a-466a-9c95-be085af75a7f",
-    "include_player_ids": [
-        onesignal_player_id
-    ],
-    "data": {
-        "key": "value"
-    },
-    "contents": {
-        "en": "This is a notification message"
-    }
-    })
-    headers = {
-    'Cookie': '__cf_bm=536.mIQOyZqwoH2Md12MW9_sMJYL32pWpSRwuOrnhxs-1729177405-1.0.1.1-epZtYVG8IBmhhrDnWrlcskZf5tNZSAT4byzbP4Z0xHErFwDn5c40uRkxJEJCUmXyH2H7L7mxrR3fkJFtaSqguw',
-    'Content-Type': 'text/plain',
-    'Authorization': 'Basic  ZTA1ZmU1MDktOTNmMy00NDBjLWE3ZWEtNWQ3Njc3ZTA1YWEz',
-    'Content-Type': 'application/json'
-    }
-
-    response = requests.request("POST", url, headers=headers, data=payload)
-    print(response.text)
+    
+    send_notification(onesignal_player_id,title,mess)
+    
     # ----------------------------------------------------------------
     all_students = Students.objects.filter(domain_name = domain).count()
 
