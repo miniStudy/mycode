@@ -333,28 +333,8 @@ def home(request):
         admindata.admin_onesignal_player_id = onesignal_player_id
         # logger.error("============================databaseplayerid:{}".format(admindata.admin_onesignal_player_id))
         admindata.save()
-        
-
-    url = "https://onesignal.com/api/v1/notifications"
-
-    payload = json.dumps({
-    "app_id": "9d720639-6e9a-466a-9c95-be085af75a7f",
-    "include_player_ids": [
-        onesignal_player_id
-    ],
-    "data": {
-        "key": "value"
-    },
-    "contents": {
-        "en": "This is a notification message"
-    }
-    })
-    headers = {
-    'Cookie': '__cf_bm=536.mIQOyZqwoH2Md12MW9_sMJYL32pWpSRwuOrnhxs-1729177405-1.0.1.1-epZtYVG8IBmhhrDnWrlcskZf5tNZSAT4byzbP4Z0xHErFwDn5c40uRkxJEJCUmXyH2H7L7mxrR3fkJFtaSqguw',
-    'Content-Type': 'text/plain',
-    'Authorization': 'Basic  ZTA1ZmU1MDktOTNmMy00NDBjLWE3ZWEtNWQ3Njc3ZTA1YWEz',
-    'Content-Type': 'application/json'
-    }
+    mess = 'Welcome To miniStudy Admin Dashboard'
+    send_notification(onesignal_player_id,mess)
 
     response = requests.request("POST", url, headers=headers, data=payload)
     print(response.text)
