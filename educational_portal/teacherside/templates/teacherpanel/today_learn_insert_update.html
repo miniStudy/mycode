@@ -34,9 +34,8 @@
             <label for="defaultSelect" class="form-label">Today's Learning Title</label>
             <select id="defaultSelect" class="form-select" name="today_teaching_chap_id">
               <option value="">--</option>
-              {% for x in today_learning_data %}
-              
-                <option value="{{x.today_teaching_chap_id.chep_id}}" {% if filled_data.today_teaching_chap_id.chep_id == x.today_teaching_chap_id.chep_id %} selected {% endif %} {% if x.today_teaching_chap_id.chep_id == update_data.today_teaching_chap_id.chep_id %} selected {% endif %} >{{x.today_teaching_chap_id.chep_name}}</option>
+              {% for x in chepters_data %}
+                <option value="{{x.chep_id}}" {% if filled_data.today_teaching_chap_id.chep_id == x.chep_id %} selected {% endif %} {% if x.chep_id == update_data.today_teaching_chap_id.chep_id %} selected {% endif %} >{{x.chep_name}}</option>
               
               {% endfor %}
             </select>
