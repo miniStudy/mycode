@@ -308,10 +308,7 @@ def teacher_attendance(request):
      stud_data = Students.objects.filter(domain_name = domain)
      subj_data = Subject.objects.filter(domain_name = domain)
      
-     
      today = timezone.localdate()
-
-     
      today_records = Attendance.objects.filter(atten_date__contains=today, domain_name = domain)
      
      
@@ -494,6 +491,7 @@ def handle_attendance(request):
         telegram_student_absent_list = []
         telegram_parent_present_list = []
         telegram_parent_absent_list = []
+        onesignal_player_id_list = []
 
         for i in students_all:
             if i.stud_id in selected_ids:
@@ -510,6 +508,9 @@ def handle_attendance(request):
 
                 telegram_student_absent_list.append(i.stud_telegram_studentchat_id)
                 telegram_parent_absent_list.append(i.stud_telegram_studentchat_id)
+
+            if i.stud_onesignal_player_id:
+                onesignal_player_id_list.append(i.stud_onesignal_player_id)
         
         date = datetime.now()
         attendance_student_present_mail('present', date, present_list)
@@ -526,6 +527,17 @@ def handle_attendance(request):
         attendance_telegram_message_parent('Present', date, telegram_parent_present_list)
         attendance_telegram_message_parent('Absent', date, telegram_parent_absent_list)
 
+        #---------------------------Notification send ---------------------------------------
+        title = '📋 Attendance Update'
+        noti_date = datetime.now().strftime('%Y-%m-%d')
+
+        for student in students_all:
+            status = 'Present' if student.stud_id in selected_ids else 'Absent'
+            if student.stud_onesignal_player_id:
+                mess = f"Your attendance status for {noti_date} is {status}."
+                send_notification(student.stud_onesignal_player_id, title, mess)
+                for player_id in onesignal_player_id_list:
+                    send_notification(player_id,title,mess)
         messages.success(request, "Attendance has been submitted!")    
      return redirect(url)
 
@@ -795,7 +807,7 @@ def teacher_save_offline_marks(request):
 
             test_attempt.save()        
     messages.success(request, 'Marks have been successfully saved.')
-    return redirect('teacher_test')
+    return redirect('teacher_tests')
 
 @teacher_login_required
 def view_attemp_students(request):
@@ -1030,9 +1042,13 @@ def insert_update_test_questions_teacher(request):
     if request.method == 'POST':
         form = TestQuestionsAnswerForm(request.POST, request.FILES)
         if form.is_valid():
+            testt_id = form.cleaned_data['tq_name']
+            testt_id = testt_id.test_id
             form.instance.domain_name = domain
             form.save()
-            return redirect('teacher_test')  # Replace 'success_url' with your actual success URL
+            url = '/teacherside/show_test_questions_teacher/?test_id={}'.format(testt_id)
+            messages.success(request, 'Question Added Successfully')
+            return redirect(url)  # Replace 'success_url' with your actual success URL
         else:
             context.update({'form': form,'errors':form.errors})
             return render(request, 'teacherpanel/insert_update_add_test_questions.html', context)
@@ -1144,11 +1160,16 @@ def announcements_insert_update_teacher(request):
             form.save()
             # ---------------------sendmail Logic===================================
             students_email_list = []
+            onesignal_player_id_list = []
             for x in students_for_mail:
                 students_email_list.append(x.stud_email)
-            print(students_email_list)    
+                if x.stud_onesignal_player_id:
+                    onesignal_player_id_list.append(x.stud_onesignal_player_id)
             # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
-         
+            title = '📢 New Announcement'
+            mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
+            for player_id in onesignal_player_id_list:
+                send_notification(player_id,title,mess)
             return redirect(url)
         else:
             filled_data = form.data
