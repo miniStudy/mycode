@@ -2389,10 +2389,10 @@ def fees_collection_admin(request):
     #=================Total Amount Fees Paid============================================
     total_amount_fees_paid = Fees_Collection.objects.filter(domain_name = domain).aggregate(total_amu_paid = Sum('fees_paid'))
     total_cheque_amount = Cheque_Collection.objects.filter(domain_name = domain, cheque_paid=False).aggregate(total_che_paid = Sum('cheque_amount'))
-    if total_cheque_amount['total_che_paid'] != 0:
-        total_cheque_amount_paid = total_cheque_amount['total_che_paid']
-    else:
+    if total_cheque_amount['total_che_paid'] == 0 or total_cheque_amount['total_che_paid'] == None:
         total_cheque_amount_paid = 0
+    else:
+        total_cheque_amount_paid = total_cheque_amount['total_che_paid']
     
     if total_amount_fees_paid['total_amu_paid'] != None:
         total_amount_fees_paid = total_amount_fees_paid['total_amu_paid']
@@ -2417,7 +2417,7 @@ def fees_collection_admin(request):
     #===================Total Pending Fees==============================================
     total_pending_fees = total_fees_amount_after_discount - total_amount_fees_paid
     
-    if total_pending_fees >= total_cheque_amount_paid:
+    if (total_pending_fees >= total_cheque_amount_paid):
         final_pending_fees_after_cheque_amount = total_pending_fees - total_cheque_amount_paid
     else:
         final_pending_fees_after_cheque_amount = 0
