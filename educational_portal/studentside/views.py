@@ -21,6 +21,10 @@ from studentside.decorators import student_login_required
 from datetime import datetime, timedelta
 from django.utils.timezone import now
 from team_ministudy.models import *
+
+import logging
+
+logger = logging.getLogger(__name__)
 # from .send_mail import *
 # Create your views here.
 
@@ -30,6 +34,13 @@ def student_home(request):
     domain = request.get_host()
     std_id = request.session['stud_std']
     stud_id = request.session['stud_id']
+    student_onesignal_player_id = request.session.get('deviceId', 'Error')
+    logger.error("============================playerid:{}".format(student_onesignal_player_id))
+    if student_onesignal_player_id != 'Error':
+        studentsdata = Students.objects.get(stud_id = stud_id)
+        studentsdata.stud_onesignal_player_id = student_onesignal_player_id
+        logger.error("============================playerid:{}".format(studentsdata.stud_onesignal_player_id))
+        studentsdata.save()
     today = datetime.today()
     cusrrent_student = Students.objects.get(stud_id=stud_id)
     
@@ -121,13 +132,6 @@ def student_login_handle(request):
         password = request.POST['password']
         val = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain).count()
         if val==1:
-            student_onesignal_player_id = request.session.get('deviceId', 'Error')
-            if student_onesignal_player_id != 'Error':
-                student = Students.objects.get(stud_email=email,stud_pass=password)
-                student.stud_onesignal_player_id = student_onesignal_player_id
-                student.save()
-
-                
             Data = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain)
             for item in Data:
                 request.session['stud_id'] = item.stud_id
