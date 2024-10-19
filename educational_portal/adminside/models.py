@@ -10,7 +10,7 @@ class AdminData(models.Model):
     admin_email = models.EmailField(unique=True)
     admin_otp = models.IntegerField(blank=True,null=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
-    admin_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
+    admin_onesignal_player_id = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.admin_email}"

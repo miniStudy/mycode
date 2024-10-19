@@ -1,3 +1,5 @@
 myenv/
 educational_portal/adminside/__pycache__/
 educational_portal/studentside/__pycache__/
+educational_portal/teacherside/__pycache__/
+educational_portal/parentsside/__pycache__/
