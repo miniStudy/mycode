@@ -1245,6 +1245,7 @@ def teacher_insert_update_materials(request):
                 messages.error(request, '{} is already Exists'.format(form.data['cm_filename']))
             else:
                 if form.is_valid():
+                    form.instance.domain_name = domain
                     material = form.save(commit=False)
                     pdf_file = form.cleaned_data['cm_file']
                     
@@ -1293,7 +1294,7 @@ def teacher_insert_update_materials(request):
                 if check >= 1:
                     messages.error(request, '{} is already Exists'.format(form.data['cm_filename']))
                 else:
-                    form.instance.doamin_name = domain
+                    form.instance.domain_name = domain
                     material = form.save(commit=False)
                     # Generate icon for the PDF file
                     material.cm_file_icon.save(
@@ -1582,7 +1583,7 @@ def today_learning_show(request):
         std_access.append(x.fa_batch.batch_std.std_id)
         batch_access.append(x.fa_batch.batch_id)
     
-    standard_access_data = Std.objects.filter(std_id__in = std_access)
+    standard_access_data = Std.objects.filter(std_id__in = std_access, domain_name = domain)
     batch_access_data = Batches.objects.filter(batch_id__in = batch_access, domain_name = domain)
 
     today_learn_data = Today_Teaching.objects.filter(today_teaching_batches_id__batch_id__in = batch_access, today_teaching_batches_id__batch_std__std_id__in = std_access, domain_name = domain)
@@ -1595,45 +1596,50 @@ def today_learning_show(request):
     }
 
     if request.GET.get('get_std'):
-        get_std = request.GET['get_std']
+        get_std = request.GET.get('get_std')
         if get_std == 0:
             pass
         else:
-            today_learn_data = today_learn_data.filter(today_teaching_batches_id__batch_std__std_id = get_std)
-            batch_access_data = batch_access_data.filter(batch_std__std_id = get_std)
+            today_learn_data = today_learn_data.filter(today_teaching_batches_id__batch_std__std_id = get_std, domain_name = domain)
+            batch_access_data = batch_access_data.filter(batch_std__std_id = get_std, domain_name = domain)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'today_learn_data':today_learn_data,'batch_access_data':batch_access_data,'get_std':get_std})
 
     if request.GET.get('get_batch'):
-        get_batch = int(request.GET['get_batch'])
+        get_batch = request.GET.get('get_batch')
         if get_batch == 0:
             pass
         else:
-            today_learn_data = today_learn_data.filter(today_teaching_batches_id__batch_id = get_batch)
+            today_learn_data = today_learn_data.filter(today_teaching_batches_id__batch_id = get_batch, domain_name = domain)
             get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'today_learn_data':today_learn_data,'get_batch':get_batch}) 
 
     return render(request, 'teacherpanel/today_learn.html', context)
 
 def today_learning_insert_update(request):
+    title = 'Class-Overview'
     domain = request.get_host()
     fac_id = request.session['fac_id']
     fac_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
 
     std_access = []
     batch_access = []
+    subject_access = []
     for x in fac_data:
         std_access.append(x.fa_batch.batch_std.std_id)
         batch_access.append(x.fa_batch.batch_id)
+        subject_access.append(x.fa_subject.sub_id)
     
+    chepters_data = Chepter.objects.filter(chep_sub__sub_id__in = subject_access, domain_name = domain)
     standard_access_data = Std.objects.filter(std_id__in = std_access, domain_name = domain)
     batch_access_data = Batches.objects.filter(batch_id__in = batch_access, domain_name = domain)
-    today_learning_data = Today_Teaching.objects.filter(today_teaching_batches_id__batch_id__in = batch_access, domain_name = domain)
+    print(chepters_data)
 
     context = {
         'standard_access_data':standard_access_data,
         'batch_access_data':batch_access_data,
-        'today_learning_data':today_learning_data
+        'chepters_data':chepters_data,
+        'title': title
     }
     
     if request.GET.get('get_std'):
@@ -1641,16 +1647,17 @@ def today_learning_insert_update(request):
         if get_std == 0:
             pass
         else:
-            batch_access_data = batch_access_data.filter(batch_std__std_id = get_std)
+            batch_access_data = batch_access_data.filter(batch_std__std_id = get_std, domain_name = domain)
+            chepters_data = chepters_data.filter(chep_std__std_id = get_std)
             get_std = Std.objects.get(std_id = get_std)
-            context.update({'batch_access_data':batch_access_data,'get_std':get_std})
+            context.update({'batch_access_data':batch_access_data,'get_std':get_std, 'chepters_data': chepters_data})
 
     if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         if get_batch == 0:
             pass
         else:
-            get_batch = Batches.objects.get(batch_id = get_batch) 
+            get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'get_batch':get_batch}) 
 
     if request.method == 'POST':
@@ -1664,7 +1671,7 @@ def today_learning_insert_update(request):
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
-                messages.success(request, 'Updated Sucessfully!')
+                messages.success(request, 'Today learning updated sucessfully!')
                 return redirect(url)
             else:
                 filled_data = form.data
@@ -1673,9 +1680,9 @@ def today_learning_insert_update(request):
         # ===================insert_logic===========================
         form = teacher_todaylearn_form(request.POST)
         if form.is_valid():
-            form.instance.doamin_name = domain
+            form.instance.domain_name = domain
             form.save()
-            messages.success(request, 'Add Sucessfully!')
+            messages.success(request, 'Today learning added Sucessfully!')
             return redirect(url)
         else:
             filled_data = form.data
@@ -1692,11 +1699,7 @@ def today_learning_insert_update(request):
 
 
 def today_learning_delete(request):
-    url = '/teacherside/today_learning/'
     if request.method == 'POST':
-        get_std = request.POST.get('get_std')
-        get_batch = request.POST.get('get_batch')
-        url = '/teacherside/today_learning/?get={}&get_batch={}'.format(get_std, get_batch)
         selected_items = request.POST.getlist('selection')
         if selected_items:
             selected_ids = [int(id) for id in selected_items]
@@ -1705,7 +1708,7 @@ def today_learning_delete(request):
                 messages.success(request, 'Items Deleted Successfully')
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
-    return redirect(url)
+    return redirect('today_learning')
 
 
 def show_question_paper(request):
