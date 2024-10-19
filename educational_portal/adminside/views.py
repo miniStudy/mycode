@@ -301,8 +301,6 @@ def home(request):
         admindata.save()
     mess = 'Welcome To miniStudy Admin Dashboard'
     title = 'MiniStudy'
-
-    
     send_notification(onesignal_player_id,title,mess)
     
     # ----------------------------------------------------------------
@@ -644,7 +642,7 @@ def insert_update_announcements(request):
                 if x.stud_telegram_studentchat_id:    
                     announcement_telegram_message_student(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
                     announcement_telegram_message_parent(x.stud_telegram_parentschat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
-            announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
+            # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
             # -------------One Single Player Id------------------------------------------------------------------------
 
             title = '📢 New Announcement'
