@@ -636,12 +636,25 @@ def insert_update_announcements(request):
             form.save()
             messages.success(request, 'Announcement Added Successfully')           
             students_email_list = []
+            onesignal_player_id_list = []
             for x in students_for_mail:
                 students_email_list.append(x.stud_email)  
+                onesignal_player_id_list.append(x.stud_onesignal_player_id)
                 if x.stud_telegram_studentchat_id:    
                     announcement_telegram_message_student(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
                     announcement_telegram_message_parent(x.stud_telegram_parentschat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
-            announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)           
+            announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
+            # -------------One Single Player Id------------------------------------------------------------------------
+
+            title = '📢 New Announcement'
+            mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
+            if onesignal_player_id_list:
+                for player_id in onesignal_player_id_list:
+                    send_notification(player_id,title,mess)
+            else:              
+                messages.error(request, "No OneSignal player IDs available for notifications.")
+
+            # -------------One Single Player Id------------------------------------------------------------------------       
             return redirect(url)         
         else:
             filled_data = form.data
