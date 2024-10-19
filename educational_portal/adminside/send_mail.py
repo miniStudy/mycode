@@ -331,3 +331,4 @@ def send_notification(playerid,message):
     'Authorization': 'Basic  ZTA1ZmU1MDktOTNmMy00NDBjLWE3ZWEtNWQ3Njc3ZTA1YWEz',
     'Content-Type': 'application/json'
     }        
+    response = requests.request("POST", url, headers=headers, data=payload)
