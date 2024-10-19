@@ -537,7 +537,7 @@ def handle_attendance(request):
             if student.stud_onesignal_player_id:
                 mess = f"Your attendance status for {noti_date} is {status}."
                 for player_id in onesignal_player_id_list:
-                    send_notification(player_id,title,mess)
+                    send_notification(player_id,title,mess, request)
         messages.success(request, "Attendance has been submitted!")    
      return redirect(url)
 
