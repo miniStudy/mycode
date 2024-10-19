@@ -2389,7 +2389,10 @@ def fees_collection_admin(request):
     #=================Total Amount Fees Paid============================================
     total_amount_fees_paid = Fees_Collection.objects.filter(domain_name = domain).aggregate(total_amu_paid = Sum('fees_paid'))
     total_cheque_amount = Cheque_Collection.objects.filter(domain_name = domain, cheque_paid=False).aggregate(total_che_paid = Sum('cheque_amount'))
-    total_cheque_amount_paid = total_cheque_amount['total_che_paid']
+    if total_cheque_amount['total_che_paid'] != 0:
+        total_cheque_amount_paid = total_cheque_amount['total_che_paid']
+    else:
+        total_cheque_amount_paid = 0
     
     if total_amount_fees_paid['total_amu_paid'] != None:
         total_amount_fees_paid = total_amount_fees_paid['total_amu_paid']
