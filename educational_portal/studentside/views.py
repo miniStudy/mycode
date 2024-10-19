@@ -13,7 +13,6 @@ from .forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 # Create your views here.
 # mail integration 
-from .send_mail import *
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
@@ -22,6 +21,7 @@ from studentside.decorators import student_login_required
 from datetime import datetime, timedelta
 from django.utils.timezone import now
 from team_ministudy.models import *
+# from .send_mail import *
 # Create your views here.
 
 
@@ -121,15 +121,11 @@ def student_login_handle(request):
         password = request.POST['password']
         val = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain).count()
         if val==1:
-            guardian_onesignal_player_id = request.session.get('deviceId', 'Error')
-            if guardian_onesignal_player_id != 'Error':
-                try:
-                    student = Students.objects.get(stud_email=email)
-                    student.guardian_onesignal_player_id = guardian_onesignal_player_id
-                    student.save()
-                except Students.DoesNotExist:
-                    messages.error(request, "Parent with this OneSignal player ID does not exist.")
-
+            student_onesignal_player_id = request.session.get('deviceId', 'Error')
+            if student_onesignal_player_id != 'Error':
+                student = Students.objects.get(stud_email=email,stud_pass=password)
+                student.stud_onesignal_player_id = student_onesignal_player_id
+                student.save()
             Data = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain)
             for item in Data:
                 request.session['stud_id'] = item.stud_id
@@ -543,7 +539,7 @@ def student_inquiries_data(request):
             student_email = form.cleaned_data['inq_email']
             form.save()
             admin_emails = AdminData.objects.values_list('admin_email', flat=True)
-            admin_email_send(admin_emails, student_name, student_email, selected_subjects)
+            # admin_email_send(admin_emails, student_name, student_email, selected_subjects)
             messages.success(request, "Inquiry saved successfully!")
             return redirect('Student_Inquiries')
         else:
