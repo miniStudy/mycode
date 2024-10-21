@@ -2331,7 +2331,7 @@ def adminside_report_card(request):
         # print(student_data)
         context.update({
             'title': 'Report-Card',
-            'logo_url': 'https://metrofoods.co.nz/1nobg.png',
+            'logo_url': 'http://ministudy.in/staticfiles/logos/logo_text_sidebyside_dark.png',
             # 'student_data':student_data,
             'overall_attendence':overall_attendence,
             'overall_attendance_li':overall_attendance_li,
