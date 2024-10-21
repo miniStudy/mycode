@@ -67,6 +67,7 @@ def generate_pdf_icon(pdf_file):
 
 @teacher_login_required
 def teacher_home(request):
+    context = {}
     domain = request.get_host()
     msg = None
     overall_attendance_li = None
@@ -74,46 +75,60 @@ def teacher_home(request):
     
     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
     std_access_list=[]
+    subject_access_list = []
     for x in faculty_access:
         std_access_list.append(x.fa_batch.batch_std.std_id)
+        subject_access_list.append(x.fa_subject.sub_id)
 
     std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)
+    subject_data = Subject.objects.filter(sub_id__in = subject_access_list, domain_name = domain)
 
-
-    if request.GET.get('get_std'):
-        get_std = request.GET.get('get_std')
-
+    get_std = request.GET.get('get_std')
+    if get_std:
+        subject_data = Subject.objects.filter(sub_std__std_id = int(get_std))
         get_std = Std.objects.get(std_id = get_std)
-        students_li = Students.objects.filter(stud_std = get_std, domain_name = domain).values('stud_id','stud_name','stud_lastname')
-        overall_attendance_li = []
-        for x in students_li:
-            total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain).count()
-            present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain).count()
-            if total_attendence_studentwise > 0:
-                overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
-            else:
-                overall_attendence_studentwise = 0
-            
-
-            total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
-            
-            
-            obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
-            
-
-            if total_marks == 0:
-                overall_result = 0
-            else:
-                overall_result = round((obtained_marks/total_marks)*100,2)
-
-            overall_attendance_li.append({'stud_name':x['stud_name'], 'stud_lastname':x['stud_lastname'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
-
-
-        overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
-        overall_attendance_li = overall_attendance_li[:5]        
+        context.update({'subject_data': subject_data, 'get_std':get_std})
     else:
-        get_std = 0
-        msg = "Please! Select standard for data"
+        get_std = Std.objects.first()
+        subject_data = Subject.objects.filter(sub_std__std_id = get_std.std_id)
+        context.update({'subject_data': subject_data, 'get_std':get_std})
+
+    get_subject = request.GET.get('get_subject')
+    if get_subject:
+        get_subject = Subject.objects.get(sub_id = get_subject)
+        context.update({'get_subject':get_subject})
+    else:
+        get_subject = Subject.objects.filter(sub_std__std_id = get_std.std_id).first()
+        context.update({'get_subject':get_subject})
+
+
+    students_li = Students.objects.filter(stud_std = get_std, domain_name = domain).values('stud_id','stud_name','stud_lastname')
+    overall_attendance_li = []
+    for x in students_li:
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject.sub_id).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject.sub_id).count()
+        if total_attendence_studentwise > 0:
+            overall_attendence_studentwise = (present_attendence_studentwise/total_attendence_studentwise)*100
+        else:
+            overall_attendence_studentwise = 0
+        
+
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain, tau_test_id__test_sub__sub_id = get_subject.sub_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain, tau_test_id__test_sub__sub_id = get_subject.sub_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        
+
+        if total_marks == 0:
+            overall_result = 0
+        else:
+            overall_result = round((obtained_marks/total_marks)*100,2)
+
+        overall_attendance_li.append({'stud_name':x['stud_name'], 'stud_lastname':x['stud_lastname'], 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+
+
+    overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+    overall_attendance_li = overall_attendance_li[:5]        
+    
     #=====================Count Unverified Doubts=======================================================
     fac_data = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
     l = []
@@ -144,7 +159,7 @@ def teacher_home(request):
         students_for_that_std.append(noss)
     
     
-    context={
+    context.update({
         'title':'Home',
         'unverified_solution':unverified_solution,
         'std_data':std_data,
@@ -156,7 +171,7 @@ def teacher_home(request):
         'piechart_data':piechart_data,
         'std_list':std_list,
         'students_for_that_std':students_for_that_std,
-    }
+    })
     return render(request, 'teacherpanel/index.html',context)
 
 def teacher_login_page(request):  
@@ -610,12 +625,12 @@ def teacher_doubts(request):
     for x in faculty_access:
         subjects_list.append(x.fa_subject.sub_id)
 
-    doubts_data = Doubt_section.objects.filter(doubt_subject__sub_id__in = subjects_list, domain_name = domain).annotate(count_solution=Count('doubt_solution'), verified_solution=Count(
+    doubts_data = Doubt_section.objects.filter(doubt_faculty__fac_id = fac_id, domain_name = domain).annotate(count_solution=Count('doubt_solution'), verified_solution=Count(
         Case(
             When(doubt_solution__solution_verified=True, then=1),
             output_field=IntegerField(),
         ))).order_by('-pk')[:30]
-     
+
     context = {
         'title':'Doubts',
         'doubts_data':doubts_data

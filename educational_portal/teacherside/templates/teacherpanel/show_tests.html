@@ -93,12 +93,12 @@
             {% endfor %}
           </tbody>
         </table>
+      </div>
       <!-- Pagination -->
       {% for x in data.paginator.page_range %}
       <a href="?page={{x}}&get_std={{get_std.std_id}}&get_subject={{get_subject.sub_id}}&searchhh={{searchhh}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>
       {% endfor %}
-
-      </div>
+      
       <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
 
       <!-- Modal -->

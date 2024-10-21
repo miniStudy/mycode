@@ -13,14 +13,26 @@
   {% csrf_token %}
   <input type="hidden" name="doubt_stud_id" value={{student_id}} />
 
-  <div class="col-sm-12" {% if update_data %}style="display:none;" {% endif %}>
-    <label for="defaultSelect" class="form-label">Subjects</label>
-    <select id="defaultSelect" class="form-select" name="doubt_subject">
-      <option value="">--</option>
-      {% for x in subjects %}
-      <option value="{{x.sub_id}}">{{x.sub_name}}</option>
-      {% endfor %}
-    </select>
+  <div class="row">
+    <div class="col-sm-6" {% if update_data %}style="display:none;" {% endif %}>
+      <label for="defaultSelect" class="form-label">Subjects</label>
+      <select id="defaultSelect" class="form-select" name="doubt_subject">
+        <option value="">--</option>
+        {% for x in subjects %}
+        <option value="{{x.sub_id}}">{{x.sub_name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  
+    <div class="col-sm-6" {% if update_data %}style="display:none;" {% endif %}>
+      <label for="defaultSelect" class="form-label">Assign Faculty</label>
+      <select id="defaultSelect" class="form-select" name="doubt_faculty">
+        <option value="">--</option>
+        {% for x in faculties_data %}
+        <option value="{{x.fac_id}}">{{x.fac_name}}</option>
+        {% endfor %}
+      </select> 
+    </div>
   </div>
 
   <label for="exampleInputEmail1" class="form-label fw-medium mt-3">Enter Doubt</label>
