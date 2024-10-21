@@ -32,6 +32,11 @@ logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 from django.core.exceptions import ObjectDoesNotExist
 
+# =================celery=========================
+from educational_portal.celery import add
+from adminside.tasks import *
+# ================================================
+
 
 import logging
 
@@ -45,9 +50,6 @@ global_domain = None
 
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
 def send_whatsapp_message_test_marks(request):
-
-
-
     # User details
     api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDBlYTNjODQ4NGQ2MGI4NDhhZDczMiIsIm5hbWUiOiJtaW5pU3R1ZHlfd2hhdHNhcHAiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjY5ZTMwOGZmYmE3OTE3ZjE1MGRmNTMyIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3MjgxMTMyMTJ9.aZSCryj6KAkD5ETSkYsmiGwOzs87-wwz70fs6D9kBcg'  # Replace with your actual API key
     campaign_name = 'miniStudy_test'  # Replace with your campaign name
@@ -291,6 +293,14 @@ def admin_logout(request):
 @admin_login_required
 def home(request):
     domain = request.get_host()
+
+    # ================celery_testing========================
+    # print("result")
+    # # add.delay(10,20)
+    # result = add.delay(10,20)
+    # print(result)
+    # result2 = sub.delay(10,20)
+    # print(result2)
     # =================================================================
     # sending push Notification
     onesignal_player_id = request.session.get('deviceId', 'Error')
@@ -644,7 +654,11 @@ def insert_update_announcements(request):
                 if x.stud_telegram_studentchat_id:    
                     announcement_telegram_message_student(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
                     announcement_telegram_message_parent(x.stud_telegram_parentschat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
-            # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
+
+            htmly = get_template('Email/announcement.html')
+            d = {'title': form.cleaned_data['announce_title'],'msg':form.cleaned_data['announce_msg']}
+            html_content = htmly.render(d)     
+            announcement_mail.delay(students_email_list,html_content)
             # -------------One Single Player Id------------------------------------------------------------------------
 
             title = '📢 New Announcement'
@@ -1022,7 +1036,7 @@ def insert_update_faculties(request):
                     fac_password = instance.fac_password
                     fac_name = form.cleaned_data['fac_name']
                     fac_email = [form.cleaned_data['fac_email']]
-                    faculty_email(fac_name, fac_email, fac_password)
+                    faculty_email.delay(fac_name, fac_email, fac_password)
                     messages.success(request, 'Faculty Added Successfully')
                     return redirect('admin_faculties')
             else:
@@ -1134,7 +1148,7 @@ def insert_update_timetable(request):
                     parent_chat_ids.append(x.stud_telegram_parentschat_id)
                     if x.stud_onesignal_player_id:
                         onesignal_player_id_list.append(x.stud_onesignal_player_id)
-                timetable_mail(tt_students_email_list)
+                timetable_mail.delay(tt_students_email_list)
 
                 # ------------------------ Telegram Message -------------------------------
                 timetable_telegram_message_student(student_chat_ids)
@@ -1913,7 +1927,7 @@ def insert_update_students(request):
             student_name = instance.stud_name
             student_email = [instance.stud_email]
             student_password = instance.stud_pass
-            student_email_send(student_name, student_email, student_password)
+            student_email_send.delay(student_name, student_email, student_password)
             
             student_std = request.POST.get('stud_std')
             student_batch = request.POST.get('stud_batch')
@@ -2513,8 +2527,8 @@ def add_cheques_admin(request):
                     student_email = [student_name.stud_email]
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.datetime.today()
-                    parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
-                    cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
+                    parent_cheque_mail.delay(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, parent_email)
+                    cheque_update_mail.delay(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, student_email)
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2537,8 +2551,8 @@ def add_cheques_admin(request):
                     student_email = [student_name.stud_email]
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.datetime.today()
-                    parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
-                    cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
+                    parent_cheque_mail.delay(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, parent_email)
+                    cheque_mail.delay(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, student_email)
                     print(student_name.stud_onesignal_player_id)
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
@@ -2608,7 +2622,7 @@ def add_fees_collection_admin(request):
                 student_name = form.cleaned_data['fees_stud_id']
                 student_email = [student_name.stud_email]
                 date = datetime.datetime.today()
-                payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
+                payment_mail.delay(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
                
                 # -------------Telegram Send-------------------------------------------------------------------
                
@@ -2915,7 +2929,7 @@ def institute_main_send_function(request):
         if 'institute_email' not in df.columns:
             return render(request, 'institute_mail_send.html', {'error': 'Excel file must contain "institute email" column.'})
         email_list = df['institute_email'].dropna().tolist()
-        institute_send_mail(email_list)
+        institute_send_mail.delay(email_list)
 
         return render(request, 'institute_mail_send.html', {'emails': email_list})
     return render(request, 'institute_mail_send.html')
