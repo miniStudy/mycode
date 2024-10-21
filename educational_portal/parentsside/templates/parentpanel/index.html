@@ -78,6 +78,17 @@
 <div class="card mb-4" id="top_students">
   <h5 class="card-header mb-2">Performance</h5>
   <div class="card-body">
+    <div class="btn-group mb-3">
+      <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_subject %}{{get_subject.sub_name}}{% else %}Subject{% endif %}</button>
+      <ul class="dropdown-menu">
+        {% for x in subject_data %}
+        <li><a class="dropdown-item" href="{% url 'parent_home' %}?get_subject={{x.sub_id}}">
+          {{x.sub_name}}
+        </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
     <div class="table-responsive text-nowrap">
       <table class="table table-bordered">
         <thead>

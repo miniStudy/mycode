@@ -397,6 +397,7 @@ class Doubt_section(models.Model):
     doubt_stud_id = models.ForeignKey(Students, on_delete = models.CASCADE)
     doubt_doubt = models.TextField()
     doubt_subject = models.ForeignKey(Subject,on_delete=models.CASCADE)
+    doubt_faculty = models.ForeignKey(Faculties, on_delete=models.CASCADE, null=True, blank=True)
     doubt_date = models.DateTimeField(auto_now_add=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
 

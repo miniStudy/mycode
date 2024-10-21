@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 
 @student_login_required
 def student_home(request):
+    context = {}
     domain = request.get_host()
     std_id = request.session['stud_std']
     stud_id = request.session['stud_id']
@@ -43,7 +44,6 @@ def student_home(request):
         studentsdata.save()
     today = datetime.today()
     cusrrent_student = Students.objects.get(stud_id=stud_id)
-    
     day = today - timedelta(days=7)
     last_7_days=(day.strftime('%Y-%m-%d'))
 
@@ -61,21 +61,32 @@ def student_home(request):
 
     student_id = request.session['stud_id']
     student_std = request.session['stud_std']
+    subject_data = Subject.objects.filter(sub_std__std_id = student_std, domain_name = domain)
     students_li = Students.objects.filter(stud_std__std_id = student_std, domain_name = domain)
+
+
+    get_subject = request.GET.get('get_subject')
+    if get_subject:
+        get_subject = Subject.objects.get(sub_id = get_subject)
+        context.update({'get_subject':get_subject})
+    else:
+        get_subject = Subject.objects.filter(sub_std = student_std).first()
+        context.update({'get_subject':get_subject})  
+    
+
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, domain_name = domain).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True, domain_name = domain).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_timetable__tt_subject1__sub_id = get_subject.sub_id,  domain_name = domain).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_present=True, atten_timetable__tt_subject1__sub_id = get_subject.sub_id, domain_name = domain).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
         else:
             overall_attendence_studentwise = 0
         
 
-        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id, domain_name = domain).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
-        
-        
-        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id, domain_name = domain).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id, domain_name = domain, tau_test_id__test_sub__sub_id = get_subject.sub_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+            
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x.stud_id, domain_name = domain, tau_test_id__test_sub__sub_id = get_subject.sub_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
         
 
         if total_marks == 0:
@@ -102,7 +113,7 @@ def student_home(request):
         test_name_list.append(x['tau_test_id__test_name'])
         test_result_list.append(x['tau_obtained_marks'])
     
-    context = {
+    context.update({
         'title':'Home',
         'current_doubts':current_doubts,
         'current_announcements':current_announcements,
@@ -113,7 +124,8 @@ def student_home(request):
         'test_name_list': test_name_list,
         'test_counts':test_counts,
         'cusrrent_student':cusrrent_student,
-    }
+        'subject_data': subject_data,
+    })
     return render(request, 'studentpanel/index.html',context)
 
 def student_login_page(request): 
@@ -593,11 +605,24 @@ def Student_add_doubts(request):
     student_id = request.session['stud_id']
     student = Students.objects.get(stud_id=student_id)
     subjects_li = student.stud_pack.pack_subjects.filter(domain_name = domain)
+    
+    student_batch_id = student.stud_batch.batch_id
+    faculties_data = Faculty_Access.objects.filter(fa_batch__batch_id=student_batch_id, domain_name = domain)
+
+    fac_disc = []
+    for x in faculties_data:
+        # Check if this faculty ID is already in the list
+        if not any(fac['fac_id'] == x.fa_faculty.fac_id for fac in fac_disc):
+            fac_disc.append({'fac_id': x.fa_faculty.fac_id, 'fac_name': x.fa_faculty.fac_name})
+
+
+   
 
     context = {
     'student_id':student_id,
     'subjects':subjects_li,
-    'title': 'Doubts'
+    'title': 'Doubts',
+    'faculties_data': fac_disc,
     }
 
     if request.method == 'POST':
