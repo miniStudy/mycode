@@ -2639,9 +2639,33 @@ def admin_fees_collection_delete(request):
 def payments_history_admin(request):
     domain = request.get_host()
     fees_collections_data = Fees_Collection.objects.filter(domain_name = domain)
+    std_data = Std.objects.filter(domain_name = domain)
+    stud_data = Students.objects.filter(domain_name = domain)
     context = {
         'fees_collections_data':fees_collections_data,
+        'std_data':std_data,
+        'stud_data':stud_data,
     }
+
+    if request.GET.get('get_std'):
+        get_std = request.GET.get('get_std')
+        if get_std == 0:
+            pass
+        else:
+            fees_collections_data = fees_collections_data.filter(fees_stud_id__stud_std__std_id = get_std, domain_name = domain)
+            stud_data = stud_data.filter(stud_std__std_id = get_std, domain_name = domain)
+            get_std = Std.objects.filter(std_id = get_std, domain_name = domain).first()
+            context.update({"fees_collections_data":fees_collections_data, "get_std":get_std, "stud_data":stud_data})
+    
+    if request.GET.get('get_student'):
+        get_student = int(request.GET['get_student'])
+        if get_student == 0:
+            pass
+        else:
+            fees_collections_data = fees_collections_data.filter(fees_stud_id__stud_id = get_student, domain_name = domain)
+            get_student = Students.objects.filter(stud_id = get_student, domain_name = domain).first()
+            context.update({'fees_collections_data':fees_collections_data,'get_student':get_student})
+
     return render(request, 'payments_history_admin.html', context)
 
 def faculty_access_show(request):
