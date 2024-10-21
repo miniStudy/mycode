@@ -10,44 +10,184 @@
     <meta name="description" content="Educational Portal" />
     <meta name="keywords" content="Educational Portal">
     {% include 'links.html' %}
-
     <style>
-      .loader-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent white */
-  z-index: 9999; /* Ensures the loader appears on top */
-  display: flex; /* Initially visible */
-  align-items: center; /* Center the loader */
-  justify-content: center;
-}
+      
+      table th,td{padding: 8px 14px 8px 14px !important;font-size: 14px !important;}
+      table th{font-weight: 400 !important;}
+      th:not(:first-child), td:not(:first-child) {
+      min-width: 200px !important;
+    }
+    @media (max-width: 576px) {
+      table th, td {
+        padding: 8px 14px 8px 14px !important; /* Reduced padding on mobile */
+        font-size: 14px !important; /* Smaller font size on mobile */
+      }
+      .btn-sm{font-size: 14px !important;padding: 0px 10px 0px 10px !important;}
+      .dropdown-menu{font-size: 10px !important;}
+      .dropdown-menu .dropdown-item{padding: 5;width: auto !important;}
+      th:not(:first-child), td:not(:first-child) {
+      min-width: 120px !important;width : 120px !important;
+    }
 
-/* Spinner inside the loader */
-.spinner {
-  border: 16px solid #f3f3f3; /* Light gray */
-  border-top: 16px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-}
+    .btn{padding: 5px 10px;font-size: 14px;}
+    .searchbtnnn{font-size: 10px !important;}
+    }
 
-/* Spinner animation */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-    </style>
     
+/* Width of the scrollbar */
+::-webkit-scrollbar {
+    width: 8px !important; /* Adjust the width */
+    height: 8px;
+  }
+  
+  /* Track (the background of the scrollbar) */
+  ::-webkit-scrollbar-track {
+    background-color: #272727;
+    
+  }
+  
+  /* Handle (the actual scroll part) */
+  ::-webkit-scrollbar-thumb {
+    
+    border-radius: 10px;       /* Rounded corners */
+    background: #434343; /* Track background color */
+    
+  }
+  
+  
+
+    </style>
 </head>
 
 <body>
-  <div id="loader" class="loader-overlay">
-    <div class="spinner"></div>
+  <style>
+    /* Loader Overlay */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    /* Loader Container */
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      justify-content: center;
+    }
+  
+    /* Dot Container to keep all dots together */
+    .dot-container {
+      position: relative;
+    }
+  
+    /* Animated Dots */
+    .dot {
+      width: 12px;
+      height: 12px;
+      background-color: #f39c12; /* Orange color to match logo */
+      border-radius: 50%;
+      position: absolute;
+      animation: orbit 3s linear infinite;
+    }
+  
+    /* Orbit Path with inside and outside movement */
+    @keyframes orbit {
+      0% {
+        transform: rotate(0deg) translateX(20px) rotate(0deg); /* Slightly closer to the center */
+      }
+      50% {
+        transform: rotate(180deg) translateX(20px) rotate(-180deg); /* Move slightly outside */
+      }
+      100% {
+        transform: rotate(360deg) translateX(20px) rotate(-360deg); /* Back to inside */
+      }
+    }
+  
+    /* Additional Dots */
+    .dot:nth-child(2) {
+      background-color: #3498db; /* Blue color */
+      animation-delay: -0.5s;
+    }
+  
+    .dot:nth-child(3) {
+      background-color: #f39c12;
+      animation-delay: -1s;
+    }
+  
+    .dot:nth-child(4) {
+      background-color: #3498db;
+      animation-delay: -1.5s;
+    }
+  
+    .dot:nth-child(5) {
+      background-color: #f39c12;
+      animation-delay: -2s;
+    }
+  
+    .dot:nth-child(6) {
+      background-color: #3498db;
+      animation-delay: -2.5s;
+    }
+  
+    .dot:nth-child(7) {
+      background-color: #f39c12;
+      animation-delay: -3s;
+    }
+  
+    /* Centered Text for miniStudy */
+    .texttt {
+      font-family: 'Arial', sans-serif;
+      font-size: 24px;
+      color: white;
+      margin-top: 50px; /* Space above text */
+      z-index: 2; /* Ensure text is above dots */
+      position: absolute;
+      
+    }
+  
+    /* Orange 'S' in miniStudy */
+    .texttt .highlight {
+      color: orange;
+      animation: fadeS 1.5s ease-in-out infinite alternate;
+    }
+  
+    /* Keyframe Animation for the 'S' */
+    @keyframes fadeS {
+      0% {
+        color: orange;
+      }
+      100% {
+        color: #ffffff;
+      }
+    }
+  </style>
+  
+  <div class="loader-overlay" id="loader">
+    <div class="loader">
+      <!-- Dot Container -->
+      <div class="dot-container">
+        <!-- Orbiting Dots -->
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
   </div>
+  
+  
   <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar  ">
   <div class="layout-container">
@@ -116,8 +256,13 @@
   console.log('Start Loading...');  // You can replace this with any action like showing a loader
   // You can also show a loader or any visual indication that loading has started
   document.getElementById("loader").style.display = "flex";
+  setTimeout(() => {
+  const loader = document.getElementById('loader');
+  if (loader) {
+      loader.style.display = 'none';
+  }
+}, 8000);
 }
-
 // Function to log or show 'End Loading'
 function endLoading() {
   console.log('End Loading...');  // You can replace this with any action like hiding a loader
@@ -145,10 +290,19 @@ forms.forEach(form => {
 const links = document.querySelectorAll("a");
         links.forEach(link => {
             link.addEventListener("click", function(event) {
-                startLoading(); // Show loader when a link is clicked
+                const href = link.getAttribute("href");
+                // Check if the href is valid
+                if (href && href !== "#" && href !== "" && href !== "/" && href !== "javascript:void(0);" && href !== "javascript:void(0)") {
+                    startLoading(); // Show loader when a valid link is clicked
+                } else {
+                    event.preventDefault(); // Prevent default action for invalid links
+                    console.log('Invalid link clicked: ' + href); // Log for debugging
+                }
             });
         });
 </script>
+
+
 
 </body>
 </html>

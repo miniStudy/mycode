@@ -46,17 +46,17 @@
 
       <form action="{% url 'delete_timetable' %}" method="POST"> 
         {% csrf_token %}
-        <div class="card-datatable table-responsive pt-0">
+        
           <div class="mt-4">
             {% for batch in batch_data %}
               <div class="row mb-4 p-0">
                 <div class="col-12">
-                  <div class="card shadow-sm">
-                    
+                  <div class="card shadow-sm border-start border-end border-top border-primary">
                     <div class="card-body p-0">
-                      <div class="p-2 border border-primary bg-light text-white">
+                      <div class="p-2 border border-primary text-white">
                         <h5 class="mb-0 ms-2">{{batch.batch_std}} - {{ batch.batch_name }}</h5>
                       </div>
+                      <div class="table-responsive">
                       <table class="table table-bordered table-hover m-0">
                         <thead class="thead-light">
                           <tr>
@@ -89,12 +89,13 @@
                           {% endfor %}
                         </tbody>
                       </table>
-                    </div>
+                      </div>
+                    
                   </div>
                 </div>
               </div>
-            {% endfor %}
           </div>
+          {% endfor %}
           
           
         </div>

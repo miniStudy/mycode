@@ -54,8 +54,8 @@
 
     <form action="{% url 'delete_chepters' %}" method="POST"> 
     {% csrf_token %}        
-    <div class="card-datatable table-responsive pt-0">
-        <table id="data-table" class="display table table-bordered" style="width:100%">
+    <div class="table-responsive pt-0">
+        <table class="display table table-bordered" style="width:100%">
             <thead>
                 <tr>
                     <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
