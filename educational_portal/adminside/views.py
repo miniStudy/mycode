@@ -2508,12 +2508,13 @@ def add_cheques_admin(request):
                     abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date, domain_name = domain)
                 form.instance.domain_name = domain
                 form.save()
-                student_name = form.cleaned_data['cheque_stud_id']
-                student_email = [student_name.stud_email]
-                parent_email = [student_name.stud_guardian_email]
-                date = datetime.datetime.today()
-                parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
-                cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
+                if form.cleaned_data['cheque_paid']==True:
+                    student_name = form.cleaned_data['cheque_stud_id']
+                    student_email = [student_name.stud_email]
+                    parent_email = [student_name.stud_guardian_email]
+                    date = datetime.datetime.today()
+                    parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
+                    cheque_update_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2538,7 +2539,7 @@ def add_cheques_admin(request):
                     date = datetime.datetime.today()
                     parent_cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, parent_email)
                     cheque_mail(form.cleaned_data['cheque_bank'], form.cleaned_data['cheque_amount'], date, student_email)
-
+                    print(student_name.stud_onesignal_player_id)
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
