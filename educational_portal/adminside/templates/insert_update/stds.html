@@ -1,6 +1,9 @@
 {% extends 'master.html' %}
  
 {% block contentsection %}
+
+{% include "message_show.html" %}
+
   <div class="mb-4"><h4>Stds</h4></div> 
    
   <div class="erroes">
@@ -30,7 +33,7 @@
           <label for="defaultSelect" class="form-label">Board Name</label>
           <select id="defaultSelect" class="form-select" name="std_board">
             {% for x in brddata %}
-              <option value="{{x.brd_id}}">{{x.brd_name}}</option>
+              <option  value="{{x.brd_id}}" {% if update_data.std_board == x %} selected {% endif %} {% if filled_data.std_board.brd_id == x.brd_id %}selected{% endif %}>{{x.brd_name}}</option>
             {% endfor %}
           </select>
         </div> 

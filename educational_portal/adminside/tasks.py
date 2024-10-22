@@ -25,15 +25,6 @@ def sub(x,y):
 
 
 
-
-
-
-
-
-
-
-
-
 # changes done
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 

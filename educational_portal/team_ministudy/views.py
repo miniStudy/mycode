@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from adminside.automate import *
 from django.contrib import messages
 from team_ministudy.models import *
 from team_ministudy.forms import *
@@ -21,6 +22,7 @@ def insert_update_institute_function(request):
             form = Institute_Form(request.POST, instance = instance)
             if form.is_valid():
                 form.save()
+                creation(request)
                 return redirect('show_institute')
             else:
                 return render(request, 'ministudy/insert_update_institute.html')
@@ -41,6 +43,7 @@ def insert_update_institute_function(request):
         institute_logo = request.FILES['institute_logo']
 
         NewInstitution.objects.create(institute_name = institute_name, institute_email = institute_email, institute_contact = institute_contact, institute_logo = institute_logo, institute_domain = institute_domain)
+        board_creation(request, institute_domain)
         return redirect('show_institute')
     return render(request, 'ministudy/insert_update_institute.html')
 

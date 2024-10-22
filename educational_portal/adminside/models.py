@@ -21,7 +21,7 @@ class AdminData(models.Model):
 
 class Boards(models.Model):
     brd_id = models.BigAutoField(primary_key=True)
-    brd_name = models.CharField(max_length=20,unique=True)
+    brd_name = models.CharField(max_length=20)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
     
     def __str__(self):
