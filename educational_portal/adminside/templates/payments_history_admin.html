@@ -16,18 +16,45 @@
       <div class="card">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
+
             <div class="myheadfont">Payment History</div>
             <div>
               <div class="d-inline-block" id="exportbtns"></div>
-  
               <a href="{% url 'add_fees_collection_admin' %}">
                 <button class="btn btn-primary">
                   <i class="fa-solid fa-plus me-2"></i> ADD
                 </button>
               </a>
-  
             </div>
           </div>
+          
+          <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2" role="group" aria-label="First group">
+              <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if get_std %}{{ get_std.std_name }} {{ get_std.std_board }}{% else %}Std{% endif %}
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'payments_history_admin' %}">ALL</a></li>
+                {% for x in std_data %}
+                <li><a class="dropdown-item" href="{% url 'payments_history_admin' %}?get_std={{ x.std_id }}">{{ x.std_name }} {{ x.std_board }}</a></li>
+                {% endfor %}
+              </ul>
+
+              
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown"
+             aria-expanded="false">{% if get_student %}{{get_student.stud_name}} {{get_student.stud_lastname}}{% else %}Students{% endif %}</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'payments_history_admin' %}?get_std={{get_std.std_id}}">ALL</a></li>
+              {% for x in stud_data %}
+              <li><a class="dropdown-item"
+                  href="{% url 'payments_history_admin' %}?get_std={{x.stud_std.std_id}}&get_student={{x.stud_id}}">{{x.stud_name}}
+                  {{x.stud_lastname}}</a></li>
+              {% endfor %}
+            </ul>
+
+            </div>
+          </div>
+
           <form action="{% url 'delete_boards' %}" method="POST">
             {% csrf_token %}
             <div class="card-datatable table-responsive pt-0">
@@ -44,7 +71,7 @@
                 <tbody>
                   {% for x in fees_collections_data %}
                   <tr>
-                    <td>{{x.fees_stud_id}}</td>
+                    <td>{{x.fees_stud_id.stud_roll_no}}.{{x.fees_stud_id}}</td>
                     <td>{{x.fees_paid}}</td>
                     <td>{{x.fees_mode}}</td>
                     <td>{{x.fees_date}}</td>

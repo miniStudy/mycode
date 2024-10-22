@@ -10,8 +10,30 @@
 
 <div class="card">
   <div class="card-body">
+        <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+          <div class="btn-group me-2" role="group" aria-label="First group">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if get_std %}{{ get_std.std_name }} {{ get_std.std_board }}{% else %}Std{% endif %}
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}">ALL</a></li>
+            {% for std in std_data %}
+            <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}?get_std={{ std.std_id }}{% if get_batch %}&get_batch={{ get_batch.batch_id }}{% endif %}">{{ std.std_name }} {{ std.std_board }}</a></li>
+            {% endfor %}
+          </ul>
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if get_batch %}{{ get_batch.batch_name }}{% else %}Batch{% endif %}
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}?get_std={{ get_std.std_id }}">ALL</a></li>
+            {% for batch in batch_data %}
+            <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}?get_std={{ get_std.std_id }}&get_batch={{ batch.batch_id }}">{{ batch }}</a></li>
+            {% endfor %}
+          </ul>
+          </div>
+        </div>
     <div class="card-datatable table-responsive pt-0">
-      <table id="example" class="display table table-bordered" style="width:100%">
+      <table id="example" class="display table table-bordered mt-2" style="width:100%">
         <thead>
           <tr>
             <th>SN</th>

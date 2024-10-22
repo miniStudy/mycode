@@ -298,12 +298,44 @@ def teacher_logout_page(request):
 @teacher_login_required
 def teacher_timetable(request):
      domain = request.get_host()
-     timetable_data = Timetable.objects.filter(domain_name = domain)
+     fac_id = request.session['fac_id']
+     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
+     batch_access_list = []
+     std_access_list=[]
+     for x in faculty_access:
+        batch_access_list.append(x.fa_batch.batch_id)
+        std_access_list.append(x.fa_batch.batch_std.std_id)
+
+     timetable_data = Timetable.objects.filter(tt_tutor1__fac_id = fac_id, tt_batch__batch_id__in = batch_access_list, tt_batch__batch_std__std_id__in = std_access_list, domain_name = domain)
+     print(timetable_data)
+     std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)
+     batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
 
      context = {
         'timetable_data':timetable_data,
         'title':'Timetable',
+        'std_data':std_data,
+        'batch_data':batch_data,
      }
+     if request.GET.get('get_std'):
+        get_std = int(request.GET['get_std'])
+        if get_std == 0:
+            pass
+        else:
+            timetable_data = timetable_data.filter(tt_batch__batch_std__std_id = get_std, domain_name = domain)
+            batch_data = batch_data.filter(batch_std__std_id = get_std, domain_name = domain)
+            get_std = Std.objects.get(std_id = get_std)
+            context.update({'timetable_data':timetable_data, 'batch_data':batch_data, 'get_std':get_std})
+
+     if request.GET.get('get_batch'):
+        get_batch = int(request.GET['get_batch'])
+        if get_batch == 0:
+            pass
+        else:
+            timetable_data = timetable_data.filter(tt_batch__batch_id = get_batch, domain_name = domain)
+            get_batch = Batches.objects.get(batch_id = get_batch)
+            context.update({'timetable_data':timetable_data, 'get_batch':get_batch})        
+
      return render(request, 'teacherpanel/timetable.html', context)
 
 @teacher_login_required
@@ -358,9 +390,9 @@ def teacher_attendance(request):
           else:    
                data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std, domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
                data = paginatoorrr(data,request)
-               batch_data = batch_data.filter(batch_std__std_id = get_std)
-               stud_data = stud_data.filter(stud_std__std_id = get_std)
-               subj_data = subj_data.filter(sub_std__std_id = get_std)
+               batch_data = batch_data.filter(batch_std__std_id = get_std, domain_name = domain)
+               stud_data = stud_data.filter(stud_std__std_id = get_std, domain_name = domain)
+               subj_data = subj_data.filter(sub_std__std_id = get_std, domain_name = domain)
                get_std = Std.objects.get(std_id = get_std)
                context.update({'data':data,'batch_data':batch_data,'get_std':get_std, 'stud_data':stud_data,'sub_data':subj_data})
      
@@ -371,7 +403,7 @@ def teacher_attendance(request):
         else:
             data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch, domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
             data = paginatoorrr(data,request)
-            stud_data = stud_data.filter(stud_batch__batch_id = get_batch)
+            stud_data = stud_data.filter(stud_batch__batch_id = get_batch, domain_name = domain)
             get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'data':data,'get_batch':get_batch,'stud_data':stud_data}) 
 
@@ -380,7 +412,7 @@ def teacher_attendance(request):
         if get_student == 0:
             pass
         else:
-            data = data.filter(atten_student__stud_id = get_student)
+            data = data.filter(atten_student__stud_id = get_student, domain_name = domain)
             get_student = Students.objects.get(stud_id = get_student)
             context.update({'data':data,'get_student':get_student})                     
 
@@ -1094,12 +1126,12 @@ def teacher_announcement(request):
     for x in faculty_access:
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
+    
 
     data = Announcements.objects.filter(domain_name = domain).values('announce_id','announce_title','announce_msg','announce_date').order_by('-announce_id')
     data = paginatoorrr(data,request)
     std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)
     batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
-   
     context ={
         'data' : data,
         'title' : 'Announcements',
@@ -1113,7 +1145,7 @@ def teacher_announcement(request):
         else:    
             data = Announcements.objects.filter(announce_std__std_id = get_std, domain_name = domain).values('announce_id','announce_title','announce_msg','announce_date').order_by('-announce_id')
             data = paginatoorrr(data,request)
-            batch_data = batch_data.filter(batch_std__std_id = get_std)
+            batch_data = batch_data.filter(batch_std__std_id = get_std, domain_name = domain)
             get_std = Std.objects.get(std_id = get_std)
             context.update({'data':data,'batch_data':batch_data,'get_std':get_std})
             
