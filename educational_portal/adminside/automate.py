@@ -1,4 +1,5 @@
 from adminside.models import *
+from adminside.automation_list import *
 
 
 def creation(request, institute_domain):
@@ -99,7 +100,22 @@ def subject_creation(institute_domain, std, subject_name):
         sub_std = std,
         domain_name = institute_domain
     )
+    std = Std.objects.get(std_id = subject.sub_std.std_id)
+    chapter_creation(institute_domain, English_5_CBSE, subject, std)
 
 
-def chapter_creation(institute_domain, subject, std):
+def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
+    chepter_list = chapter_list_func(chep_sub, chep_std)
+    for x in chepter_list:           
+        chapter = Chepter.objects.create(
+            chep_name = x,
+            chep_sub = chep_sub,
+            chep_std = chep_std,
+            domain_name = institute_domain
+        )
+
+
+def subject_creation_details(institute_domain, subject, std):
     pass
+    
+    
