@@ -9,6 +9,7 @@ from django.db.models import Sum,Count,Avg, Value
 from django.db.models import Count, Case, When, IntegerField
 import random
 from django.http import Http404,JsonResponse
+
 from .forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 # Create your views here.
@@ -145,6 +146,9 @@ def student_login_handle(request):
         val = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain).count()
         if val==1:
             Data = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain)
+            student_id = Students.objects.get(stud_id = Data[0].stud_id)
+            if student_id.stud_lock == True:
+                return render(request, 'studentpanel/lock.html')
             for item in Data:
                 request.session['stud_id'] = item.stud_id
                 request.session['stud_name'] = item.stud_name
@@ -152,7 +156,7 @@ def student_login_handle(request):
                 request.session['stud_std'] = item.stud_std.std_id
                 request.session['stud_profile'] = '{}'.format(item.stud_profile)
                 request.session['stud_logged_in'] = 'yes'
-
+            
             if request.POST.get("remember"):
                 response = redirect("Student_home")
                 response.set_cookie('stud_email', email) 
@@ -271,6 +275,9 @@ def student_info_update(request):
     else:
         form = update_form(instance=student_obj)
     return render(request, 'studentpanel/updateinfo.html', {'form':form, 'student_obj':student_obj, 'title':title})
+
+def student_lock_page(request):
+    return render(request, 'studentpanel/lock.html')
 
 @student_login_required
 def student_announcement(request):

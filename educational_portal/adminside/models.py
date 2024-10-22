@@ -21,7 +21,7 @@ class AdminData(models.Model):
 
 class Boards(models.Model):
     brd_id = models.BigAutoField(primary_key=True)
-    brd_name = models.CharField(max_length=20,unique=True)
+    brd_name = models.CharField(max_length=20)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
     
     def __str__(self):
@@ -177,6 +177,8 @@ class Students(models.Model):
     unique_code = models.CharField(max_length=20, editable=False, blank=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
     stud_onesignal_player_id = models.TextField(max_length=200, null=True, blank=True)
+    stud_lock = models.BooleanField(default=False)
+    stud_paid = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.unique_code:

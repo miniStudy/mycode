@@ -181,7 +181,6 @@ def admin_login_page(request):
 
 
 def admin_login_handle(request):
-
     if request.method == "POST":
         email = request.POST['email']
         password = request.POST['password']
@@ -447,9 +446,15 @@ def insert_update_boards(request):
             form = brd_form(request.POST, instance=instance)
             if form.is_valid():
                 form.instance.domain_name = domain
-                form.save()
-                messages.success(request, 'Board Updated Successfully')
-                return redirect('boards')
+                check = Boards.objects.filter(domain_name = domain, brd_name = form.instance.brd_name).count()
+                if check < 1:
+                    form.save()
+                    messages.success(request, 'Board Updated Successfully')
+                    return redirect('boards')
+                else:
+                    messages.error(request, 'Board Name Already Exists')
+                    filled_data = form.data
+                    return render(request, 'insert_update/boards.html', {'filled_data':filled_data})
             else:
                 filled_data = form.data
                 return render(request, 'insert_update/boards.html', {'errors': form.errors,'filled_data':filled_data})
@@ -468,9 +473,13 @@ def insert_update_boards(request):
         form = brd_form(request.POST)
         if form.is_valid():
             form.instance.domain_name = domain
-            form.save()
-            messages.success(request, 'Board Added Successfully')
-            return redirect('boards')
+            check = Boards.objects.filter(domain_name = domain, brd_name = form.instance.brd_name).count()
+            if check < 1:
+                form.save()
+                messages.success(request, 'Board Added Successfully')
+                return redirect('boards')
+            else:
+                messages.error(request, 'Board Name Already Exists')
         else:
             filled_data = form.data
             return render(request, 'insert_update/boards.html', {'errors': form.errors,'filled_data':filled_data})
@@ -517,9 +526,16 @@ def insert_update_stds(request):
             form = std_form(request.POST, instance=instance)
             if form.is_valid():
                 form.instance.domain_name = domain
-                form.save()
-                messages.success(request, 'Standard Updated Successfully')
-                return redirect('stds')
+                check = Std.objects.filter(domain_name = domain, std_name = form.instance.std_name, std_board__brd_name = form.instance.std_board).count()
+                if check < 1:
+                    form.save()
+                    messages.success(request, 'Standard Updated Successfully')
+                    return redirect('stds')
+                else:
+                    messages.error(request, 'Standard Already Exists')
+                    update_data = Std.objects.get(std_id = pk, domain_name = domain)
+                    context.update({'update_data':update_data})
+                    return render(request, 'insert_update/stds.html', context)
             else:
                 filled_data = form.data
                 return render(request, 'insert_update/stds.html', {'errors': form.errors,'filled_data':filled_data})
@@ -527,20 +543,23 @@ def insert_update_stds(request):
     if request.GET.get('update_id'):
         update_id = request.GET['update_id']
         update_data = Std.objects.get(std_id = update_id, domain_name = domain)
-        context2 = {
-            'update_data' : update_data
-
-        }
-        context.update(context2)
+        context.update({'update_data':update_data})
         return render(request, 'insert_update/stds.html',context)
 
     if request.method == "POST":
         form = std_form(request.POST)
         if form.is_valid():
             form.instance.domain_name = domain
-            form.save()
-            messages.success(request, 'Standard Added Successfully')
-            return redirect('stds')
+            check = Std.objects.filter(domain_name = domain, std_name = form.instance.std_name, std_board__brd_name = form.instance.std_board).count()
+            if check < 1:
+                form.save()
+                messages.success(request, 'Standard Added Successfully')
+                return redirect('stds')
+            else:
+                messages.error(request, 'Standard Already Exists')
+                filled_data = form.data
+                context.update({'filled_data':filled_data})
+                return render(request, 'insert_update/stds.html', context)
         else:
             filled_data = form.data
             return render(request, 'insert_update/stds.html', {'errors': form.errors,'filled_data':filled_data})
