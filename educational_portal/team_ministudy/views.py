@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from adminside.automate import *
+from django.contrib import messages
 from team_ministudy.models import *
 from team_ministudy.forms import *
 from datetime import timedelta
@@ -82,10 +83,21 @@ def insert_update_ministudy_payment_function(request):
 
 def institute_lock_function():
     unlocked_institutes = NewInstitution.objects.filter(institute_lock=False)
-
     for institute in unlocked_institutes:
         lock_date = institute.institute_joining_date + timedelta(days=15)
         
         if now() >= lock_date:
             institute.institute_lock = True
             institute.save()
+
+
+def remove_institute_function(request):
+    if request.GET.get('remove_id'):
+        institute_id = request.GET.get('remove_id')
+        remove_data = NewInstitution.objects.get(institute_id = institute_id)
+        remove_data = NewInstitution.objects.get(institute_id=institute_id)
+        Boards.objects.filter(domain_name=remove_data.institute_domain).delete()
+        remove_data.delete()  
+        messages.success(request, 'Institute deleted successfully!')
+        return redirect('show_institute')
+    return redirect('show_institute')
