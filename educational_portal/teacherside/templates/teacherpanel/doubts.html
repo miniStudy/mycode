@@ -26,6 +26,7 @@
       <a href="{% url 'teacher_solution_verify' %}?doubt_id={{data.doubt_id}}" class="btn border border-warning my-2 ms-1">{{data.count_solution}}
         Solution</a>
         <br>{% if data.verified_solution != 0 %}<span><img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 22px;">{{data.verified_solution}} Solution verified</span>{% endif %}
+        <a href="{% url 'teacher_add_solution' %}?doubt_id={{data.doubt_id}}" class="btn btn-primary my-2 ms-1">Add solution</a>
       <hr>
       <span>{{data.doubt_stud_id.stud_name}} {{data.doubt_stud_id.stud_lastname}}</span>
     </div>

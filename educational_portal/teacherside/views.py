@@ -688,6 +688,31 @@ def show_teacher_solution_verified(request):
               sol_id.save()
           return render(request, 'teacherpanel/show_solution.html', {'doubts_solution':doubts_solution, 'doubt_id': doubt_id, 'title':'Doubts Solution',})
 
+@teacher_login_required
+def teacher_add_solution_function(request):
+    domain = request.get_host()
+    context = {{}}
+    if request.method == 'POST':
+        form = solution_form(request.POST)
+        if form.is_valid():
+            student_id = form.cleaned_data['solution_stud_id']
+            doubt_id = form.cleaned_data['solution_doubt_id']
+            id = doubt_id.doubt_id
+            count_sol = Doubt_solution.objects.filter(solution_stud_id = student_id, solution_doubt_id__doubt_id=id, domain_name = domain).count()
+
+            if count_sol == 1:
+                messages.error(request, "Cannot add more than one solution!")
+                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(a))
+            else:
+                form.instance.domain_name = domain
+                form.save()
+                messages.success(request, "You'r solution has been added!")
+                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(a))
+        else:
+            print('hello wolrd')    
+    form = solution_form()   
+    context.update({'form':form})
+    return render(request, 'teacherpanel/add_solution.html')
 
 @teacher_login_required
 def teacher_events(request):
