@@ -1061,7 +1061,6 @@ def insert_update_test_questions_teacher(request):
 
     if request.GET.get('test_id'):
         test_id = request.GET['test_id']
-        print(test_id)
         test_data = Chepterwise_test.objects.get(test_id = test_id)
         chep_data = chep_data.filter(chep_sub__sub_id = test_data.test_sub.sub_id)
         context.update({'test_id': test_id,'chep_data':chep_data})
@@ -1451,7 +1450,7 @@ def report_card_show(request):
             context.update({'data':data,'batch_data':batch_data,'get_std':get_std,'stud_data':stud_data,'sub_data':subj_data})
             student_std = get_std.std_name
         student_std = get_std.std_id
-        print(student_std) 
+
     
     
     if request.GET.get('get_batch'):
@@ -1534,7 +1533,6 @@ def report_card_show(request):
         
         # ===================SubjectsWise Attendance============================
         subjects_li = Subject.objects.filter(sub_std__std_id = student_std, sub_id__in = pack_subject_list, domain_name = domain).values('sub_name').distinct()
-        print(subjects_li)
         overall_attendance_subwise = []
         for x in subjects_li:
             x = x['sub_name']
@@ -1780,7 +1778,6 @@ def show_question_paper(request):
 def delete_test_question_answer_teacher(request):
     if request.GET.get('delete_id'):
         del_id = request.GET['delete_id']
-        print(del_id)
         try:
             data = Test_questions_answer.objects.get(tq_id=del_id)
             data.delete()

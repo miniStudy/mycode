@@ -181,7 +181,6 @@ def admin_login_page(request):
 
 
 def admin_login_handle(request):
-
     if request.method == "POST":
         email = request.POST['email']
         password = request.POST['password']

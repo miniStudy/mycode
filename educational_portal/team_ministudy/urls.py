@@ -9,5 +9,9 @@ urlpatterns = [
     path('insert_update_ministudy_payment', ministudyview.insert_update_ministudy_payment_function, name='insert_update_ministudy_payment'),
 
     path('institute_lock', ministudyview.institute_lock_function, name='institute_lock'),
+
+
+
+    path('remove_institute', ministudyview.remove_institute_function, name='remove_institute'),
 ]
 

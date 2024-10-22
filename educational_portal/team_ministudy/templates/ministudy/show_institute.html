@@ -24,6 +24,7 @@
                     <strong>Domain:</strong> {{ institute.institute_domain }}
                   </p>
                   <a href="{% url 'insert_update_institute' %}?update_id={{institute.institute_id}}" class="btn btn-primary btn-sm">Update</a>
+                  <a href="{% url 'remove_institute' %}?remove_id={{institute.institute_id}}" class="btn btn-primary btn-sm">Delete</a>
                 </div>
               </div>
             </div>
