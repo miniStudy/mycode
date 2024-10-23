@@ -412,7 +412,8 @@ class Doubt_section(models.Model):
 
 class Doubt_solution(models.Model):
     solution_id = models.BigAutoField(primary_key=True)
-    solution_stud_id = models.ForeignKey(Students, on_delete = models.CASCADE)
+    solution_stud_id = models.ForeignKey(Students, on_delete = models.CASCADE,null=True,blank=True)
+    solution_teacher_id = models.CharField(max_length=200, null=True,blank=True)
     solution_doubt_id = models.ForeignKey(Doubt_section,on_delete=models.CASCADE)
     solution = models.TextField()
     solution_verified = models.BooleanField(default=0)
@@ -421,7 +422,7 @@ class Doubt_solution(models.Model):
     domain_name = models.CharField(blank=True,null=True,max_length=100)
     
     def __str__(self):
-        return f"{self.solution_stud_id.stud_name}"
+        return f"{self.solution_id} - {self.solution_doubt_id.doubt_id}"
     
     class Meta:
         db_table = 'Doubt_solution'
