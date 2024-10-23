@@ -294,12 +294,17 @@ def home(request):
     domain = request.get_host()
 
     # ================celery_testing========================
-    # print("result")
+    # logger.error("result")
     # # add.delay(10,20)
+    # logger.error("=============================================================================================")
+    # logger.error("=============================================================================================")
     # result = add.delay(10,20)
-    # print(result)
+    # logger.error(result)
+    # logger.error("=============================================================================================")
     # result2 = sub.delay(10,20)
-    # print(result2)
+    # logger.error(result2)
+    # logger.error("=============================================================================================")
+    # logger.error("=============================================================================================")
     # =================================================================
     # sending push Notification
     onesignal_player_id = request.session.get('deviceId', 'Error')
@@ -683,7 +688,7 @@ def insert_update_announcements(request):
             title = '📢 New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
             for player_id in onesignal_player_id_list:
-                send_notification(player_id,title,mess)
+                send_notification(player_id,title,mess,request)
 
             # -------------One Single Player Id------------------------------------------------------------------------       
             return redirect(url)         

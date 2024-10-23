@@ -1,0 +1,20 @@
+{% extends 'teacherpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Doubt Solution</h4>
+</div>
+
+{% include "message_show.html" %}
+<!-- DataTable with Buttons -->
+
+Q. {{doubt_data.doubt_doubt | safe}}
+<form action="{% url 'teacher_add_solution' %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="solution_doubt_id" value={{doubt_data.doubt_id}}>
+  
+  <label for="exampleInputEmail1" class="form-label fw-medium mt-3">Write solution</label>
+  {{ form.solution }}
+  <button type="submit" class="btn btn-primary mt-1">Submit Answer</button>
+</form>
+{% endblock %}

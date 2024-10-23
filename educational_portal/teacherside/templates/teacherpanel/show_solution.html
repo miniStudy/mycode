@@ -24,7 +24,12 @@
                 <div class="mb-2">{% if doubt.solution_verified == 1 %}<img src="/static/imgs/verify.png" class="me-1" alt="verifyImage" style="width: 18px;">{% endif %}Ans {{ forloop.counter }} <br></div>
                 <div style="display:block; overflow: hidden;">{{doubt.solution|safe}}</div>
                 <hr>
-                <span>Solution By: {{doubt.solution_stud_id.stud_name}} {{doubt.solution_stud_id.stud_lastname}}</span> <br>
+                {% if doubt.solution_stud_id %}
+                <span>Solution By: {{doubt.solution_stud_id.stud_name}} {{doubt.solution_stud_id.stud_lastname}}</span>
+                {% else %}
+                <span>Solution By: {{doubt.solution_teacher_id}}</span>
+                {% endif %}
+                 <br>
                 {% if doubt.solution_verified %}
                 <form action="{% url 'teacher_solution_verify' %}?doubt_id={{doubt_id}}" method="post">
                     {% csrf_token %}    

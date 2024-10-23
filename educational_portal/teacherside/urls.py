@@ -32,6 +32,7 @@ urlpatterns = [
     # <==============teacher doubts==================>
     path('teacher_doubts/', teacherview.teacher_doubts, name='teacher_doubts'),
     path('teacher_solution_verify/', teacherview.show_teacher_solution_verified, name='teacher_solution_verify'),
+    path('teacher_add_solution/', teacherview.teacher_add_solution_function, name='teacher_add_solution'),
 
     # <==============Insert Update==================>
     path('insert_update_attendance/', teacherview.insert_update_attendance, name='insert_update_attendance'),
