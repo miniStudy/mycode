@@ -422,7 +422,7 @@ class Doubt_solution(models.Model):
     domain_name = models.CharField(blank=True,null=True,max_length=100)
     
     def __str__(self):
-        return f"{self.solution_stud_id.stud_name}"
+        return f"{self.solution_id} - {self.solution_doubt_id.doubt_id}"
     
     class Meta:
         db_table = 'Doubt_solution'

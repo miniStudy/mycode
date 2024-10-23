@@ -660,15 +660,14 @@ def Student_doubt_solution_section(request):
             doubt_id = form.cleaned_data['solution_doubt_id']
             id = doubt_id.doubt_id
             count_sol = Doubt_solution.objects.filter(solution_stud_id = student_id, solution_doubt_id__doubt_id=id, domain_name = domain).count()
-
             if count_sol == 1:
                 messages.error(request, "Cannot add more than one solution!")
-                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(a))
+                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(id))
             else:
                 form.instance.domain_name = domain
                 form.save()
                 messages.success(request, "You'r solution has been added!")
-                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(a))
+                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(id))
         else:
             print('hello wolrd')    
     form = solution_form()   

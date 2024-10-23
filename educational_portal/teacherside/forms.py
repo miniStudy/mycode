@@ -27,11 +27,4 @@ class teacher_todaylearn_form(forms.ModelForm):
     class Meta:
         model = Today_Teaching
         fields = "__all__" 
-
-
-class solution_form(forms.ModelForm):
-    solution = forms.CharField(widget=SummernoteWidget())
-    class Meta:
-        model = Doubt_solution
-        fields = "__all__"
                 

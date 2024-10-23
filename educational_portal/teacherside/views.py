@@ -690,29 +690,38 @@ def show_teacher_solution_verified(request):
 
 @teacher_login_required
 def teacher_add_solution_function(request):
+    title = 'Doubts'
+    context = {}
+    teacher_data = Faculties.objects.get(fac_id = request.session['fac_id'])
+    if request.GET.get('doubt_id'):
+        doubt_id = request.GET.get('doubt_id')
+        doubt_data = Doubt_section.objects.get(doubt_id = doubt_id)
+        context.update({'doubt_data': doubt_data, 'title': title})
     domain = request.get_host()
-    context = {{}}
     if request.method == 'POST':
-        form = solution_form(request.POST)
+        form = teacher_solution_form(request.POST)
+        print(form)
         if form.is_valid():
-            student_id = form.cleaned_data['solution_stud_id']
             doubt_id = form.cleaned_data['solution_doubt_id']
             id = doubt_id.doubt_id
-            count_sol = Doubt_solution.objects.filter(solution_stud_id = student_id, solution_doubt_id__doubt_id=id, domain_name = domain).count()
+            form.instance.solution_teacher_id = teacher_data.fac_name
+            form.instance.solution_verified = True
+            form.instance.solution_verified_by_teacher = teacher_data
+            count_sol = Doubt_solution.objects.filter(solution_teacher_id = teacher_data.fac_name, solution_doubt_id__doubt_id=id, domain_name = domain).count()
 
             if count_sol == 1:
                 messages.error(request, "Cannot add more than one solution!")
-                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(a))
+                return redirect('/teacherside/teacher_doubts/?doubt_id={}'.format(id))
             else:
                 form.instance.domain_name = domain
                 form.save()
                 messages.success(request, "You'r solution has been added!")
-                return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(a))
+                return redirect('/teacherside/teacher_doubts/?doubt_id={}'.format(id))
         else:
             print('hello wolrd')    
-    form = solution_form()   
+    form = teacher_solution_form()   
     context.update({'form':form})
-    return render(request, 'teacherpanel/add_solution.html')
+    return render(request, 'teacherpanel/add_solution.html', context)
 
 @teacher_login_required
 def teacher_events(request):
