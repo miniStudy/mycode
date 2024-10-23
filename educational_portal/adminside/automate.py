@@ -24,8 +24,6 @@ def std_creation(institute_domain, board):
     subject_creation(institute_domain, std, 'Mathematics')
     subject_creation(institute_domain, std, 'Environmental Studies')
     subject_creation(institute_domain, std, 'Hindi')
-    subject_creation(institute_domain, std, 'Social Studies')
-    subject_creation(institute_domain, std, 'Science')
     
     std = Std.objects.create(
         std_name = "6",
