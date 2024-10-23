@@ -51,5 +51,14 @@
         </div>
     </div>
     {% endfor %}
+    <div class="col-md-6">
+        <div class="card mt-3" >
+        <div class="card-body">
+        {% for doubt in doubts_solution %}
+        {{doubt.solution_stud_id.stud_name}} {{doubt.solution_stud_id.stud_lastname}}
+        {% endfor %}
+        </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
