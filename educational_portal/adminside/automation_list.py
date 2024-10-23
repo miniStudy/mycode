@@ -84,55 +84,38 @@ English_6_CBSE = chapters = [
     'Chapter 5: A Different Kind of School',
     'Chapter 6: Who I Am',
     'Chapter 7: Fair Play',
-    'Chapter 8: The Wonderful Words',
-    'Chapter 9: A Game of Chance',
-    'Chapter 10: Desert Animals',
-    'Chapter 11: The Banyan Tree',
-    'Chapter 12: A Tale of Two Birds',
-    'Chapter 13: The Friendly Mongoose',
-    'Chapter 14: The Shepherd\'s Treasure',
-    'Chapter 15: The Old-Clock Shop',
-    'Chapter 16: Tansen',
-    'Chapter 17: The Monkey and the Crocodile',
-    'Chapter 18: The Wonder Called Sleep',
-    'Chapter 19: A Pact with the Sun'
+    'Chapter 8: The Banyan Tree'
 ]
 
 Maths_6_CBSE = [
-    'Chapter 1: Knowing Our Numbers',
-    'Chapter 2: Whole Numbers',
-    'Chapter 3: Playing with Numbers',
-    'Chapter 4: Basic Geometrical Ideas',
-    'Chapter 5: Understanding Elementary Shapes',
-    'Chapter 6: Integers',
+    'Chapter 1: Patterns in Mathematics ',
+    'Chapter 2: Lines and Angles ',
+    'Chapter 3: Number Play',
+    'Chapter 4: Data Handling and Presentation ',
+    'Chapter 5: Prime Time',
+    'Chapter 6: Perimeter and Area',
     'Chapter 7: Fractions',
-    'Chapter 8: Decimals',
-    'Chapter 9: Data Handling',
-    'Chapter 10: Mensuration',
-    'Chapter 11: Algebra',
-    'Chapter 12: Ratio and Proportion',
-    'Chapter 13: Symmetry',
-    'Chapter 14: Practical Geometry'
+    'Chapter 8: Playing with Constructions',
+    'Chapter 9: Symmetry',
+    'Chapter 10: The Other Side of Zero'
 ]
 
+
 Science_6_CBSE = [
-    'Chapter 1: Food: Where Does It Come From?',
-    'Chapter 2: Components of Food',
-    'Chapter 3: Fibre to Fabric',
-    'Chapter 4: Sorting Materials into Groups',
-    'Chapter 5: Separation of Substances',
-    'Chapter 6: Changes Around Us',
-    'Chapter 7: Getting to Know Plants',
-    'Chapter 8: Body Movements',
-    'Chapter 9: Living Organisms and Their Surroundings',
-    'Chapter 10: Motion and Measurement of Distances',
-    'Chapter 11: Light, Shadows and Reflections',
-    'Chapter 12: Electricity and Circuits',
-    'Chapter 13: Fun with Magnets',
-    'Chapter 14: Water',
-    'Chapter 15: Air',
-    'Chapter 16: Garbage In, Garbage Out'
+    'Chapter 1: The Wonderful World of Science',
+    'Chapter 2: Diversity in the Living World',
+    'Chapter 3: Mindful Eating: A Path to a Healthy Body ',
+    'Chapter 4: Exploring Magnets ',
+    'Chapter 5: Measurement of Length and Motion ',
+    'Chapter 6: Materials Around Us',
+    'Chapter 7: Temperature and its Measurement',
+    'Chapter 8: A Journey through States of Water',
+    'Chapter 9: Methods of Separation in Everyday Life',
+    'Chapter 10: Living Creatures: Exploring their Characteristics',
+    'Chapter 11: Nature’s Treasures',
+    'Chapter 12: Beyond Earth'
 ]
+
 
 SST_6_CBSE = [
     'Chapter 1: Understanding Diversity',
@@ -253,21 +236,20 @@ SST_7_CBSE = [
 
 Hindi_7_CBSE = [
     'Chapter 1: हम पंछी उड़न गगन के',
-    'Chapter 3: हिमालय की बेटियां',
-    'Chapter 4: कठपुतली',
-    'Chapter 5: मिठाईवाला',
-    'Chapter 6: रक्त और हमारा शरीर',
-    'Chapter 7: papa खो गए',
-    'Chapter 8: शाम- एक किसान',
-    'Chapter 10: अपूर्व अनुभव',
-    'Chapter 11: रहीम के दोहे',
-    'Chapter 13: एक तिनका',
-    'Chapter 14: खान-पान की बदलती तस्वीर',
-    'Chapter 15: नीलकंठ',
-    'Chapter 17: वीर कुंवर सिंह',
-    'Chapter 18: संघर्ष के कारण में तुनकमिजाज हो गया धनराज',
-    'Chapter 19: आश्रम का अनुमानित व्यय',
-    'Chapter 20: विप्लव ज्ञान'
+    'Chapter 2: हिमालय की बेटियां',
+    'Chapter 3: कठपुतली',
+    'Chapter 4: मिठाईवाला',
+    'Chapter 5: papa खो गए',
+    'Chapter 6: शाम- एक किसान',
+    'Chapter 7: अपूर्व अनुभव',
+    'Chapter 8: रहीम के दोहे',
+    'Chapter 9: एक तिनका',
+    'Chapter 10: खान-पान की बदलती तस्वीर',
+    'Chapter 11: नीलकंठ',
+    'Chapter 12: भोर और बरखा',
+    'Chapter 13: वीर कुंवर सिंह',
+    'Chapter 14: संघर्ष के कारण में तुनकमिजाज हो गया धनराज',
+    'Chapter 15: आश्रम का अनुमानित व्यय',
 ]
 
 Sanskrit_7_CBSE = [
@@ -405,13 +387,10 @@ Maths_9_CBSE = [
     'Chapter 6: Lines and Angles',
     'Chapter 7: Triangles',
     'Chapter 8: Quadrilaterals',
-    'Chapter 9: Areas of Parallelograms and Triangles',
-    'Chapter 10: Circles',
-    'Chapter 11: Constructions',
-    'Chapter 12: Heron’s Formula',
-    'Chapter 13: Surface Areas and Volumes',
-    'Chapter 14: Statistics',
-    'Chapter 15: Probability'
+    'Chapter 9: Circles',
+    'Chapter 10: Heron’s Formula',
+    'Chapter 11: Surface Areas and Volumes',
+    'Chapter 12: Statistics',
 ]
 
 Science_9_CBSE = [
@@ -480,16 +459,15 @@ English_10_CBSE = [
     '7. Madam Rides the Bus',
     '8. The Sermon at Benares',
     '9. The Proposal',
-    '10. The Thief’s Story',
-    '11. The Midnight Visitor',
-    '12. A Question of Trust',
-    '13. Footprints without Feet',
-    '14. The Making of a Scientist',
-    '15. The Necklace',
-    '16. The Hack Driver',
+    '10. A Triumph of Surgery'
+    '11. The Thief’s Story',
+    '12. The Midnight Visitor',
+    '13. A Question of Trust',
+    '14. Footprints without Feet',
+    '15. The Making of a Scientist',
+    '16. The Necklace',
     '17. Bholi',
     '18. The Book that Saved the Earth',
-    '19. A Triumph of Surgery'
 ]
 
 Maths_10_CBSE = [
