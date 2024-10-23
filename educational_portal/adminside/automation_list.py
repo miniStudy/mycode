@@ -41,6 +41,48 @@ Maths_5_CBSE = [
         'Chapter 19: Volume and Capacity'
     ]
 
+EVS_5_CBSE = [
+        'Chapter 1: Super Senses',
+        'Chapter 2: A Snake Charmer\'s Story',
+        'Chapter 3: From Tasting to Digesting',
+        'Chapter 4: Mangoes Round the Year',
+        'Chapter 5: Seeds and Seeds',
+        'Chapter 6: Every Drop Counts',
+        'Chapter 7: Experiments with Water',
+        'Chapter 8: A Treat for Mosquitoes',
+        'Chapter 9: Up You Go!',
+        'Chapter 10: Walls Tell Stories',
+        'Chapter 11: Sunita in Space',
+        'Chapter 12: What if it Finishes ...?',
+        'Chapter 13: A Shelter so High!',
+        'Chapter 14: When the Earth Shook!',
+        'Chapter 15: Blow Hot, Blow Cold',
+        'Chapter 16: Who will do this Work?',
+        'Chapter 17: Across the Wall',
+        'Chapter 18: No Place for Us?',
+        'Chapter 19: A Seed tells a Farmer\'s Story',
+        'Chapter 20: Whose Forests?',
+        'Chapter 21: Like Father, Like Daughter',
+        'Chapter 22: On the Move Again'
+    ]
+
+Hindi_5_CBSE = [
+        'Chapter 1: राख की रस्सी',
+        'Chapter 2: फसलों के त्योहार',
+        'Chapter 3: खिलौनेवाला',
+        'Chapter 4: नन्हा फनकार',
+        'Chapter 5: जहाँ चाह वहाँ राह',
+        'Chapter 6: चिट्ठी का सफ़र',
+        'Chapter 7: डाकिए की कहानी, कुँवरसिंह की ज़ुबानी',
+        'Chapter 8: वे दिन भी क्या दिन थे',
+        'Chapter 9: एक माँ की बेबसी',
+        'Chapter 10: एक दिन की बादशाहत',
+        'Chapter 11: चावल की रोटियाँ',
+        'Chapter 12: गुरु और चेला',
+        'Chapter 13: स्वामी की दादी',
+        'Chapter 14: बाघ आया उस रात'
+    ]
+
 
 
 
