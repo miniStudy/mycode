@@ -672,21 +672,22 @@ def teacher_doubts(request):
 
 @teacher_login_required
 def show_teacher_solution_verified(request):
-     domain = request.get_host()
-     if request.GET.get('doubt_id'):
-          doubt_id = request.GET.get('doubt_id')
-          doubts_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id, domain_name = domain)
+    fac_name = request.session['fac_name']
+    domain = request.get_host()
+    if request.GET.get('doubt_id'):
+        doubt_id = request.GET.get('doubt_id')
+        doubts_solution = Doubt_solution.objects.filter(solution_doubt_id__doubt_id = doubt_id, domain_name = domain)
 
-          teacher_id = request.session['fac_id']
-          fac_id = Faculties.objects.get(fac_id = teacher_id)
-          if request.method == 'POST':
-              verification = request.POST.get('verification')
-              solution_id = request.POST.get('solution_id')
-              sol_id = Doubt_solution.objects.get(solution_id = solution_id)
-              sol_id.solution_verified = verification
-              sol_id.solution_verified_by_teacher = fac_id
-              sol_id.save()
-          return render(request, 'teacherpanel/show_solution.html', {'doubts_solution':doubts_solution, 'doubt_id': doubt_id, 'title':'Doubts Solution',})
+        teacher_id = request.session['fac_id']
+        fac_id = Faculties.objects.get(fac_id = teacher_id)
+        if request.method == 'POST':
+            verification = request.POST.get('verification')
+            solution_id = request.POST.get('solution_id')
+            sol_id = Doubt_solution.objects.get(solution_id = solution_id)
+            sol_id.solution_verified = verification
+            sol_id.solution_verified_by_teacher = fac_id
+            sol_id.save()
+        return render(request, 'teacherpanel/show_solution.html', {'doubts_solution':doubts_solution, 'doubt_id': doubt_id,'title':'Doubts Solution', 'fac_name': fac_name})
 
 @teacher_login_required
 def teacher_add_solution_function(request):
@@ -700,7 +701,6 @@ def teacher_add_solution_function(request):
     domain = request.get_host()
     if request.method == 'POST':
         form = teacher_solution_form(request.POST)
-        print(form)
         if form.is_valid():
             doubt_id = form.cleaned_data['solution_doubt_id']
             id = doubt_id.doubt_id
@@ -722,6 +722,26 @@ def teacher_add_solution_function(request):
     form = teacher_solution_form()   
     context.update({'form':form})
     return render(request, 'teacherpanel/add_solution.html', context)
+
+def teacher_edit_solution_function(request):
+    domain = request.get_host()
+    teacher_data = Faculties.objects.get(fac_id = request.session['fac_id'])
+    solution_id = request.GET.get('solution_id')
+    instance = Doubt_solution.objects.get(solution_id=solution_id)
+    context = {'solution_id': solution_id, 'instance':instance, 'title': 'Doubts'}
+    if request.POST.get('solution'):
+        form = teacher_solution_form(request.POST, instance=instance)
+        if form.is_valid():
+            id = form.cleaned_data['solution_doubt_id']
+            form.instance.domain_name = domain
+            form.instance.solution_teacher_id = teacher_data.fac_name
+            form.save()
+            return redirect('/teacherside/teacher_solution_verify/?doubt_id={}'.format(id.doubt_id))
+    else:
+        form = teacher_solution_form(instance=instance)
+        context.update({'form': form})
+    return render(request, 'teacherpanel/edit_solution.html', context)
+
 
 @teacher_login_required
 def teacher_events(request):

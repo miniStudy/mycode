@@ -29,7 +29,9 @@
                 {% else %}
                 <span>Solution By: {{doubt.solution_teacher_id}}</span>
                 {% endif %}
-                 <br>
+                <br>
+                {% if doubt.solution_teacher_id == fac_name %}<a href="{% url 'teacher_edit_solution' %}?solution_id={{doubt.solution_id}}" class="btn btn-warning my-2">Edit</a>{% endif %}
+
                 {% if doubt.solution_verified %}
                 <form action="{% url 'teacher_solution_verify' %}?doubt_id={{doubt_id}}" method="post">
                     {% csrf_token %}    
