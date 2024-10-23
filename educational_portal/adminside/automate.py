@@ -114,8 +114,5 @@ def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
             domain_name = institute_domain
         )
 
-
-def subject_creation_details(institute_domain, subject, std):
-    pass
     
     
