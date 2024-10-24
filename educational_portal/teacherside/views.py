@@ -203,6 +203,7 @@ def teacher_login_handle(request):
             for item in Data:
                request.session['fac_id'] = item.fac_id
                request.session['fac_name'] = item.fac_name
+               request.session['fac_profile'] = '{}'.format(item.fac_profile)
                request.session['fac_logged_in'] = 'yes'
 
             if request.POST.get("remember"):
@@ -1478,7 +1479,7 @@ def materials_delete_teacher(request):
 def teacher_view_profile(request):
     domain = request.get_host()
     teacher_id = request.session['fac_id']
-    teacher_profile = Faculties.objects.filter(fac_id = teacher_id, domain_name = domain)
+    teacher_profile = Faculties.objects.get(fac_id = teacher_id, domain_name = domain)
     teacher_access = Faculty_Access.objects.filter(fa_faculty__fac_id = teacher_id, domain_name = domain)
     context = {
         'teacher_profile' : teacher_profile,
@@ -1494,7 +1495,7 @@ def teacher_profile_update(request):
     teacher_id = request.session['fac_id']
     teacher_obj = Faculties.objects.get(fac_id = teacher_id)
     if request.method == 'POST':
-        form = teacher_update_form(request.POST, instance=teacher_obj)
+        form = teacher_update_form(request.POST, request.FILES, instance=teacher_obj)
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()

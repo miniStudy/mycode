@@ -232,7 +232,11 @@
           <li class="nav-item navbar-dropdown dropdown-user dropdown">
             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
               <div class="avatar avatar-online">
-                <img src="/media/{{request.session.stud_profile}}" alt class="rounded-circle">
+                {% if request.session.stud_profile %}
+                <img src="/media/{{request.session.stud_profile}}" alt="profile" class="rounded-circle">
+                {% else %}
+                <img src="/media/uploads/default_profile.jpg" alt="profile" class="rounded-circle">
+                {% endif %}
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -241,7 +245,11 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0 me-3">
                       <div class="avatar avatar-online">
+                        {% if request.session.stud_profile %}
                         <img src="/media/{{request.session.stud_profile}}" alt="/media/{{request.session.stud_profile}}" class="rounded-circle">
+                        {% else %}
+                        <img src="/media/uploads/default_profile.jpg" alt="profile" class="rounded-circle">
+                        {% endif %}
                       </div>
                     </div>                    
                       <div class="flex-grow-1">

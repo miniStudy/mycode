@@ -1,6 +1,21 @@
 {% extends 'teacherpanel/master.html' %}
  
 {% block contentsection %}
+
+<div class="erroes">
+  {% if errors %}
+  <ul>
+  {% for field, field_errors in errors.items %}
+      <ul>
+      {% for error in field_errors %}
+          <li>{{ error }}</li>
+      {% endfor %}
+      </ul>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+{% include "message_show.html" %}
  
 <h4 class="py-3 breadcrumb-wrapper mb-4">Profile</h4>
   <!-- Header -->
@@ -12,14 +27,12 @@
         </div>
         <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
           <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
-            <img src="/media/uploads/default_profile.jpg" alt="user image" class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" style="width: 120px;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+            <img src="{{ teacher_profile.fac_profile.url }}" alt="user image" class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" style="width: 120px;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
           </div>
           <div class="flex-grow-1 mt-3 mt-sm-5">
             <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
               <div class="user-profile-info">
-                {% for teacher in teacher_profile %}
-                <h4>{{teacher.fac_name}}</h4>
-                {% endfor %}
+                <h4>{{teacher_profile.fac_name}}</h4>
               </div>
               <a href="{% url 'teacher_profile_update' %}" class="btn btn-primary text-nowrap">
                 <i class='bx bx-user-check me-1'></i>Update Information
@@ -40,14 +53,12 @@
       <div class="card mb-4">
         <div class="card-body">
           <p class="card-text text-uppercase">About</p>
-          {% for teacher in teacher_profile %}
           <ul class="list-unstyled mb-4">
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Full Name:</span> <span>{{teacher.fac_name}}</span></li>
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Contact:</span> <span>{{teacher.fac_number}}</span></li>
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Email:</span> <span>{{teacher.fac_email}}</span></li>
-            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Address:</span> <span>{{teacher.fac_address}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Full Name:</span> <span>{{teacher_profile.fac_name}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Contact:</span> <span>{{teacher_profile.fac_number}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Email:</span> <span>{{teacher_profile.fac_email}}</span></li>
+            <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Address:</span> <span>{{teacher_profile.fac_address}}</span></li>
           </ul>
-          {% endfor %}
         </div>
       </div>
       <!--/ About User -->
