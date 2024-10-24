@@ -8,6 +8,9 @@ from datetime import datetime
 from django.conf import settings
 import math
 import statistics
+from django.db.models.functions import TruncMonth
+import calendar
+from django.utils.timezone import make_aware
 import random
 from django.http import Http404, JsonResponse, HttpResponse
 from datetime import datetime
@@ -1995,16 +1998,29 @@ def show_inquiries(request):
     domain = request.get_host()
     title = "Leads"
     email_ids = list(Students.objects.values_list('stud_email', flat=True))
-    inquiries_data = Inquiries.objects.filter(domain_name = domain)
+    inquiries_data = Inquiries.objects.filter(domain_name = domain).order_by('-inq_date')
     total_inquiries = inquiries_data.count()
     students_email = Students.objects.filter(domain_name = domain).values('stud_email')
     matching_inquiries = Inquiries.objects.filter(domain_name = domain, inq_email__in=students_email)
+
     total_conversion = matching_inquiries.count()
     if total_inquiries != 0:
         percentage = round((total_conversion/total_inquiries)*100,2)
     else:
         percentage = 0
 
+    monthly_data = (
+        inquiries_data
+        .annotate(month=TruncMonth('inq_date'))  # Extract month from 'inq_date'
+        .values('month')
+        .annotate(lead_count=Count('inq_id'))  # Count inquiries per month
+        .order_by('month')
+    )
+
+    formatted_monthly_leads = [
+    f"{calendar.month_name[item['month'].month]} - {item['lead_count']} Leads"
+    for item in monthly_data
+]
 
     context = {
         "title":title,
@@ -2014,6 +2030,7 @@ def show_inquiries(request):
         "matching_inquiries":matching_inquiries,
         "percentage":percentage,
         'email_ids': email_ids,
+        'formatted_monthly_leads': formatted_monthly_leads,
     }
     return render(request, 'show_inquiries.html', context)
 

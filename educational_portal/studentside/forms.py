@@ -7,7 +7,7 @@ from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 class update_form(forms.ModelForm):
     class Meta:
         model = Students
-        fields = ['stud_name', 'stud_lastname', 'stud_email', 'stud_username', 'stud_address']
+        fields = ['stud_name', 'stud_lastname', 'stud_email', 'stud_username', 'stud_address', 'stud_profile']
 
 class update_test_answer(forms.ModelForm):
     class Meta:

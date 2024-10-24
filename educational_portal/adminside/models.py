@@ -384,8 +384,8 @@ class Inquiries(models.Model):
     inq_howuknow = models.CharField(max_length=100)
     stud_nationality = models.CharField(null=True, blank=True, max_length=255, default='India')
     inq_subjects = models.CharField(max_length=300, null=True, blank=True)
+    inq_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
-
     def __str__(self):
         return f"{self.inq_name}"
     
