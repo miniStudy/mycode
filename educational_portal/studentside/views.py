@@ -22,6 +22,7 @@ from studentside.decorators import student_login_required
 from datetime import datetime, timedelta
 from django.utils.timezone import now
 from team_ministudy.models import *
+from django.core.exceptions import ObjectDoesNotExist
 
 import logging
 
@@ -347,10 +348,10 @@ def show_attendence(request):
     student_name = request.session['stud_name']
     student_std = request.session['stud_std']
 
-    attendence_data = Attendance.objects.filter(atten_student__stud_id = student_id, domain_name = domain).values('atten_timetable__tt_day', 'atten_timetable__tt_subject1__sub_name', 'atten_date', 'atten_present')
+    attendence_data = Attendance.objects.filter(atten_student__stud_id = student_id, domain_name = domain).values('atten_timetable__tt_day', 'atten_timetable__tt_subject1__sub_name', 'atten_date', 'atten_present', 'atten_timetable__tt_time1', 'atten_timetable__tt_tutor1__fac_name')
 
     total_days = Attendance.objects.filter(atten_student__stud_id = student_id, domain_name = domain).count()
-    present_days = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True, domain_name = domain).count()
+    present_days = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True, domain_name = domain).count() 
 
     if total_days > 0:
         attendence_prec = round((present_days / total_days) * 100, 2)
@@ -371,8 +372,26 @@ def show_attendence(request):
         })
         
     absent_days = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False, domain_name = domain).count()
-    attendence_data = attendence_data.order_by('-pk')
-    return render(request, 'studentpanel/attendence.html', {'student_name':student_name, 'attendence_data':attendence_data, 'attendence_prec':attendence_prec, 'subject_attendance':subject_attendance,'total_days':total_days, 'absent_days':absent_days, 'title':title})
+    attendence_data = attendence_data.order_by('-atten_date', '-atten_timetable__tt_time1')
+
+    context ={
+        'student_name':student_name, 'attendence_data':attendence_data, 'attendence_prec':attendence_prec, 'subject_attendance':subject_attendance,'total_days':total_days, 'absent_days':absent_days, 'title':title
+    }
+
+    if request.GET.get('atten_date'):
+        atten_date = request.GET.get('atten_date')
+        context.update({'atten_date':atten_date})
+        if atten_date:
+            atten_date = datetime.strptime(atten_date, '%Y-%m-%d').date()
+            attendence_data = attendence_data.filter(atten_date__date=atten_date, domain_name=domain)
+            try:
+                atten_obj = Attendance.objects.get(atten_date=atten_date)
+                get_date = atten_obj.atten_date
+            except ObjectDoesNotExist:
+                get_date = None
+            context.update({'attendence_data': attendence_data, 'get_date': get_date}) 
+
+    return render(request, 'studentpanel/attendence.html', context)
 
 @student_login_required
 def show_event(request):

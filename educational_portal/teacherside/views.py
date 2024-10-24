@@ -13,6 +13,7 @@ from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
 from teacherside.send_mail import *
 from teacherside.send_mail import send_notification
+from django.core.exceptions import ObjectDoesNotExist
 
 import random
 from django.http import Http404,JsonResponse
@@ -35,6 +36,7 @@ from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
+
 
 from teacherside.decorators import *
 
@@ -349,7 +351,7 @@ def teacher_attendance(request):
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
-     data = Attendance.objects.filter(domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date').order_by('-atten_date')
+     data = Attendance.objects.filter(domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date', 'atten_student__stud_roll_no').order_by('-atten_date', '-atten_timetable__tt_time1')
      data = paginatoorrr(data,request)
      std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)   
      batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
@@ -388,7 +390,7 @@ def teacher_attendance(request):
           if get_std == 0:
                pass
           else:    
-               data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std, domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+               data = Attendance.objects.filter(atten_timetable__tt_batch__batch_std__std_id = get_std, domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date', 'atten_student__stud_roll_no').order_by('-atten_date', '-atten_timetable__tt_time1')
                data = paginatoorrr(data,request)
                batch_data = batch_data.filter(batch_std__std_id = get_std, domain_name = domain)
                stud_data = stud_data.filter(stud_std__std_id = get_std, domain_name = domain)
@@ -401,7 +403,7 @@ def teacher_attendance(request):
         if get_batch == 0:
             pass
         else:
-            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch, domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date')
+            data = Attendance.objects.filter(atten_timetable__tt_batch__batch_id = get_batch, domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date', 'atten_student__stud_roll_no').order_by('-atten_date', '-atten_timetable__tt_time1')
             data = paginatoorrr(data,request)
             stud_data = stud_data.filter(stud_batch__batch_id = get_batch, domain_name = domain)
             get_batch = Batches.objects.get(batch_id = get_batch)
@@ -414,7 +416,21 @@ def teacher_attendance(request):
         else:
             data = data.filter(atten_student__stud_id = get_student, domain_name = domain)
             get_student = Students.objects.get(stud_id = get_student)
-            context.update({'data':data,'get_student':get_student})                     
+            context.update({'data':data,'get_student':get_student})  
+
+     if request.GET.get('atten_date'):
+        atten_date = request.GET.get('atten_date')
+        context.update({'atten_date':atten_date})
+        if atten_date:
+            atten_date = datetime.strptime(atten_date, '%Y-%m-%d').date()
+            data = Attendance.objects.filter(atten_date__date=atten_date, domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date', 'atten_student__stud_roll_no').order_by('-atten_date', '-atten_timetable__tt_time1')
+            data = paginatoorrr(data,request)
+            try:
+                atten_obj = Attendance.objects.get(atten_date=atten_date)
+                get_date = atten_obj.atten_date
+            except ObjectDoesNotExist:
+                get_date = None
+            context.update({'data': data, 'get_date': get_date})                     
 
 
      attendance_present = Attendance.objects.filter(atten_present = True, domain_name = domain).count()
@@ -450,7 +466,7 @@ def teacher_attendance(request):
             Q(atten_present__icontains=searchhh) |
             Q(atten_student__stud_name__icontains=searchhh) |
             Q(atten_student__stud_lastname__icontains=searchhh) |
-            Q(atten_date__icontains=searchhh), domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname')
+            Q(atten_date__icontains=searchhh), domain_name = domain).values('atten_id','atten_timetable__tt_day','atten_timetable__tt_time1','atten_date','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname', 'atten_student__stud_roll_no').order_by('-atten_date', '-atten_timetable__tt_time1')
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh})  
 
