@@ -118,7 +118,7 @@
           <!-- Pagination -->
 
           <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group me-2" role="group" aria-label="First group">
+            <div class="btn-group me-2 flex-wrap" role="group" aria-label="First group">
               {% for x in students_data.paginator.page_range %}
               <a href="?page={{x}}&get_std={{get_std.std_id}}&searchhh={{searchhh}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if students_data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
               {% endfor %}
@@ -131,7 +131,7 @@
       </div>
     </div>
   </div>
-</div>
+
 
 <div class="row">
   <div class="col-sm-12 col-lg-4 mb-4">
