@@ -1899,7 +1899,23 @@ def show_students(request):
     return render(request, 'show_students.html', context)
 
 
+def insert_meeting_date(request):
+    pk = request.GET['pk']
+    return render(request, 'meeting_date.html', {'pk': pk})
 
+
+@admin_login_required
+def send_meeting_mail(request):
+    if request.method == 'POST':
+            pk = request.POST['pk']
+            student_parent = Students.objects.get(stud_id = pk)
+            parent_email = student_parent.stud_guardian_email
+            parent_name = student_parent.stud_guardian_name
+            meeting_date = request.POST['meeting_date']
+            send_email_for_meeting(parent_email, parent_name, meeting_date)
+    return render(request, 'meeting_date.html')
+
+@admin_login_required
 def insert_update_students(request):
     domain = request.get_host()
     std_data = Std.objects.filter(domain_name = domain)
@@ -1988,7 +2004,6 @@ def delete_students(request):
             except Exception as e:
                 messages.error(request, f'An error occurred: {str(e)}')
     return redirect('students_dataAdmin')
-
 
 
 
