@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   body {
-      background-color: #282c34;  /* Dark background */
+      
       color: white;  /* White text */
       font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;  /* Font style */
   }
@@ -79,14 +79,14 @@
 <div class="btn-toolbar mb-3 mt-2" role="toolbar" aria-label="Toolbar with button groups">
   <div class="btn-group me-2" role="group" aria-label="First group">
     <a href="{% url 'export_data' %}?model_name=inquiries"><button  type="button" class="btn btn-outline-primary mt-2"><i class="fa-solid fa-file-export"></i></button></a>
-  <div class="input-group mt-2 ms-2">
+  <div class="input-group mt-2 ms-2"> 
     <div class="input-group-text" id="btnGroupAddon"><i class="fa-solid fa-magnifying-glass"></i></div>
     <input type="text" id="searchInput" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
     <button id="searchButton" class="btn btn-primary mt-2" style="display: none;">Search</button>
   </div>
   </div>
   </div>
-    <form action="{% url 'delete_inquiry' %}" method="POST"> 
+    <form action="{% url 'delete_inquiry' %}" method="POST">
     {% csrf_token %}        
     <div class="card-datatable table-responsive pt-0 mt-3">
         <table id="data-table" class="display table table-bordered" style="width:100%">
