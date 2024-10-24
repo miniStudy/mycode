@@ -2800,7 +2800,7 @@ def export_data(request):
         else:
             data = Students.objects.filter(domain_name = domain)
 
-        field_names = ['student Name','student_lastname','contact','Email','DOB','gender','admission_no','roll_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
+        field_names = ['roll_no','student Name','student_lastname','contact','Email','DOB','gender','admission_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
         for x in data:
             temp_data = {}
             temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
@@ -2816,7 +2816,7 @@ def export_data(request):
         else:
             data = Attendance.objects.filter(domain_name = domain)
 
-        field_names = ['Date','Student Roll No','Student Name','Subject','Tutor','Attendance','Batch','Std','Board']
+        field_names = ['Roll No','Date','Name','Subject','Tutor','Attendance','Batch','Std','Board']
         for x in data:
             temp_data = {}
             if x.atten_present == True:
@@ -2825,7 +2825,7 @@ def export_data(request):
                 atten_present = "Absent"
             temp_data.update({'Date':x.atten_date,
             'student_roll_no':x.atten_student.stud_roll_no,
-            'Student_name':x.atten_student.stud_name,
+            'Student_name':"{} {}".format(x.atten_student.stud_name, x.atten_student.stud_lastname),
             'subject':x.atten_timetable.tt_subject1.sub_name,
             'tutor':x.atten_timetable.tt_tutor1.fac_name,
             'Attendance': atten_present,
@@ -2834,8 +2834,49 @@ def export_data(request):
             'Board':x.atten_student.stud_std.std_board.brd_name})
 
             attendance_data.append(temp_data)
-        Context.update({'attendance_data':attendance_data,'field_names':field_names})   
+        Context.update({'attendance_data':attendance_data,'field_names':field_names})  
+
+    if model_name == 'chepter':
+        chepter_data = []
+        if get_std:
+            data = Chepter.objects.filter(chep_std__std_id = get_std, domain_name = domain)
+        elif get_subject:
+            data = Chepter.objects.filter(chep_sub__sub_id = get_subject, domain_name = domain)
+        else:
+            data = Chepter.objects.filter(domain_name = domain)
+
+        field_names = ['Chapter Name', 'Subject', 'Std']
+        for x in data:
+            temp_data = {}
+            temp_data.update({
+                'Chepter':x.chep_name,
+                'Subject':x.chep_sub.sub_name,
+                'Std':"{} {}".format(x.chep_std.std_name, x.chep_std.std_board.brd_name)
+                })
+            
+            chepter_data.append(temp_data)
+        Context.update({'chepter_data':chepter_data, 'field_names':field_names})
+
+    if model_name == 'chepterwise_test':
+        tests_data = []
+        if get_std:
+            data = Chepterwise_test.objects.filter(test_std__std_id = get_std, domain_name = domain).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+        elif get_subject:
+            data = Chepterwise_test.objects.filter(test_sub__sub_id = get_subject, domain_name = domain).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+        else:
+            data = Chepterwise_test.objects.filter(domain_name = domain).annotate(num_questions=Count('test_questions_answer'),total_marks=Sum('test_questions_answer__tq_weightage'))
+
+        field_names = ['Test Name', 'Subject', 'Std', 'Questions', 'Total Marks']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'Test':x.test_name, 'Subject':x.test_sub.sub_name, 'Std':"{} {}".format(x.test_std.std_name, x.test_std.std_board.brd_name), 'Questions':x.num_questions, 'Total':x.total_marks})
+
+            tests_data.append(temp_data)
+        Context.update({'tests_data':tests_data, 'field_names':field_names})
         
+
+
+
     return render(request, 'export_data.html',Context)
 
 
