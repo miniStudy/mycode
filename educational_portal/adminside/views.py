@@ -1305,7 +1305,7 @@ def show_attendance(request):
             Q(atten_date__icontains=searchhh), domain_name = domain)
             
             context.update({'data':data,'searchhh':searchhh}) 
-    data = context['data'].values('atten_id', 'atten_timetable__tt_day', 'atten_timetable__tt_time1', 'atten_date', 'atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name', 'atten_present', 'atten_student__stud_name', 'atten_student__stud_lastname')
+    data = context['data'].values('atten_id', 'atten_timetable__tt_day', 'atten_timetable__tt_time1', 'atten_date', 'atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name', 'atten_present', 'atten_student__stud_name', 'atten_student__stud_lastname', 'atten_student__stud_roll_no').order_by('-atten_date', '-atten_timetable__tt_time1')
     data = paginatoorrr(data, request)
     context.update({'data': data}) 
 
@@ -2034,7 +2034,7 @@ def show_inquiries(request):
     }
     return render(request, 'show_inquiries.html', context)
 
-
+@admin_login_required
 def delete_inquiries(request):
     if request.method == 'POST':
         domain  = request.get_host()
@@ -2152,7 +2152,7 @@ def delete_admin_batches(request):
 
 
 
-
+@admin_login_required
 def show_admin_materials(request):
     domain = request.get_host()
     standard_data = Std.objects.filter(domain_name = domain)
@@ -2176,10 +2176,11 @@ def show_admin_materials(request):
     return render(request, 'show_materials.html', context)
 
 
-
+@admin_login_required
 def show_admin_profile(request):
     domain = request.get_host()
-    admin_data = AdminData.objects.filter(domain_name = domain)
+    admin_id = request.session['admin_id']
+    admin_data = AdminData.objects.filter(admin_id = admin_id, domain_name = domain)
     context = {
         'admin_data':admin_data,
         'title' : 'Profile',
@@ -2187,6 +2188,7 @@ def show_admin_profile(request):
     return render(request, 'show_profile.html', context)
 
 
+@admin_login_required
 def Student_doubts_adminside(request):
     domain = request.get_host()
     Total_doubts = Doubt_section.objects.filter(domain_name = domain).count()
@@ -2213,6 +2215,7 @@ def Student_doubts_adminside(request):
     return render(request, 'show_doubts_admin.html', context)
 
 
+@admin_login_required
 def adminside_report_card(request):
     domain = request.get_host()
     data = Attendance.objects.filter(domain_name = domain)
@@ -2410,6 +2413,7 @@ def adminside_report_card(request):
 
 
 
+@admin_login_required
 def fees_collection_admin(request):
     domain = request.get_host()
     cheque_collections_data = Cheque_Collection.objects.filter(cheque_paid=False, domain_name = domain)
@@ -2531,6 +2535,8 @@ def fees_collection_admin(request):
 
     return render(request, 'fees_collection_admin.html', Context)
 
+
+@admin_login_required
 def add_cheques_admin(request):
     domain = request.get_host()
     students = Students.objects.filter(domain_name = domain)
@@ -2607,6 +2613,7 @@ def add_cheques_admin(request):
     return render(request, 'insert_update/add_cheques_admin.html', context)
 
 
+@admin_login_required
 def delete_cheques_admin(request):
     if request.GET.get('delete_cheque'):
         del_id = request.GET['delete_cheque']
@@ -2618,6 +2625,7 @@ def delete_cheques_admin(request):
     return redirect('fees_collection_admin') 
 
 
+@admin_login_required
 def add_fees_collection_admin(request):
     domain = request.get_host()
     students = Students.objects.filter(domain_name = domain)
@@ -2679,6 +2687,8 @@ def add_fees_collection_admin(request):
                 return render(request, 'insert_update/add_fees_collection_admin.html', context)
     return render(request, 'insert_update/add_fees_collection_admin.html', context)
 
+
+@admin_login_required
 def admin_fees_collection_delete(request):
     if request.GET.get('delete_payment'):
         del_id = request.GET['delete_payment']
@@ -2691,6 +2701,8 @@ def admin_fees_collection_delete(request):
               
     return redirect('fees_collection_admin') 
 
+
+@admin_login_required
 def payments_history_admin(request):
     domain = request.get_host()
     fees_collections_data = Fees_Collection.objects.filter(domain_name = domain)
@@ -2723,6 +2735,8 @@ def payments_history_admin(request):
 
     return render(request, 'payments_history_admin.html', context)
 
+
+@admin_login_required
 def faculty_access_show(request):
     domain = request.get_host()
     standard_data = Std.objects.filter(domain_name = domain)
@@ -2768,7 +2782,7 @@ def faculty_access_show(request):
     return render(request, 'faculty_access.html', context)
 
 
-
+@admin_login_required
 def export_data(request):
     domain = request.get_host()
     model_name = request.GET.get('model_name')
@@ -2865,7 +2879,7 @@ def bulk_upload_questions(request):
 
 
 
-
+@admin_login_required
 def show_question_bank(request):
     domain = request.get_host()
     # Fetch all questions from the question_bank model
@@ -2875,6 +2889,7 @@ def show_question_bank(request):
     return render(request, 'show_question_bank.html', {'questions': questions, 'total_questions':total_questions})
 
 
+@admin_login_required
 def edit_question_bankk(request):
     domain = request.get_host()
     # Fetch the specific question to edit
@@ -2917,7 +2932,7 @@ def edit_question_bankk(request):
     return render(request, 'insert_update/edit_question_bank.html', context)
 
 
-
+@admin_login_required
 def delete_question_bank(request):
     qb_id = request.GET.get('qb_id')
     if qb_id:
@@ -2927,6 +2942,8 @@ def delete_question_bank(request):
     # Redirect back to the list of questions
     return redirect('show_question_bank')
 
+
+@admin_login_required
 def delete_test_question_answer(request):
     if request.GET.get('delete_id'):
         del_id = request.GET['delete_id']
@@ -2954,6 +2971,8 @@ def render_to_pdf(template_src, context_dict={}):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
 
+
+@admin_login_required
 def generate_payment_slip(request):
     context = {
         'payer_name': 'John Doe',
@@ -2966,6 +2985,8 @@ def generate_payment_slip(request):
     pdf = render_to_pdf('payment_slip.html', context)
     return HttpResponse(pdf, content_type='application/pdf')
 
+
+@admin_login_required
 def time_slot_function(request):
     domain = request.get_host()
     faculty_records = Faculties.objects.values('fac_id', 'fac_name')
@@ -2982,7 +3003,7 @@ def time_slot_function(request):
             })
     return render(request, 'time_slot.html', {'faculty_data': faculty_data})
 
-
+@admin_login_required
 def institute_main_send_function(request):
     if request.method == 'POST':
         excel_file = request.FILES['excel_file']
