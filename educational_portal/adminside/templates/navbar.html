@@ -54,7 +54,7 @@
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li>
+              
                 <a class="dropdown-item" href="{% url 'Admin Home' %}">
                   <div class="d-flex">
                     <div class="flex-shrink-0 me-3">
@@ -68,25 +68,26 @@
                     </div>
                   </div>
                 </a>
-              </li>
+             
               <li>
                 <div class="dropdown-divider"></div>
               </li>
-              <li>
-                <a class="dropdown-item" href="{% url 'admin_profile' %}">
+              
+                <a class="dropdown-item" href="{% url 'admin_profile' %}" target="_self">
                   <i class="bx bx-user me-2"></i>
                   <span class="align-middle">My Profile</span>
                 </a>
-              </li>
+             
               
               <li>
                 <div class="dropdown-divider"></div>
               </li>
+              
                 <a class="dropdown-item" href="{% url 'admin_logout' %}" target="_blank">
                   <i class="bx bx-power-off me-2"></i>
                   <span class="align-middle">Log Out</span>
                 </a>
-              </li>
+              
             </ul>
           </li>
           <!--/ User -->
