@@ -26,7 +26,7 @@
 
 
 
-<div class="mb-4"><h4>Students</h4></div>
+<div class="mb-4"><h4>Export {{title}}</h4></div>
 
 <style>
   table,td,th{padding: 5px !important;}
@@ -74,6 +74,7 @@
       <tbody>
           {% for student_value in data %}
           <tr>
+            <td>{{ student_value.roll_no }}</td>
               <td>{{ student_value.student_Name }}</td>
               <td>{{ student_value.student_lastname }}</td>
               <td>{{ student_value.contact }}</td>
@@ -81,7 +82,6 @@
               <td>{{ student_value.DOB }}</td>
               <td>{{ student_value.gender }}</td>
               <td>{{ student_value.admission_no }}</td>
-              <td>{{ student_value.roll_no }}</td>
               <td>{{ student_value.enrollment_no }}</td>
               <td>{{ student_value.Guardian_Name }}</td>
               <td>{{ student_value.Guardian_Email }}</td>
@@ -106,8 +106,8 @@
     <tbody>
         {% for student_value in attendance_data %}
         <tr>
+          <td>{{ student_value.student_roll_no }}</td>
             <td>{{ student_value.Date }}</td>
-            <td>{{ student_value.student_roll_no }}</td>
             <td>{{ student_value.Student_name }}</td>
             <td>{{ student_value.subject }}</td>
             <td>{{ student_value.tutor }}</td>
@@ -115,6 +115,50 @@
             <td>{{ student_value.Batch }}</td>
             <td>{{ student_value.Std }}</td>
             <td>{{ student_value.Board }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+  {% elif chepter_data %}
+  <table id="data-table" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            {% for field_name in field_names %}
+                <th>{{ field_name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for student_value in chepter_data %}
+        <tr>
+          <td>{{ student_value.Chepter }}</td>
+            <td>{{ student_value.Subject }}</td>
+            <td>{{ student_value.Std }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+  {% elif tests_data %}
+  <table id="data-table" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th> </th>
+            {% for field_name in field_names %}
+                <th>{{ field_name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for student_value in tests_data %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ student_value.Test }}</td>
+            <td>{{ student_value.Subject }}</td>
+            <td>{{ student_value.Std }}</td>
+            <td>{{ student_value.Questions }}</td>
+            <td>{{ student_value.Total }}</td>
         </tr>
         {% endfor %}
     </tbody>
