@@ -47,7 +47,15 @@
           <li class="nav-item navbar-dropdown dropdown-user dropdown">
             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
               <div class="avatar avatar-online">
+<<<<<<< HEAD
+                {% if request.session.fac_profile %}
+                <img src="/media/{{request.session.fac_profile}}" alt="profile" class="rounded-circle">
+                {% else %}
+                <img src="/media/uploads/default_profile.jpg" alt="profile" class="rounded-circle">
+                {% endif %}
+=======
                 <img src="/media/uploads/default_profile.jpg"  class="rounded-circle">
+>>>>>>> 0c35d16156540c464e7bbaa3d8f69e3d691e7c9c
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -56,7 +64,11 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0 me-3">
                       <div class="avatar avatar-online">
-                        <img src="/media/uploads/default_profile.jpg" alt class="rounded-circle">
+                        {% if request.session.fac_profile %}
+                        <img src="/media/{{request.session.fac_profile}}" alt="profile" class="rounded-circle">
+                        {% else %}
+                        <img src="/media/uploads/default_profile.jpg" alt="profile" class="rounded-circle">
+                        {% endif %} 
                       </div>
                     </div>
                     <div class="flex-grow-1">

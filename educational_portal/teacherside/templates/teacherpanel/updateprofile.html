@@ -15,8 +15,9 @@
     {% endfor %}
     </ul>
 {% endif %}
+{% include "message_show.html" %}
 
-<form class="add-new-record pt-0 row g-2" id="form-add-new-record" action="{% url 'teacher_profile_update' %}" method="post">
+<form class="add-new-record pt-0 row g-2" id="form-add-new-record" action="{% url 'teacher_profile_update' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %} 
     <div class="col-sm-12">
       <label class="form-label mb-2">Full Name</label>
@@ -44,6 +45,13 @@
         <div class="input-group input-group-merge">
           <input type="text" class="form-control" name="fac_address" value="{{teacher_obj.fac_address}}" required>
         </div>
+    </div>
+
+    <div class="col-sm-12">
+      <label class="form-label mb-2">Profile Picture</label>
+      <div class="input-group input-group-merge">
+          <input type="file" class="form-control" name="fac_profile">
+      </div>
     </div>
     
     <div class="col-sm-12">

@@ -15,7 +15,7 @@ class teacher_materials_form(forms.ModelForm):
 class teacher_update_form(forms.ModelForm):
     class Meta:
         model = Faculties
-        fields = ['fac_name', 'fac_email', 'fac_number', 'fac_address']
+        fields = ['fac_name', 'fac_email', 'fac_number', 'fac_address', 'fac_profile']
 
 class teacher_solution_form(forms.ModelForm):
     solution = forms.CharField(widget=SummernoteWidget())

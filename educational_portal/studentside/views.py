@@ -165,11 +165,7 @@ def student_login_handle(request):
                 return response
             
             messages.success(request, 'Logged In Successfully')
-            
-            if NewInstitution.objects.get(institute_lock = False):
-                return redirect('Student_home')
-            else:
-                return redirect('Lock_Page')
+            return redirect('Student_home')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('Student_Login')
@@ -266,12 +262,10 @@ def student_info_update(request):
     student_obj = Students.objects.get(stud_id = student_id)
     if request.method == 'POST':
         form = update_form(request.POST, request.FILES, instance=student_obj)
-        print(form)
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
-            print(form.instance.stud_profile)
-            messages.success(request, 'Your information updated successfully')
+            messages.success(request, 'You information updated successfully')
             return redirect('Student_Profile')
         else:
             messages.error(request, 'error')
