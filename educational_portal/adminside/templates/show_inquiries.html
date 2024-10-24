@@ -5,7 +5,27 @@
   
 
 {% include "message_show.html" %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+      background-color: #282c34;  /* Dark background */
+      color: white;  /* White text */
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;  /* Font style */
+  }
 
+  h2 {
+      text-align: center;  /* Centered title */
+      margin-top: 20px;
+  }
+
+  canvas {
+      max-width: 1000px;
+      margin: 20px auto;  /* Center the chart */
+      border: 1px solid rgba(255, 255, 255, 0.2);  /* Light border for better visibility */
+      border-radius: 1px;  /* Rounded corners */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);  /* Shadow effect */
+  }
+</style>
 <div class="row">
   <div class="col-sm-12 col-lg-4 mb-4">
     <div class="card card-border-shadow-warning h-100">
@@ -90,6 +110,7 @@
                     <th>Guardian_Email</th>
                     <th>Guardian_Profession</th>
                     <th>Address</th>
+                    <th>Date</th>
                     <th>Know_From</th>
                     <th>Admisssion</th>
                 </tr>
@@ -112,6 +133,7 @@
                   <td>{{ data.inq_guardian_email }}</td>
                   <td>{{ data.inq_guardian_profession }}</td>
                   <td>{{ data.inq_address }}</td>
+                  <td>{{ data.inq_date}}</td>
                   <td>{{ data.inq_howuknow }}</td>
                   <td>
                       {% if data.inq_email in email_ids %}
@@ -124,7 +146,80 @@
               {% endfor %}              
             </tbody>
         </table>
-    </div>  
+    </div>
+    <h2>Monthly Leads</h2>
+    <hr>
+    
+    <!-- Canvas for Chart.js -->
+    <canvas id="monthlyLeadsChart" width="800" height="400"></canvas>
+
+    <script>
+        // Prepare the data for the chart
+        const labels = [];
+        const data = [];
+        
+        // Use JSON to parse formatted_monthly_leads properly
+        const monthlyLeads = {{ formatted_monthly_leads|safe }};
+        
+        monthlyLeads.forEach(lead => {
+            const parts = lead.split(" - ");
+            labels.push(parts[0]);  // Month name
+            data.push(parseInt(parts[1]));  // Number of leads
+        });
+        
+        const ctx = document.getElementById('monthlyLeadsChart').getContext('2d');
+        const monthlyLeadsChart = new Chart(ctx, {
+            type: 'bar',  // Bar chart type
+            data: {
+                labels: labels,  // Month labels
+                datasets: [{
+                    label: 'NUMBERS OF LEAD',
+                    data: data,  // Leads data
+                    backgroundColor: '#D5006D',  // Magenta color for bars
+                    borderColor: 'rgba(255, 255, 255, 0.7)',  // Light border for bars
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,  // Start y-axis from 0
+                        title: {
+                            display: true,
+                            text: 'Leads',
+                            color: 'white'  // White text for y-axis title
+                        },
+                        ticks: {
+                            color: 'white'  // White color for y-axis ticks
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months',
+                            color: 'white'  // White text for x-axis title
+                        },
+                        ticks: {
+                            color: 'white'  // White color for x-axis ticks
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'  // White color for legend text
+                        }
+                    },
+                    tooltip: {
+                        titleColor: 'white',  // White color for tooltip title
+                        bodyColor: 'white'  // White color for tooltip body
+                    }
+                }
+            }
+        });
+    </script>
+ 
   <!-- Modal -->
   <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
     <div class="modal-dialog">

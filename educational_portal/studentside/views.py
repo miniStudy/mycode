@@ -264,10 +264,12 @@ def student_info_update(request):
     student_id = request.session['stud_id']
     student_obj = Students.objects.get(stud_id = student_id)
     if request.method == 'POST':
-        form = update_form(request.POST, instance=student_obj)
+        form = update_form(request.POST, request.FILES, instance=student_obj)
+        print(form)
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
+            print(form.instance.stud_profile)
             messages.success(request, 'Your information updated successfully')
             return redirect('Student_Profile')
         else:
@@ -714,7 +716,7 @@ def student_analysis_view(request):
     total_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, domain_name = domain).count()
     
     present_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=True, domain_name = domain).count()
-
+    
     absent_attendence = Attendance.objects.filter(atten_student__stud_id = student_id, atten_present=False, domain_name = domain).count()
     
     if total_attendence > 0:
