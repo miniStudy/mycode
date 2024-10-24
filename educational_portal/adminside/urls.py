@@ -99,6 +99,8 @@ urlpatterns = [
     path('students_dataAdmin/', adminview.show_students, name='students_dataAdmin'),
     path('insert_update_students/',adminview.insert_update_students,name='insert_update_students'),
     path('delete_students/', adminview.delete_students, name='delete_students'),
+    path('send_meeting_mail/', adminview.send_meeting_mail, name='send_meeting_mail'),
+    path('insert_meeting_date/', adminview.insert_meeting_date, name='insert_meeting_date'),
 
     path('inquiry_data/', adminview.show_inquiries, name='inquiry_data'),
     path('delete_inquiry/', adminview.delete_inquiries, name='delete_inquiry'),

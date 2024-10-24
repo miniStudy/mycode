@@ -237,6 +237,26 @@ def student_email_send(self,student_name, student_email, student_password):
         print(f"An error occurred: {e}")
         # Optionally, you can also retry for other exceptions
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+ 
+def send_email_for_meeting(parent_email, parent_name, meeting_date):
+    sub = 'Meeting Info'
+    email_from = 'miniStudy <mail@ministudy.in>'
+    recp_list = [parent_email]  # Ensure this is a list for multiple recipients
+    htmly = get_template('Email/parent_meeting.html')
+
+    # Prepare the context data for the email template
+    d = {
+        'parent_name': parent_name,
+        'meeting_date': meeting_date,  # Add meeting date to context
+    }
+    
+    text_content = ''
+    html_content = htmly.render(d)
+    
+    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+    
 
 # -----------------------------------------Telegram------------------------------------------------------------------------------
 
