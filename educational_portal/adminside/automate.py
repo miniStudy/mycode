@@ -117,6 +117,8 @@ def insert_chapterwise_material(cm_chepter_id, cm_filename, cm_file,domain_name)
 
 
 def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
+    print(chep_std, 'std ----------------------')
+    print(chep_sub, 'sub ----------------------')
     return_list = chapter_list_func(chep_sub, chep_std)
     counter = 0
     for x in return_list[0]:           
@@ -126,7 +128,10 @@ def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
             chep_std = chep_std,
             domain_name = institute_domain
         )
-
-        insert_chapterwise_material(chapter.chep_id, chapter.chep_name, return_list[1][counter], domain_name=institute_domain)
-        counter += 1
+        # lenth = len(return_list[1])
+        # print(lenth, 'lenth--------')
+        # print(counter, 'counter---------')
+        # if counter < lenth:
+        #     insert_chapterwise_material(chapter.chep_id, chapter.chep_name, return_list[1][counter], domain_name=institute_domain)
+        # counter += 1
 

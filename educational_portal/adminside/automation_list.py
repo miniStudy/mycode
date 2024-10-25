@@ -243,7 +243,7 @@ English_7_CBSE = [
     '5. Quality',
     '6. Expert Detectives',
     '7. The Invention of Vita-Wonk',
-    '8. A Homage to Our Brave Soldiers'
+    '8. A Homage to Our Brave Soldiers',
 ]
 
 English_7_material = [
@@ -830,25 +830,25 @@ def chapter_list_func(chep_sub, chep_std):
     
         # ================= Class 5TH =======================
     if chep_sub.sub_name == 'English' and chep_std.std_name == '5':
-        return_list = [English_5_CBSE]
+        return_list = [English_5_CBSE, []]
         return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '5':
-        return_list = [Maths_5_CBSE]
+        return_list = [Maths_5_CBSE, []]
         return return_list
     
     elif chep_sub.sub_name == 'Environmental Studies' and chep_std.std_name == '5':
-        return_list = [EVS_5_CBSE]
+        return_list = [EVS_5_CBSE,[]]
         return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '5':
-        return_list = [Hindi_5_CBSE]
+        return_list = [Hindi_5_CBSE, []]
         return return_list
     
         # ================= Class 6TH =======================
 
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '6':
-        return_list = [English_6_CBSE]
+        return_list = [English_6_CBSE, []]
         return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '6':
@@ -860,7 +860,7 @@ def chapter_list_func(chep_sub, chep_std):
         return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '6':
-        return_list = [SST_6_CBSE]
+        return_list = [SST_6_CBSE, []]
         return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '6':
@@ -874,7 +874,7 @@ def chapter_list_func(chep_sub, chep_std):
         # ================= Class 7TH =======================
     
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '7':
-        return_list = [English_7_CBSE ,English_7_material]
+        return_list = [English_7_CBSE, English_7_material]
         return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '7':
@@ -886,7 +886,7 @@ def chapter_list_func(chep_sub, chep_std):
         return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '7':
-        return_list = [SST_7_CBSE]
+        return_list = [SST_7_CBSE, []]
         return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '7':
@@ -894,7 +894,7 @@ def chapter_list_func(chep_sub, chep_std):
         return return_list
     
     elif chep_sub.sub_name == 'Sanskrit' and chep_std.std_name == '7':
-        return_list = [Sanskrit_7_CBSE]
+        return_list = [Sanskrit_7_CBSE, []]
         return return_list
     
         # ================= Class 8TH =======================
@@ -912,7 +912,7 @@ def chapter_list_func(chep_sub, chep_std):
         return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '8':
-        return_list = [SST_8_CBSE]
+        return_list = [SST_8_CBSE, []]
         return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '8':
@@ -944,26 +944,27 @@ def chapter_list_func(chep_sub, chep_std):
         # ================= Class 10TH =======================
     
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '10':
-        return_list = [English_10_CBSE]
+        return_list = [English_10_CBSE, []]
         return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '10':
-        return_list = [Maths_10_CBSE]
+        return_list = [Maths_10_CBSE, []]
         return return_list
     
     elif chep_sub.sub_name == 'Science' and chep_std.std_name == '10':
-        return_list = [Science_10_CBSE]
+        return_list = [Science_10_CBSE,[]]
         return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '10':
-        return_list = [SST_10_CBSE]
+        return_list = [SST_10_CBSE,[]]
         return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '10':
-        return_list = [Hindi_10_CBSE]
+        return_list = [Hindi_10_CBSE,[]]
         return return_list
 
     else:
+        print("Else me aa gya hai===============")
         return []
 
     
