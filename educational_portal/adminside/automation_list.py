@@ -830,108 +830,138 @@ def chapter_list_func(chep_sub, chep_std):
     
         # ================= Class 5TH =======================
     if chep_sub.sub_name == 'English' and chep_std.std_name == '5':
-        return English_5_CBSE
+        return_list = [English_5_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '5':
-        return Maths_5_CBSE
+        return_list = [Maths_5_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Environmental Studies' and chep_std.std_name == '5':
-        return EVS_5_CBSE
+        return_list = [EVS_5_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '5':
-        return Hindi_5_CBSE
+        return_list = [Hindi_5_CBSE]
+        return return_list
     
         # ================= Class 6TH =======================
 
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '6':
-        return English_6_CBSE
+        return_list = [English_6_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '6':
-        return Maths_6_CBSE
+        return_list = [Maths_6_CBSE, Maths_6_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Science' and chep_std.std_name == '6':
-        return Science_6_CBSE
+        return_list = [Science_6_CBSE, Science_6_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '6':
-        return SST_6_CBSE
+        return_list = [SST_6_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '6':
-        return Hindi_6_CBSE
+        return_list = [Hindi_6_CBSE, Hindi_6_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Sanskrit' and chep_std.std_name == '6':
-        return Sanskrit_6_CBSE
+        return_list = [Sanskrit_6_CBSE, Sanskrit_6_materials]
+        return return_list
     
         # ================= Class 7TH =======================
     
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '7':
-        return English_7_CBSE
+        return_list = [English_7_CBSE ,English_7_material]
+        return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '7':
-        return Maths_7_CBSE
+        return_list = [Maths_7_CBSE, Maths_7_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Science' and chep_std.std_name == '7':
-        return Science_7_CBSE
+        return_list = [Science_7_CBSE, Science_7_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '7':
-        return SST_7_CBSE
+        return_list = [SST_7_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '7':
-        return Hindi_7_CBSE
+        return_list = [Hindi_7_CBSE, Hindi_7_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Sanskrit' and chep_std.std_name == '7':
-        return Sanskrit_7_CBSE
+        return_list = [Sanskrit_7_CBSE]
+        return return_list
     
         # ================= Class 8TH =======================
     
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '8':
-        return English_8_CBSE
+        return_list = [English_8_CBSE, English_8_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '8':
-        return Maths_8_CBSE
+        return_list = [Maths_8_CBSE, Maths_8_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Science' and chep_std.std_name == '8':
-        return Science_8_CBSE
+        return_list = [Science_8_CBSE, Science_8_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '8':
-        return SST_8_CBSE
+        return_list = [SST_8_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '8':
-        return Hindi_8_CBSE
+        return_list = [Hindi_8_CBSE, Hindi_8_materials]
+        return return_list
     
         # ================= Class 9TH =======================
     
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '9':
-        return English_9_CBSE
+        return_list = [English_9_CBSE, English_9_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '9':
-        return Maths_9_CBSE
+        return_list = [Maths_9_CBSE, Maths_9_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Science' and chep_std.std_name == '9':
-        return Science_9_CBSE
+        return_list = [Science_9_CBSE, Science_9_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '9':
-        return SST_9_CBSE
+        return_list = [SST_9_CBSE, SST_9_materials]
+        return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '9':
-        return Hindi_9_CBSE
+        return_list = [Hindi_9_CBSE, Hindi_9_materials]
+        return return_list
     
         # ================= Class 10TH =======================
     
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '10':
-        return English_10_CBSE
+        return_list = [English_10_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '10':
-        return Maths_10_CBSE
+        return_list = [Maths_10_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Science' and chep_std.std_name == '10':
-        return Science_10_CBSE
+        return_list = [Science_10_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '10':
-        return SST_10_CBSE
+        return_list = [SST_10_CBSE]
+        return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '10':
-        return Hindi_10_CBSE
-    
+        return_list = [Hindi_10_CBSE]
+        return return_list
 
     else:
         return []
