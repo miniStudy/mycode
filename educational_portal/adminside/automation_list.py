@@ -76,7 +76,7 @@ Hindi_5_CBSE = [
 
 # ==================== Class 6th =================================
 
-English_6_CBSE = chapters = [
+English_6_CBSE = [
     'Chapter 1: Who Did Patrick\'s Homework?',
     'Chapter 2: How the Dog Found Himself a Master!',
     'Chapter 3: Taro\'s Reward',
@@ -86,6 +86,7 @@ English_6_CBSE = chapters = [
     'Chapter 7: Fair Play',
     'Chapter 8: The Banyan Tree'
 ]
+
 
 Maths_6_CBSE = [
     'Chapter 1: Patterns in Mathematics ',
@@ -98,6 +99,19 @@ Maths_6_CBSE = [
     'Chapter 8: Playing with Constructions',
     'Chapter 9: Symmetry',
     'Chapter 10: The Other Side of Zero'
+]
+
+Maths_6_materials = [
+    '6-NCERT-MATHS-1.pdf',
+    '6-NCERT-MATHS-2.pdf',
+    '6-NCERT-MATHS-3.pdf',
+    '6-NCERT-MATHS-4.pdf',
+    '6-NCERT-MATHS-5.pdf',
+    '6-NCERT-MATHS-6.pdf',
+    '6-NCERT-MATHS-7.pdf',
+    '6-NCERT-MATHS-8.pdf',
+    '6-NCERT-MATHS-9.pdf',
+    '6-NCERT-MATHS-10.pdf',
 ]
 
 
@@ -114,6 +128,21 @@ Science_6_CBSE = [
     'Chapter 10: Living Creatures: Exploring their Characteristics',
     'Chapter 11: Nature’s Treasures',
     'Chapter 12: Beyond Earth'
+]
+
+Science_6_materials = [
+    '6-NCERT-SCIENCE-1.pdf',
+    '6-NCERT-SCIENCE-2.pdf',
+    '6-NCERT-SCIENCE-3.pdf',
+    '6-NCERT-SCIENCE-4.pdf',
+    '6-NCERT-SCIENCE-5.pdf',
+    '6-NCERT-SCIENCE-6.pdf',
+    '6-NCERT-SCIENCE-7.pdf',
+    '6-NCERT-SCIENCE-8.pdf',
+    '6-NCERT-SCIENCE-9.pdf',
+    '6-NCERT-SCIENCE-10.pdf',
+    '6-NCERT-SCIENCE-11.pdf',
+    '6-NCERT-SCIENCE-12.pdf',
 ]
 
 
@@ -136,6 +165,7 @@ SST_6_CBSE = [
     'Chapter 16: The First Farmers and Herders'
 ]
 
+
 Hindi_6_CBSE = [
     'Chapter 1: मातृभूमि (कविता)',
     'Chapter 2: गोल (संस्मरण)',
@@ -151,6 +181,23 @@ Hindi_6_CBSE = [
     'Chapter 12: हिंद में हासागर में छोटा-सा हिंदुस्तान (यात्रा वृत्तांत)',
     'Chapter 13: पेड़ की बात (निबंध)'
 ]
+
+Hindi_6_materials = [
+    '6-NCERT-HINDI-1.pdf',
+    '6-NCERT-HINDI-2.pdf',
+    '6-NCERT-HINDI-3.pdf',
+    '6-NCERT-HINDI-4.pdf',
+    '6-NCERT-HINDI-5.pdf',
+    '6-NCERT-HINDI-6.pdf',
+    '6-NCERT-HINDI-7.pdf',
+    '6-NCERT-HINDI-8.pdf',
+    '6-NCERT-HINDI-9.pdf',
+    '6-NCERT-HINDI-10.pdf',
+    '6-NCERT-HINDI-11.pdf',
+    '6-NCERT-HINDI-12.pdf',
+    '6-NCERT-HINDI-13.pdf',
+]
+
 
 Sanskrit_6_CBSE = [
     'Chapter 1: वयं वर्णमालां पठामः',
@@ -170,6 +217,22 @@ Sanskrit_6_CBSE = [
     'Chapter 15: पञ्चदश: पाठ: वृक्षाः सत्पुरुषा: इव'
 ]
 
+Sanskrit_6_materials = [
+    '6-NCERT-SANSKRIT-1.pdf',
+    '6-NCERT-SANSKRIT-2.pdf',
+    '6-NCERT-SANSKRIT-3.pdf',
+    '6-NCERT-SANSKRIT-4.pdf',
+    '6-NCERT-SANSKRIT-5.pdf',
+    '6-NCERT-SANSKRIT-6.pdf',
+    '6-NCERT-SANSKRIT-7.pdf',
+    '6-NCERT-SANSKRIT-8.pdf',
+    '6-NCERT-SANSKRIT-9.pdf',
+    '6-NCERT-SANSKRIT-10.pdf',
+    '6-NCERT-SANSKRIT-11.pdf',
+    '6-NCERT-SANSKRIT-12.pdf',
+    '6-NCERT-SANSKRIT-13.pdf',
+]
+
 # ============== Class 7th ===============================
 
 English_7_CBSE = [
@@ -182,6 +245,18 @@ English_7_CBSE = [
     '7. The Invention of Vita-Wonk',
     '8. A Homage to Our Brave Soldiers'
 ]
+
+English_7_material = [
+    '7-NCERT-ENGLISH-1.pdf',
+    '7-NCERT-ENGLISH-2.pdf',
+    '7-NCERT-ENGLISH-3.pdf',
+    '7-NCERT-ENGLISH-4.pdf',
+    '7-NCERT-ENGLISH-5.pdf',
+    '7-NCERT-ENGLISH-6.pdf',
+    '7-NCERT-ENGLISH-7.pdf',
+    '7-NCERT-ENGLISH-8.pdf',
+]
+
 
 Maths_7_CBSE = [
     'Chapter 1: Integers',
@@ -199,6 +274,23 @@ Maths_7_CBSE = [
     'Chapter 13: Visualising Solid Shapes'
 ]
 
+Maths_7_materials = [
+    '7-NCERT-MATHS-1.pdf',
+    '7-NCERT-MATHS-2.pdf',
+    '7-NCERT-MATHS-3.pdf',
+    '7-NCERT-MATHS-4.pdf',
+    '7-NCERT-MATHS-5.pdf',
+    '7-NCERT-MATHS-6.pdf',
+    '7-NCERT-MATHS-7.pdf',
+    '7-NCERT-MATHS-8.pdf',
+    '7-NCERT-MATHS-9.pdf',
+    '7-NCERT-MATHS-10.pdf',
+    '7-NCERT-MATHS-11.pdf',
+    '7-NCERT-MATHS-12.pdf',
+    '7-NCERT-MATHS-13.pdf',
+]
+
+
 Science_7_CBSE = [
     'Chapter 1: Nutrition in Plants',
     'Chapter 2: Nutrition in Animals',
@@ -214,6 +306,23 @@ Science_7_CBSE = [
     'Chapter 12: Forests: Our Lifeline',
     'Chapter 13: Wastewater Story'
 ]
+
+Science_7_materials = [
+    '7-NCERT-SCIENCE-1.pdf',
+    '7-NCERT-SCIENCE-2.pdf',
+    '7-NCERT-SCIENCE-3.pdf',
+    '7-NCERT-SCIENCE-4.pdf',
+    '7-NCERT-SCIENCE-5.pdf',
+    '7-NCERT-SCIENCE-6.pdf',
+    '7-NCERT-SCIENCE-7.pdf',
+    '7-NCERT-SCIENCE-8.pdf',
+    '7-NCERT-SCIENCE-9.pdf',
+    '7-NCERT-SCIENCE-10.pdf',
+    '7-NCERT-SCIENCE-11.pdf',
+    '7-NCERT-SCIENCE-12.pdf',
+    '7-NCERT-SCIENCE-13.pdf',
+]
+
 
 SST_7_CBSE = [
     '1. History: Tracing Changes Through a Thousand Years',
@@ -251,6 +360,25 @@ Hindi_7_CBSE = [
     'Chapter 14: संघर्ष के कारण में तुनकमिजाज हो गया धनराज',
     'Chapter 15: आश्रम का अनुमानित व्यय',
 ]
+
+Hindi_7_materials = [
+    '7-NCERT-HINDI-1.pdf',
+    '7-NCERT-HINDI-2.pdf',
+    '7-NCERT-HINDI-3.pdf',
+    '7-NCERT-HINDI-4.pdf',
+    '7-NCERT-HINDI-5.pdf',
+    '7-NCERT-HINDI-6.pdf',
+    '7-NCERT-HINDI-7.pdf',
+    '7-NCERT-HINDI-8.pdf',
+    '7-NCERT-HINDI-9.pdf',
+    '7-NCERT-HINDI-10.pdf',
+    '7-NCERT-HINDI-11.pdf',
+    '7-NCERT-HINDI-12.pdf',
+    '7-NCERT-HINDI-13.pdf',
+    '7-NCERT-HINDI-14.pdf',
+    '7-NCERT-HINDI-15.pdf',
+]
+
 
 Sanskrit_7_CBSE = [
     'Chapter 1: सुभाषितानी',
@@ -291,6 +419,18 @@ English_8_CBSE = [
     'Chapter 16: Ancient Education System of India - II'
 ]
 
+English_8_materials = [
+    '8-NCERT-ENGLISH-1.pdf',
+    '8-NCERT-ENGLISH-2.pdf',
+    '8-NCERT-ENGLISH-3.pdf',
+    '8-NCERT-ENGLISH-4.pdf',
+    '8-NCERT-ENGLISH-5.pdf',
+    '8-NCERT-ENGLISH-6.pdf',
+    '8-NCERT-ENGLISH-7.pdf',
+    '8-NCERT-ENGLISH-8.pdf',
+]
+
+
 Maths_8_CBSE = [
     'Chapter 1: Rational Numbers',
     'Chapter 2: Linear Equations in One Variable',
@@ -307,6 +447,23 @@ Maths_8_CBSE = [
     'Chapter 13: Introduction to Graphs'
 ]
 
+Maths_8_materials = [
+    '8-NCERT-MATHS-1.pdf',
+    '8-NCERT-MATHS-2.pdf',
+    '8-NCERT-MATHS-3.pdf',
+    '8-NCERT-MATHS-4.pdf',
+    '8-NCERT-MATHS-5.pdf',
+    '8-NCERT-MATHS-6.pdf',
+    '8-NCERT-MATHS-7.pdf',
+    '8-NCERT-MATHS-8.pdf',
+    '8-NCERT-MATHS-9.pdf',
+    '8-NCERT-MATHS-10.pdf',
+    '8-NCERT-MATHS-11.pdf',
+    '8-NCERT-MATHS-12.pdf',
+    '8-NCERT-MATHS-13.pdf',
+]
+
+
 Science_8_CBSE = [
     'Chapter 1: Crop Production and Management',
     'Chapter 2: Microorganisms: Friend and Foe',
@@ -321,6 +478,22 @@ Science_8_CBSE = [
     'Chapter 11: Chemical Effects of Electric Current',
     'Chapter 12: Some Natural Phenomena',
     'Chapter 13: Light'
+]
+
+Science_8_materials = [
+    '8-NCERT-SCIENCE-1.pdf',
+    '8-NCERT-SCIENCE-2.pdf',
+    '8-NCERT-SCIENCE-3.pdf',
+    '8-NCERT-SCIENCE-4.pdf',
+    '8-NCERT-SCIENCE-5.pdf',
+    '8-NCERT-SCIENCE-6.pdf',
+    '8-NCERT-SCIENCE-7.pdf',
+    '8-NCERT-SCIENCE-8.pdf',
+    '8-NCERT-SCIENCE-9.pdf',
+    '8-NCERT-SCIENCE-10.pdf',
+    '8-NCERT-SCIENCE-11.pdf',
+    '8-NCERT-SCIENCE-12.pdf',
+    '8-NCERT-SCIENCE-13.pdf',
 ]
 
 
@@ -364,6 +537,23 @@ Hindi_8_CBSE = [
     'Chapter 13: बाज और साँप (कहानी)'
 ]
 
+Hindi_8_materials = [
+    '8-NCERT-HINDI-1.pdf',
+    '8-NCERT-HINDI-2.pdf',
+    '8-NCERT-HINDI-3.pdf',
+    '8-NCERT-HINDI-4.pdf',
+    '8-NCERT-HINDI-5.pdf',
+    '8-NCERT-HINDI-6.pdf',
+    '8-NCERT-HINDI-7.pdf',
+    '8-NCERT-HINDI-8.pdf',
+    '8-NCERT-HINDI-9.pdf',
+    '8-NCERT-HINDI-10.pdf',
+    '8-NCERT-HINDI-11.pdf',
+    '8-NCERT-HINDI-12.pdf',
+    '8-NCERT-HINDI-13.pdf',
+]
+
+
 # ========================= Class 9th ==========================
 
 English_9_CBSE = [
@@ -377,6 +567,19 @@ English_9_CBSE = [
     'Chapter 8: Kathmandu',
     'Chapter 9: If I Were You'
 ]
+
+English_9_materials = [
+    '9-NCERT-ENGLISH-1.pdf',
+    '9-NCERT-ENGLISH-2.pdf',
+    '9-NCERT-ENGLISH-3.pdf',
+    '9-NCERT-ENGLISH-4.pdf',
+    '9-NCERT-ENGLISH-5.pdf',
+    '9-NCERT-ENGLISH-6.pdf',
+    '9-NCERT-ENGLISH-7.pdf',
+    '9-NCERT-ENGLISH-8.pdf',
+    '9-NCERT-ENGLISH-9.pdf',
+]
+
 
 Maths_9_CBSE = [
     'Chapter 1: Number Systems',
@@ -393,6 +596,22 @@ Maths_9_CBSE = [
     'Chapter 12: Statistics',
 ]
 
+Maths_9_materials = [
+    '9-NCERT-MATHS-1.pdf',
+    '9-NCERT-MATHS-2.pdf',
+    '9-NCERT-MATHS-3.pdf',
+    '9-NCERT-MATHS-4.pdf',
+    '9-NCERT-MATHS-5.pdf',
+    '9-NCERT-MATHS-6.pdf',
+    '9-NCERT-MATHS-7.pdf',
+    '9-NCERT-MATHS-8.pdf',
+    '9-NCERT-MATHS-9.pdf',
+    '9-NCERT-MATHS-10.pdf',
+    '9-NCERT-MATHS-11.pdf',
+    '9-NCERT-MATHS-12.pdf',
+]
+
+
 Science_9_CBSE = [
     'Chapter 1: Matter in Our Surrounding',
     'Chapter 2: Is Matter Around Us Pure',
@@ -407,6 +626,22 @@ Science_9_CBSE = [
     'Chapter 11: Sound',
     'Chapter 12: Improvement in Food Resources'
 ]
+
+Science_9_materials = [
+    '9-NCERT-SCIENCE-1.pdf',
+    '9-NCERT-SCIENCE-2.pdf',
+    '9-NCERT-SCIENCE-3.pdf',
+    '9-NCERT-SCIENCE-4.pdf',
+    '9-NCERT-SCIENCE-5.pdf',
+    '9-NCERT-SCIENCE-6.pdf',
+    '9-NCERT-SCIENCE-7.pdf',
+    '9-NCERT-SCIENCE-8.pdf',
+    '9-NCERT-SCIENCE-9.pdf',
+    '9-NCERT-SCIENCE-10.pdf',
+    '9-NCERT-SCIENCE-11.pdf',
+    '9-NCERT-SCIENCE-12.pdf',
+]
+
 
 SST_9_CBSE = [
     'Chapter 1: The French Revolution - H',
@@ -431,6 +666,30 @@ SST_9_CBSE = [
     'Chapter 5: Democratic Rights - C',
 ]
 
+SST_9_materials = [
+    '9-NCERT-HISTORY-1.pdf',
+    '9-NCERT-HISTORY-2.pdf',
+    '9-NCERT-HISTORY-3.pdf',
+    '9-NCERT-HISTORY-4.pdf',
+    '9-NCERT-HISTORY-5.pdf',
+    '9-NCERT-GEOPRAPHY-1.pdf',
+    '9-NCERT-GEOPRAPHY-2.pdf',
+    '9-NCERT-GEOPRAPHY-3.pdf',
+    '9-NCERT-GEOPRAPHY-4.pdf',
+    '9-NCERT-GEOPRAPHY-5.pdf',
+    '9-NCERT-GEOPRAPHY-6.pdf',
+    '9-NCERT-ECONOMICS-1.pdf',
+    '9-NCERT-ECONOMICS-2.pdf',
+    '9-NCERT-ECONOMICS-3.pdf',
+    '9-NCERT-ECONOMICS-4.pdf',
+    '9-NCERT-POLITICALSCIENCE-1.pdf',
+    '9-NCERT-POLITICALSCIENCE-2.pdf',
+    '9-NCERT-POLITICALSCIENCE-3.pdf',
+    '9-NCERT-POLITICALSCIENCE-4.pdf',
+    '9-NCERT-POLITICALSCIENCE-5.pdf',
+]
+
+
 Hindi_9_CBSE = [
     '1. दो बैलों की कथा',
     '2. ल्हासा की ओर',
@@ -446,6 +705,23 @@ Hindi_9_CBSE = [
     '12. मेघ आए',
     '13. बच्चे काम पर जा रहे हैं'
 ]
+
+Hindi_9_materials = [
+    '9-NCERT-HINDI-1.pdf',
+    '9-NCERT-HINDI-2.pdf',
+    '9-NCERT-HINDI-3.pdf',
+    '9-NCERT-HINDI-4.pdf',
+    '9-NCERT-HINDI-5.pdf',
+    '9-NCERT-HINDI-6.pdf',
+    '9-NCERT-HINDI-7.pdf',
+    '9-NCERT-HINDI-8.pdf',
+    '9-NCERT-HINDI-9.pdf',
+    '9-NCERT-HINDI-10.pdf',
+    '9-NCERT-HINDI-11.pdf',
+    '9-NCERT-HINDI-12.pdf',
+    '9-NCERT-HINDI-13.pdf',
+]
+
 
 # ================== Class 10th ===========================
 

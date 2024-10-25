@@ -1,5 +1,8 @@
 from adminside.models import *
 from adminside.automation_list import *
+from django.db import connection
+
+
 
 
 def creation(request, institute_domain):
@@ -114,3 +117,12 @@ def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
 
     
     
+def insert_chapterwise_material(cm_chepter_id, cm_filename, cm_file, cm_file_icon=None, domain_name=None):
+    with connection.cursor() as cursor:
+        # Create the SQL insert query
+        query = """
+            INSERT INTO Chepterwise_Material (cm_chepter_id, cm_filename, cm_file, domain_name)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        # Execute the query with the provided data
+        cursor.execute(query, [cm_chepter_id, cm_filename, cm_file, cm_file_icon, domain_name])
