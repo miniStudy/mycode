@@ -2814,10 +2814,10 @@ def export_data(request):
         else:
             data = Students.objects.filter(domain_name = domain)
 
-        field_names = ['roll_no','student Name','student_lastname','contact','Email','DOB','gender','admission_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
+        field_names = ['roll_no', 'student Name','student_lastname','contact','Email','DOB','gender','admission_no','enrollment_no','Guardian Name','Guardian Email','Guardian Number','Address','Std','Batch','Package']
         for x in data:
             temp_data = {}
-            temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_contact,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
+            temp_data.update({'student_Name':x.stud_name,'student_lastname':x.stud_lastname,'contact':x.stud_contact,'Email':x.stud_email,'DOB':x.stud_dob,'gender':x.stud_gender,'admission_no':x.stud_admission_no,'roll_no':x.stud_roll_no,'enrollment_no':x.stud_enrollment_no,'Guardian_Name':x.stud_guardian_name,'Guardian_Email':x.stud_guardian_email,'Guardian_Number':x.stud_guardian_number,'Address':x.stud_address,'Std': x.stud_std.std_name + x.stud_std.std_board.brd_name,'Batch':x.stud_batch.batch_name,'Package':x.stud_pack.pack_name})
             student_data.append(temp_data)
         Context.update({'data':student_data,'field_names':field_names})
 
@@ -2936,23 +2936,31 @@ def bulk_upload_questions(request):
 
 @admin_login_required
 def show_question_bank(request):
-    domain = request.get_host()
-    # Fetch all questions from the question_bank model
 
     excel_data = pd.read_excel('chepter_list.xlsx')
-    chapter_ids = excel_data['Chapter Name'].tolist()
+    chapter_names = excel_data['Chapter Name'].tolist()
+    standard_names = excel_data['Chapter Standard'].tolist()
+    subject_names = excel_data['Chepter Subject'].tolist()
 
 
-    questions = question_bank.objects.values('qb_id','qb_chepter','qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
-
+    questions = question_bank.objects.values('qb_id', 'qb_chepter')[:50]
 
     for i, question in enumerate(questions):
-        if i < len(chapter_ids):
+        if i < len(chapter_names):
             qb_id = question['qb_id']
-            chapter_id = chapter_ids[i]  # Get the corresponding chapter ID
+            chapter_name = chapter_names[i]
+            standard_name = standard_names[i]
+            subject_name = subject_names[i]
 
-            # Update the 'qb_chepter' field in the question_bank entry
-            question_bank.objects.filter(qb_id=qb_id).update(qb_chepter=chapter_id)
+            qb = question_bank.objects.get(qb_id = qb_id)
+
+            qb.qb_chepter = chapter_name
+            qb.qb_std = standard_name
+            qb.qb_subject = subject_name
+            qb.save()
+
+    question_answers = question_bank.objects.values('qb_chepter','qb_std', 'qb_subject', 'qb_q_type', 'qb_question', 'qb_answer', 'qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')[:50]
+
     total_questions = question_bank.objects.all().count()
 
     chepters_names_with_ids = question_bank.objects.values_list('qb_chepter', 'qb_std', 'qb_subject', 'qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
@@ -2965,7 +2973,7 @@ def show_question_bank(request):
     
 
     questions = paginatoorrr(questions,request)
-    return render(request, 'show_question_bank.html', {'questions': questions, 'total_questions':total_questions})
+    return render(request, 'show_question_bank.html', {'questions': questions, 'total_questions':total_questions, 'question_answers': question_answers})
 
 
 @admin_login_required
@@ -3088,13 +3096,14 @@ def institute_main_send_function(request):
         excel_file = request.FILES['excel_file']
         try:
             df = pd.read_excel(excel_file, engine='openpyxl')
+            print(df)
         except Exception as e:
-            return render(request, 'institute_mail_send.html', {'error': f"Error reading file: {str(e)}"})
+            return render(request, 'show_inquiries.html', {'error': f"Error reading file: {str(e)}"})
 
-        if 'institute_email' not in df.columns:
-            return render(request, 'institute_mail_send.html', {'error': 'Excel file must contain "institute email" column.'})
-        email_list = df['institute_email'].dropna().tolist()
-        institute_send_mail.delay(email_list)
-
-        return render(request, 'institute_mail_send.html', {'emails': email_list})
-    return render(request, 'institute_mail_send.html')
+        if 'Email' not in df.columns:
+            return render(request, 'show_inquiries.html', {'error': 'Excel file must contain "institute email" column.'})
+        else:
+            email_list = df['Email'].dropna().tolist()
+            institute_send_mail(email_list)
+            return redirect('inquiry_data')
+    return HttpResponse('Hello')

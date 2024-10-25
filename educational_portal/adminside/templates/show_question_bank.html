@@ -14,6 +14,8 @@
             <tr>
                 <th>Index</th>
                 <th>Chapter</th>
+                <th>Standard</th>
+                <th>Subject</th>
                 <th>Question Type</th>
                 <th>Question</th>
                 <th>Answer</th>
@@ -26,10 +28,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for question in questions %}
+            {% for question in question_answers %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ question.qb_chepter__chep_name }}</td>
+                <td>{{ question.qb_chepter }}</td>
+                <td>{{ question.qb_std }}</td>
+                <td>{{ question.qb_subject }}</td>
                 <td>{{ question.qb_q_type }}</td>
                 <td>{{ question.qb_question|safe }}</td>
                 <td>{{ question.qb_answer|safe }}</td>
