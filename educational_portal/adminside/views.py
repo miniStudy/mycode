@@ -75,7 +75,7 @@ def send_whatsapp_message_test_marks(request):
         "media": media,
         "templateParams": template_params,
     }
-
+    
     # AiSensy API endpoint
     url = 'https://backend.aisensy.com/campaign/t1/api/v2'
     # Make the POST request to the AiSensy API
@@ -87,7 +87,6 @@ def send_whatsapp_message_test_marks(request):
     else:
         error_message = f"Failed to send WhatsApp message: {response.text}"
         return HttpResponse(error_message, status=response.status_code)
-
 
 def paginatoorrr(queryset,request):
         paginator = Paginator(queryset, 20)
@@ -2686,7 +2685,7 @@ def add_fees_collection_admin(request):
                 student_name = form.cleaned_data['fees_stud_id']
                 student_email = [student_name.stud_email]
                 date = datetime.datetime.today()
-                payment_mail.delay(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
+                payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
                
                 # -------------Telegram Send-------------------------------------------------------------------
                
@@ -2925,7 +2924,7 @@ def bulk_upload_questions(request):
                 qb_optionc=options_c[i] if q_types[i] == 'MCQ' else None,
                 qb_optiond=options_d[i] if q_types[i] == 'MCQ' else None,
             )
-    
+
         return redirect('show_question_bank')  # Redirect to the same page after submission
     chap_data = Chepter.objects.filter(chep_std__std_id = 13).values('chep_id','chep_name','chep_sub__sub_name','chep_sub__sub_std__std_name')
     que_type_choices = question_bank.que_type.choices
@@ -2939,8 +2938,32 @@ def bulk_upload_questions(request):
 def show_question_bank(request):
     domain = request.get_host()
     # Fetch all questions from the question_bank model
-    questions = question_bank.objects.filter(domain_name = domain).values('qb_id','qb_chepter__chep_name','qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
-    total_questions = question_bank.objects.filter(domain_name = domain).count()
+
+    excel_data = pd.read_excel('chepter_list.xlsx')
+    chapter_ids = excel_data['Chapter Name'].tolist()
+
+
+    questions = question_bank.objects.values('qb_id','qb_chepter','qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
+
+
+    for i, question in enumerate(questions):
+        if i < len(chapter_ids):
+            qb_id = question['qb_id']
+            chapter_id = chapter_ids[i]  # Get the corresponding chapter ID
+
+            # Update the 'qb_chepter' field in the question_bank entry
+            question_bank.objects.filter(qb_id=qb_id).update(qb_chepter=chapter_id)
+    total_questions = question_bank.objects.all().count()
+
+    chepters_names_with_ids = question_bank.objects.values_list('qb_chepter', 'qb_std', 'qb_subject', 'qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
+
+    chepter_list = [(chep_name, chep_std, che_sub, que_type, question, answer, weightage, q_optiona, q_optionb, q_optionc, q_optiond) for chep_name, chep_std, che_sub, que_type, question, answer, weightage, q_optiona, q_optionb, q_optionc, q_optiond in chepters_names_with_ids]
+
+    df = pd.DataFrame(chepter_list, columns=['Chapter Name', 'Chapter Standard', 'Chepter Subject', 'Question Type', 'Question', 'Answer', 'Weightage', 'Option A', 'Option B', 'Option C', 'Option D'])
+
+    # df.to_excel('chepter_list.xlsx', index=False)
+    
+
     questions = paginatoorrr(questions,request)
     return render(request, 'show_question_bank.html', {'questions': questions, 'total_questions':total_questions})
 
