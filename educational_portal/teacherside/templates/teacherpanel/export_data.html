@@ -1,0 +1,269 @@
+{% extends 'teacherpanel/master.html' %}
+
+{% block contentsection %}
+<script>
+  function toggleColumnVisibility() {
+      const checkboxes = document.querySelectorAll('input[name="selected_fields"]');
+      const table = document.getElementById('data-table');
+      const headers = table.querySelectorAll('thead th');
+      const rows = table.querySelectorAll('tbody tr');
+
+      checkboxes.forEach((checkbox, index) => {
+          const isChecked = checkbox.checked;
+
+          // Toggle header visibility
+          headers[index].style.display = isChecked ? '' : 'none';
+
+          // Toggle each row's cell visibility
+          rows.forEach(row => {
+              row.cells[index].style.display = isChecked ? '' : 'none';
+          });
+      });
+  }
+
+  // Call toggleColumnVisibility on page load
+  window.onload = toggleColumnVisibility;
+</script>
+
+
+
+<div class="mb-4"><h4>Export {{title}}</h4></div>
+
+<style>
+  table,td,th{padding: 5px !important;}
+  td,th{ width: 150px;
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 8px;
+    word-wrap: break-word;}
+</style>
+<div class="card-datatable table-responsive pt-0">
+  
+    <!-- Export Buttons -->
+
+
+
+    <form>
+        {% for field_name in field_names %}
+           <span style="display: inline-block;padding: 10px;"><input type="checkbox" name="selected_fields" id="label{{forloop.counter}}" value="{{ field_name }}" checked onchange="toggleColumnVisibility()"> <label for="label{{forloop.counter}}">{{ field_name }}</label>  </span> 
+        {% endfor %}
+    </form>
+
+
+
+  <hr>
+  
+<div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group me-2" role="group" aria-label="First group">
+    <button onclick="exportTableToCSV('table-data.csv')" class="btn btn-outline-secondary"><i class="fa-solid fa-file-csv fs-4 text-primary"></i></button>
+<button onclick="exportTableToExcel('table-data.xlsx')" class="btn btn-outline-secondary"><i class="fa-solid fa-file-excel fs-4 text-success"></i></button>
+<button onclick="exportTableToPDF('table-data.pdf')" class="btn btn-outline-secondary"><i class="fa-solid fa-file-pdf fs-4 text-danger"></i></button> <!-- New PDF Export Button -->
+<button onclick="printTable()" class="btn btn-outline-secondary"><i class="fa-solid fa-print fs-4 text-info"></i></button>
+  </div>
+
+</div>
+  <hr> 
+
+
+  {% elif attendance_data %}
+  <table id="data-table" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            {% for field_name in field_names %}
+                <th>{{ field_name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for student_value in attendance_data %}
+        <tr>
+          <td>{{ student_value.student_roll_no }}</td>
+            <td>{{ student_value.Date }}</td>
+            <td>{{ student_value.Student_name }}</td>
+            <td>{{ student_value.subject }}</td>
+            <td>{{ student_value.tutor }}</td>
+            <td>{{ student_value.Attendance }}</td>
+            <td>{{ student_value.Batch }}</td>
+            <td>{{ student_value.Std }}</td>
+            <td>{{ student_value.Board }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+
+
+  {% elif tests_data %}
+  <table id="data-table" class="table table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th> </th>
+            {% for field_name in field_names %}
+                <th>{{ field_name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for student_value in tests_data %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ student_value.Test }}</td>
+            <td>{{ student_value.Subject }}</td>
+            <td>{{ student_value.Std }}</td>
+            <td>{{ student_value.Questions }}</td>
+            <td>{{ student_value.Total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+
+  {% else %}
+      <p>No data available for {{ title }}</p>
+  {% endif %}
+</div>
+
+
+<script>
+  function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("#data-table tr");
+
+    for (var i = 0; i < rows.length; i++) {
+      var row = [],
+        cols = rows[i].querySelectorAll("td, th");
+
+      for (var j = 0; j < cols.length; j++) {
+        if (cols[j].style.display !== 'none') { // Check if the column is hidden
+          row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"'); // Escape quotes
+        }
+      }
+
+      csv.push(row.join(","));
+    }
+
+    // Download CSV
+    downloadCSV(csv.join("\n"), filename);
+  }
+
+  function exportTableToExcel(filename) {
+    var table = document.getElementById('data-table');
+    var clonedTable = table.cloneNode(true); // Clone the table to avoid modifying the original
+
+    // Remove hidden columns from the cloned table
+    Array.from(clonedTable.rows).forEach(row => {
+      Array.from(row.cells).forEach(cell => {
+        if (cell.style.display === 'none') {
+          row.removeChild(cell);
+        }
+      });
+    });
+
+    var workbook = XLSX.utils.table_to_book(clonedTable, { sheet: "Sheet1" });
+    XLSX.writeFile(workbook, filename);
+  }
+
+  async function exportTableToPDF(filename) {
+    const { jsPDF } = window.jspdf;  // Access jsPDF from the window object
+    const doc = new jsPDF('landscape', 'pt', 'a4');  // Create a new jsPDF document in landscape mode
+
+    const table = document.getElementById("data-table");
+
+    // Extract Table Data
+    var rows = table.querySelectorAll("tr");
+    var data = [];
+
+    rows.forEach((row) => {
+      var cols = row.querySelectorAll("td, th");
+      var rowData = [];
+      cols.forEach(col => {
+        if (col.style.display !== 'none') { // Check if the column is hidden
+          rowData.push(col.innerText.trim());
+        }
+      });
+      data.push(rowData);
+    });
+
+    // Calculate equal width for each column
+    const totalColumns = data[0].length;  // Assuming the first row contains the header
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 40;  // Left and right margin combined
+    const usableWidth = pageWidth - margin;
+    const equalColumnWidth = usableWidth / totalColumns;
+
+    // Setup autoTable with equal column widths
+    doc.autoTable({
+      head: [data[0]],  // Header row
+      body: data.slice(1),  // Body rows
+      startY: 20,
+      theme: 'striped',  // Table theme: striped, grid, plain
+      headStyles: { fillColor: [22, 160, 133], textColor: 255 },  // Header styling
+      bodyStyles: { fillColor: [242, 242, 242] },  // Body styling
+      alternateRowStyles: { fillColor: [255, 255, 255] },  // Alternating row styles
+      styles: {
+        fontSize: 8,  // Font size
+        overflow: 'linebreak',  // Handling overflow content
+        cellPadding: 3,  // Cell padding
+        valign: 'middle',  // Vertical alignment
+        halign: 'center',  // Horizontal alignment
+        minCellHeight: 20  // Minimum cell height
+      },
+      columnStyles: {
+        0: { cellWidth: equalColumnWidth },  // Set equal width for each column
+        1: { cellWidth: equalColumnWidth },
+        2: { cellWidth: equalColumnWidth },
+        // Repeat for all columns
+        // or use dynamic mapping for multiple columns:
+        ...Array.from({ length: totalColumns }, (_, i) => ({ [i]: { cellWidth: equalColumnWidth } })).reduce((a, b) => Object.assign(a, b), {})
+      },
+      didDrawPage: function (data) {
+        // Optional: Draw header/footer on each page
+        doc.text('Student Data Export', data.settings.margin.left, 10);
+      },
+    });
+
+    // Save the PDF
+    doc.save(filename);
+  }
+
+  function printTable() {
+    // Extract the table HTML
+    var table = document.getElementById("data-table");
+    var tableHTML = table.outerHTML;
+
+    // Create a new window for printing
+    var printWindow = window.open('', '', 'height=800,width=1200');
+
+    // Write the table HTML to the new window
+    printWindow.document.write('<html><head><title>Print Table</title>');
+    printWindow.document.write('<style>');  // Add styles for the print layout
+    printWindow.document.write('table { width: 100%; border-collapse: collapse; }');
+    printWindow.document.write('th, td { border: 1px solid black; padding: 8px; text-align: left; }');
+    printWindow.document.write('th { background-color: #f2f2f2; }');
+    printWindow.document.write('@media print { table { page-break-inside: auto; } tr { page-break-inside: avoid; page-break-after: auto; } }');
+    printWindow.document.write('</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<h1>Student Data</h1>');  // Optional title
+    printWindow.document.write(tableHTML);  // Insert the table HTML
+    printWindow.document.write('</body></html>');
+
+    // Close the document and trigger print dialog
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  }
+</script>
+
+
+
+
+<!-- Include jsPDF and jsPDF AutoTable libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+
+<!-- JavaScript Libraries and Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+
+{% endblock %}

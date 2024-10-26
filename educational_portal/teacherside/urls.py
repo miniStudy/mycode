@@ -86,4 +86,8 @@ urlpatterns = [
     path('today_learning/', teacherview.today_learning_show, name='today_learning'),
     path('today_learning_delete/', teacherview.today_learning_delete, name='today_learning_delete'),
     path('today_learning_insert_update/', teacherview.today_learning_insert_update, name='today_learning_insert_update'),
+
+
+    path('teacher_export_data/',teacherview.teacher_export_data, name='teacher_export_data'),
+
 ]

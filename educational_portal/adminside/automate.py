@@ -106,6 +106,22 @@ def subject_creation(institute_domain, std, subject_name):
 
 
 def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
+    return_list = chapter_list_func(chep_sub, chep_std)
+    counter = 0
+    if len(return_list[0]) !=0:
+        for x in return_list[0]:           
+            chapter = Chepter.objects.create(
+                chep_name = x,
+                chep_sub = chep_sub,
+                chep_std = chep_std,
+                domain_name = institute_domain
+            )
+            lenth = len(return_list[1])
+            if counter < lenth:
+                path =  "MiniSudy-Materials/{}".format(return_list[1][counter])
+                insert_chapterwise_material(chapter.chep_id, chapter.chep_name, path, domain_name=institute_domain)
+            counter += 1
+
     chepter_list = chapter_list_func(chep_sub, chep_std)
     for x in chepter_list:           
         chapter = Chepter.objects.create(
