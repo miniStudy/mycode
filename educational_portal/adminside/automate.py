@@ -103,17 +103,6 @@ def subject_creation(institute_domain, std, subject_name):
     )
     std = Std.objects.get(std_id = subject.sub_std.std_id)
     chapter_creation(institute_domain, English_5_CBSE, subject, std)
-    
-    
-def insert_chapterwise_material(cm_chepter_id, cm_filename, cm_file,domain_name):
-    with connection.cursor() as cursor:
-        # Create the SQL insert query
-        query = """
-            INSERT INTO Chepterwise_Material (cm_chepter_id, cm_filename, cm_file, domain_name)
-            VALUES (%s, %s, %s, %s)
-        """
-        # Execute the query with the provided data
-        cursor.execute(query, [cm_chepter_id, cm_filename, cm_file, domain_name])
 
 
 def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
@@ -133,3 +122,23 @@ def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
                 insert_chapterwise_material(chapter.chep_id, chapter.chep_name, path, domain_name=institute_domain)
             counter += 1
 
+    chepter_list = chapter_list_func(chep_sub, chep_std)
+    for x in chepter_list:           
+        chapter = Chepter.objects.create(
+            chep_name = x,
+            chep_sub = chep_sub,
+            chep_std = chep_std,
+            domain_name = institute_domain
+        )
+
+    
+    
+def insert_chapterwise_material(cm_chepter_id, cm_filename, cm_file, cm_file_icon=None, domain_name=None):
+    with connection.cursor() as cursor:
+        # Create the SQL insert query
+        query = """
+            INSERT INTO Chepterwise_Material (cm_chepter_id, cm_filename, cm_file, cm_file_icon, domain_name)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        # Execute the query with the provided data
+        cursor.execute(query, [cm_chepter_id, cm_filename, cm_file, cm_file_icon, domain_name])
