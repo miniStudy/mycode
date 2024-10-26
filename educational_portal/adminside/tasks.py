@@ -257,7 +257,6 @@ def send_email_for_meeting(parent_email, parent_name, meeting_date):
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
-    
 
 # -----------------------------------------Telegram------------------------------------------------------------------------------
 
@@ -436,6 +435,21 @@ def event_telegram_message_parent(event_name, event_date, student_email_ids):
             f"[Click here for more info](http://api.ministudy.in/)"
         )
         send_telegram_message(email, message, title)
+
+def doubt_telegram_message_student(doubt_topic, doubt_date, student_chat_ids):
+    title = "New Doubt Alert"
+    for chat_id in student_chat_ids:
+        message = (
+            f"Dear Student,\n\n"
+            f"A new doubt on *{doubt_topic}* has been raised on {doubt_date}.\n"
+            f"We encourage you to check it out and provide your insights or seek clarifications if needed.\n\n"
+            f"Engage with the doubt and explore other active discussions on our portal.\n\n"
+            f"Warm regards,\n"
+            f"MiniStudy Team\n\n"
+            f"[Click here to explore the doubt](http://api.ministudy.in/)"
+        )
+        send_telegram_message(chat_id, message, title)
+
 
 
 
