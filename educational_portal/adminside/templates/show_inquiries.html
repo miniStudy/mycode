@@ -147,11 +147,11 @@
             </tbody>
         </table>
     </div>
-    <h2>Monthly Leads</h2>
-    <hr>
+    <!-- <h2>Monthly Leads</h2> -->
+    <!-- <hr> -->
     
     <!-- Canvas for Chart.js -->
-    <canvas id="monthlyLeadsChart" width="800" height="400"></canvas>
+    <!-- <canvas id="monthlyLeadsChart" width="800" height="400"></canvas> -->
     
     
     <script>
@@ -247,17 +247,45 @@
   <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
 
   </form>
-  <div class="card">
-    <form method="post" enctype="multipart/form-data" action="{% url 'institute_main_send' %}">
-      {% csrf_token %}
-      <div class="mb-3">
-          <label for="excelFile" class="form-label">Upload Excel File</label>
-          <input type="file" name="excel_file" class="form-control" id="excelFile" accept=".xlsx, .xls" required>
+  
+  </div>
+  </div>
+
+
+  <div class="card p-3 mt-4">
+    <div class="row">
+    <div class="col-md-3">
+      <img src="/static/imgs/uploadexeldesign3.png" class="w-100" >
+    </div>
+    <div class="col-md-8">
+      <div class="myheadfont">Lead Acquisition Tools</div>
+      <p class="mt-2">Easily grow your leads with our tool! Just upload an Excel file with email contacts, pick an email template, and send messages to everyone with one click. Turn your contacts into leads quickly and effortlessly.</p>
+      <form method="post" enctype="multipart/form-data" class="mt-3" action="{% url 'institute_main_send' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="excelFile" class="form-label mb-2">Upload Excel</label>
+            <input type="file" name="excel_file" class="form-control" id="excelFile" accept=".xlsx, .xls" required>
+            <span style="font-size: 10px;">*Your Excel File must have field Name 'Email'.</span>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Upload</button>
+      </form>
+      
+      <div class="mt-4 bg-label-success" style="display: inline-block;border-radius: 20px;padding: 10px 20px 10px 20px;">
+        <div class="myheadfont"></div>
+        <a href="https://wa.me/?text=Check out this amazing educational portal: www.ministudy.in" target="_blank"><span><i class="fa-brands fa-whatsapp text-success fs-4"></i></span></a>
+        <input type="hidden" id="linkToCopy" value="https://ministudy.com" readonly>
+        <span onclick="copyLink()" class="ms-3"><i class="fa-regular fa-copy text-info fs-4"></i></span>
+        <script>
+          function copyLink() {
+              navigator.clipboard.writeText(document.getElementById('linkToCopy').value)
+                  .then(() => alert('Link copied'))
+                  .catch(err => console.error('Could not copy text: ', err));
+          }
+      </script>
       </div>
-      <button type="submit" class="btn btn-primary">Upload</button>
-    </form>
-  </div>
-  </div>
+    </div>
+    </div>
   </div>
 
   <!--/ DataTable with Buttons -->

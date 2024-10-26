@@ -2956,7 +2956,7 @@ def show_question_bank(request):
     subject_names = excel_data['Chepter Subject'].tolist()
 
 
-    questions = question_bank.objects.values('qb_id', 'qb_chepter')[:50]
+    questions = question_bank.objects.values('qb_id', 'qb_chepter')
 
     for i, question in enumerate(questions):
         if i < len(chapter_names):
