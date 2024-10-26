@@ -3,6 +3,7 @@ from adminside.models import *
 from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
+from datetime import datetime
 import math
 import statistics
 from django.db.models import Sum,Count,Avg, Value
@@ -14,6 +15,8 @@ from .forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 # Create your views here.
 # mail integration 
+from studentside.send_mail import *
+from adminside.tasks import *
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
@@ -637,7 +640,7 @@ def Student_add_doubts(request):
         if not any(fac['fac_id'] == x.fa_faculty.fac_id for fac in fac_disc):
             fac_disc.append({'fac_id': x.fa_faculty.fac_id, 'fac_name': x.fa_faculty.fac_name})
 
-
+    
    
 
     context = {
@@ -652,6 +655,21 @@ def Student_add_doubts(request):
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
+
+            doubt_subject = form.cleaned_data['doubt_subject']
+
+            student_std_id = request.session['stud_std']
+            student_batch_id = request.session['stud_batch']
+            student_list = Students.objects.filter(stud_std__std_id=student_std_id, stud_batch__batch_id=student_batch_id)
+
+            playerids = [player.stud_onesignal_player_id for player in student_list]
+            student_chat_ids = [chat.stud_telegram_studentchat_id for chat in student_list]
+            date = datetime.today()
+            title = 'New Doubt Notification!'
+            message = 'A new doubt has been successfully added. Please review it at your earliest convenience.'
+            send_notification(playerids,title,message, request)
+            doubt_telegram_message_student(doubt_subject, date, student_chat_ids)
+
             return redirect('Student_Doubt') 
     form = doubts_form()   
     context.update({'form':form}) 
