@@ -63,6 +63,7 @@
           <thead>
             <tr>
               <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
+              <th>Roll No.</th>
               <th>Name</th>
               <th>Username</th>
               <th>Contact</th>
@@ -85,6 +86,7 @@
             {% for data in data %}
             <tr>
               <td><input type="checkbox" class="form-check-input" value="{{ data.stud_id }}" name="selection" /></td>
+              <td>{{ data.stud_roll_no }}</td>
               <td>{{ data.stud_name }} {{ data.stud_lastname }}</td>
               <td>{{ data.stud_username }}</td>
               <td>{{ data.stud_contact }}</td>

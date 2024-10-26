@@ -1812,7 +1812,7 @@ def show_students(request):
             'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
             'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
             'stud_pack__pack_name', 'stud_guardian_email', 'stud_guardian_name', 
-            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
+            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender','stud_roll_no'
         )
 
         batch_data = Batches.objects.filter(batch_std__std_id=get_std_id, domain_name = domain)
@@ -1834,7 +1834,7 @@ def show_students(request):
             'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
             'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
             'stud_pack__pack_name', 'stud_guardian_email', 'stud_guardian_name', 
-            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
+            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender','stud_roll_no'
         )
 
         batch_data = Batches.objects.filter(batch_std__std_id=get_std_id, domain_name = domain)
@@ -1854,7 +1854,7 @@ def show_students(request):
             'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
             'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
             'stud_pack__pack_name', 'stud_guardian_email', 'stud_guardian_name', 
-            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
+            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender','stud_roll_no'
         )
         
         batch_data = Batches.objects.filter(domain_name = domain)
@@ -1890,7 +1890,7 @@ def show_students(request):
             'stud_email', 'stud_dob', 'stud_std__std_name', 'stud_std__std_board__brd_name', 
             'stud_batch__batch_name', 'stud_std__std_id', 'stud_batch__batch_id', 
             'stud_pack__pack_name', 'stud_guardian_email', 'stud_guardian_name', 
-            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender'
+            'stud_guardian_number', 'stud_address', 'stud_guardian_profession', 'stud_gender','stud_roll_no'
             )
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh})  
