@@ -231,6 +231,8 @@ Sanskrit_6_materials = [
     '6-NCERT-SANSKRIT-11.pdf',
     '6-NCERT-SANSKRIT-12.pdf',
     '6-NCERT-SANSKRIT-13.pdf',
+    '6-NCERT-SANSKRIT-14.pdf',
+    '6-NCERT-SANSKRIT-15.pdf',
 ]
 
 # ============== Class 7th ===============================
@@ -746,6 +748,28 @@ English_10_CBSE = [
     '18. The Book that Saved the Earth',
 ]
 
+English_10_materials = [
+    '10-NCERT-ENGLISH_I-1.pdf',
+    '10-NCERT-ENGLISH_I-2.pdf',
+    '10-NCERT-ENGLISH_I-3.pdf',
+    '10-NCERT-ENGLISH_I-4.pdf',
+    '10-NCERT-ENGLISH_I-5.pdf',
+    '10-NCERT-ENGLISH_I-6.pdf',
+    '10-NCERT-ENGLISH_I-7pdf',
+    '10-NCERT-ENGLISH_I-8.pdf',
+    '10-NCERT-ENGLISH_I-9.pdf',
+    '10-NCERT-ENGLISH_II-1.pdf',
+    '10-NCERT-ENGLISH_II-2.pdf',
+    '10-NCERT-ENGLISH_II-3.pdf',
+    '10-NCERT-ENGLISH_II-4.pdf',
+    '10-NCERT-ENGLISH_II-5.pdf',
+    '10-NCERT-ENGLISH_II-6.pdf',
+    '10-NCERT-ENGLISH_II-7.pdf',
+    '10-NCERT-ENGLISH_II-8.pdf',
+    '10-NCERT-ENGLISH_II-9.pdf',
+]
+
+
 Maths_10_CBSE = [
     '1. Real Numbers',
     '2. Polynomials',
@@ -763,6 +787,24 @@ Maths_10_CBSE = [
     '14. Probability'
 ]
 
+Maths_10_materials = [
+    '10-NCER-MATHS-1.pdf',
+    '10-NCER-MATHS-2.pdf',
+    '10-NCER-MATHS-3.pdf',
+    '10-NCER-MATHS-4.pdf',
+    '10-NCER-MATHS-5.pdf',
+    '10-NCER-MATHS-6.pdf',
+    '10-NCER-MATHS-7.pdf',
+    '10-NCER-MATHS-8.pdf',
+    '10-NCER-MATHS-9.pdf',
+    '10-NCER-MATHS-10.pdf',
+    '10-NCER-MATHS-11.pdf',
+    '10-NCER-MATHS-12.pdf',
+    '10-NCER-MATHS-13.pdf',
+    '10-NCER-MATHS-14.pdf',
+]
+
+
 Science_10_CBSE = [
     '1. Chemical Reactions and Equations',
     '2. Acids, Bases and Salts',
@@ -778,6 +820,23 @@ Science_10_CBSE = [
     '12. Magnetic Effects of Electric Current',
     '13. Our Environment'
 ]
+
+Science_10_materials = [
+    '10-NCERT-SCIENCE-1.pdf',
+    '10-NCERT-SCIENCE-2.pdf',
+    '10-NCERT-SCIENCE-3.pdf',
+    '10-NCERT-SCIENCE-4.pdf',
+    '10-NCERT-SCIENCE-5.pdf',
+    '10-NCERT-SCIENCE-6.pdf',
+    '10-NCERT-SCIENCE-7.pdf',
+    '10-NCERT-SCIENCE-8.pdf',
+    '10-NCERT-SCIENCE-9.pdf',
+    '10-NCERT-SCIENCE-10.pdf',
+    '10-NCERT-SCIENCE-11.pdf',
+    '10-NCERT-SCIENCE-12.pdf',
+    '10-NCERT-SCIENCE-13.pdf',
+]
+
 
 SST_10_CBSE = [
     'Chapter 1: The Rise of Nationalism in Europe - H',
@@ -807,6 +866,14 @@ SST_10_CBSE = [
     'Chapter 5: Outcomes of Democracy - C'
 ]
 
+SST_10_materials = [
+    '10-NCERT-HISTORY-1.pdf',
+    '10-NCERT-HISTORY-2.pdf',
+    '10-NCERT-HISTORY-3.pdf',
+    '10-NCERT-HISTORY-4.pdf',
+    '10-NCERT-HISTORY-5.pdf',
+]
+
 Hindi_10_CBSE = [
     'Chapter 1: पद',
     'Chapter 2: राम-लक्ष्मण-परशुराम संवाद',
@@ -820,6 +887,21 @@ Hindi_10_CBSE = [
     'Chapter 10: एक कहानी यह भी',
     'Chapter 11: नौबतखाने में इबादत',
     'Chapter 12: संस्कृति'
+]
+
+Hindi_10_materials = [
+    '10-NCERT-HINDI-1.pdf',
+    '10-NCERT-HINDI-2.pdf',
+    '10-NCERT-HINDI-3.pdf',
+    '10-NCERT-HINDI-4.pdf',
+    '10-NCERT-HINDI-5.pdf',
+    '10-NCERT-HINDI-6.pdf',
+    '10-NCERT-HINDI-7.pdf',
+    '10-NCERT-HINDI-8.pdf',
+    '10-NCERT-HINDI-9.pdf',
+    '10-NCERT-HINDI-10.pdf',
+    '10-NCERT-HINDI-11.pdf',
+    '10-NCERT-HINDI-12.pdf',
 ]
 
 
@@ -944,27 +1026,27 @@ def chapter_list_func(chep_sub, chep_std):
         # ================= Class 10TH =======================
     
     elif chep_sub.sub_name == 'English' and chep_std.std_name == '10':
-        return_list = [English_10_CBSE, []]
+        return_list = [English_10_CBSE, English_10_materials]
         return return_list
     
     elif chep_sub.sub_name == 'Mathematics' and chep_std.std_name == '10':
-        return_list = [Maths_10_CBSE, []]
+        return_list = [Maths_10_CBSE, Maths_10_materials]
         return return_list
     
     elif chep_sub.sub_name == 'Science' and chep_std.std_name == '10':
-        return_list = [Science_10_CBSE,[]]
+        return_list = [Science_10_CBSE,Science_10_materials]
         return return_list
     
     elif chep_sub.sub_name == 'Social Science' and chep_std.std_name == '10':
-        return_list = [SST_10_CBSE,[]]
+        return_list = [SST_10_CBSE, SST_10_materials]
         return return_list
     
     elif chep_sub.sub_name == 'Hindi' and chep_std.std_name == '10':
-        return_list = [Hindi_10_CBSE,[]]
+        return_list = [Hindi_10_CBSE, Hindi_10_materials]
         return return_list
 
     else:
-        print("Else me aa gya hai===============")
-        return []
+        print("Else me aa gya hai")
+        return [[],[]]
 
     

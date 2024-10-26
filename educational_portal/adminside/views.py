@@ -2887,9 +2887,22 @@ def export_data(request):
 
             tests_data.append(temp_data)
         Context.update({'tests_data':tests_data, 'field_names':field_names})
+
+
+    if model_name == 'inquiries':
+        inquiries_data = []
+        data = Inquiries.objects.filter(domain_name = domain).order_by('-inq_date')
+        email_ids = list(Students.objects.values_list('stud_email', flat=True))
+
+        field_names = ['Name', 'Phone', 'Subject', 'Std', 'Guardian Phone', 'Email', 'DOB', 'Gender', 'School Name', 'Std & Percentage', 'Guardian Name', 'Guardian Email', 'Guardian Profession', 'Address', 'Date', 'Know From', 'Admission']
+
+        for x in data:
+            temp_data = {}
+            temp_data.update({'Name':'{} {}'.format(x.inq_name, x.inq_lastname), 'Phone':x.inq_contact, 'Subject':x.inq_subjects, 'Std':x.inq_std, 'Guardian_Phone':x.inq_guardian_number, 'Email': x.inq_email, 'DOB': x.inq_dob, 'Gender': x.inq_gender, 'School':x.inq_schoolname, 'Std_Percentage': x.inq_last_std_and_marks, 'Guardian_name':x.inq_guardian_name, 'Guardian_email':x.inq_guardian_email, 'Guardian_profession':x.inq_guardian_profession, 'Address':x.inq_address, 'Date':x.inq_date, 'Know_from':x.inq_howuknow, 'Admission':x.inq_email})
+
+            inquiries_data.append(temp_data)
+        Context.update({'inquiries_data':inquiries_data, 'field_name':field_names, 'email_ids':email_ids})
         
-
-
 
     return render(request, 'export_data.html',Context)
 
