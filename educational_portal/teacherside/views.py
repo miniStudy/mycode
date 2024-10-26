@@ -1512,7 +1512,7 @@ def teacher_profile_update(request):
     }
     return render(request, 'teacherpanel/updateprofile.html',context)
 
-
+@teacher_login_required
 def report_card_show(request):
     domain = request.get_host()
     fac_id = request.session['fac_id']
@@ -1720,7 +1720,7 @@ def report_card_show(request):
         context.update({'noreport_card':noreport_card})
     return render(request, 'teacherpanel/report_card.html', context)
 
-
+@teacher_login_required
 def today_learning_show(request):
     domain = request.get_host()
     fac_id = request.session['fac_id']
@@ -1765,6 +1765,7 @@ def today_learning_show(request):
 
     return render(request, 'teacherpanel/today_learn.html', context)
 
+@teacher_login_required
 def today_learning_insert_update(request):
     title = 'Class-Overview'
     domain = request.get_host()
@@ -1845,7 +1846,7 @@ def today_learning_insert_update(request):
     return render(request, 'teacherpanel/today_learn_insert_update.html', context)
 
 
-
+@teacher_login_required
 def today_learning_delete(request):
     if request.method == 'POST':
         selected_items = request.POST.getlist('selection')
@@ -1858,7 +1859,7 @@ def today_learning_delete(request):
                 messages.error(request, f'An error occurred: {str(e)}')
     return redirect('today_learning')
 
-
+@teacher_login_required
 def show_question_paper(request):
     domain = request.get_host()
     tests_data = None  # Initialize with a default value
@@ -1874,10 +1875,7 @@ def show_question_paper(request):
     }
     return render(request, 'teacherpanel/show_question_paper.html', context)
 
-
-
-
-
+@teacher_login_required
 def delete_test_question_answer_teacher(request):
     if request.GET.get('delete_id'):
         del_id = request.GET['delete_id']
@@ -1891,6 +1889,62 @@ def delete_test_question_answer_teacher(request):
         url = '/teacherside/show_test_questions_teacher/?test_id={}'.format(request.GET['test_id'])
     return redirect(url)
 
+
+@teacher_login_required
+def teacher_export_data(request):
+    domain = request.get_host()
+    model_name = request.GET.get('model_name')
+    Context={'title':model_name}
+    fac_id = request.session['fac_id']
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
+    subjects_list = [x.fa_subject.sub_id for x in faculty_access]
+    std_list = [x.fa_batch.batch_std.std_id for x in faculty_access]
+
+    
+    if model_name == 'chepterwise_test':
+        tests_data = []
+        
+        data = Chepterwise_test.objects.filter(test_std__std_id__in = std_list ,domain_name = domain).annotate(
+            num_questions=Count('test_questions_answer'),
+            total_marks=Sum('test_questions_answer__tq_weightage')
+        )
+
+        field_names = ['Test Name', 'Subject', 'Std', 'Questions', 'Total Marks']
+        for x in data:
+            temp_data = {}
+            temp_data.update({'Test':x.test_name, 'Subject':x.test_sub.sub_name, 'Std':"{} {}".format(x.test_std.std_name, x.test_std.std_board.brd_name), 'Questions':x.num_questions, 'Total':x.total_marks})
+
+            tests_data.append(temp_data)
+        Context.update({'tests_data':tests_data, 'field_names':field_names})
+
+
+    
+    if model_name == 'attendance':
+        attendance_data = []
+        
+        data = Attendance.objects.filter(domain_name = domain)
+
+        field_names = ['Roll No','Date','Name','Subject','Tutor','Attendance','Batch','Std','Board']
+        for x in data:
+            temp_data = {}
+            if x.atten_present == True:
+                atten_present = "Present"
+            else:
+                atten_present = "Absent"
+            temp_data.update({'Date':x.atten_date,
+            'student_roll_no':x.atten_student.stud_roll_no,
+            'Student_name':"{} {}".format(x.atten_student.stud_name, x.atten_student.stud_lastname),
+            'subject':x.atten_timetable.tt_subject1.sub_name,
+            'tutor':x.atten_timetable.tt_tutor1.fac_name,
+            'Attendance': atten_present,
+            'Batch':x.atten_student.stud_batch.batch_name,
+            'Std':x.atten_student.stud_std.std_name,
+            'Board':x.atten_student.stud_std.std_board.brd_name})
+
+            attendance_data.append(temp_data)
+        Context.update({'attendance_data':attendance_data,'field_names':field_names}) 
+
+    return render(request, 'export_data.html',Context)
 
 
 @csrf_exempt  # Skip CSRF verification for API testing (enable CSRF protection for production)
