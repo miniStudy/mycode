@@ -3123,14 +3123,39 @@ def institute_main_send_function(request):
 
 
 @admin_login_required
-def show_mail_templates(request):
+def show_mail_templates_function(request):
     domain = request.get_host()
-    templates = mail_templates.objects.all()
+    templates = mail_templates.objects.filter(domain_name = domain)
 
     context = {
         'title':'mail_templates',
         'templates':templates,
     }
 
-    return
+    return render(request, 'show_mail_templates.html', context)
+
+
+@admin_login_required
+def insert_update_mail_templates(request):
+    domain = request.get_host()
+    templates = mail_templates.objects.filter(domain_name = domain)
+
+    context = {
+        'title':'mail_templates',
+        'templates':templates,
+    }
+
+    if request.method == 'POST':
+        form = mail_templates_form(request.POST)
+        context.update({'form':form})
+        if form.is_valid():
+            form.instance.domain_name = domain
+            form.save()
+            return redirect('show_mail_templates')
+        else:
+            filled_data = form.data
+            return render(request, 'insert_update/mail_templates.html', {'errors': form.errors,'filled_data':filled_data})
+        
+    context['form'] = mail_templates_form()
+    return render(request, 'insert_update/mail_templates.html', context)
 
