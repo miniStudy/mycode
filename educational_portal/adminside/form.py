@@ -99,3 +99,9 @@ class fees_collection_form(forms.ModelForm):
     class Meta:
         model = Fees_Collection
         fields = "__all__"        
+
+
+class mail_templates_form(forms.ModelForm):
+    class Meta:
+        model = mail_templates
+        fields = "__all__"
