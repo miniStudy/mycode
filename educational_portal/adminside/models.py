@@ -62,7 +62,6 @@ class Chepter(models.Model):
     chep_sub = models.ForeignKey(Subject,on_delete=models.CASCADE,null=True,blank=True)
     chep_sem = models.CharField(max_length=20,blank=True)
     chep_std = models.ForeignKey(Std,on_delete=models.CASCADE)
-    chep_icon = models.ImageField(upload_to='uploads/')
     domain_name = models.CharField(blank=True,null=True,max_length=100)
 
     def __str__(self):
@@ -289,7 +288,7 @@ class Chepterwise_test(models.Model):
     test_name = models.CharField(max_length=100)
     test_std =  models.ForeignKey(Std, on_delete=models.CASCADE)
     test_sub = models.ForeignKey(Subject, on_delete=models.CASCADE,null=True,blank=True)
-    test_sem = models.CharField(choices=sem_choices, max_length=50)
+    test_sem = models.CharField(choices=sem_choices, max_length=50, null=True, blank=True)
     test_time = models.CharField(null=True,blank=True,max_length=200)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
     
