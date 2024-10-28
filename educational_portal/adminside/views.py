@@ -34,6 +34,8 @@ from django.core.mail import send_mail
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 from django.core.exceptions import ObjectDoesNotExist
+from django.template import Template, Context
+
 
 # =================celery=========================
 from educational_portal.celery import add
@@ -678,16 +680,23 @@ def insert_update_announcements(request):
                 if x.stud_onesignal_player_id:  
                     onesignal_player_id_list.append(x.stud_onesignal_player_id)
                 if x.stud_telegram_studentchat_id:    
-                    announcement_telegram_message_student(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
-                    announcement_telegram_message_parent(x.stud_telegram_parentschat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
+                    # announcement_telegram_message_student(x.stud_telegram_studentchat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
+                    # announcement_telegram_message_parent(x.stud_telegram_parentschat_id, form.cleaned_data['announce_msg'],form.cleaned_data['announce_title'])
+                    pass
 
-            htmly = get_template('Email/announcement.html')
+            # htmly = get_template('Email/announcement.html')
+            htmly = mail_templates.objects.get(mail_temp_type = 'Announcement_mail').mail_temp_html
+            context_data = {
+            'title': form.cleaned_data['announce_title'],
+            'msg': form.cleaned_data['announce_msg'],
+    }
+            htmly = Template(htmly)
             d = {'title': form.cleaned_data['announce_title'],'msg':form.cleaned_data['announce_msg']}
-            html_content = htmly.render(d)     
-            announcement_mail.delay(students_email_list,html_content)
+            html_content = htmly.render(Context(context_data))     
+            announcement_mail(students_email_list,html_content)
             # -------------One Single Player Id------------------------------------------------------------------------
 
-            title = '📢 New Announcement'
+            title = 'New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
             for player_id in onesignal_player_id_list:
                 send_notification(player_id,title,mess,request)
