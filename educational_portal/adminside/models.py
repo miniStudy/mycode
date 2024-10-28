@@ -62,7 +62,6 @@ class Chepter(models.Model):
     chep_sub = models.ForeignKey(Subject,on_delete=models.CASCADE,null=True,blank=True)
     chep_sem = models.CharField(max_length=20,blank=True)
     chep_std = models.ForeignKey(Std,on_delete=models.CASCADE)
-    chep_icon = models.ImageField(upload_to='uploads/')
     domain_name = models.CharField(blank=True,null=True,max_length=100)
 
     def __str__(self):
@@ -289,7 +288,7 @@ class Chepterwise_test(models.Model):
     test_name = models.CharField(max_length=100)
     test_std =  models.ForeignKey(Std, on_delete=models.CASCADE)
     test_sub = models.ForeignKey(Subject, on_delete=models.CASCADE,null=True,blank=True)
-    test_sem = models.CharField(choices=sem_choices, max_length=50)
+    test_sem = models.CharField(choices=sem_choices, max_length=50, null=True, blank=True)
     test_time = models.CharField(null=True,blank=True,max_length=200)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
     
@@ -577,3 +576,22 @@ class question_bank(models.Model):
     
     class Meta:
         db_table = 'question_bank'
+
+
+
+class mail_templates(models.Model):
+    class mail_option(models.TextChoices):
+        Itroduction_mail = 'Itroduction_mail','Itroduction_mail'
+        Marketing_mail = 'Marketing_mail','Marketing_mail'
+
+    mail_temp_id = models.BigAutoField(primary_key=True)
+    mail_temp_html = models.TextField(blank=True, null=True)
+    mail_temp_type = models.CharField(choices=mail_option.choices, max_length=50)
+    mail_temp_selected = models.BooleanField(default=0)
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
+
+    def __str__(self):
+        return f"{self.mail_temp_html} - {self.mail_temp_type}" 
+
+    class Meta:
+        db_table = 'mail_templates'

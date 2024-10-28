@@ -154,4 +154,7 @@ urlpatterns = [
 
     path('time_slot/', adminview.time_slot_function, name='time_slot'),
     path('institute_main_send/', adminview.institute_main_send_function, name='institute_main_send'),
+
+    path('show_mail_templates/', adminview.show_mail_templates_function, name='show_mail_templates'),
+    path('insert_update_mail_templates/', adminview.insert_update_mail_templates, name='insert_update_mail_templates'),
 ]
