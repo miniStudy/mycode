@@ -1517,9 +1517,10 @@ def insert_update_tests(request):
                         # Function to get questions by weightage
                         def get_questions_by_weightage(weightage, count):
                             return question_bank.objects.filter(
-                                qb_chepter=chap_object,
+                                qb_chepter = chap_object.chep_name,
+                                qb_std = chap_object.chep_std.std_name,
+                                qb_subject = chap_object.chep_sub.sub_name,
                                 qb_weightage=weightage,
-                                domain_name = domain,
                             ).order_by('?')[:count]
 
                         # Retrieve questions based on weightage
@@ -1530,9 +1531,10 @@ def insert_update_tests(request):
 
                         # Insert the generated questions into Test_questions_answer
                         for question in one_mark_questions:
+                            chep_id = Chepter.objects.get(chep_name = question.qb_chepter, domain_name = domain)
                             Test_questions_answer.objects.create(     
                                 tq_name=test_instance,
-                                tq_chepter=question.qb_chepter,
+                                tq_chepter=chep_id,
                                 tq_q_type=Test_questions_answer.que_type.Question_Answer,
                                 tq_question=question.qb_question,
                                 tq_answer=question.qb_answer,
@@ -1546,9 +1548,10 @@ def insert_update_tests(request):
                             )
 
                         for question in two_mark_questions:
+                            chep_id = Chepter.objects.get(chep_name = question.qb_chepter, domain_name = domain)
                             Test_questions_answer.objects.create(
                                 tq_name=test_instance,
-                                tq_chepter=question.qb_chepter,
+                                tq_chepter=chep_id,
                                 tq_q_type=Test_questions_answer.que_type.Question_Answer,
                                 tq_question=question.qb_question,
                                 tq_answer=question.qb_answer,
@@ -1562,9 +1565,10 @@ def insert_update_tests(request):
                             )
 
                         for question in three_mark_questions:
+                            chep_id = Chepter.objects.get(chep_name = question.qb_chepter, domain_name = domain)
                             Test_questions_answer.objects.create(
                                 tq_name=test_instance,
-                                tq_chepter=question.qb_chepter,
+                                tq_chepter=chep_id,
                                 tq_q_type=Test_questions_answer.que_type.Question_Answer,
                                 tq_question=question.qb_question,
                                 tq_answer=question.qb_answer,
@@ -1578,9 +1582,10 @@ def insert_update_tests(request):
                             )
 
                         for question in four_mark_questions:
+                            chep_id = Chepter.objects.get(chep_name = question.qb_chepter, domain_name = domain)
                             Test_questions_answer.objects.create(
                                 tq_name=test_instance,
-                                tq_chepter=question.qb_chepter,
+                                tq_chepter=chep_id,
                                 tq_q_type=Test_questions_answer.que_type.Question_Answer,
                                 tq_question=question.qb_question,
                                 tq_answer=question.qb_answer,
