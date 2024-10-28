@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ministudy Payments</title>
-  <link rel="stylesheet" href="styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
     }
     .container {
       max-width: 900px;
@@ -117,7 +118,7 @@
                   {% endif %}
                 </td>
                 <td>
-                  <a href="{% url 'insert_update_ministudy_payment' %}?update_id={{ payment.ministudypay_id }}" class="btn btn-warning"><button>Edit</button></a>
+                  <a href="{% url 'insert_update_ministudy_payment' %}?update_id={{ payment.ministudypay_id }}" class="btn-edit">Edit</a>
                 </td>
               </tr>
             {% endfor %}

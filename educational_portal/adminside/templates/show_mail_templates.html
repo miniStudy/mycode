@@ -1,5 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      color: #333;
+    }
+    .template {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .variables {
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Mail Templates</h2>
 
-{% for x in templates  %}
-<p>{{x.mail_temp_html|safe}}</p>
-{% endfor %}
+    {% for template in templates %}
+      <div class="template">
+        <h3>Template: {{ template.mail_temp_name }}</h3>
+        <p><strong>Type:</strong> {{ template.mail_temp_type }}</p>
 
+        <h4>Variables:</h4>
+        <div class="variables">
+
+          {% for variable in template.mail_template.all %}
+            <p>{{ variable.mail_variables_name }}</p>
+          {% empty %}    
+            <p>No variables available for this template.</p>
+          {% endfor %}
+        </div>
+        <p>{{ template.mail_temp_html|safe }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</body>
+</html>

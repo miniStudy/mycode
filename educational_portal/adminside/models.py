@@ -582,8 +582,10 @@ class mail_templates(models.Model):
     class mail_option(models.TextChoices):
         Itroduction_mail = 'Itroduction_mail','Itroduction_mail'
         Marketing_mail = 'Marketing_mail','Marketing_mail'
-
+        Announcement_mail = 'Announcement_mail','Announcement_mail'
+    
     mail_temp_id = models.BigAutoField(primary_key=True)
+    mail_temp_name = models.CharField(max_length=150,null=True,blank=True)
     mail_temp_html = models.TextField(blank=True, null=True)
     mail_temp_type = models.CharField(choices=mail_option.choices, max_length=50)
     mail_temp_selected = models.BooleanField(default=0)
@@ -594,3 +596,16 @@ class mail_templates(models.Model):
 
     class Meta:
         db_table = 'mail_templates'
+
+class mail_variables(models.Model):
+    mail_variables_id = models.BigAutoField(primary_key=True)
+    mail_variables_name = models.CharField(max_length=100)
+    mail_variables_mail_template = models.ForeignKey(mail_templates, on_delete=models.CASCADE, related_name='mail_template')
+
+    def __str__(self):
+        return f"{self.mail_variables_name}" 
+
+    class Meta:
+        db_table = 'mail_variables'
+
+

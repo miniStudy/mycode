@@ -57,14 +57,6 @@
           </div>
 
           <div class="col-sm-12">
-            <label for="test_sem" class="form-label mb-2">Semester</label>
-            <select id="test_sem" class="form-select" name="test_sem">
-              <option value="sem1" {% if update_data and update_data.test_sem == 'sem1' %} selected {% endif %} {% if filled_data and filled_data.test_sem == 'sem1' %} selected {% endif %}>Semester 1</option>
-              <option value="sem2" {% if update_data and update_data.test_sem == 'sem2' %} selected {% endif %} {% if filled_data and filled_data.test_sem == 'sem2' %} selected {% endif %}>Semester 2</option>
-            </select>
-          </div>
-
-          <div class="col-sm-12">
             <label class="form-label mb-2">Test Time</label>
             <div class="input-group input-group-merge">
               <input type="text" class="form-control" name="test_time" placeholder="Test Time" {% if update_data %} value="{{ update_data.test_time }}" {% endif %}{% if filled_data %} value="{{ filled_data.test_time }}" {% endif %}/>

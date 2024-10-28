@@ -3131,7 +3131,6 @@ def institute_main_send_function(request):
 def show_mail_templates_function(request):
     domain = request.get_host()
     templates = mail_templates.objects.filter(domain_name = domain)
-
     context = {
         'title':'mail_templates',
         'templates':templates,
@@ -3172,7 +3171,10 @@ def insert_update_mail_templates(request):
     if request.method == 'POST':
         form = mail_templates_form(request.POST)
         context.update({'form':form})
+
         if form.is_valid():
+            if form.instance.mail_temp_type == 'Announcement_mail':
+                print("Hello")
             form.instance.domain_name = domain
             form.save()
             return redirect('show_mail_templates')
