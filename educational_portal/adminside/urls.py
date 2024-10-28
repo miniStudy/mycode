@@ -157,4 +157,7 @@ urlpatterns = [
 
     path('show_mail_templates/', adminview.show_mail_templates_function, name='show_mail_templates'),
     path('insert_update_mail_templates/', adminview.insert_update_mail_templates, name='insert_update_mail_templates'),
+    path('insert_update_mail_templates/', adminview.insert_update_mail_templates, name='insert_update_mail_templates'),
+
+
 ]
