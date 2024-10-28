@@ -578,7 +578,6 @@ class question_bank(models.Model):
         db_table = 'question_bank'
 
 
-
 class mail_templates(models.Model):
     class mail_option(models.TextChoices):
         Itroduction_mail = 'Itroduction_mail','Itroduction_mail'
@@ -591,7 +590,7 @@ class mail_templates(models.Model):
     domain_name = models.CharField(blank=True,null=True,max_length=100)
 
     def __str__(self):
-        return f"{self.mail_temp_html} - {self.mail_temp_type}" 
+        return f"{self.mail_temp_id} - {self.mail_temp_type}" 
 
     class Meta:
         db_table = 'mail_templates'

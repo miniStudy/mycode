@@ -3150,6 +3150,25 @@ def insert_update_mail_templates(request):
         'templates':templates,
     }
 
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        instance = get_object_or_404(mail_templates, pk=pk)
+        if request.method == "POST":
+            form = mail_templates_form(request.POST, instance=instance)
+            print(form, '==================')
+            if form.is_valid():
+                form.instance.domain_name = domain
+                form.save()
+                return redirect('show_mail_templates')
+            else:
+                filled_data = form.data
+                return render(request, 'insert_update/mail_templates.html', {'errors': form.errors,'filled_data':filled_data})
+        
+        update_data = mail_templates.objects.get(mail_temp_id = request.GET['pk'])
+        context.update({'update_data':update_data}) 
+    
+
+
     if request.method == 'POST':
         form = mail_templates_form(request.POST)
         context.update({'form':form})
@@ -3164,3 +3183,18 @@ def insert_update_mail_templates(request):
     context['form'] = mail_templates_form()
     return render(request, 'insert_update/mail_templates.html', context)
 
+
+@admin_login_required
+def delete_mail_templates(request):
+    domain = request.get_host()
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                mail_templates.objects.filter(mail_temp_id__in=selected_ids, domain_name = domain).delete()
+                messages.success(request, 'Template Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {str(e)}')
+
+    return redirect('show_mail_templates')

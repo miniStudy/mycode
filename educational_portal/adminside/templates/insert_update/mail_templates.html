@@ -26,9 +26,39 @@
     </div>
     <div class="card-body">
       
-    <form method="post" action="{% url 'insert_update_mail_templates' %}">
+    <form method="post" action="{% url 'insert_update_mail_templates' %}{% if update_data %}?pk={{update_data.mail_temp_id}}{% endif %}">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <div class="col-sm-12">            
+            <label for="temp_html"><strong>Template Html :</strong></label><br>
+            <textarea id="temp_html" name="temp_html" rows="10" cols="60" >
+                {% if update_data %} {{update_data.mail_temp_html}} {% endif %}
+            </textarea><br>
+            <br>
+
+            <label for="mail_temp_type">Mail Type:</label>
+            <select id="mail_temp_type" name="mail_temp_type">
+            <option value="Itroduction_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Itroduction_mail' %}selected{% endif %}>
+                Itroduction_mail
+            </option>
+            <option value="Marketing_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Marketing_mail' %}selected{% endif %}>
+                Marketing_mail
+            </option>
+            </select>
+            <br>
+            <br>
+            <label for="mail_temp_selected">Mail Selected:</label>
+            <input type="checkbox" id="mail_temp_selected" name="mail_temp_selected" 
+                {% if update_data and update_data.mail_temp_selected %}checked{% endif %}>  
+            <br>
+            <br>
+            <label for="domain_name">Domain Name:</label>
+            <input type="text" id="domain_name" name="domain_name" 
+                {% if update_data and update_data.domain_name %}value="{{ update_data.domain_name }}"{% endif %}>
+
+        </div>
         <button type="submit">Submit</button>
     </form>
       
