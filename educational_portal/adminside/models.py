@@ -577,3 +577,22 @@ class question_bank(models.Model):
     
     class Meta:
         db_table = 'question_bank'
+
+
+
+class mail_templates(models.Model):
+    class mail_option(models.TextChoices):
+        Itroduction_mail = 'Itroduction_mail','Itroduction_mail'
+        Marketing_mail = 'Marketing_mail','Marketing_mail'
+
+    mail_temp_id = models.BigAutoField(primary_key=True)
+    mail_temp_html = models.TextField(blank=True, null=True)
+    mail_temp_type = models.CharField(choices=mail_option.choices, max_length=50)
+    mail_temp_selected = models.BooleanField(default=0)
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
+
+    def __str__(self):
+        return f"{self.mail_temp_html} - {self.mail_temp_type}" 
+
+    class Meta:
+        db_table = 'mail_templates'

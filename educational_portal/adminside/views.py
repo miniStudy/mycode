@@ -3120,3 +3120,17 @@ def institute_main_send_function(request):
             institute_send_mail(email_list)
             return redirect('inquiry_data')
     return HttpResponse('Hello')
+
+
+@admin_login_required
+def show_mail_templates(request):
+    domain = request.get_host()
+    templates = mail_templates.objects.all()
+
+    context = {
+        'title':'mail_templates',
+        'templates':templates,
+    }
+
+    return
+
