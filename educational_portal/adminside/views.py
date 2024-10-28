@@ -3154,7 +3154,6 @@ def insert_update_mail_templates(request):
         instance = get_object_or_404(mail_templates, pk=pk)
         if request.method == "POST":
             form = mail_templates_form(request.POST, instance=instance)
-            print(form, '==================')
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()

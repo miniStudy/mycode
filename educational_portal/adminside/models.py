@@ -583,7 +583,17 @@ class mail_templates(models.Model):
         Itroduction_mail = 'Itroduction_mail','Itroduction_mail'
         Marketing_mail = 'Marketing_mail','Marketing_mail'
         Announcement_mail = 'Announcement_mail','Announcement_mail'
-    
+        Attendance_mail = 'Attendance_mail', 'Attendance_mail'
+        Cheque_mail = 'Cheque_mail', 'Cheque_mail'
+        Cheque_update_mail = 'Cheque_update_mail', 'Cheque_update_mail'
+        Faculty_mail = 'Faculty_mail', 'Faculty_mail'
+        Institute_mail = 'Institute_mail', 'Institute_mail'
+        Parent_meeting_mail = 'Parent_meeting_mail', 'Parent_meeting_mail'
+        Payment_mail = 'Payment_mail', 'Payment_mail'
+        Student_mail = 'Student_mail', 'Student_mail'
+        Timetable_mail = 'Timetable_mail', 'Timetable_mail'
+
+
     mail_temp_id = models.BigAutoField(primary_key=True)
     mail_temp_name = models.CharField(max_length=150,null=True,blank=True)
     mail_temp_html = models.TextField(blank=True, null=True)
