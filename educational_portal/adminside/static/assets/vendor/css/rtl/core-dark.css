@@ -7,4 +7,7 @@
 /* --bs-card-bg: rgb(90,141,238,0.1); */
 /* border-color ; rgb(90,141,238,0.5); */
 .dropdown-menu{background-color: #232832;border: 1px solid rgb(90,141,238,0.5);}
+.accordion,.accordion-item,.accordion-header{background-color: rgba(90,141,238,0.1) !important;}
+
+
 

@@ -19,6 +19,26 @@ class AdminData(models.Model):
         db_table = 'AdminData'
 
 
+class Faculties(models.Model):
+    fac_id = models.BigAutoField(primary_key=True)
+    fac_name = models.CharField(max_length=100)
+    fac_number = models.CharField(max_length=20)
+    fac_email = models.EmailField(unique=True,default='abc@gmail.com')
+    fac_address = models.TextField()
+    fac_profile = models.ImageField(blank=True, null=True, upload_to='uploads/',default='uploads/default_profile.jpg')
+    Subjects = models.CharField(max_length=100)
+    fac_password = models.CharField(max_length=100,null=True, blank=True,default='12345678')
+    fac_otp = models.IntegerField(blank=True,null=True)
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
+    fac_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.fac_name}"
+    
+    class Meta:
+        db_table = 'faculty'        
+
+
 class Boards(models.Model):
     brd_id = models.BigAutoField(primary_key=True)
     brd_name = models.CharField(max_length=20)
@@ -118,6 +138,8 @@ class Syllabus(models.Model):
     syllabus_chapter = models.ForeignKey(Chepter, on_delete=models.CASCADE)
     syllabus_date = models.DateTimeField(auto_now_add=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
+    fac_syllabus = models.ForeignKey(Faculties, on_delete=models.CASCADE,null=True,blank=True)
+    Completion_time = models.CharField(max_length=100,null=True,blank=True)
 
     def __str__(self):
         return f"{self.syllabus_status} - {self.syllabus_chapter}"
@@ -196,24 +218,7 @@ class Students(models.Model):
     class Meta:
         db_table = 'student'  
 
-class Faculties(models.Model):
-    fac_id = models.BigAutoField(primary_key=True)
-    fac_name = models.CharField(max_length=100)
-    fac_number = models.CharField(max_length=20)
-    fac_email = models.EmailField(unique=True,default='abc@gmail.com')
-    fac_address = models.TextField()
-    fac_profile = models.ImageField(blank=True, null=True, upload_to='uploads/',default='uploads/default_profile.jpg')
-    Subjects = models.CharField(max_length=100)
-    fac_password = models.CharField(max_length=100,null=True, blank=True,default='12345678')
-    fac_otp = models.IntegerField(blank=True,null=True)
-    domain_name = models.CharField(blank=True,null=True,max_length=100)
-    fac_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.fac_name}"
-    
-    class Meta:
-        db_table = 'faculty'
 
 
 class Timetable(models.Model):

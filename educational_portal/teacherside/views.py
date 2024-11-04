@@ -14,7 +14,8 @@ from django.db.models import Count, Case, When, IntegerField
 from teacherside.send_mail import *
 from teacherside.send_mail import send_notification
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.utils import timezone
+from datetime import datetime, timezone as dt_timezone
 import random
 from django.http import Http404,JsonResponse
 from studentside.forms import *
@@ -642,19 +643,55 @@ def edit_handle_attendance(request):
 def teacher_syllabus(request):
     domain = request.get_host()
     fac_id = request.session['fac_id']
+    fac_object = Faculties.objects.get(fac_id = fac_id)
+
     if request.GET.get('chep_id'):
         chep_id = request.GET.get('chep_id')
         status_id = request.GET.get('status')
-        chep_obj = Chepter.objects.get(chep_id=chep_id)
-        Syllabus.objects.update_or_create(syllabus_chapter=chep_obj, defaults={'syllabus_status':status_id, 'syllabus_chapter':chep_obj, 'domain_name' : domain}, )
 
+        # Get objects from the database
+        chep_obj = Chepter.objects.get(chep_id=chep_id)
+        Last_obj = Syllabus.objects.filter(domain_name=domain, fac_syllabus__fac_id=fac_id).last()
+
+        if Last_obj is not None:
+            # Assuming Last_obj.syllabus_date is a datetime field, it should already have timezone info.
+            provided_date = Last_obj.syllabus_date
+
+            # Current date and time with timezone information
+            today_date = timezone.now()
+
+            # Calculate the difference in days
+            difference_in_days = (today_date - provided_date).days
+
+            # Update or create the Syllabus entry
+            Syllabus.objects.update_or_create(
+                syllabus_chapter=chep_obj,
+                defaults={
+                    'syllabus_status': status_id,
+                    'syllabus_chapter': chep_obj,
+                    'domain_name': domain,
+                    'fac_syllabus': fac_object,
+                    'Completion_time': difference_in_days
+                },
+            )
+        else:
+            # Create without Completion_time if no Last_obj is found
+            Syllabus.objects.update_or_create(
+                syllabus_chapter=chep_obj,
+                defaults={
+                    'syllabus_status': status_id,
+                    'syllabus_chapter': chep_obj,
+                    'domain_name': domain,
+                    'fac_syllabus': fac_object
+                },
+            )
     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
     subjects_list = []
     for x in faculty_access:
         subjects_list.append(x.fa_subject.sub_id)
     
     subjects = Subject.objects.filter(sub_id__in = subjects_list, domain_name = domain)
-    chepters = Chepter.objects.filter(domain_name = domain).annotate(status=F('syllabus__syllabus_status')).values('chep_sub__sub_id', 'chep_name','chep_id', 'status')
+    chepters = Chepter.objects.filter(domain_name = domain).annotate(status=F('syllabus__syllabus_status'), completion_time = F('syllabus__Completion_time')).values('chep_sub__sub_id', 'chep_name','chep_id', 'status','completion_time')
 
 
     context = {

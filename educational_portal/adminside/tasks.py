@@ -101,7 +101,6 @@ def payment_mail(self,mode, date, amount, student_email):
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
-
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def cheque_mail(self,bank, amount, date, student_email):
     sub = 'Cheque Satus!'
@@ -148,8 +147,8 @@ def parent_cheque_mail(self,bank, amount, date, parent_email):
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
-# @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def institute_send_mail(email_list): 
+@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+def institute_send_mail(self,email_list): 
     sub = 'Team Ministudy Marketing'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = email_list
@@ -159,17 +158,16 @@ def institute_send_mail(email_list):
     html_content = htmly.render(d)
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
-    # try:
-    #     msg.send()
-    # except smtplib.SMTPServerDisconnected as e:
-    #     print(f"SMTP error occurred: {e}")
-    #     # Retry the task after a delay
-    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
-    #     # Optionally, you can also retry for other exceptions
-    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    try:
+        msg.send()
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        # Retry the task after a delay
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Optionally, you can also retry for other exceptions
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
@@ -239,7 +237,8 @@ def student_email_send(self,student_name, student_email, student_password):
         # Optionally, you can also retry for other exceptions
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
  
-def send_email_for_meeting(parent_email, parent_name, meeting_date):
+@shared_task(bind=True, max_retries=5) 
+def send_email_for_meeting(self, parent_email, parent_name, meeting_date):
     sub = 'Meeting Info'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = [parent_email]  # Ensure this is a list for multiple recipients
@@ -256,7 +255,16 @@ def send_email_for_meeting(parent_email, parent_name, meeting_date):
     
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    try:
+        msg.send()
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        # Retry the task after a delay
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Optionally, you can also retry for other exceptions
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 # -----------------------------------------Telegram------------------------------------------------------------------------------
 
@@ -452,8 +460,8 @@ def doubt_telegram_message_student(doubt_topic, doubt_date, student_chat_ids):
 
 
 
-
-def send_notification(playerid,title,message, request):
+@shared_task(bind=True, max_retries=5)
+def send_notification(self, playerid,title,message, request):
     url = "https://onesignal.com/api/v1/notifications"
 
     payload = json.dumps({
@@ -477,4 +485,8 @@ def send_notification(playerid,title,message, request):
     'Authorization': 'Basic  ZTA1ZmU1MDktOTNmMy00NDBjLWE3ZWEtNWQ3Njc3ZTA1YWEz',
     'Content-Type': 'application/json'
     }        
-    response = requests.request("POST", url, headers=headers, data=payload)
+    
+    try:
+        response = requests.request("POST", url, headers=headers, data=payload)
+    except requests.exceptions.RequestException as e:
+        raise self.retry(exc=e)
