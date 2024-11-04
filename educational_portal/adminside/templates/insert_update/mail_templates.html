@@ -26,9 +26,77 @@
     </div>
     <div class="card-body">
       
-    <form method="post" action="{% url 'insert_update_mail_templates' %}">
+    <form method="post" action="{% url 'insert_update_mail_templates' %}{% if update_data %}?pk={{update_data.mail_temp_id}}{% endif %}">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <div class="col-sm-12">            
+            <label for="temp_html"><strong>Template Html:</strong></label><br>
+            <textarea id="temp_html" name="mail_temp_html" rows="10" cols="60">{% if update_data %}{{ update_data.mail_temp_html|safe }}{% endif %}</textarea><br>
+
+
+            <label for="mail_temp_type">Mail Type:</label>
+            <select id="mail_temp_type" name="mail_temp_type">
+            <option value="Itroduction_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Itroduction_mail' %}selected{% endif %}>
+                Itroduction_mail
+            </option>
+            <option value="Marketing_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Marketing_mail' %}selected{% endif %}>
+                Marketing_mail
+            </option>
+            <option value="Announcement_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Announcement_mail' %}selected{% endif %}>
+                Announcement_mail
+            </option>
+            <option value="Attendance_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Attendance_mail' %}selected{% endif %}>
+                Attendance_mail
+            </option>
+            <option value="Cheque_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Cheque_mail' %}selected{% endif %}>
+                Cheque_mail
+            </option>
+            <option value="Cheque_update_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Cheque_update_mail' %}selected{% endif %}>
+                Cheque_update_mail
+            </option>
+            <option value="Faculty_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Faculty_mail' %}selected{% endif %}>
+                Faculty_mail
+            </option>
+            <option value="Institute_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Institute_mail' %}selected{% endif %}>
+                Institute_mail
+            </option>
+            <option value="Parent_meeting_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Parent_meeting_mail' %}selected{% endif %}>
+                Parent_meeting_mail
+            </option>
+            <option value="Payment_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Payment_mail' %}selected{% endif %}>
+                Payment_mail
+            </option>
+            <option value="Student_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Student_mail' %}selected{% endif %}>
+                Student_mail
+            </option>
+            <option value="Timetable_mail" 
+                {% if update_data and update_data.mail_temp_type == 'Timetable_mail' %}selected{% endif %}>
+                Timetable_mail
+            </option>
+            </select>
+            <br>
+            <br>
+            <label for="mail_temp_selected">Mail Selected:</label>
+            <input type="checkbox" id="mail_temp_selected" name="mail_temp_selected" 
+                {% if update_data and update_data.mail_temp_selected %}checked{% endif %}>  
+            <br>
+            <br>
+            <label for="domain_name">Domain Name:</label>
+            <input type="text" id="domain_name" name="domain_name" 
+                {% if update_data and update_data.domain_name %}value="{{ update_data.domain_name }}"{% endif %}>
+
+        </div>
         <button type="submit">Submit</button>
     </form>
       

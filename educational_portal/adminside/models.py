@@ -583,13 +583,22 @@ class question_bank(models.Model):
         db_table = 'question_bank'
 
 
-
 class mail_templates(models.Model):
     class mail_option(models.TextChoices):
         Itroduction_mail = 'Itroduction_mail','Itroduction_mail'
         Marketing_mail = 'Marketing_mail','Marketing_mail'
         Announcement_mail = 'Announcement_mail','Announcement_mail'
-    
+        Attendance_mail = 'Attendance_mail', 'Attendance_mail'
+        Cheque_mail = 'Cheque_mail', 'Cheque_mail'
+        Cheque_update_mail = 'Cheque_update_mail', 'Cheque_update_mail'
+        Faculty_mail = 'Faculty_mail', 'Faculty_mail'
+        Institute_mail = 'Institute_mail', 'Institute_mail'
+        Parent_meeting_mail = 'Parent_meeting_mail', 'Parent_meeting_mail'
+        Payment_mail = 'Payment_mail', 'Payment_mail'
+        Student_mail = 'Student_mail', 'Student_mail'
+        Timetable_mail = 'Timetable_mail', 'Timetable_mail'
+
+
     mail_temp_id = models.BigAutoField(primary_key=True)
     mail_temp_name = models.CharField(max_length=150,null=True,blank=True)
     mail_temp_html = models.TextField(blank=True, null=True)
@@ -598,7 +607,7 @@ class mail_templates(models.Model):
     domain_name = models.CharField(blank=True,null=True,max_length=100)
 
     def __str__(self):
-        return f"{self.mail_temp_html} - {self.mail_temp_type}" 
+        return f"{self.mail_temp_id} - {self.mail_temp_type}" 
 
     class Meta:
         db_table = 'mail_templates'

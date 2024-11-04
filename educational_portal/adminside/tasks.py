@@ -29,7 +29,7 @@ def sub(x,y):
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 
 
-@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+# @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def announcement_mail(self, list_of_receivers, html_content):
     print(list_of_receivers)
     sub = 'New Announcement from miniStudy'
@@ -39,17 +39,17 @@ def announcement_mail(self, list_of_receivers, html_content):
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    
-    try:
-        msg.send()
-    except smtplib.SMTPServerDisconnected as e:
-        print(f"SMTP error occurred: {e}")
-        # Retry the task after a delay
-        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Optionally, you can also retry for other exceptions
-        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    msg.send()
+
+    # try:
+    # except smtplib.SMTPServerDisconnected as e:
+    #     print(f"SMTP error occurred: {e}")
+    #     # Retry the task after a delay
+    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")
+    #     # Optionally, you can also retry for other exceptions
+    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
 
