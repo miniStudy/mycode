@@ -30,3 +30,23 @@ class MinistudyPayment(models.Model):
 
     class Meta:
         db_table = 'MinistudyPayment'
+
+
+class suggestions_improvements(models.Model):
+    class user_option(models.TextChoices):
+        Admin = 'Admin','Admin'
+        Teacher = 'Teacher','Teacher'
+        Student = 'Student','Student'
+        Parent = 'Parent','Parent'
+
+    si_id = models.BigAutoField(primary_key=True)
+    si_user_name = models.CharField(max_length=55)
+    si_user = models.CharField(choices=user_option.choices, max_length=15)
+    si_suggestion = models.TextField()
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
+
+    def __str__(self):
+        return f"{self.si_user_name}"
+
+    class Meta:
+        db_table = 'suggestions_improvements'

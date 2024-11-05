@@ -159,4 +159,6 @@ urlpatterns = [
     path('insert_update_mail_templates/', adminview.insert_update_mail_templates, name='insert_update_mail_templates'),
     path('delete_mail_templates/', adminview.delete_mail_templates, name='delete_mail_templates'),
 
+    
+    path('admin_insert_suggestions/', adminview.insert_suggestions_function, name='admin_insert_suggestions'),
 ]

@@ -11,6 +11,8 @@ from django.db.models import Count, Case, When, IntegerField
 import random
 from django.http import Http404,JsonResponse
 
+from team_ministudy.forms import suggestions_improvements_Form
+
 from .forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 # Create your views here.
@@ -563,6 +565,7 @@ def show_syllabus(request):
     }
     return render(request, 'studentpanel/syllabus.html', context)
 
+@student_login_required
 def student_inquiries_data(request):
     title = 'Inquiries'
     domain = request.get_host()
@@ -736,6 +739,7 @@ def Student_edit_solution(request,id):
     return render(request, 'studentpanel/edit_solution.html',{'form':form, 'solution_id':solution_id, 'sol_id':id, 'title':title})
 
 
+@student_login_required
 def student_analysis_view(request): 
     domain = request.get_host()
     student_id = request.session['stud_id']
@@ -888,6 +892,8 @@ def student_analysis_view(request):
 
     return render(request, 'studentpanel/student_analysis.html', context)
 
+
+@student_login_required
 def student_fees_collection_view(request):
     domain = request.get_host()
     student_id = request.session['stud_id']
@@ -948,3 +954,25 @@ def today_study_page(request):
         'todays_study_data':todays_study_data
     }
     return render(request, 'studentpanel/today-study.html', context)
+
+
+
+@student_login_required
+def insert_suggestions_function(request):
+    domain = request.get_host()
+    suggestion = suggestions_improvements.objects.filter(domain_name = domain)
+    username = request.session['stud_name']
+
+    context = {
+        'title': 'suggestions_improvements',
+        'suggestions':suggestion,
+        'username':username
+    }
+    
+
+    if request.method == 'POST':
+        si_user = request.POST.get('si_user')
+        si_suggestion = request.POST.get('si_suggestion')
+        suggestions_improvements.objects.create(si_user_name=username, si_user=si_user, si_suggestion=si_suggestion, domain_name = domain)
+    
+    return render(request, 'studentpanel/insert_suggestions.html', context)

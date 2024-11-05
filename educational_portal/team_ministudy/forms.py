@@ -11,3 +11,8 @@ class Ministudy_Payment_Form(forms.ModelForm):
     class Meta:  
         model = MinistudyPayment  
         fields = "__all__"
+
+class suggestions_improvements_Form(forms.ModelForm):  
+    class Meta:  
+        model = suggestions_improvements  
+        fields = "__all__"

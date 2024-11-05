@@ -42,4 +42,6 @@ urlpatterns = [
     path('parentside_payment/',parentview.show_parentside_payment, name = 'parentside_payment' ),
     path('parentside_announcement/',parentview.show_parentside_announcement, name = 'parentside_announcement'),
     path('parentside_timetable/',parentview.show_parentside_timetable, name = 'parentside_timetable'),
+
+    path('parent_insert_suggestions/',parentview.insert_suggestions_function, name = 'parent_insert_suggestions'),
 ]
