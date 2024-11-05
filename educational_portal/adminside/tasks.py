@@ -94,14 +94,9 @@ def payment_mail(self, student_email, html_content):
     #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
-<<<<<<< HEAD
 
-# @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def cheque_mail(self, student_email, html_content):
-=======
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def cheque_mail(self,bank, amount, date, student_email):
->>>>>>> 7ca94908066b7da540994d2ef6ab41d1232c0e1e
+def cheque_mail(self,student_email, html_content):
     sub = 'Cheque Satus!'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = student_email
