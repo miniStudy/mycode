@@ -31,6 +31,10 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.mail import send_mail
+
+from team_ministudy.forms import suggestions_improvements_Form
+from team_ministudy.models import suggestions_improvements
+
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 from django.core.exceptions import ObjectDoesNotExist
@@ -2576,10 +2580,11 @@ def fees_collection_admin(request):
             data = Fees_Collection.objects.filter(stud_std__std_id=get_standard, domain_name = domain)
         else:
             data = Fees_Collection.objects.filter(domain_name = domain)
-        field_names = ['Student Name','Student Standard','Total Payable Amount','Discount Fees','Amount Paid','Remaining Amount']
+        field_names = ['Roll No.','Student Name','Student Standard','Total Payable Amount','Discount Fees','Amount Paid','Remaining Amount']
         for x in data:
             temp_data = {}
-            temp_data.update({'student_name':x.fees_stud_id.stud_name,
+            temp_data.update({'roll_no':x.fees_stud_id.stud_roll_no,
+                              'student_name':x.fees_stud_id.stud_name,
                               'student_lastname':x.fees_stud_id.stud_name,
                               'student_standard':x.fees_stud_id.stud_std,
                               'total_payable_amount':total_amount_fees_paid,
@@ -3277,3 +3282,25 @@ def delete_mail_templates(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('show_mail_templates')
+
+
+
+@admin_login_required
+def insert_suggestions_function(request):
+    domain = request.get_host()
+    suggestion = suggestions_improvements.objects.filter(domain_name = domain)
+    username = request.session['admin_name']
+
+
+    context = {
+        'title': 'suggestions_improvements',
+        'suggestions':suggestion,
+        'username':username
+    }
+    
+    if request.method == 'POST':
+        si_user = request.POST.get('si_user')
+        si_suggestion = request.POST.get('si_suggestion')
+        suggestions_improvements.objects.create(si_user_name=username, si_user=si_user, si_suggestion=si_suggestion, domain_name = domain)
+    
+    return render(request, 'insert_update/suggestions.html', context)

@@ -8,6 +8,8 @@ import statistics
 from django.db.models import Sum,Count
 from django.db.models import Count, Case, When, IntegerField
 from django.db.models import OuterRef, Subquery, BooleanField,Q
+from team_ministudy.forms import suggestions_improvements_Form
+from team_ministudy.models import suggestions_improvements
 from parentsside.decorators import *
 
 # mail integration 
@@ -456,3 +458,22 @@ def show_parentside_timetable(request):
     title = 'Timetable'
     timetable_data = Timetable.objects.filter(tt_batch__batch_id = student.stud_batch.batch_id, domain_name = domain).values('tt_day','tt_subject1','tt_time1','tt_tutor1__fac_name')
     return render(request, 'parentpanel/timetable.html', {'timetable_data':timetable_data, 'title':title})
+
+
+@parent_login_required
+def insert_suggestions_function(request):
+    domain = request.get_host()
+    suggestion = suggestions_improvements.objects.filter(domain_name = domain)
+    username = request.session['parent_name']
+
+    context = {
+        'title': 'suggestions_improvements',
+        'suggestions':suggestion,
+    }
+    
+    if request.method == 'POST':
+        si_user = request.POST.get('si_user')
+        si_suggestion = request.POST.get('si_suggestion')
+        suggestions_improvements.objects.create(si_user_name=username, si_user=si_user, si_suggestion=si_suggestion, domain_name = domain)
+    
+    return render(request, 'parentpanel/insert_suggestions.html', context)

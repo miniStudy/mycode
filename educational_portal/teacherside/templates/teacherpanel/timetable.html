@@ -5,58 +5,76 @@
   <h4>Timetable</h4>
 </div>
 
-
 {% include 'message_show.html' %}
 
 <div class="card">
   <div class="card-body">
-        <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-          <div class="btn-group me-2" role="group" aria-label="First group">
-          <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {% if get_std %}{{ get_std.std_name }} {{ get_std.std_board }}{% else %}Std{% endif %}
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}">ALL</a></li>
-            {% for std in std_data %}
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group me-2" role="group" aria-label="First group">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {% if get_std %}{{ get_std.std_name }} {{ get_std.std_board }}{% else %}Std{% endif %}
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}">ALL</a></li>
+          {% for std in std_data %}
             <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}?get_std={{ std.std_id }}{% if get_batch %}&get_batch={{ get_batch.batch_id }}{% endif %}">{{ std.std_name }} {{ std.std_board }}</a></li>
-            {% endfor %}
-          </ul>
-          <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {% if get_batch %}{{ get_batch.batch_name }}{% else %}Batch{% endif %}
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}?get_std={{ get_std.std_id }}">ALL</a></li>
-            {% for batch in batch_data %}
-            <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}?get_std={{ get_std.std_id }}&get_batch={{ batch.batch_id }}">{{ batch }}</a></li>
-            {% endfor %}
-          </ul>
-          </div>
-        </div>
-    <div class="card-datatable table-responsive pt-0">
-      <table id="example" class="display table table-bordered mt-2" style="width:100%">
-        <thead>
-          <tr>
-            <th>SN</th>
-            <th>Day</th>
-            <th>Subject</th>
-            <th>Time</th>
-            <th>Faculty</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for data in timetable_data %}
-          <tr>
-            <th>{{ forloop.counter }}</th>
-            <td>{{ data.tt_day }}</td>
-            <td>{{ data.tt_subject1 }}</td>
-            <td>{{ data.tt_time1 }}</td>
-            <td>{{ data.tt_tutor1.fac_name }}</td>
-          </tr>
           {% endfor %}
-        </tbody>
-      </table>
+        </ul>
+
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2 ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {% if get_batch %}{{ get_batch.batch_name }}{% else %}Batch{% endif %}
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}?get_std={{ get_std.std_id }}">ALL</a></li>
+          {% for batch in batch_data %}
+            <li><a class="dropdown-item" href="{% url 'teacher_timetable' %}?get_std={{ get_std.std_id }}&get_batch={{ batch.batch_id }}">{{ batch }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
-  </div>
-</div>
+
+    <div class="mt-4">
+      {% for batch in batch_data %}
+      <div class="row mb-4 p-0">
+        <div class="col-12">
+          <div class="card shadow-sm border-start border-end border-top border-primary">
+            <div class="card-body p-0">
+              <div class="p-2 border border-primary text-white">
+                <h5 class="mb-0 ms-2">{{ batch.batch_std }} - {{ batch.batch_name }}</h5>
+              </div>
+              <div class="card-datatable table-responsive pt-0">
+                <table id="example" class="table table-bordered table-hover m-0" style="width:100%">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>SN</th>
+                      <th>Day</th>
+                      <th>Subject</th>
+                      <th>Time</th>
+                      <th>Faculty</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for tt in timetable_data %}
+                      {% if tt.tt_batch.batch_id == batch.batch_id %}
+                      <tr>
+                        <th>{{ forloop.counter }}</th>
+                        <td>{{ tt.tt_day }}</td>
+                        <td>{{ tt.tt_subject1.sub_name }}</td>
+                        <td>{{ tt.tt_time1 }}</td>
+                        <td>{{ tt.tt_tutor1.fac_name }}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div> <!-- card-body -->
+          </div> <!-- card -->
+        </div> <!-- col-12 -->
+      </div> <!-- row -->
+      {% endfor %}
+    </div> <!-- mt-4 -->
+  </div> <!-- card-body -->
+</div> <!-- card -->
 
 {% endblock %}

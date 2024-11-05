@@ -11,6 +11,8 @@ from django.utils import timezone
 from django.db.models.functions import TruncHour, TruncMinute, TruncDate
 from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
+from team_ministudy.forms import suggestions_improvements_Form
+from team_ministudy.models import suggestions_improvements
 from teacherside.send_mail import *
 from teacherside.send_mail import send_notification
 from django.core.exceptions import ObjectDoesNotExist
@@ -2158,3 +2160,25 @@ def send_whatsapp_message_event(user_name, phone, campaign_name='miniStudy_event
     else:
         error_message = f"Failed to send WhatsApp message: {response.text}"
         return HttpResponse(error_message, status=response.status_code)
+
+
+
+@teacher_login_required
+def insert_suggestions_function(request):
+    domain = request.get_host()
+    suggestion = suggestions_improvements.objects.filter(domain_name = domain)
+    username = request.session['fac_name']
+
+
+    context = {
+        'title': 'suggestions_improvements',
+        'suggestions':suggestion,
+        'username':username
+    }
+    
+    if request.method == 'POST':
+        si_user = request.POST.get('si_user')
+        si_suggestion = request.POST.get('si_suggestion')
+        suggestions_improvements.objects.create(si_user_name=username, si_user=si_user, si_suggestion=si_suggestion, domain_name = domain)
+    
+    return render(request, 'teacherpanel/insert_suggestions.html', context)

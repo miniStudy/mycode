@@ -124,6 +124,7 @@
   <table id="data-table" class="table table-bordered" style="width:100%">
     <thead>
         <tr>
+            <th style="width: 5%;"> </th>
             {% for field_name in field_names %}
                 <th>{{ field_name }}</th>
             {% endfor %}
@@ -132,6 +133,7 @@
     <tbody>
         {% for student_value in chepter_data %}
         <tr>
+          <td style="width: 5%;">{{ forloop.counter }}</td>
           <td>{{ student_value.Chepter }}</td>
             <td>{{ student_value.Subject }}</td>
             <td>{{ student_value.Std }}</td>
@@ -186,7 +188,7 @@
   <table id="data-table" class="table table-bordered" style="width:100%">
     <thead>
         <tr>
-            <th> </th>
+            <th style="width: 5%;"> </th>
             {% for field_name in field_names %}
                 <th>{{ field_name }}</th>
             {% endfor %}
@@ -195,7 +197,7 @@
     <tbody>
         {% for student_value in tests_data %}
         <tr>
-          <td>{{ forloop.counter }}</td>
+          <td style="width: 5%;">{{ forloop.counter }}</td>
           <td>{{ student_value.Test }}</td>
             <td>{{ student_value.Subject }}</td>
             <td>{{ student_value.Std }}</td>
@@ -218,6 +220,7 @@
     <tbody>
         {% for student_value in payment_data %}
         <tr>
+            <td> {{ student_value.roll_no }} </td>
             <td>{{ student_value.student_name }} {{ student_value.student_lastname }}</td>
             <td>{{ student_value.student_standard }}</td>
             <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ student_value.total_payable_amount }}</td>

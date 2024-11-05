@@ -1,0 +1,47 @@
+{% extends 'studentpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Suggestion or Improvement</h4></div> 
+   
+  <div class="errors">
+    {% if errors %}
+    <ul>
+        {% for field, field_errors in errors.items %}
+        <li>{{ field }}:</li>
+        <ul>
+            {% for error in field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  
+  <!-- Modal to add new record -->
+  <div class="card">
+    {% include 'message_show.html' %}
+    <div class="card-body">
+
+    <form action="{% url 'student_insert_suggestions' %}" method="post">
+        {% csrf_token %}
+
+            <label for="si_user">User Role:</label>
+            <select id="si_user" name="si_user" required>
+                <option value="Admin">Admin</option>
+                <option value="Teacher">Teacher</option>
+                <option value="Student">Student</option>
+                <option value="Parent">Parent</option>
+            </select><br><br>
+
+            <label for="si_suggestion">Suggestion:</label>
+            <textarea id="si_suggestion" name="si_suggestion" required></textarea><br><br>
+
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+            </div>
+    </form>
+</div>
+</div>
+
+{% endblock %}
