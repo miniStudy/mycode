@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'api',
     'django_crontab',
     'team_ministudy',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -179,7 +181,10 @@ SUMMERNOTE_CONFIG = {
 
 # Celery Configuration Options
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_TIMEZONE = "Asia/Kolkata"
+CELERY_TIMEZONE = "UTC"
 # CELERY_TASK_TRACK_STARTED = True
 # CELERY_TASK_TIME_LIMIT = 30 * 60
 
+
+# Optional: Configure Celery Beat Scheduler for periodic tasks
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

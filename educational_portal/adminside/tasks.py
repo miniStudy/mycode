@@ -13,20 +13,34 @@ from django.core.mail import EmailMultiAlternatives
 from django.http import Http404, JsonResponse, HttpResponse
 from adminside.models import *
 import datetime
+from django.utils import timezone
+from datetime import timedelta
 
 @shared_task
-def sub(x,y):
+def sub():
     subject = "Greetings"  
     msg     = "Congratulations for your success"  
     to      = "tmp1221pmt@gmail.com"
     fromm = settings.EMAIL_HOST_USER
     send_mail(subject, msg, fromm, [to])  
-    return x-y
+    return 1
 
 
 
 # changes done
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
+
+
+
+@shared_task
+def lock_expired_users():
+    # Calculate the threshold date
+    threshold_date = timezone.now() - timedelta(days=15)
+    # Filter users who were created more than 15 days ago and are not locked
+    users_to_lock = Students.objects.filter(stude_created_at__lt=threshold_date, is_locked=False)
+    # Update the is_locked field for these users
+    users_to_lock.update(stud_lock=True)
+
 
 
 # @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
