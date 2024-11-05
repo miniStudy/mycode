@@ -2754,8 +2754,6 @@ def add_fees_collection_admin(request):
                 student_name = form.cleaned_data['fees_stud_id']
                 student_email = [student_name.stud_email]
                 date = datetime.datetime.today()
-<<<<<<< HEAD
-                payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
 
 
                 htmly = mail_templates.objects.get(mail_temp_type = 'Payment Mail').mail_temp_html
@@ -2766,9 +2764,7 @@ def add_fees_collection_admin(request):
                 htmly = Template(htmly)
                 html_content = htmly.render(Context(context_data))     
                 payment_mail(student_email, html_content)
-=======
                 payment_mail.delay(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
->>>>>>> 7ca94908066b7da540994d2ef6ab41d1232c0e1e
                
                 # -------------Telegram Send-------------------------------------------------------------------
                
