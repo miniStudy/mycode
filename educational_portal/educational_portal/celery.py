@@ -24,3 +24,14 @@ def add(x,y):
 # @app.task(bind=True, ignore_result=True)
 # def debug_task(self):
 #     print(f'Request: {self.request!r}')
+
+app.conf.broker_connection_retry_on_startup = True
+
+from celery.schedules import crontab
+
+app.conf.beat_schedule = {
+    'my_periodic_task': {
+        'task': 'adminside.tasks.sub',
+        'schedule': crontab(minute='*/5'),  # Run every 5 minutes
+    },
+}

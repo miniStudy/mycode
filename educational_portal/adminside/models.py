@@ -201,6 +201,7 @@ class Students(models.Model):
     stud_onesignal_player_id = models.TextField(max_length=200, null=True, blank=True)
     stud_lock = models.BooleanField(default=False)
     stud_paid = models.BooleanField(default=False)
+    stude_created_at = models.DateTimeField(auto_now_add=True,blank=True,null=True)
 
     def save(self, *args, **kwargs):
         if not self.unique_code:

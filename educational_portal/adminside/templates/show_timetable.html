@@ -1,15 +1,12 @@
 {% extends 'master.html' %}
 
 {% block contentsection %}
-  <div class="mb-4"><h4>Timetable</h4></div> 
-
 {% include 'message_show.html' %}
 
   <!-- DataTable with Buttons -->
-  <div class="card">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center">
-        <div class="myheadfont">{{ title }} Data</div>   
+        <div class="myheadfont">Timetable</div>   
         <a href="{% url 'insert_update_timetable' %}?get_std={{ get_std.std_id }}&get_batch={{ get_batch.batch_id }}">
           <button class="btn btn-primary">
             <i class="fa-solid fa-plus me-2"></i> ADD
@@ -122,6 +119,6 @@
         <button type="button" class="btn btn-primary" style="position: fixed; bottom: 20px; right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
       </form>
     </div>
-  </div>
+  
   <!--/ DataTable with Buttons -->
 {% endblock %}
