@@ -112,7 +112,7 @@
 
  
 
-<div class="card-datatable table-responsive pt-0">
+{% comment %} <div class="card-datatable table-responsive pt-0">
     <table id="data-table" class="display table table-bordered" style="width:100%">
         <thead>
             <tr>
@@ -141,6 +141,51 @@
             {% endfor %}
         </tbody>
     </table>
+</div>  {% endcomment %}
+
+
+<br><br>
+<div class="card-datatable table-responsive pt-0">
+  <table id="data-table" class="display table table-bordered" style="width:100%">
+      <thead>
+          <tr>
+              <th>Roll No.</th>
+              <th>Student</th>
+              <th>Total <i class="fa-solid fa-square-check text-success"></i></th>
+              <th>Total <i class="fa-solid fa-square-xmark text-danger"></i></th>
+              {% for dayy in days %}
+              <th>{{dayy}}</th>
+              {% endfor %}
+          
+          </tr>
+      </thead>
+      <tbody>
+        {% for student in attendance_list %}
+          <tr>
+              <td>{{student.Roll}}</td>
+              <td>{{student.Name}}</td>
+              <td>{{student.Present_counter}}</td>
+              <td>{{student.Absent_counter}}</td>
+
+              {% for dayy in days %}
+                    <td>
+                    {% for day, records in student.Attendance.items %}
+                    {% if dayy == day %}
+                        {% if records %}
+                        {% for record in records %}
+                        {% if record.attendance_status %}
+                        {% if record.attendance_status == 'Present' %} {{record.time}} {{ record.subject_name }} <i class="fa-solid fa-square-check text-success"></i>{% else %} {{record.time}} {{ record.subject_name }} <i class="fa-solid fa-square-xmark text-danger"></i>{% endif %} <br>                      
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    {% endif %}    
+                    {% endfor %}
+                  </td>
+              {% endfor %}    
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
 </div> 
 
       <!-- Pagination -->
@@ -154,31 +199,9 @@
           {% endfor %}
         </div>
       </div>
-    </div>
-
-         
+    </div>    
 
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-    
-
-
 {% endblock %}
-
-
-
-
-
- 
-
-
-          

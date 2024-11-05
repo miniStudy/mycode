@@ -35,7 +35,7 @@ from django.core.files.base import ContentFile
 # mail integration 
 from django.core.mail import send_mail
 from django.template.loader import get_template
-from django.template import Context
+from django.template import Context, Template
 from django.core.mail import EmailMultiAlternatives
 
 
@@ -579,11 +579,26 @@ def handle_attendance(request):
                 onesignal_player_id_list.append(i.stud_onesignal_player_id)
         
         date = datetime.now()
-        attendance_student_present_mail('present', date, present_list)
-        attendance_student_absent_mail('Absent', date, absent_list)
-    
-        attendance_parent_present_mail('present', date, parent_present_li)
-        attendance_parent_absent_mail('Absent', date, parent_absent_li)
+
+        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance Mail').mail_temp_html
+        context_data = {
+        'title': "Attendance Result",
+        'msg': f"You'r attendance result on {date} is: Present",
+        }
+        htmly = Template(htmly)
+        html_content = htmly.render(Context(context_data))     
+        attendance_student_present_mail(present_list, html_content)
+        attendance_parent_present_mail(present_list, html_content)
+
+        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance Mail').mail_temp_html
+        context_data = {
+        'title': "Attendance Result",
+        'msg': f"You'r attendance result on {date} is: Absent",
+        }
+        htmly = Template(htmly)
+        html_content = htmly.render(Context(context_data))     
+        attendance_student_absent_mail(absent_list, html_content)
+        attendance_parent_absent_mail(absent_list, html_content)
 
 
         #------------------------- Telegram Message -----------------------------------------
