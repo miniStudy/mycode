@@ -689,9 +689,8 @@ def insert_update_announcements(request):
             context_data = {
             'title': form.cleaned_data['announce_title'],
             'msg': form.cleaned_data['announce_msg'],
-    }
+            }
             htmly = Template(htmly)
-            d = {'title': form.cleaned_data['announce_title'],'msg':form.cleaned_data['announce_msg']}
             html_content = htmly.render(Context(context_data))     
             announcement_mail(students_email_list,html_content)
             # -------------One Single Player Id------------------------------------------------------------------------
@@ -1183,7 +1182,16 @@ def insert_update_timetable(request):
                     parent_chat_ids.append(x.stud_telegram_parentschat_id)
                     if x.stud_onesignal_player_id:
                         onesignal_player_id_list.append(x.stud_onesignal_player_id)
-                timetable_mail.delay(tt_students_email_list)
+
+                
+                htmly = mail_templates.objects.get(mail_temp_type = 'Timetable Mail').mail_temp_html
+                context_data = {
+                'title': 'Time Table Updated',
+                'msg': 'Your time table has been updated!',
+                }
+                htmly = Template(htmly)
+                html_content = htmly.render(Context(context_data))     
+                timetable_mail(tt_students_email_list, html_content)
 
                 # ------------------------ Telegram Message -------------------------------
                 timetable_telegram_message_student(student_chat_ids)
@@ -1338,8 +1346,44 @@ def show_attendance(request):
     combined_data = zip(subject_wise_attendance, subjects)
 
     context.update({'combined_data': combined_data})
+    
+    attendance_list = []
 
-     
+    for id in Students.objects.filter(domain_name = domain):
+        get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=11, domain_name = domain)
+        
+        # Initialize a dictionary for each student to store their name and attendance
+        attendance_disc = {
+            'Name': id.stud_name,
+            'Roll': id.stud_roll_no,
+            'Attendance': {},
+            'Present_counter': 0,
+            'Absent_counter': 0,
+        }
+
+        # Loop through each day of the month (1 to 31)
+        for day in range(1, 32):
+            # Default to "Absent" for each day, will update to "Present" if record is found
+            attendance_disc['Attendance'][day] = ''
+            a_list = []
+            for stud in get_student_records:
+                if stud.atten_date.day == day:
+                    # Update attendance status for this day if a record is found
+                    tt = 'Present' if stud.atten_present else 'Absent'
+                    if stud.atten_present == 1:
+                        attendance_disc['Present_counter'] += 1
+                    elif stud.atten_present == 0:
+                        attendance_disc['Absent_counter'] += 1
+                    a_list.append({"attendance_status": tt, "subject_name": stud.atten_timetable.tt_subject1.sub_name, "time": stud.atten_timetable.tt_time1})
+                    # Stop searching once the attendance is found for the day
+            attendance_disc['Attendance'][day] = a_list
+        # Add the completed dictionary for the student to the attendance list
+        attendance_list.append(attendance_disc)
+    print(attendance_list)
+
+    # Output attendance list
+    days_list = list(range(1, 32))
+    context.update({'attendance_list': attendance_list, 'days': days_list})
 
     return render(request, 'show_attendance.html',context)
 
@@ -2602,8 +2646,11 @@ def add_cheques_admin(request):
                     student_email = [student_name.stud_email]
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.datetime.today()
-                    parent_cheque_mail.delay(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, parent_email)
-                    cheque_update_mail.delay(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, student_email)
+                    parent_cheque_mail(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, parent_email)
+                    cheque_update_mail(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, student_email)
+                    title = "Cheque Payment Update"
+                    mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been withdraw on {date} successfully."
+                    send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2626,9 +2673,18 @@ def add_cheques_admin(request):
                     student_email = [student_name.stud_email]
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.datetime.today()
-                    parent_cheque_mail.delay(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, parent_email)
-                    cheque_mail.delay(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, student_email)
-                    print(student_name.stud_onesignal_player_id)
+
+                    htmly = mail_templates.objects.get(mail_temp_type = 'Timetable Mail').mail_temp_html
+                    context_data = {
+                    'title': "Cheque Payment Update",
+                    'msg': f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}.",
+                    }
+                    htmly = Template(htmly)
+                    html_content = htmly.render(Context(context_data))     
+                    cheque_mail(student_email, html_content)
+                    parent_cheque_mail(parent_email, html_content)
+
+
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
@@ -2700,6 +2756,16 @@ def add_fees_collection_admin(request):
                 student_email = [student_name.stud_email]
                 date = datetime.datetime.today()
                 payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
+
+
+                htmly = mail_templates.objects.get(mail_temp_type = 'Payment Mail').mail_temp_html
+                context_data = {
+                'title': "Payment Update",
+                'msg': f"Dear {student_name.stud_name}, your payment of ₹{form.cleaned_data['fees_paid']} "f"via {form.cleaned_data['fees_mode']} has been successfully processed on {date}.",
+                }
+                htmly = Template(htmly)
+                html_content = htmly.render(Context(context_data))     
+                payment_mail(student_email, html_content)
                
                 # -------------Telegram Send-------------------------------------------------------------------
                
