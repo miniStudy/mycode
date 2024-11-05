@@ -136,7 +136,7 @@ def student_home(request):
 def student_login_page(request): 
     login=1
     if request.COOKIES.get("stud_email"):
-            cookie_email = request.COOKIES['stud_email']
+            cookie_email = request.COOKIES['stud_email'].lower()
             cookie_pass = request.COOKIES['stud_password']
             return render(request, 'studentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':'login'})
     else:
@@ -145,7 +145,7 @@ def student_login_page(request):
 def student_login_handle(request):
     domain = request.get_host()
     if request.method == "POST":
-        email = request.POST['email']
+        email = request.POST['email'].lower()
         password = request.POST['password']
         val = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain).count()
         if val==1:

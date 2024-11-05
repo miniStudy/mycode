@@ -177,7 +177,7 @@ def mail_send(request):
 def admin_login_page(request):  
     login=1
     if request.COOKIES.get("admin_email"):
-            cookie_email = request.COOKIES['admin_email']
+            cookie_email = request.COOKIES['admin_email'].lower()
             cookie_pass = request.COOKIES['admin_password']
             return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':'login'})
     else:
@@ -186,7 +186,7 @@ def admin_login_page(request):
 
 def admin_login_handle(request):
     if request.method == "POST":
-        email = request.POST['email']
+        email = request.POST['email'].lower()
         password = request.POST['password']
         val = AdminData.objects.filter(admin_email=email,admin_pass=password).count()
         if val==1:
@@ -1064,6 +1064,7 @@ def insert_update_faculties(request):
                     messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
                 else:
                     form.instance.domain_name = domain
+                    form.instance.fac_email = request.POST.get('fac_email')
                     instance = form.save()
 
                     fac_password = instance.fac_password
@@ -2020,6 +2021,8 @@ def insert_update_students(request):
         # ===================insert_logic===========================
         form = student_form(request.POST)
         if form.is_valid():
+            form.instance.stud_email = request.POST.get('stud_email').lower()
+            form.instance.stud_guardian_email = request.POST.get('stud_guardian_email').lower()
             form.instance.domain_name = domain
             instance = form.save()
             # ----------Mail Send-------------------------------------------
@@ -2841,7 +2844,7 @@ def faculty_access_show(request):
         'batch_data':batch_data,
         'subject_data':subject_data,
         'teachers_names':teachers_names,
-        'title': 'Faculty-Access',
+        'title': 'Faculties',
     }
     if request.GET.get('get_std'):
         get_std = request.GET.get('get_std')
@@ -2855,7 +2858,8 @@ def faculty_access_show(request):
         faculty_access_subject = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
         sub_access_list = [sub.fa_subject for sub in faculty_access_subject]
         subjects_not_accessible = subject_data.exclude(sub_id__in=[sub.sub_id for sub in sub_access_list])
-        context.update({'fac_id': fac_id, 'subject_data': subjects_not_accessible})
+        teachers_names = teachers_names.filter(fac_id = fac_id)
+        context.update({'fac_id': fac_id, 'subject_data': subjects_not_accessible, 'teachers_names': teachers_names})
 
     selected_subjects = request.POST.getlist('fa_subject')
     

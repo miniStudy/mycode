@@ -95,7 +95,7 @@ def parent_login_page(request):
     title = 'login' 
     login=1
     if request.COOKIES.get("stud_guardian_email"):
-          cookie_email = request.COOKIES['stud_guardian_email']
+          cookie_email = request.COOKIES['stud_guardian_email'].lower()
           cookie_pass = request.COOKIES['stud_guardian_password']
           return render(request, 'parentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':title})
     else:
@@ -104,7 +104,7 @@ def parent_login_page(request):
 def parent_login_handle(request):
     domain = request.get_host()
     if request.method == "POST":
-        email = request.POST['email']
+        email = request.POST['email'].lower()
         password = request.POST['password']
         val = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password, domain_name = domain).count()
         if val==1:
