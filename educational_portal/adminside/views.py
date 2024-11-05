@@ -320,7 +320,7 @@ def home(request):
     mess = 'Welcome To miniStudy Admin Dashboard'
     title = 'MiniStudy'
 
-    send_notification(onesignal_player_id,title,mess,request)
+    # send_notification(onesignal_player_id,title,mess,request)
 
     
     # ----------------------------------------------------------------
@@ -711,7 +711,6 @@ def insert_update_announcements(request):
         update_data = Announcements.objects.get(announce_id = request.GET['pk'])
         context.update({'update_data':update_data})
     return render(request, 'insert_update/announcements.html',context)
-
 
 def delete_announcements(request):
     domain = request.get_host()
@@ -1201,7 +1200,7 @@ def insert_update_timetable(request):
                 mess = 'Your timetable has been updated.'
                 title = 'Timetable Updated!'
                 for palayer_id in onesignal_player_id_list:
-                    send_notification(palayer_id,title,mess, request)
+                    send_notification.delay(palayer_id,title,mess, request)
                 return redirect(url)
             else:
                 filled_data = form.data
@@ -1969,7 +1968,7 @@ def send_meeting_mail(request):
             parent_email = student_parent.stud_guardian_email
             parent_name = student_parent.stud_guardian_name
             meeting_date = request.POST['meeting_date']
-            send_email_for_meeting(parent_email, parent_name, meeting_date)
+            send_email_for_meeting.delay(parent_email, parent_name, meeting_date)
     return render(request, 'meeting_date.html')
 
 @admin_login_required
@@ -2687,7 +2686,7 @@ def add_cheques_admin(request):
 
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
-                    send_notification(student_name.stud_onesignal_player_id,title,mess, request)
+                    send_notification.delay(student_name.stud_onesignal_player_id,title,mess, request)
                     return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2755,6 +2754,7 @@ def add_fees_collection_admin(request):
                 student_name = form.cleaned_data['fees_stud_id']
                 student_email = [student_name.stud_email]
                 date = datetime.datetime.today()
+<<<<<<< HEAD
                 payment_mail(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
 
 
@@ -2766,6 +2766,9 @@ def add_fees_collection_admin(request):
                 htmly = Template(htmly)
                 html_content = htmly.render(Context(context_data))     
                 payment_mail(student_email, html_content)
+=======
+                payment_mail.delay(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
+>>>>>>> 7ca94908066b7da540994d2ef6ab41d1232c0e1e
                
                 # -------------Telegram Send-------------------------------------------------------------------
                
@@ -3197,7 +3200,7 @@ def institute_main_send_function(request):
             return render(request, 'show_inquiries.html', {'error': 'Excel file must contain "institute email" column.'})
         else:
             email_list = df['Email'].dropna().tolist()
-            institute_send_mail(email_list)
+            institute_send_mail.delay(email_list)
             return redirect('inquiry_data')
     return HttpResponse('Hello')
 
@@ -3229,7 +3232,6 @@ def insert_update_mail_templates(request):
         instance = get_object_or_404(mail_templates, pk=pk)
         if request.method == "POST":
             form = mail_templates_form(request.POST, instance=instance)
-            print(form, '==================')
             if form.is_valid():
                 form.instance.domain_name = domain
                 form.save()
