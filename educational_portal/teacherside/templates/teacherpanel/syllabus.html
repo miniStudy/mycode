@@ -6,6 +6,37 @@
 </div>
 
 {% include 'message_show.html' %}
+    <button class="btn btn-outline-primary btn-sm dropdown-toggle mb-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_batch %}{{get_batch.batch_name}}{% else %}Batches{% endif %}</button>
+    <ul class="dropdown-menu">
+    {% for x in batches %}
+    <li><a class="dropdown-item" href="{% url 'teacher_syllabus' %}?get_batch={{x.batch_id}}">{{x}}</a></li>
+    {% endfor %}
+    </ul>
+
+
+
+    <div class="card-datatable table-responsive pt-0">
+        <table id="data-table" class="display table table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Chepter's Name</th>
+                    <th>Completion Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for syllabus in syllabus_data %}
+                <tr>
+                    <td>{{syllabus.syllabus_chapter.chep_name}}</td>
+                    <td>{{student.Completion_time}}</td>
+                    <td>{{student.syllabus_status}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div> 
+
+
 
     <div class="accordion" id="accordionExample">
         {% for subject in subjects %}
