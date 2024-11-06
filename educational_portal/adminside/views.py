@@ -1354,7 +1354,13 @@ def show_attendance(request):
     attendance_list = []
 
     for id in Students.objects.filter(domain_name = domain):
-        get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=11, domain_name = domain)
+        if request.GET.get("month"):
+            selected_month = request.GET.get("month")
+            selected_month_name = request.GET.get("month_name")
+            get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=selected_month, domain_name = domain)
+            context.update({'selected_month': selected_month_name})
+        else:
+            get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=1, domain_name = domain)
         
         # Initialize a dictionary for each student to store their name and attendance
         attendance_disc = {
@@ -1383,7 +1389,6 @@ def show_attendance(request):
             attendance_disc['Attendance'][day] = a_list
         # Add the completed dictionary for the student to the attendance list
         attendance_list.append(attendance_disc)
-    print(attendance_list)
 
     # Output attendance list
     days_list = list(range(1, 32))
