@@ -26,7 +26,10 @@ urlpatterns = [
     path('teacher_attendance/', teacherview.teacher_attendance, name='teacher_attendance'),
     path('teacher_edit_attendance/', teacherview.teacher_edit_attendance, name='teacher_edit_attendance'),
     path('edit_handle_attendance/', teacherview.edit_handle_attendance, name='edit_handle_attendance'),
+
+    # <==============Teacher syllabus==================>
     path('teacher_syllabus/', teacherview.teacher_syllabus, name='teacher_syllabus'),
+    path('insert_update_syllabus/', teacherview.insert_update_syllabus, name='insert_update_syllabus'),
 
 
     # <==============teacher doubts==================>

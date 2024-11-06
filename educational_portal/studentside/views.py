@@ -17,7 +17,7 @@ from .forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 # Create your views here.
 # mail integration 
-from studentside.send_mail import *
+from educational_portal.studentside.tasks import *
 from adminside.tasks import *
 from django.core.mail import send_mail
 from django.template.loader import get_template
