@@ -123,6 +123,9 @@ def bulk_upload_questions(request):
         qb_chapter = Chepter.objects.get(chep_id=qb_chapter_id)
 
         # Extract all question entries
+        
+        qb_subject = qb_chapter.chep_sub.sub_name
+        qb_std = qb_chapter.chep_std.std_name
         questions_data = request.POST.getlist('question[]')
         q_types = request.POST.getlist('q_type[]')
         answers = request.POST.getlist('answer[]')
@@ -136,6 +139,8 @@ def bulk_upload_questions(request):
         for i in range(len(questions_data)):
             question_bank.objects.create(
                 qb_chepter=qb_chapter,
+                qb_subject=qb_subject,
+                qb_std=qb_std,
                 qb_q_type=q_types[i],
                 qb_question=questions_data[i],
                 qb_answer=answers[i],
@@ -193,7 +198,10 @@ def edit_question_bankk(request):
     
     if request.method == 'POST':
         # Update the question details from form data
-        question.qb_chepter = Chepter.objects.get(chep_id=request.POST.get('qb_chepter'))
+        chepter_object = Chepter.objects.get(chep_id=request.POST.get('gb_chepter'))
+        question.qb_chepter = chepter_object.chep_name
+        question.qb_subject = chepter_object.chep_sub.sub_name
+        question.qb_std = chepter_object.chep_std.std_name
         question.qb_q_type = request.POST.get('qb_q_type')
         question.qb_question = request.POST.get('qb_question')
         question.qb_answer = request.POST.get('qb_answer')
