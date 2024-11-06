@@ -182,7 +182,7 @@ def teacher_home(request):
 def teacher_login_page(request):  
     login=1
     if request.COOKIES.get("fac_email"):
-          cookie_email = request.COOKIES['fac_email']
+          cookie_email = request.COOKIES['fac_email'].lower()
           cookie_pass = request.COOKIES['fac_password']
           return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title': 'login'})
     else:
@@ -190,7 +190,7 @@ def teacher_login_page(request):
 
 def teacher_login_handle(request):
     if request.method == "POST":
-        email = request.POST['email']
+        email = request.POST['email'].lower()
         password = request.POST['password']
         val = Faculties.objects.filter(fac_email=email,fac_password=password).count()
         if val==1:
@@ -313,7 +313,6 @@ def teacher_timetable(request):
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
      timetable_data = Timetable.objects.filter(tt_tutor1__fac_id = fac_id, tt_batch__batch_id__in = batch_access_list, tt_batch__batch_std__std_id__in = std_access_list, domain_name = domain)
-     print(timetable_data)
      std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)
      batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
 
@@ -477,6 +476,7 @@ def teacher_attendance(request):
      return render(request, 'teacherpanel/attendance.html',context)
 
 def teacher_edit_attendance(request):
+    context = {'title' : 'Attendance'}
     domain = request.get_host()
     if request.GET.get('get_std') and request.GET.get('get_batch'):
         get_std = request.GET['get_std']     
@@ -484,27 +484,25 @@ def teacher_edit_attendance(request):
         tt_id = request.GET['tt_id']
         std_data = Std.objects.get(std_id=get_std)
         batch_data = Batches.objects.get(batch_id=get_batch) 
-        timetable_data = Timetable.objects.filter(tt_batch__batch_id = get_batch, domain_name = domain)
+        timetable_data = Timetable.objects.filter(tt_batch__batch_id = get_batch, tt_batch__batch_std__std_id = get_std,  domain_name = domain)
         students_data = Students.objects.filter(stud_std__std_id = get_std, stud_batch__batch_id = get_batch, domain_name = domain)
         get_hour = request.GET.get('hour','')     
         get_date = request.GET.get('date','')
         get_minute = request.GET.get('minute','')
         date_obj = datetime.strptime(get_date, '%Y-%m-%d')
         get_data = Attendance.objects.filter(atten_date__hour=get_hour, atten_date__date=date_obj,atten_timetable__tt_id=tt_id, domain_name = domain)
-        context = {
+        context.update({
           'std_data':std_data,
           'batch_data':batch_data,
           'students_data':students_data,
           'timetable_data':timetable_data,
-          'title': 'Insert Attendence',
           'get_data':get_data,
           'get_date':get_date,
-          'get_hour':get_hour,
-     
-          }
+          'get_hour':get_hour})
     else:
         messages.error(request, 'Please! Select Standard And Batch')
         return redirect('teacher_attendance')
+    print(context.title)
     return render(request, 'teacherpanel/teacher_edit_attendance.html', context)
 
 
@@ -522,11 +520,11 @@ def insert_update_attendance(request):
         students_data = Students.objects.filter(stud_std__std_id = get_std, stud_batch__batch_id = get_batch, domain_name = domain)
 
         context = {
+          'title' : 'Attendance',
           'std_data':std_data,
           'batch_data':batch_data,
           'students_data':students_data,
           'timetable_data':timetable_data,
-          'title': 'Insert Attendence',    
         }
 
      else:
@@ -662,13 +660,24 @@ def teacher_syllabus(request):
     fac_id = request.session['fac_id']
     fac_object = Faculties.objects.get(fac_id = fac_id)
 
+
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
+    subjects_list = []
+    batches_list = []
+    for x in faculty_access:
+        subjects_list.append(x.fa_subject.sub_id)
+        batches_list.append(x.fa_batch.batch_id)
+    syllabus_data = Syllabus.objects.filter(syllabus_batch__batch_id__in = batches_list, syllabus_chapter__chep_sub__sub_id__in = subjects_list, domain_name = domain)
+    context = {'syllabus_data': syllabus_data}
+
     if request.GET.get('chep_id'):
         chep_id = request.GET.get('chep_id')
         status_id = request.GET.get('status')
 
         # Get objects from the database
         chep_obj = Chepter.objects.get(chep_id=chep_id)
-        Last_obj = Syllabus.objects.filter(domain_name=domain, fac_syllabus__fac_id=fac_id).last()
+        get_batch = request.GET.get('get_batch')
+        Last_obj = Syllabus.objects.filter(domain_name=domain, fac_syllabus__fac_id=fac_id, syllabus_batch__batch_id = get_batch).last()
 
         if Last_obj is not None:
             # Assuming Last_obj.syllabus_date is a datetime field, it should already have timezone info.
@@ -688,7 +697,8 @@ def teacher_syllabus(request):
                     'syllabus_chapter': chep_obj,
                     'domain_name': domain,
                     'fac_syllabus': fac_object,
-                    'Completion_time': difference_in_days
+                    'Completion_time': difference_in_days,
+                    'syllabus_batch': get_batch
                 },
             )
         else:
@@ -699,23 +709,30 @@ def teacher_syllabus(request):
                     'syllabus_status': status_id,
                     'syllabus_chapter': chep_obj,
                     'domain_name': domain,
-                    'fac_syllabus': fac_object
+                    'fac_syllabus': fac_object,
+                    'syllabus_batch': get_batch
                 },
             )
-    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
-    subjects_list = []
-    for x in faculty_access:
-        subjects_list.append(x.fa_subject.sub_id)
+    
+    
     
     subjects = Subject.objects.filter(sub_id__in = subjects_list, domain_name = domain)
-    chepters = Chepter.objects.filter(domain_name = domain).annotate(status=F('syllabus__syllabus_status'), completion_time = F('syllabus__Completion_time')).values('chep_sub__sub_id', 'chep_name','chep_id', 'status','completion_time')
+    batches = Batches.objects.filter(batch_id__in = batches_list, domain_name = domain)
+    
+
+    # if request.GET.get('get_batch',1):
+    #     get_batch = request.GET.get('get_batch')
+    #     batch_obj = Batches.objects.get(batch_id = get_batch)
+    #     subjects = subjects.filter(sub_std__std_id = batch_obj.batch_std.std_id)
+    #     context.update({'subjects': subjects})
 
 
-    context = {
+    context.update({
         'title':'Syllabus',
         'subjects':subjects,
-        'chepters':chepters,
-    }
+        'batches': batches,
+        
+    })
     return render(request, 'teacherpanel/syllabus.html', context) 
    
 
