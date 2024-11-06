@@ -17,7 +17,7 @@ from .forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
 # Create your views here.
 # mail integration 
-from educational_portal.studentside.tasks import *
+from studentside.tasks import *
 from adminside.tasks import *
 from django.core.mail import send_mail
 from django.template.loader import get_template
@@ -565,7 +565,6 @@ def show_syllabus(request):
     }
     return render(request, 'studentpanel/syllabus.html', context)
 
-@student_login_required
 def student_inquiries_data(request):
     title = 'Inquiries'
     domain = request.get_host()
@@ -585,7 +584,7 @@ def student_inquiries_data(request):
             student_email = form.cleaned_data['inq_email']
             form.save()
             admin_emails = AdminData.objects.values_list('admin_email', flat=True)
-            # admin_email_send(admin_emails, student_name, student_email, selected_subjects)
+            admin_email_send.delay(admin_emails, student_name, student_email, selected_subjects)
             messages.success(request, "Inquiry saved successfully!")
             return redirect('Student_Inquiries')
         else:
