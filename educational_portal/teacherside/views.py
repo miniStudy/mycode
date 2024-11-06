@@ -660,7 +660,7 @@ def teacher_syllabus(request):
     fac_id = request.session['fac_id']
     fac_object = Faculties.objects.get(fac_id = fac_id)
 
-
+ 
     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
     subjects_list = []
     batches_list = []
@@ -734,7 +734,26 @@ def teacher_syllabus(request):
         
     })
     return render(request, 'teacherpanel/syllabus.html', context) 
-   
+
+@teacher_login_required  
+def insert_update_syllabus(request):
+    context = {}
+    domain = request.get_host()
+    fac_id = request.session['fac_id']
+ 
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
+    subjects_list = []
+    batches_list = []
+    standard_list = []
+    for x in faculty_access:
+        subjects_list.append(x.fa_subject.sub_id)
+        batches_list.append(x.fa_batch.batch_id)
+        standard_list.append(x.fa_batch.batch_std.std_id)
+
+    chepter_data = Chepter.objects.filter(chep_std__std_id__in = standard_list)
+    context.update({'chepter_data': chepter_data})
+    return render(request, 'teacherpanel/insert_update_syllabus.html')
+
 
 @teacher_login_required
 def teacher_doubts(request):

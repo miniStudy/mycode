@@ -27,4 +27,9 @@ class teacher_todaylearn_form(forms.ModelForm):
     class Meta:
         model = Today_Teaching
         fields = "__all__" 
+
+class teacher_syllabus_form(forms.ModelForm):
+    class Meta:
+        model = Syllabus
+        fields = "__all__" 
                 
