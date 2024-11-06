@@ -52,17 +52,18 @@ def announcement_mail(self, list_of_receivers, html_content):
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    
 
-    # try:
-    # except smtplib.SMTPServerDisconnected as e:
-    #     print(f"SMTP error occurred: {e}")
-    #     # Retry the task after a delay
-    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
-    #     # Optionally, you can also retry for other exceptions
-    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    try:
+        msg.send()
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        # Retry the task after a delay
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Optionally, you can also retry for other exceptions
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
 
@@ -74,17 +75,18 @@ def timetable_mail(self, list_of_receivers, html_content):
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    
 
-    # try:
-    # except smtplib.SMTPServerDisconnected as e:
-    #     print(f"SMTP error occurred: {e}")
-    #     # Retry the task after a delay
-    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
-    #     # Optionally, you can also retry for other exceptions
-    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    try:
+        msg.send()
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        # Retry the task after a delay
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Optionally, you can also retry for other exceptions
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
 # @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
@@ -95,17 +97,18 @@ def payment_mail(self, student_email, html_content):
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
     
-    # try:     
-    # except smtplib.SMTPServerDisconnected as e:
-    #     print(f"SMTP error occurred: {e}")
-    #     # Retry the task after a delay
-    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
-    #     # Optionally, you can also retry for other exceptions
-    #     raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    
+    try: 
+        msg.send()    
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        # Retry the task after a delay
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Optionally, you can also retry for other exceptions
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
 

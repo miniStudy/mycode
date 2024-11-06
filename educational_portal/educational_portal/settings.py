@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'api',
     'django_crontab',
     'team_ministudy',
-    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
