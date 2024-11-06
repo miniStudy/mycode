@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'api',
     'django_crontab',
     'team_ministudy',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -186,4 +187,4 @@ CELERY_TIMEZONE = "UTC"
 
 
 # Optional: Configure Celery Beat Scheduler for periodic tasks
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

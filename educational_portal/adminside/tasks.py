@@ -43,7 +43,7 @@ def lock_expired_users():
 
 
 
-# @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def announcement_mail(self, list_of_receivers, html_content):
     sub = 'New Announcement from miniStudy'
     email_from = settings.EMAIL_HOST_USER
@@ -67,7 +67,7 @@ def announcement_mail(self, list_of_receivers, html_content):
 
 
 
-# @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def timetable_mail(self, list_of_receivers, html_content):
     sub = 'New Update from miniStudy'
     email_from = settings.EMAIL_HOST_USER
@@ -89,7 +89,7 @@ def timetable_mail(self, list_of_receivers, html_content):
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
-# @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def payment_mail(self, student_email, html_content):
     sub = 'Payment Satus!'
     email_from = 'miniStudy <mail@ministudy.in>'
