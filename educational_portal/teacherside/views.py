@@ -660,13 +660,24 @@ def teacher_syllabus(request):
     fac_id = request.session['fac_id']
     fac_object = Faculties.objects.get(fac_id = fac_id)
 
+
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
+    subjects_list = []
+    batches_list = []
+    for x in faculty_access:
+        subjects_list.append(x.fa_subject.sub_id)
+        batches_list.append(x.fa_batch.batch_id)
+    syllabus_data = Syllabus.objects.filter(syllabus_batch__batch_id__in = batches_list, syllabus_chapter__chep_sub__sub_id__in = subjects_list, domain_name = domain)
+    context = {'syllabus_data': syllabus_data}
+
     if request.GET.get('chep_id'):
         chep_id = request.GET.get('chep_id')
         status_id = request.GET.get('status')
 
         # Get objects from the database
         chep_obj = Chepter.objects.get(chep_id=chep_id)
-        Last_obj = Syllabus.objects.filter(domain_name=domain, fac_syllabus__fac_id=fac_id).last()
+        get_batch = request.GET.get('get_batch')
+        Last_obj = Syllabus.objects.filter(domain_name=domain, fac_syllabus__fac_id=fac_id, syllabus_batch__batch_id = get_batch).last()
 
         if Last_obj is not None:
             # Assuming Last_obj.syllabus_date is a datetime field, it should already have timezone info.
@@ -686,7 +697,8 @@ def teacher_syllabus(request):
                     'syllabus_chapter': chep_obj,
                     'domain_name': domain,
                     'fac_syllabus': fac_object,
-                    'Completion_time': difference_in_days
+                    'Completion_time': difference_in_days,
+                    'syllabus_batch': get_batch
                 },
             )
         else:
@@ -697,23 +709,30 @@ def teacher_syllabus(request):
                     'syllabus_status': status_id,
                     'syllabus_chapter': chep_obj,
                     'domain_name': domain,
-                    'fac_syllabus': fac_object
+                    'fac_syllabus': fac_object,
+                    'syllabus_batch': get_batch
                 },
             )
-    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
-    subjects_list = []
-    for x in faculty_access:
-        subjects_list.append(x.fa_subject.sub_id)
+    
+    
     
     subjects = Subject.objects.filter(sub_id__in = subjects_list, domain_name = domain)
-    chepters = Chepter.objects.filter(domain_name = domain).annotate(status=F('syllabus__syllabus_status'), completion_time = F('syllabus__Completion_time')).values('chep_sub__sub_id', 'chep_name','chep_id', 'status','completion_time')
+    batches = Batches.objects.filter(batch_id__in = batches_list, domain_name = domain)
+    
+
+    # if request.GET.get('get_batch',1):
+    #     get_batch = request.GET.get('get_batch')
+    #     batch_obj = Batches.objects.get(batch_id = get_batch)
+    #     subjects = subjects.filter(sub_std__std_id = batch_obj.batch_std.std_id)
+    #     context.update({'subjects': subjects})
 
 
-    context = {
+    context.update({
         'title':'Syllabus',
         'subjects':subjects,
-        'chepters':chepters,
-    }
+        'batches': batches,
+        
+    })
     return render(request, 'teacherpanel/syllabus.html', context) 
    
 

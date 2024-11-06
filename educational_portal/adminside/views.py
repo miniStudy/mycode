@@ -1354,7 +1354,13 @@ def show_attendance(request):
     attendance_list = []
 
     for id in Students.objects.filter(domain_name = domain):
-        get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=11, domain_name = domain)
+        if request.GET.get("month"):
+            selected_month = request.GET.get("month")
+            selected_month_name = request.GET.get("month_name")
+            get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=selected_month, domain_name = domain)
+            context.update({'selected_month': selected_month_name})
+        else:
+            get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=1, domain_name = domain)
         
         # Initialize a dictionary for each student to store their name and attendance
         attendance_disc = {
@@ -1383,7 +1389,6 @@ def show_attendance(request):
             attendance_disc['Attendance'][day] = a_list
         # Add the completed dictionary for the student to the attendance list
         attendance_list.append(attendance_disc)
-    print(attendance_list)
 
     # Output attendance list
     days_list = list(range(1, 32))
@@ -3038,39 +3043,13 @@ def bulk_upload_questions(request):
 @admin_login_required
 def show_question_bank(request):
 
-    excel_data = pd.read_excel('chepter_list.xlsx')
-    chapter_names = excel_data['Chapter Name'].tolist()
-    standard_names = excel_data['Chapter Standard'].tolist()
-    subject_names = excel_data['Chepter Subject'].tolist()
-
-
     questions = question_bank.objects.values('qb_id', 'qb_chepter')
-
-    for i, question in enumerate(questions):
-        if i < len(chapter_names):
-            qb_id = question['qb_id']
-            chapter_name = chapter_names[i]
-            standard_name = standard_names[i]
-            subject_name = subject_names[i]
-
-            qb = question_bank.objects.get(qb_id = qb_id)
-
-            qb.qb_chepter = chapter_name
-            qb.qb_std = standard_name
-            qb.qb_subject = subject_name
-            qb.save()
 
     question_answers = question_bank.objects.values('qb_chepter','qb_std', 'qb_subject', 'qb_q_type', 'qb_question', 'qb_answer', 'qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')[:50]
 
     total_questions = question_bank.objects.all().count()
 
     chepters_names_with_ids = question_bank.objects.values_list('qb_chepter', 'qb_std', 'qb_subject', 'qb_q_type','qb_question','qb_answer','qb_weightage','qb_optiona','qb_optionb','qb_optionc','qb_optiond')
-
-    chepter_list = [(chep_name, chep_std, che_sub, que_type, question, answer, weightage, q_optiona, q_optionb, q_optionc, q_optiond) for chep_name, chep_std, che_sub, que_type, question, answer, weightage, q_optiona, q_optionb, q_optionc, q_optiond in chepters_names_with_ids]
-
-    df = pd.DataFrame(chepter_list, columns=['Chapter Name', 'Chapter Standard', 'Chepter Subject', 'Question Type', 'Question', 'Answer', 'Weightage', 'Option A', 'Option B', 'Option C', 'Option D'])
-
-    # df.to_excel('chepter_list.xlsx', index=False)
     
 
     questions = paginatoorrr(questions,request)
