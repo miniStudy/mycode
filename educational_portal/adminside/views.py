@@ -3065,7 +3065,9 @@ def edit_question_bankk(request):
     
     if request.method == 'POST':
         # Update the question details from form data
-        question.qb_chepter = Chepter.objects.get(chep_id=request.POST.get('qb_chepter'))
+        question.qb_chepter = Chepter.objects.get(chep_name=request.POST.get('qb_chepter'))
+        question.qb_subject = Chepter.objects.get(chep_sub__sub_name=request.POST.get('qb_subject'))
+        question.qb_std = Chepter.objects.get(chep_std__std_name=request.POST.get('qb_std'))
         question.qb_q_type = request.POST.get('qb_q_type')
         question.qb_question = request.POST.get('qb_question')
         question.qb_answer = request.POST.get('qb_answer')
