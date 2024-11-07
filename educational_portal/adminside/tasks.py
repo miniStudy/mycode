@@ -499,3 +499,6 @@ def send_notification(self, playerid,title,message, request):
         response = requests.request("POST", url, headers=headers, data=payload)
     except requests.exceptions.RequestException as e:
         raise self.retry(exc=e)
+    
+
+    
