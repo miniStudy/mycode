@@ -23,9 +23,12 @@
     <div class="card-header">
       <h5 class="offcanvas-title" id="exampleModalLabel">{% if update_data %} Update Record {% else %} New Record{% endif %}</h5>
     </div>
+
+
+
     <div class="card-body">
          
-      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'announcements_insert_update_teacher' %}{% if update_data %}?pk={{update_data.announce_id}}{% endif %}">
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_syllabus' %}{% if update_data %}?pk={{update_data.syllabus_id}}{% endif %}">
         {% csrf_token %} 
 
         <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
@@ -33,38 +36,35 @@
             <select id="defaultSelect" class="form-select" name="syllabus_chapter">
               <option value="">--</option>
               {% for x in chepter_data %}
-                <option value="{{x.chep_id}}" {% if x.chep_id == update_data.chep_id %} selected {% endif %} >{{x.chep_name}}</option>
+                <option value="{{x.chep_id}}" {% if x.chep_id == update_data.syllabus_chapter.chep_id %} selected {% endif %} >{{x.chep_name}}</option>
                 {% endfor %}
             </select>
         </div>
 
-
         <div class="col-sm-12">
-          <label class="form-label mb-2">Announcement Title</label>
-          <div class="input-group input-group-merge">
-            <input type="text" class="form-control" name="announce_title" placeholder="CBSE" {% if update_data %} value="{{update_data.announce_title}}" {% endif %}{% if filled_data %} value="{{filled_data.announce_title}}" {% endif %}/>
-          </div>
+            <label for="syllabusStatus" class="form-label">Syllabus Status</label>
+            <select id="syllabusStatus" class="form-select" name="syllabus_status">
+                <option value="0" {% if update_data and not update_data.syllabus_status %}selected{% endif %}>Incomplete</option>
+                <option value="1" {% if update_data and update_data.syllabus_status %}selected{% endif %}>Complete</option>
+            </select>
         </div>
 
         <div class="col-sm-12">
-          <label class="form-label mb-2">Announcement Message</label>
-          <div class="input-group input-group-merge">
-            <textarea class="form-control" name="announce_msg">{% if filled_data %} {{filled_data.announce_msg}} {% endif %}{% if update_data %} {{update_data.announce_msg}} {% endif %}</textarea>
-          </div>
+            <label for="syllabusBatch" class="form-label">Batch</label>
+            <select id="syllabusBatch" class="form-select" name="syllabus_batch">
+                <option value="">--</option>
+                {% for batch in batch_data %}
+                    <option value="{{ batch.batch_id }}" {% if update_data and batch.batch_id == update_data.syllabus_batch.batch_id %}selected{% endif %}>{{ batch }}</option>
+                {% endfor %}
+            </select>
         </div>
 
-        
-
-        <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
-          <label for="defaultSelect" class="form-label">Batch Name</label>
-          <select id="defaultSelect" class="form-select" name="announce_batch">
-            <option value="">--</option>
-            {% for x in batch_data %}
-            
-              <option value="{{x.batch_id}}" {% if filled_data.announce_batch.batch_id == x.batch_id %} selected {% endif %} {% if x.batch_id == update_data.announce_batch.batch_id %} selected {% endif %} >{{x.batch_name}}</option>
-            
-            {% endfor %}
-          </select>
+        <div class="col-sm-12">
+            <label for="facultySyllabus" class="form-label">Faculty</label>
+            <select id="facultySyllabus" class="form-select" name="fac_syllabus">
+                <option value="">--</option>
+                    <option value="{{ fac_data.fac_id }}" {% if update_data and fac_data.fac_id == update_data.fac_syllabus.fac_id %}selected{% endif %}>{{ fac_data.fac_name }}</option>
+            </select>
         </div>
         
         <div class="col-sm-12">

@@ -25,6 +25,9 @@
                 <h4>{{request.session.admin_name}}</h4>
                 
               </div>
+              <a href="{% url 'Admin_Forgot_Password' %}" class="btn btn-primary text-nowrap">
+                <i class='bx bx-user-check me-1'></i>Update Password
+              </a>
             </div>
           </div>
         </div>
@@ -42,7 +45,7 @@
                 {% for admin in admin_data %}
                 <ul class="list-unstyled mb-4">
                     <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Name:</span> <span>{{admin.admin_name}}</span></li>
-                    <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Email:</span> <span>{{admin.admin_email}}</span></li>
+                    <li class="d-flex align-items-center mb-3"><span class="fw-medium mx-2">Email:</span> <span>{{admin.admin_email}}</span></li> 
                 </ul>
                 {% endfor %}
             </div>

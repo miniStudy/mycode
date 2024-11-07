@@ -178,6 +178,55 @@ def mail_send(request):
         return redirect('Admin Home')
 
 
+
+def show_admin_page(request):
+    domain = request.get_host()
+    admin_data = AdminData.objects.filter(domain_name = domain)
+    context = {'admin_data': admin_data, 'title': 'Admin'}
+    return render(request, 'show_admin.html', context)
+
+def insert_update_admin_page(request):
+    domain = request.get_host()
+    context = {'title': 'Admin'}
+    if request.method == 'POST':
+        form = admin_form(request.POST)
+        if form.is_valid():
+            form.instance.domain_name = domain
+            admin_password = form.instance.admin_pass
+            admin_name = form.cleaned_data['admin_name']
+            admin_email = form.cleaned_data['admin_email']
+            form.save()
+            messages.success(request, "You have been registed successfully!")
+
+            title = "Admin Register"
+            msg = f"Dear {admin_name}, You have been register successfully! Your default password is: {admin_password}. Now you can change your password!"
+            htmly = get_template('Email/admin_register_mail.html')
+            context_data = {
+            'title': title,
+            'msg': msg,
+            }
+            htmly = Template(htmly)
+            html_content = htmly.render(context_data)
+            admin_register_email.delay([admin_email], html_content)
+            return redirect('show_admin')
+        else:
+            form = admin_form()
+    return render(request, "insert_update/add_admin.html", context)
+
+def delete_admin_page(request):
+    domain  = request.get_host()
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                AdminData.objects.filter(admin_id__in=selected_ids, domain_name = domain).delete()
+                messages.success(request, 'Admin deleted successfully!')
+                return redirect('show_admin')
+            except Exception as e:
+                messages.error(request, f'<i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)}')
+
+
 def admin_login_page(request):  
     login=1
     if request.COOKIES.get("admin_email"):
@@ -189,12 +238,13 @@ def admin_login_page(request):
 
 
 def admin_login_handle(request):
+    domain = request.get_host()
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
-        val = AdminData.objects.filter(admin_email=email,admin_pass=password).count()
+        val = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain).count()
         if val==1:
-            Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
+            Data = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain)
             for item in Data:
                 request.session['admin_id'] = item.admin_id
                 request.session['admin_name'] = item.admin_name
@@ -226,9 +276,10 @@ def admin_Forgot_Password(request):
             return render(request, 'master_auth.html',{'login_set':login, 'title': 'Forget Passoword'})
     
 def admin_handle_forgot_password(request):
+     domain = request.get_host()
      if request.method == "POST":
         email2 = request.POST['email']
-        val = AdminData.objects.filter(admin_email=email2).count()
+        val = AdminData.objects.filter(admin_email=email2, domain_name = domain).count()
         if val!=1:
             messages.error(request, "Email is Wrong")
             url = f"{reverse('Admin_Forgot_Password')}?email={email2}"
@@ -256,12 +307,13 @@ def admin_Set_New_Password(request):
     return render(request, 'master_auth.html',{'login_set':login,'email':foremail, 'title': 'New Password'})
 
 def admin_handle_set_new_password(request):
+     domain = request.get_host()
      if request.method == "POST":
         otp = int(request.POST['otp'])
         password = request.POST['password']
         conf_password = request.POST['confirm_password']
         if password == conf_password:
-             obj = AdminData.objects.filter(admin_otp = otp).count()
+             obj = AdminData.objects.filter(admin_otp = otp, domain_name = domain).count()
              if obj == 1:
                   data = AdminData.objects.get(admin_otp = otp)
                   data.admin_pass = password
@@ -504,7 +556,7 @@ def delete_boards(request):
                 Boards.objects.filter(brd_id__in=selected_ids, domain_name = domain).delete()
                 messages.success(request, 'Board Deleted Successfully')
             except Exception as e:
-                messages.error(request, f'<div class="bg-danger text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)} </div>')
+                messages.error(request, f'<i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)}')
 
     return redirect('boards')
 

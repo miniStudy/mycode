@@ -13,13 +13,20 @@
     {% endfor %}
     </ul>
 
+    <button class="btn btn-outline-primary btn-sm dropdown-toggle mb-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_subject %}{{get_subject.sub_name}}{% else %}Subject{% endif %}</button>
+    <ul class="dropdown-menu">
+    {% for x in subjects %}
+    <li><a class="dropdown-item" href="{% url 'teacher_syllabus' %}?get_batch={{get_batch.batch_id}}&get_subject={{x.sub_id}}">{{x}}</a></li>
+    {% endfor %}
+    </ul>
+
     <div class="card"> 
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center">
             <div class="myheadfont">Add Syllabus</div>
             <div>
               <div class="d-inline-block" id="exportbtns"></div>
-            <a href="{% url 'insert_update_syllabus' %}?get_batch={{get_batch.batch_id}}">
+            <a href="{% url 'insert_update_syllabus' %}?get_batch={{get_batch.batch_id}}&get_subject={{get_subject.sub_id}}">
                 <button class="btn btn-primary">
                     <i class="fa-solid fa-plus me-2"></i> ADD
                 </button>
@@ -28,10 +35,12 @@
     </div>
 
 
-    <div class="card-datatable table-responsive pt-0">
+    <div class="card-datatable table-responsive pt-0 mt-3">
         <table id="data-table" class="display table table-bordered" style="width:100%">
             <thead>
                 <tr>
+                    <th>Standard</th>
+                    <th>Subject</th>
                     <th>Chepter's Name</th>
                     <th>Completion Time</th>
                     <th>Status</th>
@@ -40,9 +49,15 @@
             <tbody>
               {% for syllabus in syllabus_data %}
                 <tr>
+                    <td>{{syllabus.syllabus_batch.batch_std.std_name}}</td>
+                    <td>{{syllabus.syllabus_chapter.chep_sub.sub_name}}</td>
                     <td>{{syllabus.syllabus_chapter.chep_name}}</td>
-                    <td>{{student.Completion_time}}</td>
-                    <td>{{student.syllabus_status}}</td>
+                    <td>{{syllabus.Completion_time}}</td>
+                    {% if syllabus.syllabus_status == 1 %}
+                    <td><i class="fa-solid fa-square-check text-success"></i></td>
+                    {% else %}
+                    <td><i class="fa-solid fa-square-xmark text-danger"></i></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
@@ -51,7 +66,7 @@
 
 
 
-    <div class="accordion" id="accordionExample">
+    {% comment %} <div class="accordion" id="accordionExample">
         {% for subject in subjects %}
         <div class="accordion-item" style="border-bottom:1px solid grey;">
             <h2 class="accordion-header">
@@ -100,6 +115,6 @@
             
         </div>
         {% endfor %}
-    </div>
+    </div> {% endcomment %}
 
     {% endblock %}

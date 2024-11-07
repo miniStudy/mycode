@@ -2,6 +2,11 @@ from django import forms
 from adminside.models import *  
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
+class admin_form(forms.ModelForm):  
+    class Meta:  
+        model = AdminData  
+        fields = "__all__"
+
 
 class brd_form(forms.ModelForm):  
     class Meta:  
