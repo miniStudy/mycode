@@ -34,6 +34,7 @@ urlpatterns = [
     # ---------------------------adminside auth-------------------------
     path('show_admin/', adminview.show_admin_page, name='show_admin'),
     path('insert_update_admin/', adminview.insert_update_admin_page, name='insert_update_admin'),
+    path('delete_admin/', adminview.delete_admin_page, name='delete_admin'),
     path('Admin_Login/', adminview.admin_login_page, name='Admin Login'),
     path('admin_login_handle/',adminview.admin_login_handle,name='admin_login_handle'),
     path('Admin_Forgot_Password/', adminview.admin_Forgot_Password, name='Admin_Forgot_Password'),

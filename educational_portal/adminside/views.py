@@ -192,12 +192,39 @@ def insert_update_admin_page(request):
         form = admin_form(request.POST)
         if form.is_valid():
             form.instance.domain_name = domain
+            admin_password = form.instance.admin_pass
+            admin_name = form.cleaned_data['admin_name']
+            admin_email = form.cleaned_data['admin_email']
             form.save()
             messages.success(request, "You have been registed successfully!")
+
+            title = "Admin Register"
+            msg = f"Dear {admin_name}, You have been register successfully! Your default password is: {admin_password}. Now you can change your password!"
+            htmly = get_template('Email/admin_register_mail.html')
+            context_data = {
+            'title': title,
+            'msg': msg,
+            }
+            htmly = Template(htmly)
+            html_content = htmly.render(context_data)
+            admin_register_email.delay([admin_email], html_content)
             return redirect('show_admin')
         else:
             form = admin_form()
     return render(request, "insert_update/add_admin.html", context)
+
+def delete_admin_page(request):
+    domain  = request.get_host()
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                AdminData.objects.filter(admin_id__in=selected_ids, domain_name = domain).delete()
+                messages.success(request, 'Admin deleted successfully!')
+                return redirect('show_admin')
+            except Exception as e:
+                messages.error(request, f'<i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)}')
 
 
 def admin_login_page(request):  
@@ -529,7 +556,7 @@ def delete_boards(request):
                 Boards.objects.filter(brd_id__in=selected_ids, domain_name = domain).delete()
                 messages.success(request, 'Board Deleted Successfully')
             except Exception as e:
-                messages.error(request, f'<div class="bg-danger text-white p-2 rounded-2 returnmessage mb-2" id="returnmessage"><i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)} </div>')
+                messages.error(request, f'<i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)}')
 
     return redirect('boards')
 

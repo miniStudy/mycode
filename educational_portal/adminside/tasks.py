@@ -66,6 +66,25 @@ def announcement_mail(self, list_of_receivers, html_content):
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
+@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+def admin_register_email(self, list_of_receivers, html_content):
+    subject = 'New Mail from miniStudy'
+    email_from = settings.EMAIL_HOST_USER
+    
+    text_content = ''
+    
+    msg = EmailMultiAlternatives(subject, text_content, email_from, list_of_receivers)
+    msg.attach_alternative(html_content, "text/html")
+    
+    try:
+        msg.send()
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def timetable_mail(self, list_of_receivers, html_content):

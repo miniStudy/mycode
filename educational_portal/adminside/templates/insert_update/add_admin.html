@@ -26,27 +26,19 @@
     </div>
     <div class="card-body">
          
-      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_admin' %}{% if update_data %}?pk={{update_data.admin_id}}{% endif %}">
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'insert_update_admin' %}">
         {% csrf_token %} 
         <div class="col-sm-12">
           <label class="form-label mb-2">Admin Name</label>
           <div class="input-group input-group-merge">
-            <input type="text" class="form-control" name="admin_name" {% if update_data %} value="{{update_data.admin_name}}" {% endif %}{% if filled_data %} value="{{filled_data.admin_name}}" {% endif %} required/>
+            <input type="text" class="form-control" name="admin_name" required/>
           </div>
         </div>
 
         <div class="col-sm-12">
             <label class="form-label mb-2">Email</label>
             <div class="input-group input-group-merge">
-              <input type="email" class="form-control" name="admin_email" {% if update_data %} value="{{update_data.admin_email}}" {% endif %}{% if filled_data %} value="{{filled_data.admin_email}}" {% endif %} required/>
-            </div>
-        </div>
-
-
-        <div class="col-sm-12">
-            <label class="form-label mb-2">Password</label>
-            <div class="input-group input-group-merge">
-              <input type="Password" class="form-control" name="admin_pass" {% if update_data %} value="{{update_data.admin_pass}}" {% endif %}{% if filled_data %} value="{{filled_data.brd_name}}" {% endif %} required/>
+              <input type="email" class="form-control" name="admin_email" required/>
             </div>
         </div>
         

@@ -22,7 +22,7 @@
       </div>
         
 </div>
-    <form action="{% url 'delete_boards' %}" method="POST"> 
+    <form action="{% url 'delete_admin' %}" method="POST"> 
     {% csrf_token %}        
     <div class="card-datatable table-responsive pt-0 mt-3">
         <table id="example" class="display table table-bordered" style="width:100%">
@@ -31,7 +31,6 @@
                     <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
                     <th>Admin Name</th>
                     <th>Email</th>
-                    <th>Edit</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +39,6 @@
                     <td><input type="checkbox" class="form-check-input" value="{{x.admin_id}}" name="selection" /></td>
                     <td>{{x.admin_name}}</td>
                     <td>{{x.admin_email}}</td>
-                    <td><a href="{% url 'insert_update_admin' %}?update_id={{x.admin_id}}"><i class="fa-solid fa-pen-to-square me-2"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

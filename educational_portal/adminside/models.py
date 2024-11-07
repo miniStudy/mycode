@@ -6,7 +6,7 @@ import random
 class AdminData(models.Model):
     admin_id = models.BigAutoField(primary_key=True)
     admin_name = models.CharField(max_length=20)
-    admin_pass = models.CharField(max_length=100)
+    admin_pass = models.CharField(max_length=100, default='123456', null=True, blank=True)
     admin_email = models.EmailField(unique=True)
     admin_otp = models.IntegerField(blank=True,null=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
