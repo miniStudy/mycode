@@ -627,7 +627,7 @@ class mail_variables(models.Model):
         Institute_mail = 'Institute_mail', 'Institute_mail'
         Parent_meeting_mail = 'Parent_meeting_mail', 'Parent_meeting_mail'
         Payment_mail = 'Payment_mail', 'Payment_mail'
-        Student_mail = 'Student_mail', 'Student_mail'
+        Student_mail = 'Student_mail', 'Payment_mail'
         Timetable_mail = 'Timetable_mail', 'Timetable_mail'
         Admin_mail = 'Admin_mail', 'Admin_mail'
 
