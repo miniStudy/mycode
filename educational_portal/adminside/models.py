@@ -587,7 +587,7 @@ class question_bank(models.Model):
 
 class mail_templates(models.Model):
     class mail_option(models.TextChoices):
-        Itroduction_mail = 'Itroduction_mail','Itroduction_mail'
+        Introduction_mail = 'Introduction_mail','Introduction_mail'
         Marketing_mail = 'Marketing_mail','Marketing_mail'
         Announcement_mail = 'Announcement_mail','Announcement_mail'
         Attendance_mail = 'Attendance_mail', 'Attendance_mail'
@@ -599,6 +599,7 @@ class mail_templates(models.Model):
         Payment_mail = 'Payment_mail', 'Payment_mail'
         Student_mail = 'Student_mail', 'Student_mail'
         Timetable_mail = 'Timetable_mail', 'Timetable_mail'
+        Admin_mail = 'Admin_mail', 'Admin_mail'
 
 
     mail_temp_id = models.BigAutoField(primary_key=True)
@@ -615,9 +616,24 @@ class mail_templates(models.Model):
         db_table = 'mail_templates'
 
 class mail_variables(models.Model):
+    class mail_option_variable(models.TextChoices):
+        Introduction_mail = 'Introduction_mail','Introduction_mail'
+        Marketing_mail = 'Marketing_mail','Marketing_mail'
+        Announcement_mail = 'Announcement_mail','Announcement_mail'
+        Attendance_mail = 'Attendance_mail', 'Attendance_mail'
+        Cheque_mail = 'Cheque_mail', 'Cheque_mail'
+        Cheque_update_mail = 'Cheque_update_mail', 'Cheque_update_mail'
+        Faculty_mail = 'Faculty_mail', 'Faculty_mail'
+        Institute_mail = 'Institute_mail', 'Institute_mail'
+        Parent_meeting_mail = 'Parent_meeting_mail', 'Parent_meeting_mail'
+        Payment_mail = 'Payment_mail', 'Payment_mail'
+        Student_mail = 'Student_mail', 'Student_mail'
+        Timetable_mail = 'Timetable_mail', 'Timetable_mail'
+        Admin_mail = 'Admin_mail', 'Admin_mail'
+
     mail_variables_id = models.BigAutoField(primary_key=True)
     mail_variables_name = models.CharField(max_length=100)
-    mail_variables_mail_template = models.ForeignKey(mail_templates, on_delete=models.CASCADE, related_name='mail_template')
+    mail_variables_type = models.CharField(choices=mail_option_variable.choices, max_length=50,null=True,blank=True)
 
     def __str__(self):
         return f"{self.mail_variables_name}" 

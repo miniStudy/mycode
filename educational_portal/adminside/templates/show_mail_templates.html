@@ -35,23 +35,8 @@
   <div class="container">
     <h2>Mail Templates</h2>
 
-    {% for template in templates %}
-      <div class="template">
-        <h3>Template: {{ template.mail_temp_name }}</h3>
-        <p><strong>Type:</strong> {{ template.mail_temp_type }}</p>
-
-        <h4>Variables:</h4>
-        <div class="variables">
-
-          {% for variable in template.mail_template.all %}
-            <p>{{ variable.mail_variables_name }}</p>
-          {% empty %}    
-            <p>No variables available for this template.</p>
-          {% endfor %}
-        </div>
-        <p>{{ template.mail_temp_html|safe }}</p>
-      </div>
-    {% endfor %}
+    
+    
   </div>
 </body>
 </html>
