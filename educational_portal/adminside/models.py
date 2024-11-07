@@ -83,7 +83,7 @@ class Chepter(models.Model):
     chep_sem = models.CharField(max_length=20,blank=True)
     chep_std = models.ForeignKey(Std,on_delete=models.CASCADE)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
-
+    
     def __str__(self):
         return f"{self.chep_name} - {self.chep_sem} {self.chep_std}"
     
@@ -138,9 +138,9 @@ class Syllabus(models.Model):
     syllabus_chapter = models.ForeignKey(Chepter, on_delete=models.CASCADE)
     syllabus_date = models.DateTimeField(auto_now_add=True)
     syllabus_batch = models.ForeignKey(Batches, on_delete=models.CASCADE,null=True, blank=True)
-    domain_name = models.CharField(blank=True,null=True,max_length=100)
     fac_syllabus = models.ForeignKey(Faculties, on_delete=models.CASCADE,null=True,blank=True)
     Completion_time = models.CharField(max_length=100,null=True,blank=True)
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
 
     def __str__(self):
         return f"{self.syllabus_status} - {self.syllabus_chapter}"

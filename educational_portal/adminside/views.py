@@ -178,6 +178,28 @@ def mail_send(request):
         return redirect('Admin Home')
 
 
+
+def show_admin_page(request):
+    domain = request.get_host()
+    admin_data = AdminData.objects.filter(domain_name = domain)
+    context = {'admin_data': admin_data, 'title': 'Admin'}
+    return render(request, 'show_admin.html', context)
+
+def insert_update_admin_page(request):
+    domain = request.get_host()
+    context = {'title': 'Admin'}
+    if request.method == 'POST':
+        form = admin_form(request.POST)
+        if form.is_valid():
+            form.instance.domain_name = domain
+            form.save()
+            messages.success(request, "You have been registed successfully!")
+            return redirect('show_admin')
+        else:
+            form = admin_form()
+    return render(request, "insert_update/add_admin.html", context)
+
+
 def admin_login_page(request):  
     login=1
     if request.COOKIES.get("admin_email"):
@@ -189,12 +211,13 @@ def admin_login_page(request):
 
 
 def admin_login_handle(request):
+    domain = request.get_host()
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
-        val = AdminData.objects.filter(admin_email=email,admin_pass=password).count()
+        val = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain).count()
         if val==1:
-            Data = AdminData.objects.filter(admin_email=email,admin_pass=password)
+            Data = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain)
             for item in Data:
                 request.session['admin_id'] = item.admin_id
                 request.session['admin_name'] = item.admin_name
@@ -226,9 +249,10 @@ def admin_Forgot_Password(request):
             return render(request, 'master_auth.html',{'login_set':login, 'title': 'Forget Passoword'})
     
 def admin_handle_forgot_password(request):
+     domain = request.get_host()
      if request.method == "POST":
         email2 = request.POST['email']
-        val = AdminData.objects.filter(admin_email=email2).count()
+        val = AdminData.objects.filter(admin_email=email2, domain_name = domain).count()
         if val!=1:
             messages.error(request, "Email is Wrong")
             url = f"{reverse('Admin_Forgot_Password')}?email={email2}"
@@ -256,12 +280,13 @@ def admin_Set_New_Password(request):
     return render(request, 'master_auth.html',{'login_set':login,'email':foremail, 'title': 'New Password'})
 
 def admin_handle_set_new_password(request):
+     domain = request.get_host()
      if request.method == "POST":
         otp = int(request.POST['otp'])
         password = request.POST['password']
         conf_password = request.POST['confirm_password']
         if password == conf_password:
-             obj = AdminData.objects.filter(admin_otp = otp).count()
+             obj = AdminData.objects.filter(admin_otp = otp, domain_name = domain).count()
              if obj == 1:
                   data = AdminData.objects.get(admin_otp = otp)
                   data.admin_pass = password
