@@ -3248,10 +3248,14 @@ def institute_main_send_function(request):
 @admin_login_required
 def show_mail_templates_function(request):
     domain = request.get_host()
-    templates = mail_templates.objects.filter(domain_name = domain)
+    mail_name = request.GET.get('mail_name','Introduction_mail')
+    templates = mail_templates.objects.filter(domain_name = domain,mail_temp_type = mail_name)
+    template_variables = mail_variables.objects.filter(mail_variables_type = mail_name)
     context = {
-        'title':'mail_templates',
         'templates':templates,
+        'title':'mail_templates',
+        'active_mail': mail_name,
+        'template_variables': template_variables,
     }
 
     return render(request, 'show_mail_templates.html', context)

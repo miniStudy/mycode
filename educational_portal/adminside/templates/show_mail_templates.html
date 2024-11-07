@@ -3,40 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title }}</title>
+  <title>Mail Templates</title>
   <style>
+    
     body {
       font-family: Arial, sans-serif;
       background-color: #f8f9fa;
-      padding: 20px;
+      display: flex;
+      height: 100vh;
+      margin: 0;
     }
-    .container {
-      max-width: 900px;
-      margin: 20px auto;
-      background-color: #fff;
+    .sidenav {
+      height: 100%;
+      width: 250px;
+      background-color: #343a40;
+      padding-top: 20px;
+      position: fixed;
+    }
+    .sidenav a {
+      padding: 15px 10px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #ffffff;
+      display: block;
+    }
+    .sidenav a:hover {
+      background-color: #495057;
+    }
+    .main {
+      margin-left: 260px;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      flex: 1;
     }
     h2 {
       color: #333;
     }
-    .template {
-      margin-bottom: 20px;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    .variables {
-      margin-left: 20px;
-    }
+    .col-md-4 div {
+  max-width: 100%; /* Ensures child elements don't exceed parent width */
+  overflow-x: auto; /* Allows horizontal scrolling for large content */
+}
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-  <div class="container">
-    <h2>Mail Templates</h2>
+  <div class="sidenav">
+    <a href="{% url 'show_mail_templates' %}?mail_name=Introduction_mail" id="introduction">Introduction Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Marketing_mail" id="marketing">Marketing Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Announcement_mail" id="announcement">Announcement Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Cheque_mail" id="cheque">Cheque Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Attendance_mail" id="attendance">Attendance Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Cheque_update_mail" id="cheque_update">Cheque Update Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Faculty_mail" id="faculty">Faculty Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Parent_meeting_mail" id="parent_meeting">Parent Meeting Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Payment_mail" id="payment">Payment Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Timetable_mail" id="timetable">Timetable Mail</a>
+    <a href="{% url 'show_mail_templates' %}?mail_name=Admin_mail" id="admin">Admin Mail</a>
+  </div>
 
+  <div class="main">
+    <h2>{{active_mail}}</h2>
+    <p>Select a mail template from the side menu to view its content.</p>
+    <!-- This area will dynamically display the mail content -->
     
-    
+  <hr>
+
+  <h5>Mail Variables</h5>
+  {% for x in template_variables %}
+  <p>({{forloop.counter}}) <span class="ms-1">{{x.mail_variables_name}}</span></p>
+  {% endfor %}
+  <hr>
+
+    <div>
+      <div class="row">
+      {% for x in templates %}
+      <div class="col-md-6" style="border: 1px solid black;padding: 15px;overflow: hidden;">
+        <div style="max-width: 100%;">{{x.mail_temp_html|safe}}</div> 
+      </div>
+      {% endfor %}
+    </div>
+  </div>
   </div>
 </body>
 </html>
