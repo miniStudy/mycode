@@ -21,7 +21,7 @@ from datetime import timedelta
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 
 
-@shared_task
+@shared_task(bind=True, max_retries=5)
 def admin_email_send(self,admin_emails, student_name, student_email, selected_subjects):
     subject = 'New Student Inquiry - miniStudy'
     email_from = 'miniStudy <mail@ministudy.in>'

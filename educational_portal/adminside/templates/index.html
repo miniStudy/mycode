@@ -8,18 +8,18 @@
 </div>
 
 <div class="row">
-  <div class="col-md-3 mb-4">
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
     <a href="{% url 'students_dataAdmin' %}">
-      <div class="card">
-        <div class="card-body">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1" >
           <div class="d-flex justify-content-between">
             <div class="d-flex align-items-center gap-3">
               <div class="avatar">
-                <span class="avatar-initial bg-label-info rounded-circle"><i class="tf-icons fa-solid fa-graduation-cap fs-4"></i></span>
+                <span class="avatar-initial bg-label-info rounded-circle"><i class="tf-icons fa-solid fa-graduation-cap fs-5"></i></span>
               </div>
               <div class="card-info">
                 <h5 class="card-title mb-0 me-2">Student</h5>
-                <small class="text-muted">View</small>
+                <small class="dashboardmutedtext text-muted">View</small>
               </div>
             </div>
       
@@ -28,18 +28,18 @@
       </div>
     </a>
   </div>
-  <div class="col-md-3 mb-4">
+  <div class="col-6 col-sm-6 col-md-3 mb-4">
     <a href="{% url 'fees_collection_admin' %}">
-    <div class="card">
-      <div class="card-body">
+    <div class="card card-border-shadow-success">
+      <div class="card-body dashboardcardaddon1">
         <div class="d-flex justify-content-between">
           <div class="d-flex align-items-center gap-3">
             <div class="avatar">
-              <span class="avatar-initial bg-label-success rounded-circle"><i class="tf-icons fa-solid fa-hand-holding-dollar fs-4"></i></span>
+              <span class="avatar-initial bg-label-success rounded-circle"><i class="tf-icons fa-solid fa-hand-holding-dollar fs-5"></i></span>
             </div>
             <div class="card-info">
               <h5 class="card-title mb-0 me-2">Payment</h5>
-              <small class="text-muted">Report</small>
+              <small class="dashboardmutedtext text-muted">Report</small>
             </div>
           </div>
         
@@ -49,18 +49,18 @@
   </a>
   </div>
 
-  <div class="col-md-3 mb-4">
+  <div class="col-6 col-sm-6 col-md-3 mb-4">
     <a href="{% url 'admin_packages' %}">
-    <div class="card">
-      <div class="card-body">
+    <div class="card card-border-shadow-warning">
+      <div class="card-body dashboardcardaddon1">
         <div class="d-flex justify-content-between">
           <div class="d-flex align-items-center gap-3">
             <div class="avatar">
-              <span class="avatar-initial bg-label-warning rounded-circle"><i class="tf-icons fa-brands fa-gg fs-4"></i></span>
+              <span class="avatar-initial bg-label-warning rounded-circle"><i class="tf-icons fa-brands fa-gg fs-5"></i></span>
             </div>
             <div class="card-info">
               <h5 class="card-title mb-0 me-2">Package</h5>
-              <small class="text-muted">View</small>
+              <small class="dashboardmutedtext text-muted">View</small>
             </div>
           </div>
         </div>
@@ -69,18 +69,18 @@
   </a>
   </div>
 
-  <div class="col-md-3 mb-4">
+  <div class="col-6 col-sm-6 col-md-3 mb-4">
     <a href="{% url 'admin_timetable' %}">
-    <div class="card">
-      <div class="card-body">
+    <div class="card card-border-shadow-warning">
+      <div class="card-body dashboardcardaddon1">
         <div class="d-flex justify-content-between">
           <div class="d-flex align-items-center gap-3">
             <div class="avatar">
-              <span class="avatar-initial bg-label-warning rounded-circle"><i class="tf-icons fa-solid fa-clock fs-4"></i></span>
+              <span class="avatar-initial bg-label-warning rounded-circle"><i class="tf-icons fa-solid fa-clock fs-5"></i></span>
             </div>
             <div class="card-info">
               <h5 class="card-title mb-0 me-2">Timetable</h5>
-              <small class="text-muted">View</small>
+              <small class="dashboardmutedtext text-muted">View</small>
             </div>
           </div>
         </div>
@@ -92,29 +92,31 @@
 
 
 <div class="row">
-  <div class="col-sm-6 col-lg-3 mb-4">
+  <div class="col-6 col-lg-3 mb-4">
     <a href="{% url 'inquiry_data' %}">
-    <div class="card card-border-shadow-primary h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
+    <div class="card card-border-shadow-primary">
+      <div class="card-body dashboardcardaddon1">
+        <div class="d-flex align-items-center">
           <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-primary"><i class="tf-icons fa-solid fa-clipboard-question fs-4"></i></span>
+            <span class="avatar-initial rounded bg-label-primary rounded-circle"><i class="tf-icons fa-solid fa-clipboard-question fs-5"></i></span>
           </div>
-          <h5 class="ms-1 mb-0">Leads</h5>
+          <div class="card-info">
+          <h5 class="card-title ms-1 mb-0">Leads</h5>
+          </div>
         </div>        
       </div>
     </div>
   </a>
   </div>
-  <div class="col-sm-6 col-lg-3 mb-4">
+  <div class="col-6 col-lg-3 mb-4">
     <a href="{% url 'admin_attendance' %}">
-    <div class="card card-border-shadow-danger h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
+    <div class="card card-border-shadow-danger">
+      <div class="card-body dashboardcardaddon1">
+        <div class="d-flex align-items-center">
           <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-danger"><i class="fa-brands fa-battle-net fs-4"></i></span>
+            <span class="avatar-initial rounded bg-label-danger rounded-circle"><i class="fa-brands fa-battle-net fs-5"></i></span>
           </div>
-          <h5 class="ms-1 mb-0">Attendance</h5>
+          <h5 class="card-title ms-1 mb-0">Attendance</h5>
         </div>
        
       </div>
@@ -122,30 +124,30 @@
   </a>
   </div>
 
-  <div class="col-sm-6 col-lg-3 mb-4">
+  <div class="col-6 col-lg-3 mb-4">
     <a href="{% url 'adminside_report_card' %}">
-      <div class="card card-border-shadow-success h-100">
-        <div class="card-body">
-          <div class="d-flex align-items-center mb-2 pb-1">
+      <div class="card card-border-shadow-success">
+        <div class="card-body dashboardcardaddon1">
+          <div class="d-flex align-items-center">
             <div class="avatar me-2">
-              <span class="avatar-initial rounded bg-label-success"><i class="tf-icons fa-solid fa-magnifying-glass-chart fs-4"></i></span>
+              <span class="avatar-initial rounded bg-label-success rounded-circle"><i class="tf-icons fa-solid fa-magnifying-glass-chart fs-5"></i></span>
             </div>
-            <h5 class="ms-1 mb-0">Report-Card</h5>
+            <h5 class="card-title ms-1 mb-0">Report-Card</h5>
           </div>
         
         </div>
       </div>
     </a>
   </div>
-  <div class="col-sm-6 col-lg-3 mb-4">
+  <div class="col-6 col-lg-3 mb-4">
     <a href="{% url 'admin_faculties' %}">
-    <div class="card card-border-shadow-info h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
+    <div class="card card-border-shadow-info">
+      <div class="card-body dashboardcardaddon1">
+        <div class="d-flex align-items-center">
           <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-info"><i class="tf-icons fa-solid fa-user-check fs-4"></i></span>
+            <span class="avatar-initial rounded bg-label-info rounded-circle"><i class="tf-icons fa-solid fa-user-check fs-5"></i></span>
           </div>
-          <h5 class="ms-1 mb-0">Faculties</h5>
+          <h5 class="card-title ms-1 mb-0">Faculties</h5>
         </div>
        
       </div>
@@ -161,7 +163,7 @@
 <div class="card mb-4" id="top_students">
   <h5 class="card-header mb-2">Performance</h5>
 
-  <div class="card-body">
+  <div class="card-body mt-3">
     <div class="btn-group mb-3">
       <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if get_std %}{{get_std.std_name}} {{get_std.std_board}}{% else %}Std{% endif %}</button> <ul class="dropdown-menu">
         {% for x in std_data %}
@@ -236,12 +238,9 @@
 
 
 <div class="row">
-  <div class="col-md-6 mb-3">
+  <div class="col-md-4 mb-3">
     <div class="card h-100">
-      <div class="card-header">
-        <h5 class="card-title mb-2 text-uppercase">Total Students : {{all_students|safe}}</h5>
-        <!-- <h5 class="fw-light mb-0">{{all_students|safe}}</h5> -->
-      </div>
+      
       <div class="card-body">
         <!-- <span class="d-block mb-2">Stdwise Students and Test Data</span> -->
         <div class="table-responsive">
@@ -252,36 +251,28 @@
     </div>
   </div>
 
-  <div class="col-md-6 mb-3">
+  <div class="col-md-4 mb-3">
     <div class="card h-100">
-      <div class="card-header">
-        <h5 class="card-title mb-2 text-uppercase">Students Ratio</h5>
-      </div>
-      <div class="card-body d-flex justify-content-center">
+      
+      <div class="card-body d-flex justify-content-center align-items-center">
         <div id="students_male_female_ratio" class="malefemalegraph"></div>
       </div>
     </div>
   </div>
-</div>
 
-
-<div class="row">
-  <div class="col-md-12">
+  <div class="col-md-4 mb-3">
     <div class="card h-100">
       
-        <h5 class="card-header mb-2">Test Analysis</h5>
+        
       
-      <div class="card-body">
-        <div class="table-responsive">
+      <div class="card-body d-flex justify-content-center align-items-center">
+        <div class="table-responsive" style="width: 100% !important;">
         <div id="students_chart_test"></div>
       </div>
       </div>
     </div>
   </div>
 </div>
-
-
-
   
 
 
