@@ -758,7 +758,7 @@ def insert_update_announcements(request):
             title = 'New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
             for player_id in onesignal_player_id_list:
-                send_notification(player_id,title,mess,request)
+                send_notification.delay(player_id,title,mess,request)
 
             # -------------One Single Player Id------------------------------------------------------------------------       
             return redirect(url)         
@@ -2725,6 +2725,7 @@ def add_cheques_admin(request):
                     studid = form.cleaned_data['cheque_stud_id']
                     cheque_amt = form.cleaned_data['cheque_amount']
                     cheque_amt = form.cleaned_data['cheque_amount']
+                    cheque_number = form.cleaned_data['cheque_number']
                     fees_mode = 'CHECK'
                     cheque_date = form.cleaned_data['cheque_date']
                     fees_collection_create = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date, domain_name = domain)
@@ -2742,6 +2743,7 @@ def add_cheques_admin(request):
                     'name': student_name.stud_name,
                     'amount': form.cleaned_data['cheque_amount'],
                     'bank': form.cleaned_data['cheque_bank'],
+                    'cheque_number': cheque_number,
                     'date': date
                     }
 
@@ -2750,7 +2752,9 @@ def add_cheques_admin(request):
                     cheque_update_mail.delay(student_email, html_content)
                     cheque_update_mail.delay(parent_email, html_content)
 
-                    send_notification(student_name.stud_onesignal_player_id,title,mess, request)
+                    title = "Cheque Payment Update"
+                    mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been successfully withdraw on {date}."
+                    send_notification.delay(student_name.stud_onesignal_player_id,title,mess, request)
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2772,6 +2776,7 @@ def add_cheques_admin(request):
                     student_name = form.cleaned_data['cheque_stud_id']
                     student_email = [student_name.stud_email]
                     parent_email = [student_name.stud_guardian_email]
+                    cheque_number = form.cleaned_data['cheque_number']
                     date = datetime.datetime.today()
 
                     htmly = mail_templates.objects.get(mail_temp_type = 'Cheque_mail', mail_temp_selected=1).mail_temp_html
@@ -2780,13 +2785,13 @@ def add_cheques_admin(request):
                     'name': student_name.stud_name,
                     'amount': form.cleaned_data['cheque_amount'],
                     'bank': form.cleaned_data['cheque_bank'],
-                    'date': date
+                    'date': date,
+                    'cheque_number': cheque_number
                     }
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))     
                     cheque_mail.delay(student_email, html_content)
                     cheque_mail.delay(parent_email, html_content)
-
 
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
@@ -2880,7 +2885,7 @@ def add_fees_collection_admin(request):
 
                 title = "Payment Update"
                 mess = f"Dear {student_name.stud_name}, your payment of ₹{form.cleaned_data['fees_paid']} "f"via {form.cleaned_data['fees_mode']} has been successfully processed on {date}."
-                send_notification(student_name.stud_onesignal_player_id,title,mess, request)
+                send_notification.delay(student_name.stud_onesignal_player_id,title,mess, request)
                 return redirect(url)
             else:
                 filled_data = form.data
