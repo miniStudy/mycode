@@ -131,12 +131,11 @@ def payment_mail(self, student_email, html_content):
 
 
 
-
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def cheque_mail(self,student_email, html_content):
+def cheque_mail(self, email_list, html_content):
     sub = 'Cheque Satus!'
     email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = student_email
+    recp_list = email_list
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
@@ -153,17 +152,15 @@ def cheque_mail(self,student_email, html_content):
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
-# @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def parent_cheque_mail(self, parent_email, html_content):
-    sub = 'Cheque Satus!'
+@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+def cheque_update_mail(self, email_list, html_content):
+    sub = 'Cheque Withdraw!'
     email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = parent_email
+    recp_list = email_list
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    
-
-    try:     
+    try:
         msg.send()
     except smtplib.SMTPServerDisconnected as e:
         print(f"SMTP error occurred: {e}")
@@ -173,7 +170,7 @@ def parent_cheque_mail(self, parent_email, html_content):
         print(f"An error occurred: {e}")
         # Optionally, you can also retry for other exceptions
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
-
+        
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def institute_send_mail(self,email_list): 
@@ -198,27 +195,7 @@ def institute_send_mail(self,email_list):
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
-@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def cheque_update_mail(self,bank, amount, date, student_email):
-    sub = 'Cheque Withdraw!'
-    email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = student_email
-    htmly = get_template('Email/cheque_update.html')
-    d = {'bank': bank, 'amount':amount, 'date':date}
-    text_content = ''
-    html_content = htmly.render(d)
-    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
-    msg.attach_alternative(html_content, "text/html")
-    try:
-        msg.send()
-    except smtplib.SMTPServerDisconnected as e:
-        print(f"SMTP error occurred: {e}")
-        # Retry the task after a delay
-        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Optionally, you can also retry for other exceptions
-        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def faculty_email(self,fac_name, fac_email, fac_password):

@@ -741,7 +741,7 @@ def insert_update_announcements(request):
                     pass
 
             # htmly = get_template('Email/announcement.html')
-            htmly = mail_templates.objects.get(mail_temp_type = 'Announcement_mail').mail_temp_html
+            htmly = mail_templates.objects.get(mail_temp_type = 'Announcement_mail', mail_temp_selected=1).mail_temp_html
             context_data = {
             'title': form.cleaned_data['announce_title'],
             'msg': form.cleaned_data['announce_msg'],
@@ -1240,7 +1240,7 @@ def insert_update_timetable(request):
                         onesignal_player_id_list.append(x.stud_onesignal_player_id)
 
                 
-                htmly = mail_templates.objects.get(mail_temp_type = 'Timetable Mail').mail_temp_html
+                htmly = mail_templates.objects.get(mail_temp_type = 'Timetable_mail', mail_temp_selected=1).mail_temp_html
                 context_data = {
                 'title': 'Time Table Updated',
                 'msg': 'Your time table has been updated!',
@@ -2711,10 +2711,21 @@ def add_cheques_admin(request):
                     student_email = [student_name.stud_email]
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.datetime.today()
-                    parent_cheque_mail(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, parent_email)
-                    cheque_update_mail(form.cleaned_data['cheque_bank'].bank_name, form.cleaned_data['cheque_amount'], date, student_email)
-                    title = "Cheque Payment Update"
-                    mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been withdraw on {date} successfully."
+
+                    htmly = mail_templates.objects.get(mail_temp_type = 'Cheque_mail', mail_temp_selected=1).mail_temp_html
+                    context_data = {
+                    'title': "Cheque Payment Update",
+                    'name': student_name.stud_name,
+                    'amount': form.cleaned_data['cheque_amount'],
+                    'bank': form.cleaned_data['cheque_bank'],
+                    'date': date
+                    }
+
+                    htmly = Template(htmly)
+                    html_content = htmly.render(Context(context_data))     
+                    cheque_update_mail(student_email, html_content)
+                    cheque_update_mail(parent_email, html_content)
+
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                 return redirect('fees_collection_admin')
             else:
@@ -2739,15 +2750,18 @@ def add_cheques_admin(request):
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.datetime.today()
 
-                    htmly = mail_templates.objects.get(mail_temp_type = 'Timetable Mail').mail_temp_html
+                    htmly = mail_templates.objects.get(mail_temp_type = 'Cheque_mail', mail_temp_selected=1).mail_temp_html
                     context_data = {
-                    'title': "Cheque Payment Update",
-                    'msg': f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}.",
+                    'title': "Cheque Payment",
+                    'name': student_name.stud_name,
+                    'amount': form.cleaned_data['cheque_amount'],
+                    'bank': form.cleaned_data['cheque_bank'],
+                    'date': date
                     }
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))     
                     cheque_mail(student_email, html_content)
-                    parent_cheque_mail(parent_email, html_content)
+                    cheque_mail(parent_email, html_content)
 
 
                     title = "Cheque Payment Update"
@@ -3257,6 +3271,15 @@ def show_mail_templates_function(request):
         'active_mail': mail_name,
         'template_variables': template_variables,
     }
+
+    pk = request.GET.get('pk')
+    if pk:
+        get_object = mail_templates.objects.get(mail_temp_id = pk)
+        domain_name = get_object.domain_name
+        mail_type = get_object.mail_temp_type
+        mail_templates.objects.filter(domain_name=domain_name, mail_temp_type=mail_type).update(mail_temp_selected=0)
+        get_object.mail_temp_selected = 1
+        get_object.save()
 
     return render(request, 'show_mail_templates.html', context)
 
