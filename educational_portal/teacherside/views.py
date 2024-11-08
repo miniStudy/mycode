@@ -13,8 +13,8 @@ from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
-from teacherside.send_mail import *
-from teacherside.send_mail import send_notification
+from teacherside.tasks import *
+from teacherside.tasks import send_notification
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from datetime import datetime, timezone as dt_timezone
@@ -553,6 +553,8 @@ def handle_attendance(request):
         absent_list = []
         parent_present_li = []
         parent_absent_li = []
+        student_present_name_list = []
+        student_absent_name_list = []
         telegram_student_present_list = []
         telegram_student_absent_list = []
         telegram_parent_present_list = []
@@ -564,6 +566,7 @@ def handle_attendance(request):
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1, domain_name = domain)
                 present_list.append(i.stud_email)
                 parent_present_li.append(i.stud_guardian_email)
+                student_present_name_list.append(i.stud_name)
 
                 telegram_student_present_list.append(i.stud_telegram_studentchat_id)
                 telegram_parent_present_list.append(i.stud_telegram_parentschat_id)
@@ -571,6 +574,7 @@ def handle_attendance(request):
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0, domain_name = domain)
                 absent_list.append(i.stud_email)
                 parent_absent_li.append(i.stud_guardian_email)
+                student_absent_name_list.append(i.stud_name)
 
                 telegram_student_absent_list.append(i.stud_telegram_studentchat_id)
                 telegram_parent_absent_list.append(i.stud_telegram_studentchat_id)
@@ -580,25 +584,29 @@ def handle_attendance(request):
         
         date = datetime.now()
 
-        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance Mail').mail_temp_html
+        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance_mail', mail_temp_selected=1).mail_temp_html
         context_data = {
         'title': "Attendance Result",
-        'msg': f"You'r attendance result on {date} is: Present",
+        'name': student_present_name_list,
+        'status': 'Present',
+        'date': date,
         }
         htmly = Template(htmly)
         html_content = htmly.render(Context(context_data))     
-        attendance_student_present_mail(present_list, html_content)
-        attendance_parent_present_mail(present_list, html_content)
+        attendance_student_present_mail.delay(present_list, html_content)
+        attendance_student_present_mail.delay(parent_present_li, html_content)
 
-        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance Mail').mail_temp_html
+        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance_mail', mail_temp_selected=1).mail_temp_html
         context_data = {
         'title': "Attendance Result",
-        'msg': f"You'r attendance result on {date} is: Absent",
+        'name': student_absent_name_list,
+        'status': 'Absent',
+        'date': date,
         }
         htmly = Template(htmly)
         html_content = htmly.render(Context(context_data))     
-        attendance_student_absent_mail(absent_list, html_content)
-        attendance_parent_absent_mail(absent_list, html_content)
+        attendance_student_absent_mail.delay(absent_list, html_content)
+        attendance_student_absent_mail.delay(parent_absent_li, html_content)
 
 
         #------------------------- Telegram Message -----------------------------------------
@@ -657,9 +665,7 @@ def edit_handle_attendance(request):
 @teacher_login_required
 def teacher_syllabus(request):
     domain = request.get_host()
-    fac_id = request.session['fac_id']
-    fac_object = Faculties.objects.get(fac_id = fac_id)
-
+    fac_id = request.session['fac_id'] 
  
     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
     subjects_list = []
@@ -667,52 +673,54 @@ def teacher_syllabus(request):
     for x in faculty_access:
         subjects_list.append(x.fa_subject.sub_id)
         batches_list.append(x.fa_batch.batch_id)
+
+        
     syllabus_data = Syllabus.objects.filter(syllabus_batch__batch_id__in = batches_list, syllabus_chapter__chep_sub__sub_id__in = subjects_list, domain_name = domain)
     context = {'syllabus_data': syllabus_data}
 
-    if request.GET.get('chep_id'):
-        chep_id = request.GET.get('chep_id')
-        status_id = request.GET.get('status')
+    # if request.GET.get('chep_id'):
+    #     chep_id = request.GET.get('chep_id')
+    #     status_id = request.GET.get('status')
 
-        # Get objects from the database
-        chep_obj = Chepter.objects.get(chep_id=chep_id)
-        get_batch = request.GET.get('get_batch')
-        Last_obj = Syllabus.objects.filter(domain_name=domain, fac_syllabus__fac_id=fac_id, syllabus_batch__batch_id = get_batch).last()
+    #     # Get objects from the database
+    #     chep_obj = Chepter.objects.get(chep_id=chep_id)
+    #     get_batch = request.GET.get('get_batch')
+    #     Last_obj = Syllabus.objects.filter(domain_name=domain, fac_syllabus__fac_id=fac_id, syllabus_batch__batch_id = get_batch).last()
 
-        if Last_obj is not None:
-            # Assuming Last_obj.syllabus_date is a datetime field, it should already have timezone info.
-            provided_date = Last_obj.syllabus_date
+    #     if Last_obj is not None:
+    #         # Assuming Last_obj.syllabus_date is a datetime field, it should already have timezone info.
+    #         provided_date = Last_obj.syllabus_date
 
-            # Current date and time with timezone information
-            today_date = timezone.now()
+    #         # Current date and time with timezone information
+    #         today_date = timezone.now()
 
-            # Calculate the difference in days
-            difference_in_days = (today_date - provided_date).days
+    #         # Calculate the difference in days
+    #         difference_in_days = (today_date - provided_date).days
 
-            # Update or create the Syllabus entry
-            Syllabus.objects.update_or_create(
-                syllabus_chapter=chep_obj,
-                defaults={
-                    'syllabus_status': status_id,
-                    'syllabus_chapter': chep_obj,
-                    'domain_name': domain,
-                    'fac_syllabus': fac_object,
-                    'Completion_time': difference_in_days,
-                    'syllabus_batch': get_batch
-                },
-            )
-        else:
-            # Create without Completion_time if no Last_obj is found
-            Syllabus.objects.update_or_create(
-                syllabus_chapter=chep_obj,
-                defaults={
-                    'syllabus_status': status_id,
-                    'syllabus_chapter': chep_obj,
-                    'domain_name': domain,
-                    'fac_syllabus': fac_object,
-                    'syllabus_batch': get_batch
-                },
-            )
+    #         # Update or create the Syllabus entry
+    #         Syllabus.objects.update_or_create(
+    #             syllabus_chapter=chep_obj,
+    #             defaults={
+    #                 'syllabus_status': status_id,
+    #                 'syllabus_chapter': chep_obj,
+    #                 'domain_name': domain,
+    #                 'fac_syllabus': fac_object,
+    #                 'Completion_time': difference_in_days,
+    #                 'syllabus_batch': get_batch
+    #             },
+    #         )
+    #     else:
+    #         # Create without Completion_time if no Last_obj is found
+    #         Syllabus.objects.update_or_create(
+    #             syllabus_chapter=chep_obj,
+    #             defaults={
+    #                 'syllabus_status': status_id,
+    #                 'syllabus_chapter': chep_obj,
+    #                 'domain_name': domain,
+    #                 'fac_syllabus': fac_object,
+    #                 'syllabus_batch': get_batch
+    #             },
+    #         )
     
     
     
@@ -720,12 +728,18 @@ def teacher_syllabus(request):
     batches = Batches.objects.filter(batch_id__in = batches_list, domain_name = domain)
     
 
-    # if request.GET.get('get_batch',1):
-    #     get_batch = request.GET.get('get_batch')
-    #     batch_obj = Batches.objects.get(batch_id = get_batch)
-    #     subjects = subjects.filter(sub_std__std_id = batch_obj.batch_std.std_id)
-    #     context.update({'subjects': subjects})
+    if request.GET.get('get_batch'):
+        get_batch = request.GET.get('get_batch')
+        get_batch = Batches.objects.get(batch_id = get_batch)
+        subjects = subjects.filter(sub_std__std_id = get_batch.batch_std.std_id)
+        syllabus_data = syllabus_data.filter(syllabus_batch__batch_id = get_batch.batch_id)
+        context.update({'get_batch': get_batch, 'subjects': subjects, 'syllabus_data': syllabus_data})
 
+    if request.GET.get('get_subject'):
+        get_subject = request.GET.get('get_subject')
+        get_subject = Subject.objects.get(sub_id = get_subject)
+        syllabus_data = syllabus_data.filter(syllabus_chapter__chep_sub__sub_id = get_subject.sub_id)
+        context.update({'get_subject': get_subject, 'syllabus_data': syllabus_data})
 
     context.update({
         'title':'Syllabus',
@@ -750,13 +764,82 @@ def insert_update_syllabus(request):
         batches_list.append(x.fa_batch.batch_id)
         standard_list.append(x.fa_batch.batch_std.std_id)
 
-    chepter_data = Chepter.objects.filter(chep_std__std_id__in = standard_list)
-    context.update({'chepter_data': chepter_data})
-    return render(request, 'teacherpanel/insert_update_syllabus.html')
+    chepter_data = Chepter.objects.filter(chep_std__std_id__in = standard_list, domain_name = domain)
+    batch_data = Batches.objects.filter(batch_id__in = batches_list, domain_name = domain)
+    fac_data = Faculties.objects.get(fac_id = fac_id, domain_name = domain)
+
+    if request.GET.get('get_batch') and request.GET.get('get_subject'):
+        get_batch = request.GET.get('get_batch')
+        get_subject = request.GET.get('get_subject')
+        chepter_data = chepter_data.filter(chep_sub__sub_id = get_subject, domain_name = domain)
+        batch_data = batch_data.filter(batch_id = get_batch, domain_name = domain)
+        context.update({'chepter_data': chepter_data})
+
+    context.update({'chepter_data': chepter_data, 'batch_data': batch_data, 'fac_data': fac_data, 'title':'Syllabus'})
+
+
+    if request.method == 'POST':
+        chep_id = request.POST.get('syllabus_chapter')
+        status_id = request.POST.get('syllabus_status')
+        print(status_id)
+        fac_syllabus = request.POST.get('fac_syllabus')
+        fac_object = Faculties.objects.get(fac_id = fac_syllabus)
+        # Get objects from the database
+        chep_obj = Chepter.objects.get(chep_id=chep_id)
+        get_batch = request.POST.get('syllabus_batch')
+        batch_obj = Batches.objects.get(batch_id = get_batch)
+        Last_obj = Syllabus.objects.filter(domain_name=domain, fac_syllabus__fac_id=fac_id, syllabus_batch__batch_id = get_batch).last()
+
+        if Last_obj is not None:
+            # Assuming Last_obj.syllabus_date is a datetime field, it should already have timezone info.
+            provided_date = Last_obj.syllabus_date
+
+            # Current date and time with timezone information
+            today_date = timezone.now()
+
+            # Calculate the difference in days
+            difference_in_days = (today_date - provided_date).days
+
+            # Update or create the Syllabus entry
+            Syllabus.objects.update_or_create(
+                syllabus_chapter=chep_obj,
+                defaults={
+                    'syllabus_status': status_id,
+                    'syllabus_chapter': chep_obj,
+                    'domain_name': domain,
+                    'fac_syllabus': fac_object,
+                    'Completion_time': difference_in_days,
+                    'syllabus_batch': batch_obj
+                },
+            )
+        else:
+            # Create without Completion_time if no Last_obj is found
+            Syllabus.objects.update_or_create(
+                syllabus_chapter=chep_obj,
+                defaults={
+                    'syllabus_status': status_id,
+                    'syllabus_chapter': chep_obj,
+                    'domain_name': domain,
+                    'fac_syllabus': fac_object,
+                    'syllabus_batch': batch_obj
+                },
+            )
+        
+        title = "Syllabus Completion Update"
+        message = (
+        f"The syllabus for chapter '{chep_obj.chep_name}' "
+        f"in batch '{batch_obj.batch_name}' has been successfully completed."
+)
+        player_ids = AdminData.objects.values_list('admin_onesignal_player_id', flat=True).exclude(admin_onesignal_player_id__isnull=True)
+        player_ids_str = ",".join(player_ids)
+        send_notification(player_ids_str,title,message, request)
+        return redirect('teacher_syllabus')
+    return render(request, 'teacherpanel/insert_update_syllabus.html', context)
 
 
 @teacher_login_required
 def teacher_doubts(request):
+    context = {}
     domain = request.get_host()
     fac_id = request.session['fac_id']
     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
@@ -768,12 +851,21 @@ def teacher_doubts(request):
         Case(
             When(doubt_solution__solution_verified=True, then=1),
             output_field=IntegerField(),
-        ))).order_by('-pk')[:30]
+        ))).order_by('-pk')
 
-    context = {
+    if request.GET.get('get_verified'):
+        get_verified = request.GET.get('get_verified')
+        verify_check = request.GET.get('verify_check')
+        doubts_data = doubts_data.filter(verified_solution = get_verified)
+        context.update({'doubts_data': doubts_data, 'verify_check': verify_check})
+
+    doubts_data = doubts_data[:30]
+    context['doubts_data'] = doubts_data
+
+    context.update({
         'title':'Doubts',
         'doubts_data':doubts_data
-    }
+    })
     return render(request, 'teacherpanel/doubts.html', context)
 
 
@@ -991,12 +1083,14 @@ def teacher_save_offline_marks(request):
 
             test_attempt.save()
 
-        email_ids = []
+        student_email_ids = []
+        parent_email_ids = []
+        student_names = []
         onesignal_player_ids = []
         student_marks = []
 
         if not date:
-            date = datetime.now().date() 
+            test_date = datetime.now().date() 
             
         test = Test_attempted_users.objects.filter(tau_test_id__test_id=test_id.test_id, domain_name = domain).first()
 
@@ -1007,11 +1101,16 @@ def teacher_save_offline_marks(request):
 
             for i, stud_id in enumerate(student_ids):
                 student_email = Students.objects.get(stud_id=stud_id)
-                email_ids.append(student_email.stud_email)
+                student_names.append(student_email.stud_name)
+                student_email_ids.append(student_email.stud_email)
+                parent_email_ids.append(student_email.stud_guardian_email)
                 onesignal_player_ids.append(student_email.stud_onesignal_player_id)
                 student_marks.append(marks[i])
+            
+            htmly = mail_templates.objects.get(mail_temp_type = 'Marks_mail', mail_temp_selected=1).mail_temp_html   
+            marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, student_email_ids, htmly)
+            marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, parent_email_ids, htmly)
 
-            marks_mail(student_marks, email_ids, test_name, total_marks, date)
 
             title = "📢 Marks Update"
             for index, player_id in enumerate(onesignal_player_ids):

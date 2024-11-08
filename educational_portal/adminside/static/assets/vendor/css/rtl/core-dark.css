@@ -11,3 +11,9 @@
 
 
 
+@media (max-width: 575.98px) {
+    .card-title{font-size: 12px;}
+    .dashboardmutedtext{font-size: 10px;}
+    .dashboardcardaddon1{padding-top: 15px;padding-bottom: 15px;}
+}
+

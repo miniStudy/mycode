@@ -110,7 +110,7 @@
 <script>
   var options = {
     series: [{
-      name: 'No of Students',
+      name: '',
       data: {{ students_for_that_std|safe }}
     }],
     chart: {
@@ -122,7 +122,8 @@
       }
     },
     grid: {
-      borderColor: '#626567', // Dark grey grid lines
+      borderColor: '#333333',  // Darker grid line color
+      strokeDashArray: 4  // Dashed grid lines for added style
     },
     plotOptions: {
       bar: {
@@ -143,7 +144,8 @@
       categories: {{ std_list|safe }},
       labels: {
         style: {
-          colors: '#FFFFFF'
+          colors: '#FFFFFF',
+          fontSize: 8,
         }
       },
       axisBorder: {
@@ -153,7 +155,7 @@
         color: '#FFFFFF'
       },
       title: {
-        text: 'STDS',
+        text: '',
         style: {
           color: '#FFFFFF', // White color for x-axis title
           fontSize: 12,
@@ -162,7 +164,7 @@
     },
     yaxis: {
       title: {
-        text: 'No of Students',
+        text: '',
         style: {
           color: '#FFFFFF', // White color for y-axis title
           fontSize: 12,
@@ -181,7 +183,7 @@
       }
     },
     fill: {
-      opacity: 1
+      opacity: 1,
     },
     tooltip: {
       y: {
@@ -252,111 +254,87 @@
   chart.render();
 </script>
 
-
-
-
-
 <script>
   var options = {
-    series: [{
-      name: 'No of Students',
-      data: [20,30,40,50,60,70],
-    }],
     chart: {
-      type: 'bar',
-      height: 350,
-      background: 'transparent',
+      height: 280,
+      type: "area",
       toolbar: {
         show: false
       }
-    },
-    grid: {
-      borderColor: '#626567', // Dark grey grid lines
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        endingShape: 'rounded'
-      },
+      
     },
     dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent']
-    },
-    xaxis: {
-      categories: ['std9','std10','std11','std12','std13','std14'],
-      labels: {
-        style: {
-          colors: '#FFFFFF'
-        }
-      },
-      axisBorder: {
-        color: '#FFFFFF'
-      },
-      axisTicks: {
-        color: '#FFFFFF'
-      },
-      title: {
-        text: 'STDS',
-        style: {
-          color: '#FFFFFF', // White color for x-axis title
-          fontSize: 12,
-        }
+      enabled: false,
+      style: {
+        colors: ['#FFFFFF']  // Set text color to white
       }
     },
-    yaxis: {
-      title: {
-        text: 'No of Students',
-        style: {
-          color: '#FFFFFF', // White color for y-axis title
-          fontSize: 12,
-        }
-      },
-      labels: {
-        style: {
-          colors: '#FFFFFF'
-        }
-      },
-      axisBorder: {
-        color: '#FFFFFF'
-      },
-      axisTicks: {
-        color: '#FFFFFF'
+    series: [
+      {
+        name: "Series 1",
+        data: [45, 52, 38, 45, 19, 23, 2]
       }
-    },
+    ],
     fill: {
-      opacity: 1
-    },
-    tooltip: {
-      y: {
-        formatter: function (val) {
-          return val
-        }
-      }
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.7,
+        opacityTo: 0.9,
+        stops: [0, 90, 100]
+      },
+      
     },
     legend: {
       labels: {
-        colors: '#FFFFFF' // White color for legend labels
+        colors: '#FFFFFF'  // Set legend text color to white
       }
     },
-    responsive: [{
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 400
-            },
-            legend: {
-              position: 'bottom'
-            }
-          }
-        }]
+    xaxis: {
+      categories: [
+        "01 Jan",
+        "02 Jan",
+        "03 Jan",
+        "04 Jan",
+        "05 Jan",
+        "06 Jan",
+        "07 Jan"
+      ],
+      labels: {
+        style: {
+          colors: '#FFFFFF',  // X-axis label color
+          fontSize: 8,
+        }
+      },
+      axisBorder: {
+        color: '#666666'  // X-axis border color
+      },
+      axisTicks: {
+        color: '#666666'  // X-axis ticks color
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: '#FFFFFF'  // Y-axis label color
+        }
+      },
+      axisBorder: {
+        color: '#666666'  // Y-axis border color
+      },
+      axisTicks: {
+        color: '#666666'  // Y-axis ticks color
+      }
+    },
+    grid: {
+      borderColor: '#333333',  // Darker grid line color
+      strokeDashArray: 4  // Dashed grid lines for added style
+    }
   };
-
-  var students_chart = new ApexCharts(document.querySelector("#students_chart_test"), options);
-  students_chart.render();
-</script>
+  
+  var chart = new ApexCharts(document.querySelector("#students_chart_test"), options);
+  
+  chart.render();
+  </script>
+  

@@ -36,6 +36,12 @@
           <div>Dashboard</div>
         </a>
       </li>
+      <li class="menu-item {% if title == 'Admin' %} active {% endif %}">
+        <a href="{% url 'show_admin' %}" class="menu-link">
+          <i class="menu-icon fa-solid fa-user-tie"></i>
+          <div>Admin</div>
+        </a>
+      </li>
       <li class="menu-item {% if title == 'Boards' %} active {% endif %}">
         <a href="{% url 'boards' %}" class="menu-link">
           <i class="menu-icon tf-icons fa-solid fa-person-chalkboard"></i>

@@ -583,7 +583,7 @@ def student_inquiries_data(request):
             student_name = form.cleaned_data['inq_name']
             student_email = form.cleaned_data['inq_email']
             form.save()
-            admin_emails = AdminData.objects.values_list('admin_email', flat=True)
+            admin_emails = list(AdminData.objects.values_list('admin_email', flat=True))  # Convert QuerySet to a list
             admin_email_send.delay(admin_emails, student_name, student_email, selected_subjects)
             messages.success(request, "Inquiry saved successfully!")
             return redirect('Student_Inquiries')
