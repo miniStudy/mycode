@@ -630,6 +630,7 @@ class mail_variables(models.Model):
         Student_mail = 'Student_mail', 'Payment_mail'
         Timetable_mail = 'Timetable_mail', 'Timetable_mail'
         Admin_mail = 'Admin_mail', 'Admin_mail'
+        Marks_mail = 'Marks_mail', 'Marks_mail'
 
     mail_variables_id = models.BigAutoField(primary_key=True)
     mail_variables_name = models.CharField(max_length=100)

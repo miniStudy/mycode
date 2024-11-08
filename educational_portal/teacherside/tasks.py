@@ -1,6 +1,8 @@
 from django.core.mail import send_mail
+from celery import shared_task
+import smtplib
 from django.template.loader import get_template
-from django.template import Context
+from django.template import Context, Template
 from datetime import datetime
 from django.core.mail import EmailMultiAlternatives
 from django.views.decorators.csrf import csrf_exempt
@@ -11,107 +13,97 @@ from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.http import Http404, JsonResponse, HttpResponse
 from adminside.models import *
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.template.loader import get_template
 
 # changes done
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 
 
-def attendance_student_present_mail(list_of_receivers, html_content):
+@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+def attendance_student_present_mail(self, email_list, html_content):
     sub = "Today's Attendance Update!"
     email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = list_of_receivers
-    # send_mail(sub,mess,email_from,recp_list)
+    recp_list = email_list
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    try:
+        msg.send()
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        # Retry the task after a delay
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Optionally, you can also retry for other exceptions
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
-def attendance_parent_present_mail(list_of_receivers, html_content):
+
+@shared_task(bind=True, max_retries=5)  # Use None for infinite retries
+def attendance_student_absent_mail(self, email_list, html_content):
     sub = "Today's Attendance Update!"
     email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = list_of_receivers
-    # send_mail(sub,mess,email_from,recp_list)
+    recp_list = email_list
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    try:
+        msg.send()
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        # Retry the task after a delay
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Optionally, you can also retry for other exceptions
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
-def attendance_student_absent_mail(list_of_receivers, html_content):
-    sub = "Today's Attendance Update!"
-    email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = list_of_receivers
-    # send_mail(sub,mess,email_from,recp_list)
-    text_content = ''
-    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
-def attendance_parent_absent_mail(list_of_receivers, html_content):
-    sub = "Today's Attendance Update!"
-    email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = list_of_receivers
-    # send_mail(sub,mess,email_from,recp_list)
-    text_content = ''
-    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
-
-def timetable_mail(list_of_receivers):
-    sub = 'New Update from miniStudy'
-    title = 'Time Table Updated'
-    msg = 'Your time table has been updated!'
-    email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = list_of_receivers
-    htmly = get_template('teacherpanel/Email/timetable.html')
-    d = {'title':title, 'msg':msg}
-    text_content = ''
-    html_content = htmly.render(d)
-    msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
-
-from django.core.mail import EmailMultiAlternatives, get_connection
-from django.template.loader import get_template
-
-def marks_mail(marks, email_ids, test_name, total_marks, test_date):
-    sub = f'Test Marks Result for {test_name}'
+@shared_task(bind=True, max_retries=5)  # Retry up to 5 times
+def marks_mail(self, student_names, student_marks, test_date, test_name, total_marks, student_email_ids, htmly):
+    subject = f'Test Marks Result for {test_name}'
     email_from = 'miniStudy <mail@ministudy.in>'
     htmly = get_template('teacherpanel/Email/marks_student.html')
-
     connection = get_connection()
-
     messages = []
-
+    html_content = htmly.render(Context(context_data))
+    htmly = Template(htmly)
+    # Format the test date
     if isinstance(test_date, str):
         formatted_date = test_date
     else:
         formatted_date = test_date.strftime('%d-%m-%Y')
 
-    for i, email in enumerate(email_ids):
-        student_marks = marks[i]
-        print(student_marks)
-        print(email)
-        d = {
+    for i, email in enumerate(student_email_ids):
+        student_marks = student_marks[i]
+        context_data = {
             'title': 'Test Marks Notification',
             'test_name': test_name,
+            'student_name': student_names,
             'total_marks': total_marks,
             'test_date': formatted_date,
             'student_marks': student_marks,
         }
-        html_content = htmly.render(d)
-        
-        msg = EmailMultiAlternatives(sub, '', email_from, [email])
+        html_content = htmly.render(context_data)
+
+        # Create the email message
+        msg = EmailMultiAlternatives(subject, '', email_from, [email])
         msg.attach_alternative(html_content, "text/html")
-      
         messages.append(msg)
-    connection.send_messages(messages)
+    try:
+        connection.send_messages(messages)
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP error occurred: {e}")
+        # Retry the task after a delay if there's an SMTP server issue
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Retry on other exceptions as well
+        raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
 
 
 # -----------------------------------------Telegram------------------------------------------------------------------------------
 # curl -X POST "https://api.telegram.org/bot7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U/setWebhook?url=https://aadd-2401-4900-5774-145c-80b4-b65f-5a8e-c0f8.ngrok-free.app/adminside/webhook/"
-
 BOT_TOKEN = '7606273676:AAH8PlgH262QTaNyeG9ulSLt1rfsYqhfj1U' 
 
 
@@ -207,7 +199,6 @@ def telegram_webhook(request):
     return JsonResponse({'status': 'error'}, status=400)
 
 
-from datetime import datetime
 def attendance_telegram_message_student(status, date, student_chatids):
     title = "Attendance Status"
     formatted_date = date.strftime("%Y-%m-%d %H:%M")

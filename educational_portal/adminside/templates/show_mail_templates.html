@@ -77,6 +77,11 @@
       <div class="row">
       {% for x in templates %}
       <div class="col-md-6" style="border: 1px solid black;padding: 15px;overflow: hidden;">
+        {% if x.mail_temp_selected == 1 %}
+        <span>Selected</span>
+        {% else %}
+        <button type="button"><a href="{% url 'show_mail_templates' %}?pk={{x.mail_temp_id}}">Select</a></button>
+        {% endif %}
         <div style="max-width: 100%;">{{x.mail_temp_html|safe}}</div> 
       </div>
       {% endfor %}
