@@ -13,8 +13,8 @@ from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
-from teacherside.send_mail import *
-from teacherside.send_mail import send_notification
+from teacherside.tasks import *
+from teacherside.tasks import send_notification
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from datetime import datetime, timezone as dt_timezone
