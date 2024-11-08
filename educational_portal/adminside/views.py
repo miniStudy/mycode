@@ -2755,7 +2755,7 @@ def add_cheques_admin(request):
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been successfully withdraw on {date}."
 
-                    send_notification.delay(student_name.stud_onesignal_player_id,title,mess, request)
+                    send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                 messages.success(request, "Cheque Updated Successfully")
 
                 return redirect('fees_collection_admin')
@@ -2799,7 +2799,7 @@ def add_cheques_admin(request):
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
 
-                    send_notification.delay(student_name.stud_onesignal_player_id,title,mess, request)
+                    send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                     messages.success(request, "Cheque Added Successfully!")
 
                     return redirect('fees_collection_admin')
