@@ -461,7 +461,7 @@ def doubt_telegram_message_student(doubt_topic, doubt_date, student_chat_ids):
 
 
 @shared_task(bind=True, max_retries=5)
-def send_notification(self, playerid,title,message, request):
+def send_notification(self, playerid,title,message):
     url = "https://onesignal.com/api/v1/notifications"
 
     payload = json.dumps({
