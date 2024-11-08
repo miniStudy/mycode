@@ -15,6 +15,7 @@ from adminside.models import *
 # changes done
 logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 
+
 def attendance_student_present_mail(list_of_receivers, html_content):
     sub = "Today's Attendance Update!"
     email_from = 'miniStudy <mail@ministudy.in>'
