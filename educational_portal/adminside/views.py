@@ -741,7 +741,7 @@ def insert_update_announcements(request):
                     pass
 
             # htmly = get_template('Email/announcement.html')
-            htmly = mail_templates.objects.get(mail_temp_type = 'Announcement_mail').mail_temp_html
+            htmly = mail_templates.objects.get(mail_temp_type = 'Announcement_mail',mail_temp_selected = 1).mail_temp_html
             context_data = {
             'title': form.cleaned_data['announce_title'],
             'msg': form.cleaned_data['announce_msg'],
