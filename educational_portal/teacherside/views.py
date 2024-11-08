@@ -553,6 +553,8 @@ def handle_attendance(request):
         absent_list = []
         parent_present_li = []
         parent_absent_li = []
+        student_present_name_list = []
+        student_absent_name_list = []
         telegram_student_present_list = []
         telegram_student_absent_list = []
         telegram_parent_present_list = []
@@ -564,6 +566,7 @@ def handle_attendance(request):
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1, domain_name = domain)
                 present_list.append(i.stud_email)
                 parent_present_li.append(i.stud_guardian_email)
+                student_present_name_list.append(i.stud_name)
 
                 telegram_student_present_list.append(i.stud_telegram_studentchat_id)
                 telegram_parent_present_list.append(i.stud_telegram_parentschat_id)
@@ -571,6 +574,7 @@ def handle_attendance(request):
                 Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0, domain_name = domain)
                 absent_list.append(i.stud_email)
                 parent_absent_li.append(i.stud_guardian_email)
+                student_absent_name_list.append(i.stud_name)
 
                 telegram_student_absent_list.append(i.stud_telegram_studentchat_id)
                 telegram_parent_absent_list.append(i.stud_telegram_studentchat_id)
@@ -580,25 +584,29 @@ def handle_attendance(request):
         
         date = datetime.now()
 
-        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance Mail').mail_temp_html
+        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance_mail', mail_temp_selected=1).mail_temp_html
         context_data = {
         'title': "Attendance Result",
-        'msg': f"You'r attendance result on {date} is: Present",
+        'name': student_present_name_list,
+        'status': 'Present',
+        'date': date,
         }
         htmly = Template(htmly)
         html_content = htmly.render(Context(context_data))     
-        attendance_student_present_mail(present_list, html_content)
-        attendance_parent_present_mail(present_list, html_content)
+        attendance_student_present_mail.delay(present_list, html_content)
+        attendance_student_present_mail.delay(parent_present_li, html_content)
 
-        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance Mail').mail_temp_html
+        htmly = mail_templates.objects.get(mail_temp_type = 'Attendance_mail', mail_temp_selected=1).mail_temp_html
         context_data = {
         'title': "Attendance Result",
-        'msg': f"You'r attendance result on {date} is: Absent",
+        'name': student_absent_name_list,
+        'status': 'Absent',
+        'date': date,
         }
         htmly = Template(htmly)
         html_content = htmly.render(Context(context_data))     
-        attendance_student_absent_mail(absent_list, html_content)
-        attendance_parent_absent_mail(absent_list, html_content)
+        attendance_student_absent_mail.delay(absent_list, html_content)
+        attendance_student_absent_mail.delay(parent_absent_li, html_content)
 
 
         #------------------------- Telegram Message -----------------------------------------
@@ -1075,12 +1083,14 @@ def teacher_save_offline_marks(request):
 
             test_attempt.save()
 
-        email_ids = []
+        student_email_ids = []
+        parent_email_ids = []
+        student_names = []
         onesignal_player_ids = []
         student_marks = []
 
         if not date:
-            date = datetime.now().date() 
+            test_date = datetime.now().date() 
             
         test = Test_attempted_users.objects.filter(tau_test_id__test_id=test_id.test_id, domain_name = domain).first()
 
@@ -1091,11 +1101,16 @@ def teacher_save_offline_marks(request):
 
             for i, stud_id in enumerate(student_ids):
                 student_email = Students.objects.get(stud_id=stud_id)
-                email_ids.append(student_email.stud_email)
+                student_names.append(student_email.stud_name)
+                student_email_ids.append(student_email.stud_email)
+                parent_email_ids.append(student_email.stud_guardian_email)
                 onesignal_player_ids.append(student_email.stud_onesignal_player_id)
                 student_marks.append(marks[i])
+            
+            htmly = mail_templates.objects.get(mail_temp_type = 'Marks_mail', mail_temp_selected=1).mail_temp_html   
+            marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, student_email_ids, htmly)
+            marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, parent_email_ids, htmly)
 
-            marks_mail(student_marks, email_ids, test_name, total_marks, date)
 
             title = "📢 Marks Update"
             for index, player_id in enumerate(onesignal_player_ids):

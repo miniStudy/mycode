@@ -198,15 +198,14 @@ def insert_update_admin_page(request):
             form.save()
             messages.success(request, "You have been registed successfully!")
 
-            title = "Admin Register"
-            msg = f"Dear {admin_name}, You have been register successfully! Your default password is: {admin_password}. Now you can change your password!"
-            htmly = get_template('Email/admin_register_mail.html')
+            htmly = mail_templates.objects.get(mail_temp_type = 'Admin_mail', mail_temp_selected=1).mail_temp_html
             context_data = {
-            'title': title,
-            'msg': msg,
+            'title': "Admin Register",
+            'name': admin_name,
+            'password': admin_password
             }
             htmly = Template(htmly)
-            html_content = htmly.render(context_data)
+            html_content = htmly.render(Context(context_data))
             admin_register_email.delay([admin_email], html_content)
             return redirect('show_admin')
         else:
@@ -730,9 +729,11 @@ def insert_update_announcements(request):
             form.save()
             messages.success(request, 'Announcement Added Successfully')           
             students_email_list = []
+            parents_email_list = []
             onesignal_player_id_list = []
             for x in students_for_mail:
                 students_email_list.append(x.stud_email)
+                parents_email_list.append(x.stud_guardian_email)
                 if x.stud_onesignal_player_id:  
                     onesignal_player_id_list.append(x.stud_onesignal_player_id)
                 if x.stud_telegram_studentchat_id:    
@@ -748,7 +749,8 @@ def insert_update_announcements(request):
             }
             htmly = Template(htmly)
             html_content = htmly.render(Context(context_data))     
-            announcement_mail(students_email_list,html_content)
+            announcement_mail.delay(students_email_list, html_content)
+            announcement_mail.delay(parents_email_list, html_content)
             # -------------One Single Player Id------------------------------------------------------------------------
 
             title = 'New Announcement'
@@ -1126,7 +1128,17 @@ def insert_update_faculties(request):
                     fac_password = instance.fac_password
                     fac_name = form.cleaned_data['fac_name']
                     fac_email = [form.cleaned_data['fac_email']]
-                    faculty_email.delay(fac_name, fac_email, fac_password)
+
+                    htmly = mail_templates.objects.get(mail_temp_type = 'Faculty_mail', mail_temp_selected=1).mail_temp_html
+                    context_data = {
+                    'title': "Student Register",
+                    'name': fac_name,
+                    'password': fac_password
+                    }
+                    htmly = Template(htmly)
+                    html_content = htmly.render(Context(context_data))
+                    faculty_email.delay(fac_email, html_content)
+
                     messages.success(request, 'Faculty Added Successfully')
                     return redirect('admin_faculties')
             else:
@@ -2090,7 +2102,17 @@ def insert_update_students(request):
             student_name = instance.stud_name
             student_email = [instance.stud_email]
             student_password = instance.stud_pass
-            student_email_send.delay(student_name, student_email, student_password)
+
+
+            htmly = mail_templates.objects.get(mail_temp_type = 'Student_mail', mail_temp_selected=1).mail_temp_html
+            context_data = {
+            'title': "Student Register",
+            'name': student_name,
+            'password': student_password
+            }
+            htmly = Template(htmly)
+            html_content = htmly.render(Context(context_data))
+            student_email_send.delay(student_email, html_content)
             
             student_std = request.POST.get('stud_std')
             student_batch = request.POST.get('stud_batch')
@@ -2703,7 +2725,7 @@ def add_cheques_admin(request):
                     cheque_amt = form.cleaned_data['cheque_amount']
                     fees_mode = 'CHECK'
                     cheque_date = form.cleaned_data['cheque_date']
-                    abcd = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date, domain_name = domain)
+                    fees_collection_create = Fees_Collection.objects.create(fees_stud_id = studid,fees_paid=cheque_amt,fees_mode=fees_mode,fees_date=cheque_date, domain_name = domain)
                 form.instance.domain_name = domain
                 form.save()
                 if form.cleaned_data['cheque_paid']==True:
@@ -2723,8 +2745,8 @@ def add_cheques_admin(request):
 
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))     
-                    cheque_update_mail(student_email, html_content)
-                    cheque_update_mail(parent_email, html_content)
+                    cheque_update_mail.delay(student_email, html_content)
+                    cheque_update_mail.delay(parent_email, html_content)
 
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                 return redirect('fees_collection_admin')
@@ -2760,8 +2782,8 @@ def add_cheques_admin(request):
                     }
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))     
-                    cheque_mail(student_email, html_content)
-                    cheque_mail(parent_email, html_content)
+                    cheque_mail.delay(student_email, html_content)
+                    cheque_mail.delay(parent_email, html_content)
 
 
                     title = "Cheque Payment Update"
@@ -2833,19 +2855,23 @@ def add_fees_collection_admin(request):
                 # -------------Mail Send----------------------------------------------------------------------
                 student_name = form.cleaned_data['fees_stud_id']
                 student_email = [student_name.stud_email]
+                parent_email = [student_name.stud_guardian_email]
                 date = datetime.datetime.today()
 
 
-                htmly = mail_templates.objects.get(mail_temp_type = 'Payment Mail').mail_temp_html
+                htmly = mail_templates.objects.get(mail_temp_type = 'Payment Mail', mail_temp_selected=1).mail_temp_html
                 context_data = {
                 'title': "Payment Update",
-                'msg': f"Dear {student_name.stud_name}, your payment of ₹{form.cleaned_data['fees_paid']} "f"via {form.cleaned_data['fees_mode']} has been successfully processed on {date}.",
+                'name': student_name.stud_name,
+                'amount': form.cleaned_data['fees_paid'],
+                'mode': form.cleaned_data['fees_mode'],
+                'date': date
                 }
+
                 htmly = Template(htmly)
                 html_content = htmly.render(Context(context_data))     
-                payment_mail(student_email, html_content)
-                payment_mail.delay(form.cleaned_data['fees_mode'],date,form.cleaned_data['fees_paid'],student_email)
-               
+                payment_mail.delay(student_email, html_content)
+                payment_mail.delay(parent_email, html_content)               
                 # -------------Telegram Send-------------------------------------------------------------------
                
                 payment_telegram_message(student_name.stud_name, student_name.stud_telegram_studentchat_id, form.cleaned_data['fees_mode'],form.cleaned_data['fees_paid'])

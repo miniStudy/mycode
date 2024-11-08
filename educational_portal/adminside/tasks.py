@@ -67,15 +67,13 @@ def announcement_mail(self, list_of_receivers, html_content):
 
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def admin_register_email(self, list_of_receivers, html_content):
+def admin_register_email(self, email_list, html_content):
     subject = 'New Mail from miniStudy'
     email_from = settings.EMAIL_HOST_USER
-    
     text_content = ''
     
-    msg = EmailMultiAlternatives(subject, text_content, email_from, list_of_receivers)
+    msg = EmailMultiAlternatives(subject, text_content, email_from, email_list)
     msg.attach_alternative(html_content, "text/html")
-    
     try:
         msg.send()
     except smtplib.SMTPServerDisconnected as e:
@@ -87,10 +85,10 @@ def admin_register_email(self, list_of_receivers, html_content):
 
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def timetable_mail(self, list_of_receivers, html_content):
+def timetable_mail(self, email_list, html_content):
     sub = 'New Update from miniStudy'
     email_from = settings.EMAIL_HOST_USER
-    recp_list = list_of_receivers
+    recp_list = email_list
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
@@ -109,14 +107,13 @@ def timetable_mail(self, list_of_receivers, html_content):
 
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def payment_mail(self, student_email, html_content):
+def payment_mail(self, email_list, html_content):
     sub = 'Payment Satus!'
     email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = student_email
+    recp_list = email_list
     text_content = ''
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
-    
     
     try: 
         msg.send()    
@@ -221,14 +218,11 @@ def faculty_email(self,fac_name, fac_email, fac_password):
 
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def student_email_send(self,student_name, student_email, student_password):
+def student_email_send(self, email_list, html_content):
     sub = 'Login Details!'
     email_from = 'miniStudy <mail@ministudy.in>'
-    recp_list = student_email
-    htmly = get_template('Email/student.html')
-    d = {'student_name':student_name, 'student_email':student_email[0], 'student_password':student_password}
+    recp_list = email_list
     text_content = ''
-    html_content = htmly.render(d)
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     try:
@@ -241,6 +235,7 @@ def student_email_send(self,student_name, student_email, student_password):
         print(f"An error occurred: {e}")
         # Optionally, you can also retry for other exceptions
         raise self.retry(exc=e, countdown=60)  # Retry after 60 seconds
+    
  
 @shared_task(bind=True, max_retries=5) 
 def send_email_for_meeting(self, parent_email, parent_name, meeting_date):
