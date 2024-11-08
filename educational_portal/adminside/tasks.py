@@ -460,8 +460,7 @@ def doubt_telegram_message_student(doubt_topic, doubt_date, student_chat_ids):
 
 
 
-@shared_task(bind=True, max_retries=5)
-def send_notification(self, playerid,title,message):
+def send_notification(self, playerid,title,message, request):
     url = "https://onesignal.com/api/v1/notifications"
 
     payload = json.dumps({
@@ -486,10 +485,7 @@ def send_notification(self, playerid,title,message):
     'Content-Type': 'application/json'
     }        
     
-    try:
-        response = requests.request("POST", url, headers=headers, data=payload)
-    except requests.exceptions.RequestException as e:
-        raise self.retry(exc=e)
+    response = requests.request("POST", url, headers=headers, data=payload)
     
 
     

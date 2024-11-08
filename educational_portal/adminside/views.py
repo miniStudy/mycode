@@ -2743,7 +2743,7 @@ def add_cheques_admin(request):
                     'name': student_name.stud_name,
                     'amount': form.cleaned_data['cheque_amount'],
                     'bank': form.cleaned_data['cheque_bank'],
-                    'cheque_number': cheque_number,
+                    'Cheque_number': cheque_number,
                     'date': date
                     }
 
@@ -2754,7 +2754,10 @@ def add_cheques_admin(request):
 
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been successfully withdraw on {date}."
-                    send_notification(student_name.stud_onesignal_player_id,title,mess, request)
+
+                    send_notification.delay(student_name.stud_onesignal_player_id,title,mess, request)
+                messages.success(request, "Cheque Updated Successfully")
+
                 return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
@@ -2786,7 +2789,7 @@ def add_cheques_admin(request):
                     'amount': form.cleaned_data['cheque_amount'],
                     'bank': form.cleaned_data['cheque_bank'],
                     'date': date,
-                    'cheque_number': cheque_number
+                    'Cheque_number': cheque_number
                     }
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))     
@@ -2795,7 +2798,10 @@ def add_cheques_admin(request):
 
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
-                    send_notification(student_name.stud_onesignal_player_id,title,mess, request)
+
+                    send_notification.delay(student_name.stud_onesignal_player_id,title,mess, request)
+                    messages.success(request, "Cheque Added Successfully!")
+
                     return redirect('fees_collection_admin')
             else:
                 filled_data = form.data
