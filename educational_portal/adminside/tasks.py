@@ -195,14 +195,11 @@ def institute_send_mail(self,email_list):
     
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
-def faculty_email(self,fac_name, fac_email, fac_password):
+def faculty_email(self, fac_email, html_content):
     sub = 'Login Details!'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = fac_email
-    htmly = get_template('Email/faculty.html')
-    d = {'fac_name':fac_name, 'fac_email':fac_email[0], 'fac_password':fac_password}
     text_content = ''
-    html_content = htmly.render(d)
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     try:

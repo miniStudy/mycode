@@ -1233,14 +1233,14 @@ def insert_update_timetable(request):
     # Update logic
     if request.GET.get('pk'):
         instance = get_object_or_404(Timetable, pk=request.GET['pk'])
-        print(instance)
         if request.method == 'POST':
             tt_batch = request.POST.get('tt_batch')
             url = '/adminside/admin_timetable/?get_batch={}'.format(tt_batch)
             form = timetable_form(request.POST, instance=instance)
             if form.is_valid():
                 form.instance.domain_name = domain
-                form.save()               
+                messages.success(request, "Timetable updated successfully")
+                form.save()             
                 # ---------------------sendmail Logic===================================
                 tt_students_email_list = []
                 student_chat_ids = []
@@ -2864,6 +2864,7 @@ def add_fees_collection_admin(request):
             form = fees_collection_form(request.POST)
             if form.is_valid(): 
                 form.instance.domain_name = domain  
+                messages.success(request, "Payment added successfully")
                 form.save()
                 # -------------Mail Send----------------------------------------------------------------------
                 student_name = form.cleaned_data['fees_stud_id']
@@ -2872,7 +2873,7 @@ def add_fees_collection_admin(request):
                 date = datetime.datetime.today()
 
 
-                htmly = mail_templates.objects.get(mail_temp_type = 'Payment Mail', mail_temp_selected=1).mail_temp_html
+                htmly = mail_templates.objects.get(mail_temp_type = 'Payment_mail', mail_temp_selected=1).mail_temp_html
                 context_data = {
                 'title': "Payment Update",
                 'name': student_name.stud_name,
