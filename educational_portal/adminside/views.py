@@ -479,6 +479,8 @@ def home(request):
         'conversion': conversion,
         'lead': lead,
         'domain':domain,
+        'total_inquiries':total_inquiries,
+        'total_conversion': count,
     })
     return render(request, 'index.html',context)
 
