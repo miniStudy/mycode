@@ -915,6 +915,16 @@ def teacher_add_solution_function(request):
                 form.instance.domain_name = domain
                 form.save()
                 messages.success(request, "You'r solution has been added!")
+
+                doubt = Doubt_section.objects.get(doubt_id = id)
+                playerid = doubt.doubt_stud_id.stud_onesignal_player_id
+                student_name = doubt.doubt_stud_id.stud_name
+                fac_name = teacher_data.fac_name
+
+                title = "Your Doubt Has Been Answered!"
+                message = f"Hello {student_name}, your doubt has been answered by the {fac_name}. Check it out!"
+                send_notification(playerid, title, message, request)
+
                 return redirect('/teacherside/teacher_doubts/?doubt_id={}'.format(id))
         else:
             print('hello wolrd')    
