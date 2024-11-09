@@ -670,12 +670,14 @@ def Student_add_doubts(request):
 
             student_chat_ids = [chat.stud_telegram_studentchat_id for chat in student_list]
             date = datetime.today()
-            title = f'{request.session['stud_name']}: Needs Help with a Doubt!'
-            message = f'{request.session['stud_name']}: Hey, batch mates! I’ve got some new doubts that need solving. Can anyone lend a hand❓I will appreciate your assist! 🙌'
+            s_name = request.session['stud_name']
+            title = f'{s_name}: Needs Help with a Doubt!'
+            message = f'{s_name}: Hey, batch mates! I’ve got some new doubts that need solving. Can anyone lend a hand❓I will appreciate your assist! 🙌'
             send_notification(playerids, title, message, request)
 
             fac_email = fac_object.fac_email
-            fac_title = f"{request.session['stud_name']}: Needs Help with a Doubt!"
+            s_name = request.session['stud_name']
+            fac_title = f"{s_name}: Needs Help with a Doubt!"
             fac_message = "A new doubt has been added! Please check it out."
             send_notification(fac_email, fac_title, fac_message, request)
 

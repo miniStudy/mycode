@@ -600,6 +600,7 @@ class mail_templates(models.Model):
         Student_mail = 'Student_mail', 'Student_mail'
         Timetable_mail = 'Timetable_mail', 'Timetable_mail'
         Admin_mail = 'Admin_mail', 'Admin_mail'
+        Student_marks_mail = 'Student_marks_mail', 'Student_marks_mail'
 
 
     mail_temp_id = models.BigAutoField(primary_key=True)
