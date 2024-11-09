@@ -1505,10 +1505,17 @@ def insert_events(request):
 
         #------------------Telegram and Mail Message----------------------------------------------
         student_chat_ids = Students.objects.filter(domain_name = domain).values_list('stud_telegram_studentchat_id', flat=True)
+        student_player_id = Students.objects.filter(domain_name = domain).values_list('stud_onesignal_player_id', flat=True)
+        parent_player_id = Students.objects.filter(domain_name = domain).values_list('guardian_onesignal_player_id', flat=True)
         student_email_ids = Students.objects.filter(domain_name = domain).values_list('stud_email', flat=True)
         
         event_telegram_message_student(event_name,formatted_event_date, student_chat_ids)
         event_telegram_message_parent(event_name,formatted_event_date, student_email_ids)
+
+        title = "New Event"
+        msg = f"Dear Student, thank you for participating in our recent event held on {formatted_event_date}. We hope you found it enjoyable and informative! Stay tuned for more events."
+        send_notification(student_player_id, title, msg, request)
+        send_notification(parent_player_id, title, msg, request)
         #-------------------------End-------------------------------------------------------------
         
         fs = FileSystemStorage(location='media/uploads/events/')
@@ -2045,6 +2052,9 @@ def send_meeting_mail(request):
             parent_name = student_parent.stud_guardian_name
             meeting_date = request.POST['meeting_date']
             send_email_for_meeting.delay(parent_email, parent_name, meeting_date)
+            title = "Parent Meeting"
+            msg = f"Dear Parent, we would like to inform you that a parent meeting is scheduled for {meeting_date}. Your presence is highly encouraged as we will be discussing important updates concerning your child's academic progress."
+            send_notification.delay(student_parent.guardian_onesignal_player_id, title, msg, request)
     return render(request, 'meeting_date.html')
 
 @admin_login_required
@@ -2737,7 +2747,7 @@ def add_cheques_admin(request):
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.datetime.today()
 
-                    htmly = mail_templates.objects.get(mail_temp_type = 'Cheque_mail', mail_temp_selected=1).mail_temp_html
+                    htmly = mail_templates.objects.get(mail_temp_type = 'Cheque_update_mail', mail_temp_selected=1).mail_temp_html
                     context_data = {
                     'title': "Cheque Payment Update",
                     'name': student_name.stud_name,
@@ -3355,8 +3365,9 @@ def insert_update_mail_templates(request):
     if request.method == 'POST':
         form = mail_templates_form(request.POST)
         context.update({'form':form})
-
+        print(form)
         if form.is_valid():
+           
             if form.instance.mail_temp_type == 'Announcement_mail':
                 print("Hello")
             form.instance.domain_name = domain

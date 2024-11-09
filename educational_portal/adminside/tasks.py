@@ -108,7 +108,7 @@ def timetable_mail(self, email_list, html_content):
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def payment_mail(self, email_list, html_content):
-    sub = 'Payment Satus!'
+    sub = 'Payment Status!'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = email_list
     text_content = ''

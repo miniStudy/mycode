@@ -96,7 +96,6 @@
                         <th>Cheque Date</th>
                         <th>Cheque Expiry Date</th>
                         <th>Cheque Paid</th>
-                        <th>Bounce</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,8 +105,13 @@
                         <td>{{x.cheque_amount}}</td>
                         <td>{{x.cheque_date}}</td>
                         <td>{{x.cheque_expiry}}</td>
-                        <td>{{x.cheque_paid}}</td>
-                        <td>{{x.cheque_bounce}}</td>
+                        {% if x.cheque_paid == 1 %}
+                        <td><span class="text-success">Paid</span></td>
+                        {% elif x.cheque_bounce == 1 %}
+                        <td><span class="text-danger">Bounced</span></td>
+                        {% elif x.cheque_paid == 0 %}
+                        <td><span class="text-warning">Pending</span></td>
+                        {% endif %}
                     </tr>
                     {% endif %}
                     {% endfor %}

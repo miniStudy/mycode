@@ -32,7 +32,7 @@
                                 {% if chepter.chep_sub__sub_id == subject.sub_id %}
                                 <tr>
                                     <td>{{chepter.chep_name}}</td>
-                                    <td>{% if chepter.status == 0 %}Inompleted{% else %}Completed{% endif %}</td>
+                                    <td>{% if chepter.status == 0 %}<i class="fa-solid fa-square-xmark text-danger"></i>{% else %}<i class="fa-solid fa-square-check text-success"></i>{% endif %}</td>
                                 </tr>
                                 {% endif %}
                                 {% endfor %}

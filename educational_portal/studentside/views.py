@@ -553,10 +553,11 @@ def show_syllabus(request):
     domain = request.get_host()
     student_std = request.session['stud_std']
     student_id = request.session['stud_id']
-    syllabus_data = Syllabus.objects.filter(syllabus_chapter__chep_std__std_id = student_std, domain_name = domain)
+    student_batch = request.session['stud_batch']
+    syllabus_data = Syllabus.objects.filter(syllabus_chapter__chep_std__std_id = student_std, syllabus_batch__batch_id =  student_batch , domain_name = domain)
     student = Students.objects.get(stud_id=student_id)
     subjects = student.stud_pack.pack_subjects.filter(domain_name = domain)
-    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std, domain_name = domain).annotate(status=Case(When(syllabus__syllabus_status = None, then=Value(0)), default=1, output_filed=IntegerField())).values('chep_sub__sub_id','chep_name', 'status')
+    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std,  domain_name = domain).annotate(status=Case(When(syllabus__syllabus_status = None, then=Value(0)), default=1, output_filed=IntegerField())).values('chep_sub__sub_id','chep_name', 'status')
     context = {
         'subjects':subjects,
         'chepters':chepters, 
@@ -656,6 +657,7 @@ def Student_add_doubts(request):
         form = doubts_form(request.POST)
         if form.is_valid():
             form.instance.domain_name = domain
+            fac_object = form.cleaned_data['doubt_faculty']
             form.save()
 
             doubt_subject = form.cleaned_data['doubt_subject']
@@ -665,13 +667,20 @@ def Student_add_doubts(request):
             student_list = Students.objects.filter(stud_std__std_id=student_std_id, stud_batch__batch_id=student_batch_id)
 
             playerids = [player.stud_onesignal_player_id for player in student_list]
+
             student_chat_ids = [chat.stud_telegram_studentchat_id for chat in student_list]
             date = datetime.today()
-            title = 'New Doubt Notification!'
-            message = 'A new doubt has been successfully added. Please review it at your earliest convenience.'
-            send_notification(playerids,title,message, request)
-            doubt_telegram_message_student(doubt_subject, date, student_chat_ids)
+            title = f'{request.session['stud_name']}: Needs Help with a Doubt!'
+            message = f'{request.session['stud_name']}: Hey, batch mates! I’ve got some new doubts that need solving. Can anyone lend a hand❓I will appreciate your assist! 🙌'
+            send_notification(playerids, title, message, request)
 
+            fac_email = fac_object.fac_email
+            fac_title = f"{request.session['stud_name']}: Needs Help with a Doubt!"
+            fac_message = "A new doubt has been added! Please check it out."
+            send_notification(fac_email, fac_title, fac_message, request)
+
+
+            doubt_telegram_message_student(doubt_subject, date, student_chat_ids)
             return redirect('Student_Doubt') 
     form = doubts_form()   
     context.update({'form':form}) 

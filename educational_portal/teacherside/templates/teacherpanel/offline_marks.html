@@ -1,7 +1,8 @@
 {% extends 'teacherpanel/master.html' %}
  
 {% block contentsection %}
-  <div class="mb-4"><h4>Tests</h4></div> 
+  <div><h5>{{test_data.test_name}}</h5></div> 
+  <div class="mb-4">Total Marks- {{total_marks}}</div>
   
 
 {% include 'message_show.html' %}
@@ -33,7 +34,7 @@
                 <tr>
                     <input type="hidden" name="student_id" value="{{data.stud_id}}">
                     <td>{{data.stud_name}} {{data.stud_lastname}}</td>
-                    <td><input type="number" class="form-control" name="marks" value="0" id="marks" style="width:150px"></td>
+                    <td><input type="number" class="form-control" name="marks" value="0" id="marks" style="width:150px" max="{{total_marks}}"></td>
                 </tr>
                 {% endfor %}
             </tbody>
