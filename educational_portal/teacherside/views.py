@@ -1029,7 +1029,13 @@ def teacher_insert_offline_marks(request):
 
     if request.GET.get('test_id'):
         test_id = request.GET.get('test_id')
-        context.update({'test_id':test_id})
+        test_data = Chepterwise_test.objects.get(test_id = test_id)
+
+        total_marks = 0
+        for marks in Test_questions_answer.objects.filter(tq_name__test_id = test_id):
+            total_marks += marks.tq_weightage
+
+        context.update({'test_id':test_id, 'test_data': test_data, 'title': 'Tests', 'total_marks': total_marks})
 
     if request.GET.get('std_id'):
         std_id = request.GET.get('std_id')
@@ -1107,10 +1113,10 @@ def teacher_save_offline_marks(request):
                 onesignal_player_ids.append(student_email.stud_onesignal_player_id)
                 student_marks.append(marks[i])
             
-            htmly = mail_templates.objects.get(mail_temp_type = 'Marks_mail', mail_temp_selected=1).mail_temp_html   
+            htmly = mail_templates.objects.get(mail_temp_type = 'Student_marks_mail', mail_temp_selected=1, domain_name = domain).mail_temp_html   
             marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, student_email_ids, htmly)
             marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, parent_email_ids, htmly)
-
+            
 
             title = "📢 Marks Update"
             for index, player_id in enumerate(onesignal_player_ids):
