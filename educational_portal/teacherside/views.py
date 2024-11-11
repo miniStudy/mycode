@@ -12,7 +12,7 @@ from django.db.models.functions import TruncHour, TruncMinute, TruncDate
 from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
 from team_ministudy.forms import suggestions_improvements_Form
-from team_ministudy.models import suggestions_improvements
+from team_ministudy.models import NewInstitution, suggestions_improvements
 from teacherside.tasks import *
 from teacherside.tasks import send_notification
 from django.core.exceptions import ObjectDoesNotExist
@@ -585,12 +585,31 @@ def handle_attendance(request):
         date = datetime.now()
 
         htmly = mail_templates.objects.get(mail_temp_type = 'Attendance_mail', mail_temp_selected=1).mail_temp_html
-        context_data = {
+        context_data={}
+        if domain != '127.0.0.1:8000':
+                Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                
+                logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                context_data.update({
+                    'logo':logo,
+                    'institute_name': Institute_data.institute_name,
+                    'institute_email': Institute_data.institute_email,
+                    'institute_number': Institute_data.institute_contact,
+                })
+        else:
+                logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                context_data.update({
+                    'logo':logo,
+                    'institute':'miniStudy',
+                    'email':'mail.trushalpatel@gmail.com',
+                    'phone_num':'8511962611',
+                })
+        context_data.update({
         'title': "Attendance Result",
         'name': student_present_name_list,
         'status': 'Present',
         'date': date,
-        }
+        })
         htmly = Template(htmly)
         html_content = htmly.render(Context(context_data))     
         attendance_student_present_mail.delay(present_list, html_content)
