@@ -10,6 +10,7 @@ from django.db.models import Sum,Count,Avg, Value
 from django.db.models import Count, Case, When, IntegerField
 import random
 from django.http import Http404,JsonResponse
+from django.contrib.auth.hashers import check_password
 
 from team_ministudy.forms import suggestions_improvements_Form
 
@@ -149,28 +150,36 @@ def student_login_handle(request):
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
-        val = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain).count()
+
+        val = Students.objects.filter(stud_email=email, domain_name = domain).count()
+
+        
         if val==1:
-            Data = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain)
-            student_id = Students.objects.get(stud_id = Data[0].stud_id)
-            if student_id.stud_lock == True:
-                return render(request, 'studentpanel/lock.html')
-            for item in Data:
-                request.session['stud_id'] = item.stud_id
-                request.session['stud_name'] = item.stud_name
-                request.session['stud_batch'] = item.stud_batch.batch_id
-                request.session['stud_std'] = item.stud_std.std_id
-                request.session['stud_profile'] = '{}'.format(item.stud_profile)
-                request.session['stud_logged_in'] = 'yes'
-            
-            if request.POST.get("remember"):
-                response = redirect("Student_home")
-                response.set_cookie('stud_email', email) 
-                response.set_cookie('stud_password', password)   
-                return response
-            
-            messages.success(request, 'Logged In Successfully')
-            return redirect('Student_home')
+            Data = Students.objects.filter(stud_email=email, domain_name = domain)
+            student_id = Students.objects.get(stud_id = Data[0] .stud_id)
+            if check_password(password, student_id.stud_pass):
+                if student_id.stud_lock == True:
+                    return render(request, 'studentpanel/lock.html')
+                for item in Data:
+                    request.session['stud_id'] = item.stud_id
+                    request.session['stud_name'] = item.stud_name
+                    request.session['stud_batch'] = item.stud_batch.batch_id
+                    request.session['stud_std'] = item.stud_std.std_id
+                    request.session['stud_profile'] = '{}'.format(item.stud_profile)
+                    request.session['stud_logged_in'] = 'yes'
+                
+                if request.POST.get("remember"):
+                    response = redirect("Student_home")
+                    response.set_cookie('stud_email', email) 
+                    response.set_cookie('stud_password', password)   
+                    return response
+                
+                messages.success(request, 'Logged In Successfully')
+                return redirect('Student_home')
+            else:
+                messages.error(request, "password Wrong")
+                return redirect('Student_Login')
+
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('Student_Login')
@@ -553,10 +562,11 @@ def show_syllabus(request):
     domain = request.get_host()
     student_std = request.session['stud_std']
     student_id = request.session['stud_id']
-    syllabus_data = Syllabus.objects.filter(syllabus_chapter__chep_std__std_id = student_std, domain_name = domain)
+    student_batch = request.session['stud_batch']
+    syllabus_data = Syllabus.objects.filter(syllabus_chapter__chep_std__std_id = student_std, syllabus_batch__batch_id =  student_batch , domain_name = domain)
     student = Students.objects.get(stud_id=student_id)
     subjects = student.stud_pack.pack_subjects.filter(domain_name = domain)
-    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std, domain_name = domain).annotate(status=Case(When(syllabus__syllabus_status = None, then=Value(0)), default=1, output_filed=IntegerField())).values('chep_sub__sub_id','chep_name', 'status')
+    chepters = Chepter.objects.filter(chep_sub__sub_std__std_id = student_std,  domain_name = domain).annotate(status=Case(When(syllabus__syllabus_status = None, then=Value(0)), default=1, output_filed=IntegerField())).values('chep_sub__sub_id','chep_name', 'status')
     context = {
         'subjects':subjects,
         'chepters':chepters, 
@@ -656,6 +666,7 @@ def Student_add_doubts(request):
         form = doubts_form(request.POST)
         if form.is_valid():
             form.instance.domain_name = domain
+            fac_object = form.cleaned_data['doubt_faculty']
             form.save()
 
             doubt_subject = form.cleaned_data['doubt_subject']
@@ -665,13 +676,22 @@ def Student_add_doubts(request):
             student_list = Students.objects.filter(stud_std__std_id=student_std_id, stud_batch__batch_id=student_batch_id)
 
             playerids = [player.stud_onesignal_player_id for player in student_list]
+
             student_chat_ids = [chat.stud_telegram_studentchat_id for chat in student_list]
             date = datetime.today()
-            title = 'New Doubt Notification!'
-            message = 'A new doubt has been successfully added. Please review it at your earliest convenience.'
-            send_notification(playerids,title,message, request)
-            doubt_telegram_message_student(doubt_subject, date, student_chat_ids)
+            s_name = request.session['stud_name']
+            title = f'{s_name}: Needs Help with a Doubt!'
+            message = f'{s_name}: Hey, batch mates! I’ve got some new doubts that need solving. Can anyone lend a hand❓I will appreciate your assist! 🙌'
+            send_notification(playerids, title, message, request)
 
+            fac_email = fac_object.fac_email
+            s_name = request.session['stud_name']
+            fac_title = f"{s_name}: Needs Help with a Doubt!"
+            fac_message = "A new doubt has been added! Please check it out."
+            send_notification(fac_email, fac_title, fac_message, request)
+
+
+            doubt_telegram_message_student(doubt_subject, date, student_chat_ids)
             return redirect('Student_Doubt') 
     form = doubts_form()   
     context.update({'form':form}) 

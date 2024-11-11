@@ -12,7 +12,7 @@ from django.db.models.functions import TruncHour, TruncMinute, TruncDate
 from django.db.models import Sum,Count, Max, Min, Avg, F
 from django.db.models import Count, Case, When, IntegerField
 from team_ministudy.forms import suggestions_improvements_Form
-from team_ministudy.models import suggestions_improvements
+from team_ministudy.models import NewInstitution, suggestions_improvements
 from teacherside.tasks import *
 from teacherside.tasks import send_notification
 from django.core.exceptions import ObjectDoesNotExist
@@ -27,6 +27,7 @@ from django.db.models import OuterRef, Subquery, BooleanField,Q
 from django.core.paginator import Paginator
 import requests
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import check_password
 
 import fitz  # PyMuPDF
 from PIL import Image
@@ -189,6 +190,7 @@ def teacher_login_page(request):
           return render(request, 'teacherpanel/master_auth.html',{'login_set':login, 'title':'login'})
 
 def teacher_login_handle(request):
+    domain = request.get_host()
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
@@ -202,22 +204,26 @@ def teacher_login_handle(request):
                     faculty.save()
                 except Faculties.DoesNotExist:
                     messages.error(request, "Faculties with this OneSignal player ID does not exist.")
-            Data = Faculties.objects.filter(fac_email=email,fac_password=password)
-            for item in Data:
-               request.session['fac_id'] = item.fac_id
-               request.session['fac_name'] = item.fac_name
-               request.session['fac_profile'] = '{}'.format(item.fac_profile)
-               request.session['fac_logged_in'] = 'yes'
+            Data = Faculties.objects.filter(fac_email=email, domain_name = domain)
+            fac_id = Faculties.objects.get(fac_id = Data[0] .fac_id)
+            if check_password(password, fac_id.fac_password):
+                for item in Data:
+                    request.session['fac_id'] = item.fac_id
+                    request.session['fac_name'] = item.fac_name
+                    request.session['fac_profile'] = '{}'.format(item.fac_profile)
+                    request.session['fac_logged_in'] = 'yes'
 
-            if request.POST.get("remember"):
-               response = redirect("teacher_home")
-               response.set_cookie('fac_email', email) 
-               response.set_cookie('fac_password', password)   
-               return response
-            
-            messages.success(request, 'Logged In Successfully')
-            
-            return redirect('teacher_home')
+                if request.POST.get("remember"):
+                    response = redirect("teacher_home")
+                    response.set_cookie('fac_email', email) 
+                    response.set_cookie('fac_password', password)   
+                    return response
+                
+                messages.success(request, 'Logged In Successfully')
+                return redirect('teacher_home')
+            else:
+                messages.error(request, "password Wrong")
+                return redirect('teacher_login')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('teacher_login')
@@ -585,12 +591,31 @@ def handle_attendance(request):
         date = datetime.now()
 
         htmly = mail_templates.objects.get(mail_temp_type = 'Attendance_mail', mail_temp_selected=1).mail_temp_html
-        context_data = {
+        context_data={}
+        if domain != '127.0.0.1:8000':
+                Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                
+                logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                context_data.update({
+                    'logo':logo,
+                    'institute_name': Institute_data.institute_name,
+                    'institute_email': Institute_data.institute_email,
+                    'institute_number': Institute_data.institute_contact,
+                })
+        else:
+                logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                context_data.update({
+                    'logo':logo,
+                    'institute':'miniStudy',
+                    'email':'mail.trushalpatel@gmail.com',
+                    'phone_num':'8511962611',
+                })
+        context_data.update({
         'title': "Attendance Result",
         'name': student_present_name_list,
         'status': 'Present',
         'date': date,
-        }
+        })
         htmly = Template(htmly)
         html_content = htmly.render(Context(context_data))     
         attendance_student_present_mail.delay(present_list, html_content)
@@ -915,6 +940,16 @@ def teacher_add_solution_function(request):
                 form.instance.domain_name = domain
                 form.save()
                 messages.success(request, "You'r solution has been added!")
+
+                doubt = Doubt_section.objects.get(doubt_id = id)
+                playerid = doubt.doubt_stud_id.stud_onesignal_player_id
+                student_name = doubt.doubt_stud_id.stud_name
+                fac_name = teacher_data.fac_name
+
+                title = "Your Doubt Has Been Answered!"
+                message = f"Hello {student_name}, your doubt has been answered by the {fac_name}. Check it out!"
+                send_notification(playerid, title, message, request)
+
                 return redirect('/teacherside/teacher_doubts/?doubt_id={}'.format(id))
         else:
             print('hello wolrd')    
@@ -1029,7 +1064,13 @@ def teacher_insert_offline_marks(request):
 
     if request.GET.get('test_id'):
         test_id = request.GET.get('test_id')
-        context.update({'test_id':test_id})
+        test_data = Chepterwise_test.objects.get(test_id = test_id)
+
+        total_marks = 0
+        for marks in Test_questions_answer.objects.filter(tq_name__test_id = test_id):
+            total_marks += marks.tq_weightage
+
+        context.update({'test_id':test_id, 'test_data': test_data, 'title': 'Tests', 'total_marks': total_marks})
 
     if request.GET.get('std_id'):
         std_id = request.GET.get('std_id')
@@ -1107,10 +1148,10 @@ def teacher_save_offline_marks(request):
                 onesignal_player_ids.append(student_email.stud_onesignal_player_id)
                 student_marks.append(marks[i])
             
-            htmly = mail_templates.objects.get(mail_temp_type = 'Marks_mail', mail_temp_selected=1).mail_temp_html   
+            htmly = mail_templates.objects.get(mail_temp_type = 'Student_marks_mail', mail_temp_selected=1, domain_name = domain).mail_temp_html   
             marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, student_email_ids, htmly)
             marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, parent_email_ids, htmly)
-
+            
 
             title = "📢 Marks Update"
             for index, player_id in enumerate(onesignal_player_ids):

@@ -108,7 +108,7 @@ def timetable_mail(self, email_list, html_content):
 
 @shared_task(bind=True, max_retries=5)  # Use None for infinite retries
 def payment_mail(self, email_list, html_content):
-    sub = 'Payment Satus!'
+    sub = 'Payment Status!'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = email_list
     text_content = ''
@@ -235,21 +235,11 @@ def student_email_send(self, email_list, html_content):
     
  
 @shared_task(bind=True, max_retries=5) 
-def send_email_for_meeting(self, parent_email, parent_name, meeting_date):
+def send_email_for_meeting(self, parent_email, html_content, request):
     sub = 'Meeting Info'
     email_from = 'miniStudy <mail@ministudy.in>'
     recp_list = [parent_email]  # Ensure this is a list for multiple recipients
-    htmly = get_template('Email/parent_meeting.html')
-
-    # Prepare the context data for the email template
-    d = {
-        'parent_name': parent_name,
-        'meeting_date': meeting_date,  # Add meeting date to context
-    }
-    
     text_content = ''
-    html_content = htmly.render(d)
-    
     msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
     msg.attach_alternative(html_content, "text/html")
     try:

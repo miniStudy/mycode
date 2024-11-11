@@ -11,12 +11,14 @@ from django.db.models import OuterRef, Subquery, BooleanField,Q
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
 from parentsside.decorators import *
+from django.contrib.auth.hashers import check_password
 
 # mail integration 
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
+
 
 # Create your views here.
 # Shivam is on testing
@@ -30,8 +32,8 @@ def parent_home(request):
     student_std = student.stud_std.std_id
     students_li = Students.objects.filter(stud_std__std_id = student_std, domain_name = domain).values('stud_id', 'stud_name', 'stud_lastname')
 
-    student_id = request.session['stud_id']
-    student_std = request.session['stud_std']
+    student_id = request.session['parent_id']
+    student_std = request.session['parent_id']
     subject_data = Subject.objects.filter(sub_std__std_id = student_std, domain_name = domain)
     context.update({'subject_data': subject_data})
 
@@ -46,18 +48,18 @@ def parent_home(request):
 
     overall_attendance_li = []
     for x in students_li:
-        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject.sub_id).count()
-        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain, atten_timetable__tt_subject1__sub_id = get_subject.sub_id).count()
+        total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], domain_name = domain, atten_timetable__tt_subject1 = context['get_subject']).count()
+        present_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x['stud_id'], atten_present=True, domain_name = domain, atten_timetable__tt_subject1 = context['get_subject']).count()
         if total_attendence_studentwise > 0:
             overall_attendence_studentwise = round((present_attendence_studentwise/total_attendence_studentwise)*100,2)
         else:
             overall_attendence_studentwise = 0
         
 
-        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain, tau_test_id__test_sub__sub_id = get_subject.sub_id).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
+        total_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain, tau_test_id__test_sub = context['get_subject']).aggregate(total_sum_marks=Sum('tau_total_marks'))['total_sum_marks'] or 0
         
         
-        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain, tau_test_id__test_sub__sub_id = get_subject.sub_id).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
+        obtained_marks = Test_attempted_users.objects.filter(tau_stud_id__stud_id = x['stud_id'], domain_name = domain, tau_test_id__test_sub = context['get_subject']).aggregate(total_obtained_marks=Sum('tau_obtained_marks'))['total_obtained_marks'] or 0
         
 
         if total_marks == 0:
@@ -118,21 +120,23 @@ def parent_login_handle(request):
                     parent.save()
                 except Students.DoesNotExist:
                     messages.error(request, "Parent with this OneSignal player ID does not exist.")
-            Data = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password, domain_name = domain)
-            for item in Data:
-               request.session['parent_id'] = item.stud_id
-               request.session['parent_name'] = item.stud_guardian_name
-               request.session['parent_logged_in'] = 'yes'
+            Data = Students.objects.filter(stud_guardian_email=email, domain_name = domain)
+            student_id = Students.objects.get(stud_id = Data[0] .stud_id)
+            if check_password(password, student_id.stud_guardian_password):
+                for item in Data:
+                    request.session['parent_id'] = item.stud_id
+                    request.session['parent_name'] = item.stud_guardian_name
+                    request.session['parent_logged_in'] = 'yes'
 
-            if request.POST.get("remember"):
-               response = redirect("parent_home")
-               response.set_cookie('stud_guardian_email', email) 
-               response.set_cookie('stud_guardian_password', password)   
-               return response
-            
-            messages.success(request, 'Logged In Successfully')
-            
-            return redirect('parent_home')
+                if request.POST.get("remember"):
+                    response = redirect("parent_home")
+                    response.set_cookie('stud_guardian_email', email) 
+                    response.set_cookie('stud_guardian_password', password)   
+                    return response
+                
+                messages.success(request, 'Logged In Successfully')
+                
+                return redirect('parent_home')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('parent_login')

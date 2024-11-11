@@ -15,6 +15,132 @@
 
 <body>
   <!-- Layout wrapper -->
+  <style>
+    /* Loader Overlay */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    /* Loader Container */
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      justify-content: center;
+    }
+  
+    /* Dot Container to keep all dots together */
+    .dot-container {
+      position: relative;
+    }
+  
+    /* Animated Dots */
+    .dot {
+      width: 12px;
+      height: 12px;
+      background-color: #f39c12; /* Orange color to match logo */
+      border-radius: 50%;
+      position: absolute;
+      animation: orbit 3s linear infinite;
+    }
+  
+    /* Orbit Path with inside and outside movement */
+    @keyframes orbit {
+      0% {
+        transform: rotate(0deg) translateX(20px) rotate(0deg); /* Slightly closer to the center */
+      }
+      50% {
+        transform: rotate(180deg) translateX(20px) rotate(-180deg); /* Move slightly outside */
+      }
+      100% {
+        transform: rotate(360deg) translateX(20px) rotate(-360deg); /* Back to inside */
+      }
+    }
+  
+    /* Additional Dots */
+    .dot:nth-child(2) {
+      background-color: #3498db; /* Blue color */
+      animation-delay: -0.5s;
+    }
+  
+    .dot:nth-child(3) {
+      background-color: #f39c12;
+      animation-delay: -1s;
+    }
+  
+    .dot:nth-child(4) {
+      background-color: #3498db;
+      animation-delay: -1.5s;
+    }
+  
+    .dot:nth-child(5) {
+      background-color: #f39c12;
+      animation-delay: -2s;
+    }
+  
+    .dot:nth-child(6) {
+      background-color: #3498db;
+      animation-delay: -2.5s;
+    }
+  
+    .dot:nth-child(7) {
+      background-color: #f39c12;
+      animation-delay: -3s;
+    }
+  
+    /* Centered Text for miniStudy */
+    .texttt {
+      font-family: 'Arial', sans-serif;
+      font-size: 24px;
+      color: white;
+      margin-top: 50px; /* Space above text */
+      z-index: 2; /* Ensure text is above dots */
+      position: absolute;
+      
+    }
+  
+    /* Orange 'S' in miniStudy */
+    .texttt .highlight {
+      color: orange;
+      animation: fadeS 1.5s ease-in-out infinite alternate;
+    }
+  
+    /* Keyframe Animation for the 'S' */
+    @keyframes fadeS {
+      0% {
+        color: orange;
+      }
+      100% {
+        color: #ffffff;
+      }
+    }
+  </style>
+  
+  <div class="loader-overlay" id="loader">
+    <div class="loader">
+      <!-- Dot Container -->
+      <div class="dot-container">
+        <!-- Orbiting Dots -->
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+  </div>
 <div class="layout-wrapper layout-content-navbar  ">
   <div class="layout-container">
 
@@ -75,6 +201,59 @@
 
 {% include 'studentpanel/charts.html' %}
 {% include 'studentpanel/scripts.html' %}
+
+<script>
+  function startLoading() {
+  console.log('Start Loading...');  // You can replace this with any action like showing a loader
+  // You can also show a loader or any visual indication that loading has started
+  document.getElementById("loader").style.display = "flex";
+  setTimeout(() => {
+  const loader = document.getElementById('loader');
+  if (loader) {
+      loader.style.display = 'none';
+  }
+}, 8000);
+}
+// Function to log or show 'End Loading'
+function endLoading() {
+  console.log('End Loading...');  // You can replace this with any action like hiding a loader
+  // You can also hide the loader or any visual indication that loading has ended
+  document.getElementById("loader").style.display = "none";
+}
+
+startLoading();
+// Detect when the entire page has finished loading (including images, CSS, etc.)
+window.addEventListener("load", function() {
+  endLoading();  // This will fire when the entire page is fully loaded
+});
+
+
+
+const forms = document.querySelectorAll("form");
+// Add event listener to each form for the submit event
+forms.forEach(form => {
+    form.addEventListener("submit", function(event) {
+      startLoading(); // Show loader before submitting the form
+    });
+});
+
+
+const links = document.querySelectorAll("a");
+        links.forEach(link => {
+            link.addEventListener("click", function(event) {
+                const href = link.getAttribute("href");
+                // Check if the href is valid
+                if (href && href !== "#" && href !== "" && href !== "/" && href !== "javascript:void(0);" && href !== "javascript:void(0)") {
+                    startLoading(); // Show loader when a valid link is clicked
+                } else {
+                    event.preventDefault(); // Prevent default action for invalid links
+                    console.log('Invalid link clicked: ' + href); // Log for debugging
+                }
+            });
+        });
+</script>
+
+
 
 
 

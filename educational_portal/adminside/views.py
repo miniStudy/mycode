@@ -31,6 +31,9 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.mail import send_mail
+from team_ministudy.models import *
+from django.contrib.auth.hashers import check_password
+
 
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
@@ -39,7 +42,7 @@ logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import Template, Context
-
+from django.contrib.auth.hashers import make_password
 
 # =================celery=========================
 from educational_portal.celery import add
@@ -191,6 +194,8 @@ def insert_update_admin_page(request):
     if request.method == 'POST':
         form = admin_form(request.POST)
         if form.is_valid():
+            hashed_password = make_password('123456')
+            form.instance.admin_pass = hashed_password
             form.instance.domain_name = domain
             admin_password = form.instance.admin_pass
             admin_name = form.cleaned_data['admin_name']
@@ -199,11 +204,30 @@ def insert_update_admin_page(request):
             messages.success(request, "You have been registed successfully!")
 
             htmly = mail_templates.objects.get(mail_temp_type = 'Admin_mail', mail_temp_selected=1).mail_temp_html
-            context_data = {
+            context_data={}
+            if domain != '127.0.0.1:8000':
+                Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                
+                logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                context_data.update({
+                    'logo':logo,
+                    'institute_name': Institute_data.institute_name,
+                    'institute_email': Institute_data.institute_email,
+                    'institute_number': Institute_data.institute_contact,
+                })
+            else:
+                logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                context_data.update({
+                    'logo':logo,
+                    'institute':'miniStudy',
+                    'email':'mail.trushalpatel@gmail.com',
+                    'phone_num':'8511962611',
+                })
+            context_data.update({
             'title': "Admin Register",
             'name': admin_name,
             'password': admin_password
-            }
+            })
             htmly = Template(htmly)
             html_content = htmly.render(Context(context_data))
             admin_register_email.delay([admin_email], html_content)
@@ -243,21 +267,26 @@ def admin_login_handle(request):
         password = request.POST['password']
         val = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain).count()
         if val==1:
-            Data = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain)
-            for item in Data:
-                request.session['admin_id'] = item.admin_id
-                request.session['admin_name'] = item.admin_name
-                request.session['admin_logged_in'] = 'yes'
+            Data = AdminData.objects.filter(admin_email=email, domain_name = domain)
+            admin_id = AdminData.objects.get(admin_id = Data[0] .admin_id)
+            if check_password(password, admin_id.admin_pass):
+                for item in Data:
+                    request.session['admin_id'] = item.admin_id
+                    request.session['admin_name'] = item.admin_name
+                    request.session['admin_logged_in'] = 'yes'
 
-            if request.POST.get("remember"):
-                response = redirect("Admin Home")
-                response.set_cookie('admin_email', email) 
-                response.set_cookie('admin_password', password)   
-                return response
-            
-            messages.success(request, 'Logged In Successfully')
-            url = '/adminside/'
-            return redirect(url)
+                if request.POST.get("remember"):
+                    response = redirect("Admin Home")
+                    response.set_cookie('admin_email', email) 
+                    response.set_cookie('admin_password', password)   
+                    return response
+                
+                messages.success(request, 'Logged In Successfully')
+                url = '/adminside/'
+                return redirect(url)
+            else:
+                messages.error(request, "password Wrong")
+                return redirect('Admin Login')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('Admin Login')
@@ -745,10 +774,32 @@ def insert_update_announcements(request):
 
             # htmly = get_template('Email/announcement.html')
             htmly = mail_templates.objects.get(mail_temp_type = 'Announcement_mail', mail_temp_selected=1).mail_temp_html
-            context_data = {
+            context_data={}
+            if domain != '127.0.0.1:8000':
+                Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                
+                logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                context_data.update({
+                    'logo':logo,
+                    'institute_name':Institute_data.institute_name,
+                    'institute_email':Institute_data.institute_email,
+                    'institute_number':Institute_data.institute_contact
+                })
+            else:
+                logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                context_data.update({
+                    'logo':logo,
+                    'institute':'miniStudy',
+                    'email':'mail.trushalpatel@gmail.com',
+                    'phone_num':'8511962611',
+                })
+                
+
+            context_data.update({
             'title': form.cleaned_data['announce_title'],
             'msg': form.cleaned_data['announce_msg'],
-            }
+            
+            })
             htmly = Template(htmly)
             html_content = htmly.render(Context(context_data))     
             announcement_mail.delay(students_email_list, html_content)
@@ -1123,6 +1174,8 @@ def insert_update_faculties(request):
                 if check >= 1:
                     messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
                 else:
+                    hashed_password = make_password('123456')
+                    form.instance.admin_pass = hashed_password
                     form.instance.domain_name = domain
                     form.instance.fac_email = request.POST.get('fac_email')
                     instance = form.save()
@@ -1132,11 +1185,31 @@ def insert_update_faculties(request):
                     fac_email = [form.cleaned_data['fac_email']]
 
                     htmly = mail_templates.objects.get(mail_temp_type = 'Faculty_mail', mail_temp_selected=1).mail_temp_html
-                    context_data = {
+                    context_data={}
+                    if domain != '127.0.0.1:8000':
+                        Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                        
+                        logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                        context_data.update({
+                            'logo':logo,
+                            'institute_name': Institute_data.institute_name,
+                            'institute_email': Institute_data.institute_email,
+                            'institute_number': Institute_data.institute_contact,
+                        })
+                    else:
+                        logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                        context_data.update({
+                            'logo':logo,
+                            'institute':'miniStudy',
+                            'email':'mail.trushalpatel@gmail.com',
+                            'phone_num':'8511962611',
+                        })
+
+                    context_data.update({
                     'title': "Student Register",
                     'name': fac_name,
                     'password': fac_password
-                    }
+                    })
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))
                     faculty_email.delay(fac_email, html_content)
@@ -1146,7 +1219,6 @@ def insert_update_faculties(request):
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
-
     return render(request, 'insert_update/faculties.html', context)
 
 
@@ -1255,10 +1327,29 @@ def insert_update_timetable(request):
 
                 
                 htmly = mail_templates.objects.get(mail_temp_type = 'Timetable_mail', mail_temp_selected=1).mail_temp_html
-                context_data = {
+                context_data={}
+                if domain != '127.0.0.1:8000':
+                    Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                    
+                    logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                    context_data.update({
+                        'logo':logo,
+                        'institute_name': Institute_data.institute_name,
+                        'institute_email': Institute_data.institute_email,
+                        'institute_number': Institute_data.institute_contact,
+                    })
+                else:
+                    logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                    context_data.update({
+                        'logo':logo,
+                        'institute':'miniStudy',
+                        'email':'mail.trushalpatel@gmail.com',
+                        'phone_num':'8511962611',
+                    })
+                context_data.update({
                 'title': 'Time Table Updated',
                 'msg': 'Your time table has been updated!',
-                }
+                })
                 htmly = Template(htmly)
                 html_content = htmly.render(Context(context_data))     
                 timetable_mail(tt_students_email_list, html_content)
@@ -1505,10 +1596,17 @@ def insert_events(request):
 
         #------------------Telegram and Mail Message----------------------------------------------
         student_chat_ids = Students.objects.filter(domain_name = domain).values_list('stud_telegram_studentchat_id', flat=True)
+        student_player_id = Students.objects.filter(domain_name = domain).values_list('stud_onesignal_player_id', flat=True)
+        parent_player_id = Students.objects.filter(domain_name = domain).values_list('guardian_onesignal_player_id', flat=True)
         student_email_ids = Students.objects.filter(domain_name = domain).values_list('stud_email', flat=True)
         
         event_telegram_message_student(event_name,formatted_event_date, student_chat_ids)
         event_telegram_message_parent(event_name,formatted_event_date, student_email_ids)
+
+        title = "New Event"
+        msg = f"Dear Student, thank you for participating in our recent event held on {formatted_event_date}. We hope you found it enjoyable and informative! Stay tuned for more events."
+        send_notification(student_player_id, title, msg, request)
+        send_notification(parent_player_id, title, msg, request)
         #-------------------------End-------------------------------------------------------------
         
         fs = FileSystemStorage(location='media/uploads/events/')
@@ -2039,12 +2137,48 @@ def insert_meeting_date(request):
 @admin_login_required
 def send_meeting_mail(request):
     if request.method == 'POST':
+            domain = request.get_host()
             pk = request.POST['pk']
             student_parent = Students.objects.get(stud_id = pk)
             parent_email = student_parent.stud_guardian_email
             parent_name = student_parent.stud_guardian_name
             meeting_date = request.POST['meeting_date']
-            send_email_for_meeting.delay(parent_email, parent_name, meeting_date)
+            meeting_time = request.POST['meeting_time']
+
+            htmly = mail_templates.objects.get(mail_temp_type = 'Parent_meeting_mail', mail_temp_selected=1).mail_temp_html
+            context_data={}
+            if domain != '127.0.0.1:8000':
+                Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                
+                logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                context_data.update({
+                    'logo':logo,
+                    'institute_name': Institute_data.institute_name,
+                    'institute_email': Institute_data.institute_email,
+                    'institute_number': Institute_data.institute_contact,
+                })
+            else:
+                logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                context_data.update({
+                    'logo':logo,
+                    'institute':'miniStudy',
+                    'email':'mail.trushalpatel@gmail.com',
+                    'phone_num':'8511962611',
+                })
+
+            context_data.update({
+            'title': "Parent Meeting",
+            'name': parent_name,
+            'date': meeting_date,
+            'time': meeting_time
+            })
+            htmly = Template(htmly)
+            html_content = htmly.render(Context(context_data)) 
+            send_email_for_meeting.delay(parent_email, html_content)
+
+            title = "Parent Meeting"
+            msg = f"Dear Parent, we would like to inform you that a parent meeting is scheduled for {meeting_date} on {meeting_time}. Your presence is highly encouraged as we will be discussing important updates concerning your child's academic progress."
+            send_notification.delay(student_parent.guardian_onesignal_player_id, title, msg, request)
     return render(request, 'meeting_date.html')
 
 @admin_login_required
@@ -2096,6 +2230,10 @@ def insert_update_students(request):
         # ===================insert_logic===========================
         form = student_form(request.POST)
         if form.is_valid():
+            hashed_password = make_password('12345678')
+            hashed_password_parent = make_password('123456')
+            form.instance.stud_pass = hashed_password
+            form.instance.stud_guardian_password = hashed_password_parent
             form.instance.stud_email = request.POST.get('stud_email').lower()
             form.instance.stud_guardian_email = request.POST.get('stud_guardian_email').lower()
             form.instance.domain_name = domain
@@ -2107,11 +2245,30 @@ def insert_update_students(request):
 
 
             htmly = mail_templates.objects.get(mail_temp_type = 'Student_mail', mail_temp_selected=1).mail_temp_html
-            context_data = {
+            context_data={}
+            if domain != '127.0.0.1:8000':
+                Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                
+                logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                context_data.update({
+                    'logo':logo,
+                    'institute_name': Institute_data.institute_name,
+                    'institute_email': Institute_data.institute_email,
+                    'institute_number': Institute_data.institute_contact,
+                })
+            else:
+                logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                context_data.update({
+                    'logo':logo,
+                    'institute':'miniStudy',
+                    'email':'mail.trushalpatel@gmail.com',
+                    'phone_num':'8511962611',
+                })
+            context_data.update({
             'title': "Student Register",
             'name': student_name,
             'password': student_password
-            }
+            })
             htmly = Template(htmly)
             html_content = htmly.render(Context(context_data))
             student_email_send.delay(student_email, html_content)
@@ -2737,15 +2894,34 @@ def add_cheques_admin(request):
                     parent_email = [student_name.stud_guardian_email]
                     date = datetime.datetime.today()
 
-                    htmly = mail_templates.objects.get(mail_temp_type = 'Cheque_mail', mail_temp_selected=1).mail_temp_html
-                    context_data = {
+                    htmly = mail_templates.objects.get(mail_temp_type = 'Cheque_update_mail', mail_temp_selected=1).mail_temp_html
+                    context_data = {}
+                    if domain != '127.0.0.1:8000':
+                        Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                        logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                        context_data.update({
+                        'logo':logo,
+                        'institute_name': Institute_data.institute_name,
+                        'institute_email': Institute_data.institute_email,
+                        'institute_number': Institute_data.institute_contact,
+                        })
+
+                    else:
+                        logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                        context_data.update({
+                            'logo':logo,
+                            'institute':'miniStudy',
+                            'email':'mail.trushalpatel@gmail.com',
+                            'phone_num':'8511962611',
+                        })
+                    context_data.update({
                     'title': "Cheque Payment Update",
                     'name': student_name.stud_name,
                     'amount': form.cleaned_data['cheque_amount'],
                     'bank': form.cleaned_data['cheque_bank'],
                     'Cheque_number': cheque_number,
                     'date': date
-                    }
+                    })
 
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))     
@@ -2783,14 +2959,33 @@ def add_cheques_admin(request):
                     date = datetime.datetime.today()
 
                     htmly = mail_templates.objects.get(mail_temp_type = 'Cheque_mail', mail_temp_selected=1).mail_temp_html
-                    context_data = {
+                    context_data = {}
+                    if domain != '127.0.0.1:8000':
+                        Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                        logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                        context_data.update({
+                        'logo':logo,
+                        'institute_name': Institute_data.institute_name,
+                        'institute_email': Institute_data.institute_email,
+                        'institute_number': Institute_data.institute_contact,
+                        })
+
+                    else:
+                        logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                        context_data.update({
+                            'logo':logo,
+                            'institute':'miniStudy',
+                            'email':'mail.trushalpatel@gmail.com',
+                            'phone_num':'8511962611',
+                        })
+                    context_data.update({
                     'title': "Cheque Payment",
                     'name': student_name.stud_name,
                     'amount': form.cleaned_data['cheque_amount'],
                     'bank': form.cleaned_data['cheque_bank'],
                     'date': date,
                     'Cheque_number': cheque_number
-                    }
+                    })
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))     
                     cheque_mail.delay(student_email, html_content)
@@ -2874,13 +3069,32 @@ def add_fees_collection_admin(request):
 
 
                 htmly = mail_templates.objects.get(mail_temp_type = 'Payment_mail', mail_temp_selected=1).mail_temp_html
-                context_data = {
+                context_data = {}
+                if domain != '127.0.0.1:8000':
+                    Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                    logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                    context_data.update({
+                    'logo':logo,
+                    'institute_name': Institute_data.institute_name,
+                    'institute_email': Institute_data.institute_email,
+                    'institute_number': Institute_data.institute_contact,
+                    })
+
+                else:
+                    logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                    context_data.update({
+                        'logo':logo,
+                        'institute':'miniStudy',
+                        'email':'mail.trushalpatel@gmail.com',
+                        'phone_num':'8511962611',
+                    })
+                context_data.update({
                 'title': "Payment Update",
                 'name': student_name.stud_name,
                 'amount': form.cleaned_data['fees_paid'],
                 'mode': form.cleaned_data['fees_mode'],
                 'date': date
-                }
+                })
 
                 htmly = Template(htmly)
                 html_content = htmly.render(Context(context_data))     
@@ -3355,8 +3569,9 @@ def insert_update_mail_templates(request):
     if request.method == 'POST':
         form = mail_templates_form(request.POST)
         context.update({'form':form})
-
+        print(form)
         if form.is_valid():
+           
             if form.instance.mail_temp_type == 'Announcement_mail':
                 print("Hello")
             form.instance.domain_name = domain
