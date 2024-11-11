@@ -31,7 +31,7 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.mail import send_mail
-
+from team_ministudy.models import *
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
 
@@ -745,10 +745,32 @@ def insert_update_announcements(request):
 
             # htmly = get_template('Email/announcement.html')
             htmly = mail_templates.objects.get(mail_temp_type = 'Announcement_mail', mail_temp_selected=1).mail_temp_html
-            context_data = {
+            context_data={}
+            if domain != '127.0.0.1:8000':
+                Institute_data = NewInstitution.objects.get(domain_name = domain)
+                
+                logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                context_data.update({
+                    'logo':logo,
+                    'institute':Institute_data.institute_name,
+                    'email':Institute_data.institute_email,
+                    'phone_num':Institute_data.institute_contact
+                })
+            else:
+                logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                context_data.update({
+                    'logo':logo,
+                    'institute':'miniStudy',
+                    'email':'mail.trushalpatel@gmail.com',
+                    'phone_num':'8511962611',
+                })
+                
+
+            context_data.update({
             'title': form.cleaned_data['announce_title'],
             'msg': form.cleaned_data['announce_msg'],
-            }
+            
+            })
             htmly = Template(htmly)
             html_content = htmly.render(Context(context_data))     
             announcement_mail.delay(students_email_list, html_content)
