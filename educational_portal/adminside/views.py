@@ -31,6 +31,7 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.mail import send_mail
+from team_ministudy.models import *
 
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
@@ -2046,14 +2047,35 @@ def insert_meeting_date(request):
 @admin_login_required
 def send_meeting_mail(request):
     if request.method == 'POST':
+            domain = request.get_host()
             pk = request.POST['pk']
             student_parent = Students.objects.get(stud_id = pk)
             parent_email = student_parent.stud_guardian_email
             parent_name = student_parent.stud_guardian_name
             meeting_date = request.POST['meeting_date']
-            send_email_for_meeting.delay(parent_email, parent_name, meeting_date)
+            meeting_time = request.POST['meeting_time']
+            institute_details = NewInstitution.objects.get(institute_domain = domain)
+
+            institute_name = institute_details.institute_name
+            institute_email = institute_details.institute_email
+            institute_number = institute_details.institute_contact
+
+            htmly = mail_templates.objects.get(mail_temp_type = 'Parent_meeting_mail', mail_temp_selected=1).mail_temp_html
+            context_data = {
+            'title': "Parent Meeting",
+            'name': parent_name,
+            'date': meeting_date,
+            'time': meeting_time,
+            'institute_name': institute_name,
+            'institute_email': institute_email,
+            'institute_number': institute_number,
+            }
+            htmly = Template(htmly)
+            html_content = htmly.render(Context(context_data)) 
+            send_email_for_meeting.delay(parent_email, html_content, request)
+
             title = "Parent Meeting"
-            msg = f"Dear Parent, we would like to inform you that a parent meeting is scheduled for {meeting_date}. Your presence is highly encouraged as we will be discussing important updates concerning your child's academic progress."
+            msg = f"Dear Parent, we would like to inform you that a parent meeting is scheduled for {meeting_date} on {meeting_time}. Your presence is highly encouraged as we will be discussing important updates concerning your child's academic progress."
             send_notification.delay(student_parent.guardian_onesignal_player_id, title, msg, request)
     return render(request, 'meeting_date.html')
 
