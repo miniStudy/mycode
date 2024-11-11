@@ -10,6 +10,7 @@ from django.db.models import Sum,Count,Avg, Value
 from django.db.models import Count, Case, When, IntegerField
 import random
 from django.http import Http404,JsonResponse
+from django.contrib.auth.hashers import check_password
 
 from team_ministudy.forms import suggestions_improvements_Form
 
@@ -149,28 +150,36 @@ def student_login_handle(request):
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
-        val = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain).count()
+
+        val = Students.objects.filter(stud_email=email, domain_name = domain).count()
+
+        
         if val==1:
-            Data = Students.objects.filter(stud_email=email,stud_pass=password, domain_name = domain)
-            student_id = Students.objects.get(stud_id = Data[0].stud_id)
-            if student_id.stud_lock == True:
-                return render(request, 'studentpanel/lock.html')
-            for item in Data:
-                request.session['stud_id'] = item.stud_id
-                request.session['stud_name'] = item.stud_name
-                request.session['stud_batch'] = item.stud_batch.batch_id
-                request.session['stud_std'] = item.stud_std.std_id
-                request.session['stud_profile'] = '{}'.format(item.stud_profile)
-                request.session['stud_logged_in'] = 'yes'
-            
-            if request.POST.get("remember"):
-                response = redirect("Student_home")
-                response.set_cookie('stud_email', email) 
-                response.set_cookie('stud_password', password)   
-                return response
-            
-            messages.success(request, 'Logged In Successfully')
-            return redirect('Student_home')
+            Data = Students.objects.filter(stud_email=email, domain_name = domain)
+            student_id = Students.objects.get(stud_id = Data[0] .stud_id)
+            if check_password(password, student_id.stud_pass):
+                if student_id.stud_lock == True:
+                    return render(request, 'studentpanel/lock.html')
+                for item in Data:
+                    request.session['stud_id'] = item.stud_id
+                    request.session['stud_name'] = item.stud_name
+                    request.session['stud_batch'] = item.stud_batch.batch_id
+                    request.session['stud_std'] = item.stud_std.std_id
+                    request.session['stud_profile'] = '{}'.format(item.stud_profile)
+                    request.session['stud_logged_in'] = 'yes'
+                
+                if request.POST.get("remember"):
+                    response = redirect("Student_home")
+                    response.set_cookie('stud_email', email) 
+                    response.set_cookie('stud_password', password)   
+                    return response
+                
+                messages.success(request, 'Logged In Successfully')
+                return redirect('Student_home')
+            else:
+                messages.error(request, "password Wrong")
+                return redirect('Student_Login')
+
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('Student_Login')

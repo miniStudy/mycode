@@ -39,7 +39,7 @@ logo_image_url = 'https://metrofoods.co.nz/logoo.png'
 from adminside.send_mail import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.template import Template, Context
-
+from django.contrib.auth.hashers import make_password
 
 # =================celery=========================
 from educational_portal.celery import add
@@ -747,7 +747,7 @@ def insert_update_announcements(request):
             htmly = mail_templates.objects.get(mail_temp_type = 'Announcement_mail', mail_temp_selected=1).mail_temp_html
             context_data={}
             if domain != '127.0.0.1:8000':
-                Institute_data = NewInstitution.objects.get(domain_name = domain)
+                Institute_data = NewInstitution.objects.get(institute_domain = domain)
                 
                 logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
                 context_data.update({
@@ -2128,6 +2128,9 @@ def insert_update_students(request):
         # ===================insert_logic===========================
         form = student_form(request.POST)
         if form.is_valid():
+            hashed_password = make_password('12345678')
+            print(hashed_password)
+            form.instance.stud_pass = hashed_password
             form.instance.stud_email = request.POST.get('stud_email').lower()
             form.instance.stud_guardian_email = request.POST.get('stud_guardian_email').lower()
             form.instance.domain_name = domain
