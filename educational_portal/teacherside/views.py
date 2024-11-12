@@ -2379,16 +2379,16 @@ def teacher_chatbox(request):
         Q(chatbox_sender=teacher_object.fac_email,chatbox_receiver = selected_person.stud_guardian_email) |
         Q(chatbox_receiver=teacher_object.fac_email, chatbox_sender = selected_person.stud_guardian_email)
         )
-        context.update({'selected_person':selected_person, 'chatbox_data': chatbox_data})
+        context.update({'selected_person':selected_person,'chatbox_data':chatbox_data})
+
     else:
         selected_person = Students.objects.get(stud_guardian_email = Persons[0]['chatbox_sender'])
         chatbox_data = Chatbox.objects.filter( 
         Q(chatbox_sender=teacher_object.fac_email,chatbox_receiver = selected_person.stud_guardian_email) |
         Q(chatbox_receiver=teacher_object.fac_email, chatbox_sender = selected_person.stud_guardian_email)
         )
-        context.update({'selected_person':selected_person, 'chatbox_data': chatbox_data})
-    
-
+        context.update({'selected_person':selected_person,'chatbox_data':chatbox_data})
+        
     Unique_persons = []
     for x in Persons:
         a = Students.objects.get(stud_guardian_email=x['chatbox_sender'])
