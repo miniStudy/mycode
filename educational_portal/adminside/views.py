@@ -3672,3 +3672,10 @@ def show_complaints_functions(request):
     complaints_data = Complaint.objects.filter(domain_name = domain, complaint_handle = 0)
     context = {"complaints_data": complaints_data, "title": "Complaints"}
     return render(request, "show_complaint.html", context)
+
+
+def show_notification_function(request):
+    domain = request.get_host()
+    notification_data = Notification.objects.filter(domain_name = domain).order_by('-pk')
+    context = {'notification_data': notification_data, 'title': 'Notification'}
+    return render(request, 'show_notification.html', context)
