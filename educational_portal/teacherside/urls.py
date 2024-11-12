@@ -94,4 +94,7 @@ urlpatterns = [
     path('teacher_export_data/',teacherview.teacher_export_data, name='teacher_export_data'),
 
     path('teacher_insert_suggestions/',teacherview.insert_suggestions_function, name='teacher_insert_suggestions'),
+
+
+    path('teacher_chatbox/',teacherview.teacher_chatbox, name='teacher_chatbox'),
 ]

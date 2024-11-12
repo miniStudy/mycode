@@ -265,7 +265,7 @@ def admin_login_handle(request):
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
-        val = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain).count()
+        val = AdminData.objects.filter(admin_email=email, domain_name = domain).count()
         if val==1:
             Data = AdminData.objects.filter(admin_email=email, domain_name = domain)
             admin_id = AdminData.objects.get(admin_id = Data[0] .admin_id)
