@@ -11,12 +11,14 @@ from django.db.models import OuterRef, Subquery, BooleanField,Q
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
 from parentsside.decorators import *
+from django.contrib.auth.hashers import check_password
 
 # mail integration 
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMultiAlternatives
+
 
 # Create your views here.
 # Shivam is on testing
@@ -118,21 +120,23 @@ def parent_login_handle(request):
                     parent.save()
                 except Students.DoesNotExist:
                     messages.error(request, "Parent with this OneSignal player ID does not exist.")
-            Data = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password, domain_name = domain)
-            for item in Data:
-               request.session['parent_id'] = item.stud_id
-               request.session['parent_name'] = item.stud_guardian_name
-               request.session['parent_logged_in'] = 'yes'
+            Data = Students.objects.filter(stud_guardian_email=email, domain_name = domain)
+            student_id = Students.objects.get(stud_id = Data[0] .stud_id)
+            if check_password(password, student_id.stud_guardian_password):
+                for item in Data:
+                    request.session['parent_id'] = item.stud_id
+                    request.session['parent_name'] = item.stud_guardian_name
+                    request.session['parent_logged_in'] = 'yes'
 
-            if request.POST.get("remember"):
-               response = redirect("parent_home")
-               response.set_cookie('stud_guardian_email', email) 
-               response.set_cookie('stud_guardian_password', password)   
-               return response
-            
-            messages.success(request, 'Logged In Successfully')
-            
-            return redirect('parent_home')
+                if request.POST.get("remember"):
+                    response = redirect("parent_home")
+                    response.set_cookie('stud_guardian_email', email) 
+                    response.set_cookie('stud_guardian_password', password)   
+                    return response
+                
+                messages.success(request, 'Logged In Successfully')
+                
+                return redirect('parent_home')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('parent_login')

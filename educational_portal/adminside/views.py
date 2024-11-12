@@ -32,6 +32,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.mail import send_mail
 from team_ministudy.models import *
+from django.contrib.auth.hashers import check_password
+
 
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
@@ -192,6 +194,8 @@ def insert_update_admin_page(request):
     if request.method == 'POST':
         form = admin_form(request.POST)
         if form.is_valid():
+            hashed_password = make_password('123456')
+            form.instance.admin_pass = hashed_password
             form.instance.domain_name = domain
             admin_password = form.instance.admin_pass
             admin_name = form.cleaned_data['admin_name']
@@ -263,21 +267,26 @@ def admin_login_handle(request):
         password = request.POST['password']
         val = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain).count()
         if val==1:
-            Data = AdminData.objects.filter(admin_email=email,admin_pass=password, domain_name = domain)
-            for item in Data:
-                request.session['admin_id'] = item.admin_id
-                request.session['admin_name'] = item.admin_name
-                request.session['admin_logged_in'] = 'yes'
+            Data = AdminData.objects.filter(admin_email=email, domain_name = domain)
+            admin_id = AdminData.objects.get(admin_id = Data[0] .admin_id)
+            if check_password(password, admin_id.admin_pass):
+                for item in Data:
+                    request.session['admin_id'] = item.admin_id
+                    request.session['admin_name'] = item.admin_name
+                    request.session['admin_logged_in'] = 'yes'
 
-            if request.POST.get("remember"):
-                response = redirect("Admin Home")
-                response.set_cookie('admin_email', email) 
-                response.set_cookie('admin_password', password)   
-                return response
-            
-            messages.success(request, 'Logged In Successfully')
-            url = '/adminside/'
-            return redirect(url)
+                if request.POST.get("remember"):
+                    response = redirect("Admin Home")
+                    response.set_cookie('admin_email', email) 
+                    response.set_cookie('admin_password', password)   
+                    return response
+                
+                messages.success(request, 'Logged In Successfully')
+                url = '/adminside/'
+                return redirect(url)
+            else:
+                messages.error(request, "password Wrong")
+                return redirect('Admin Login')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('Admin Login')
@@ -1165,6 +1174,8 @@ def insert_update_faculties(request):
                 if check >= 1:
                     messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
                 else:
+                    hashed_password = make_password('123456')
+                    form.instance.admin_pass = hashed_password
                     form.instance.domain_name = domain
                     form.instance.fac_email = request.POST.get('fac_email')
                     instance = form.save()
@@ -2220,8 +2231,9 @@ def insert_update_students(request):
         form = student_form(request.POST)
         if form.is_valid():
             hashed_password = make_password('12345678')
-            print(hashed_password)
+            hashed_password_parent = make_password('123456')
             form.instance.stud_pass = hashed_password
+            form.instance.stud_guardian_password = hashed_password_parent
             form.instance.stud_email = request.POST.get('stud_email').lower()
             form.instance.stud_guardian_email = request.POST.get('stud_guardian_email').lower()
             form.instance.domain_name = domain

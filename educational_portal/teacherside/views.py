@@ -27,6 +27,7 @@ from django.db.models import OuterRef, Subquery, BooleanField,Q
 from django.core.paginator import Paginator
 import requests
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import check_password
 
 import fitz  # PyMuPDF
 from PIL import Image
@@ -189,6 +190,7 @@ def teacher_login_page(request):
           return render(request, 'teacherpanel/master_auth.html',{'login_set':login, 'title':'login'})
 
 def teacher_login_handle(request):
+    domain = request.get_host()
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
@@ -202,22 +204,26 @@ def teacher_login_handle(request):
                     faculty.save()
                 except Faculties.DoesNotExist:
                     messages.error(request, "Faculties with this OneSignal player ID does not exist.")
-            Data = Faculties.objects.filter(fac_email=email,fac_password=password)
-            for item in Data:
-               request.session['fac_id'] = item.fac_id
-               request.session['fac_name'] = item.fac_name
-               request.session['fac_profile'] = '{}'.format(item.fac_profile)
-               request.session['fac_logged_in'] = 'yes'
+            Data = Faculties.objects.filter(fac_email=email, domain_name = domain)
+            fac_id = Faculties.objects.get(fac_id = Data[0] .fac_id)
+            if check_password(password, fac_id.fac_password):
+                for item in Data:
+                    request.session['fac_id'] = item.fac_id
+                    request.session['fac_name'] = item.fac_name
+                    request.session['fac_profile'] = '{}'.format(item.fac_profile)
+                    request.session['fac_logged_in'] = 'yes'
 
-            if request.POST.get("remember"):
-               response = redirect("teacher_home")
-               response.set_cookie('fac_email', email) 
-               response.set_cookie('fac_password', password)   
-               return response
-            
-            messages.success(request, 'Logged In Successfully')
-            
-            return redirect('teacher_home')
+                if request.POST.get("remember"):
+                    response = redirect("teacher_home")
+                    response.set_cookie('fac_email', email) 
+                    response.set_cookie('fac_password', password)   
+                    return response
+                
+                messages.success(request, 'Logged In Successfully')
+                return redirect('teacher_home')
+            else:
+                messages.error(request, "password Wrong")
+                return redirect('teacher_login')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('teacher_login')
