@@ -650,7 +650,7 @@ class Complaint(models.Model):
     complaint_message = models.TextField()
     complaint_date = models.DateField(auto_now_add=True)
     complaint_handle = models.BooleanField(default=0)
-    domain_name = models.CharField(max_length=100)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"{self.complaint_subject}" 
@@ -665,10 +665,26 @@ class Chatbox(models.Model):
     chatbox_sender = models.CharField(max_length=100)
     chatbox_receiver = models.CharField(max_length=100)
     chatbox_chat = models.TextField()
+    chatbox_datetime = models.DateTimeField(auto_now_add=True, null=True,blank=True)
     domain_name = models.CharField(max_length=100)
+
 
     def __str__(self):
         return f"{self.chatbox_sender}"
     
     class Meta:
         db_table = 'Chatbox'
+
+
+class Notification(models.Model):
+    notify_id = models.BigAutoField(primary_key=True)
+    notify_title = models.TextField(max_length=155)
+    notify_notification = models.TextField(max_length=255)
+    notify_date = models.DateField(auto_now_add=True)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.notify_title}"
+    
+    class Meta:
+        db_table = 'Notification'

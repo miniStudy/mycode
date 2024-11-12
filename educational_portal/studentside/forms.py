@@ -35,3 +35,9 @@ class solution_form(forms.ModelForm):
     class Meta:
         model = Doubt_solution
         fields = "__all__"        
+
+
+class complaint_form(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = "__all__"

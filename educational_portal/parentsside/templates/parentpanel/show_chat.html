@@ -1,4 +1,4 @@
-{% extends 'teacherpanel/master.html' %}
+{% extends 'parentpanel/master.html' %}
 
 {% block contentsection %}
 <div class="row">
@@ -7,11 +7,10 @@
         <h5 class="mb-3">Contacts</h5>
         <div>
             {% for person in Unique_persons %}
-            <a href="{% url 'teacher_chatbox' %}?selected_person={{person.GuardianEmail}}"><div class="d-flex p-2 align-items-center mb-3 rounded-3 {% if selected_person.stud_guardian_email == person.GuardianEmail %} bg-light border border-primary{% endif %}">
+            <a href="{% url 'parent_chatbox' %}?selected_person={{person.FacultyEmail}}"><div class="d-flex align-items-center mb-3 rounded-3 {% if selected_person.fac_email == person.FacultyEmail %} bg-light border border-primary{% endif %}">
                 <img src="/media/uploads/default_profile.jpg" alt="Profile Image" class="rounded-circle me-2" width="40" height="40">
                 <div>
-                    <strong class="ms-1">{{ person.GuardianName }}</strong>
-                    <div class="small text-muted ms-1">{{person.StudentName}} {{ person.StudentBatch }}</div>
+                    <strong class="ms-1">{{ person.FacultyName }}</strong>
                 </div>
             </div></a>
             {% endfor %}
@@ -24,15 +23,14 @@
         <div class="d-flex align-items-center border-bottom pb-2">
             <img src="/media/uploads/default_profile.jpg" alt="Profile Image" class="rounded-circle me-2" width="30" height="30">
             <div>
-                <strong>{{ selected_person.stud_guardian_name }}</strong>
-                <div class="small text-muted">{{ selected_person.stud_batch }}</div>
+                <strong>{{ selected_person.fac_name }}</strong>
             </div>
         </div>
 
         <!-- Chat Messages -->
         <div class="chat-messages flex-grow-1 p-3" style="overflow-y: auto;">
             {% for x in chatbox_data %}
-            {% if faculty.fac_email == x.chatbox_sender %}
+            {% if parent.stud_guardian_email == x.chatbox_sender %}
             <!-- Outgoing message -->
             <div class="d-flex justify-content-end mb-2">
                 <div class="card bg-primary text-white px-1 py-1 shadow-sm" style="max-width: 75%; word-wrap: break-word;">
@@ -48,7 +46,7 @@
                 <div class="card bg-light px-1 py-1 shadow-sm" style="max-width: 75%; word-wrap: break-word;">
                     <div class="card-body p-2">
                         {{ x.chatbox_chat }}
-                        <div class="small text-start" style="font-size: 0.75em; opacity: 0.8;">{{ x.chatbox_datetime }}</div>
+                        <div class="small text-end" style="font-size: 0.75em; opacity: 0.8;">{{ x.chatbox_datetime }}</div>
                     </div>
                 </div>
             </div>
@@ -57,10 +55,10 @@
         </div>
 
         <!-- Message Input Box -->
-        <form action="{% url 'insert_chatbox_teacher' %}" method="post">
+        <form action="{% url 'insert_chatbot_parent' %}" method="post">
         {% csrf_token %}
         <div class="input-group mt-3 p-2">
-            <input type="hidden" value="{{selected_person.stud_guardian_email}}" name="chatbox_receiver" />
+            <input type="hidden" value="{{selected_person.fac_email}}" name="chatbox_receiver" />
             <input type="text" class="form-control rounded-pill" name="chatbox_chat" placeholder="Type a message...">
             <button class="btn btn-primary rounded-pill ms-2" type="submit">
                 <i class="fa fa-paper-plane"></i>

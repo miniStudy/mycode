@@ -44,4 +44,12 @@ urlpatterns = [
     path('parentside_timetable/',parentview.show_parentside_timetable, name = 'parentside_timetable'),
 
     path('parent_insert_suggestions/',parentview.insert_suggestions_function, name = 'parent_insert_suggestions'),
+    path('add_complaint/',parentview.add_complaint_function, name = 'add_complaint'),
+    path('delete_complaint/',parentview.delete_complaint_function, name = 'delete_complaint'),
+
+
+    path('parent_chatbox/',parentview.parent_chatbox, name = 'parent_chatbox'),
+    path('insert_chatbot_parent/',parentview.insert_chatbot_parent, name = 'insert_chatbot_parent'),
+
+
 ]

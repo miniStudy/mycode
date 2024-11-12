@@ -650,6 +650,11 @@ def handle_attendance(request):
             status = 'Present' if student.stud_id in selected_ids else 'Absent'
             if student.stud_onesignal_player_id:
                 mess = f"Your attendance status for {noti_date} is {status}."
+                notification = Notification(
+                notify_title=title,
+                notify_notification=mess,
+                domain_name=domain)
+                notification.save()
                 for player_id in onesignal_player_id_list:
                     send_notification(player_id,title,mess, request)
         messages.success(request, "Attendance has been submitted!")    
@@ -858,6 +863,11 @@ def insert_update_syllabus(request):
 )
         player_ids = AdminData.objects.values_list('admin_onesignal_player_id', flat=True).exclude(admin_onesignal_player_id__isnull=True)
         player_ids_str = ",".join(player_ids)
+        notification = Notification(
+        notify_title=title,
+        notify_notification=message,
+        domain_name=domain)
+        notification.save()
         send_notification(player_ids_str,title,message, request)
         return redirect('teacher_syllabus')
     return render(request, 'teacherpanel/insert_update_syllabus.html', context)
@@ -949,6 +959,11 @@ def teacher_add_solution_function(request):
 
                 title = "Your Doubt Has Been Answered!"
                 message = f"Hello {student_name}, your doubt has been answered by the {fac_name}. Check it out!"
+                notification = Notification(
+                notify_title=title,
+                notify_notification=message,
+                domain_name=domain)
+                notification.save()
                 send_notification(playerid, title, message, request)
 
                 return redirect('/teacherside/teacher_doubts/?doubt_id={}'.format(id))
@@ -1161,6 +1176,11 @@ def teacher_save_offline_marks(request):
                 mess = (
                 f"Dear {student_name}, your score for the test '{test_name}' is {student_score}/{total_marks}. "
                 f"Keep up the hard work! Exam date: {date}.")
+                notification = Notification(
+                notify_title=title,
+                notify_notification=mess,
+                domain_name=domain)
+                notification.save()
                 send_notification(player_id, title, mess, request)
 
         else:
@@ -1534,6 +1554,11 @@ def announcements_insert_update_teacher(request):
             # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
             title = '📢 New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
+            notification = Notification(
+            notify_title=title,
+            notify_notification=mess,
+            domain_name=domain)
+            notification.save()
             for player_id in onesignal_player_id_list:
                 send_notification(player_id,title,mess, request)
             return redirect(url)
@@ -2367,10 +2392,55 @@ def insert_suggestions_function(request):
 
 @teacher_login_required
 def teacher_chatbox(request):
+    context={"title": "ChatBox"}
     domain = request.get_host()
     teacher_id = request.session['fac_id']
     teacher_object = Faculties.objects.get(fac_id = teacher_id)
-    context = {
+    
+    Persons = Chatbox.objects.filter(chatbox_receiver=teacher_object.fac_email, domain_name = domain).values('chatbox_sender').distinct()
+    if request.GET.get('selected_person'):
+        selected_person = Students.objects.get(stud_guardian_email = request.GET.get('selected_person'))
+        chatbox_data = Chatbox.objects.filter( 
+        Q(chatbox_sender=teacher_object.fac_email,chatbox_receiver = selected_person.stud_guardian_email) |
+        Q(chatbox_receiver=teacher_object.fac_email, chatbox_sender = selected_person.stud_guardian_email)
+        )
+        chatbox_data = chatbox_data.filter(domain_name = domain)
+        context.update({'selected_person':selected_person,'chatbox_data':chatbox_data})
+
+    else:
+        if Persons:
+            selected_person = Students.objects.get(stud_guardian_email = Persons[0]['chatbox_sender'])
+            chatbox_data = Chatbox.objects.filter( 
+            Q(chatbox_sender=teacher_object.fac_email,chatbox_receiver = selected_person.stud_guardian_email) |
+            Q(chatbox_receiver=teacher_object.fac_email, chatbox_sender = selected_person.stud_guardian_email)
+            )
+            chatbox_data = chatbox_data.filter(domain_name = domain)
+            context.update({'selected_person':selected_person,'chatbox_data':chatbox_data})
+
+    Unique_persons = []
+    for x in Persons:
+        a = Students.objects.get(stud_guardian_email=x['chatbox_sender'])
+        person_dict = {
+            'GuardianName': a.stud_guardian_name,
+            'StudentName' : a.stud_name,
+            'StudentBatch' : a.stud_batch,
+            'GuardianEmail' : a.stud_guardian_email,
+        }
+        Unique_persons.append(person_dict)
+    context.update({
+        'Unique_persons':Unique_persons,
         'faculty':teacher_object,
-    }
+        'chatbox_data':chatbox_data,
+    })
     return render(request, 'teacherpanel/show_chatbox.html',context)
+
+
+@teacher_login_required
+def insert_chatbox_teacher(request):
+    domain_name = request.get_host()
+    teacher_id = request.session['fac_id']
+    teacher_object = Faculties.objects.get(fac_id = teacher_id)
+    receiver = request.POST.get('chatbox_receiver')
+    chat = request.POST.get('chatbox_chat')
+    Chatbox.objects.create(chatbox_sender = teacher_object.fac_email,chatbox_receiver=receiver,chatbox_chat=chat,domain_name = domain_name)
+    return redirect('/teacherside/teacher_chatbox?selected_person={}'.format(receiver))

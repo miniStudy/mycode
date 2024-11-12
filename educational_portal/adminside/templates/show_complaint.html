@@ -1,0 +1,45 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Show Complaints</h4></div> 
+  
+
+{% include 'message_show.html' %}
+
+
+{% for x in complaints_data %}
+<div class="card p-4 mt-3">
+    <strong style="display: inline;">Name:</strong> {{ x.complaint_parent.stud_guardian_name }}<br>
+    <strong>Contact:</strong> {{ x.complaint_parent.stud_guardian_number }}<br>
+    <strong>Email:</strong> {{ x.complaint_parent.stud_guardian_email }}<br>
+    <strong>Subject:</strong> {{ x.complaint_subject }} <br><br>
+    {{ x.complaint_message }} <br> 
+    Date : <small class='fst-italic'>{{ x.complaint_date }}</small>
+<a href="{% url 'show_complaints' %}?complaint_id={{x.complaint_id}}" 
+   class="btn mt-3" 
+   style="background: linear-gradient(90deg, #4A90E2, #007AFF, #005BBB); 
+          border: none; 
+          color: white; 
+          padding: 8px 18px; 
+          font-size: 14px; 
+          font-weight: bold; 
+          text-transform: uppercase; 
+          border-radius: 8px; 
+          transition: background 0.3s ease, transform 0.3s ease;"
+   onmouseover="this.style.background='linear-gradient(90deg, #357ABD, #0066CC, #004999)'; this.style.transform='scale(1.05)';" 
+   onmouseout="this.style.background='linear-gradient(90deg, #4A90E2, #007AFF, #005BBB)'; this.style.transform='scale(1)';">
+   Complaint Solve
+</a>
+
+</div>
+{% endfor %}
+{% endblock %}
+
+
+
+
+
+ 
+
+
+          

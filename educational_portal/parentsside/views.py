@@ -12,6 +12,7 @@ from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
 from parentsside.decorators import *
 from django.contrib.auth.hashers import check_password
+from studentside.forms import *
 
 # mail integration 
 from django.core.mail import send_mail
@@ -482,3 +483,83 @@ def insert_suggestions_function(request):
         suggestions_improvements.objects.create(si_user_name=username, si_user=si_user, si_suggestion=si_suggestion, domain_name = domain)
     
     return render(request, 'parentpanel/insert_suggestions.html', context)
+
+@parent_login_required
+def add_complaint_function(request):
+    student_id = request.session['parent_id']
+    title = "Complaint"
+    context = {'student_id': student_id, 'title': title}
+    domain = request.get_host()
+    if request.method == 'POST':
+        form = complaint_form(request.POST)
+        if form.is_valid():
+            student_pk = form.cleaned_data['complaint_parent']
+            form.instance.domain_name = domain
+            form.instance.complaint_parent = student_pk
+            form.save()
+            messages.success(request, "You'r complaint has been send!")
+            return redirect('parent_home')
+    return render(request, "parentpanel/add_complaint.html", context)
+
+@parent_login_required
+def delete_complaint_function(request):
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        delete_data = Complaint.objects.get(complaint_id = pk)
+        delete_data.delete()
+        messages.success(request, "Complaint delete successfully!")
+        return redirect('add_complaint')
+    
+    return render(request, "parentpanel/add_complaint")
+
+
+
+@parent_login_required
+def parent_chatbox(request):
+    context={"title": "ChatBox"}
+    domain = request.get_host()
+    parent_id = request.session['parent_id']
+    parent_object = Students.objects.get(stud_id = parent_id)
+    
+    Persons = Chatbox.objects.filter(chatbox_receiver=parent_object.stud_guardian_email, domain_name = domain).values('chatbox_sender').distinct()
+    if request.GET.get('selected_person'):
+        selected_person = Faculties.objects.get(fac_email = request.GET.get('selected_person'))
+        chatbox_data = Chatbox.objects.filter( 
+        Q(chatbox_sender=parent_object.stud_guardian_email,chatbox_receiver = selected_person.fac_email) |
+        Q(chatbox_receiver=parent_object.stud_guardian_email, chatbox_sender = selected_person.fac_email)
+        )
+        context.update({'selected_person':selected_person, 'chatbox_data': chatbox_data})
+    else:
+        selected_person = Faculties.objects.get(fac_email = Persons[0]['chatbox_sender'])
+        chatbox_data = Chatbox.objects.filter( 
+        Q(chatbox_sender=parent_object.stud_guardian_email,chatbox_receiver = selected_person.fac_email) |
+        Q(chatbox_receiver=parent_object.stud_guardian_email, chatbox_sender = selected_person.fac_email)
+        )
+        context.update({'selected_person':selected_person, 'chatbox_data': chatbox_data})
+    
+
+    Unique_persons = []
+    for x in Persons:
+        a = Faculties.objects.get(fac_email=x['chatbox_sender'])
+        person_dict = {
+            'FacultyEmail': a.fac_email,
+            'FacultyName' : a.fac_name,
+        }
+        Unique_persons.append(person_dict)
+    context.update({
+        'Unique_persons':Unique_persons,
+        'parent':parent_object,
+        'chatbox_data':chatbox_data,
+    })
+    return render(request, 'parentpanel/show_chat.html',context)
+
+
+@parent_login_required
+def insert_chatbot_parent(request):
+    domain_name = request.get_host()
+    parent_id = request.session['parent_id']
+    parent_object = Students.objects.get(stud_id = parent_id)
+    receiver = request.POST.get('chatbox_receiver')
+    chat = request.POST.get('chatbox_chat')
+    Chatbox.objects.create(chatbox_sender = parent_object.stud_guardian_email,chatbox_receiver=receiver,chatbox_chat=chat,domain_name = domain_name)
+    return redirect('/parentsside/parent_chatbox?selected_person={}'.format(receiver))
