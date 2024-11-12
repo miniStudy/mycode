@@ -97,4 +97,5 @@ urlpatterns = [
 
 
     path('teacher_chatbox/',teacherview.teacher_chatbox, name='teacher_chatbox'),
+    path('insert_chatbox_teacher/',teacherview.insert_chatbox_teacher, name='insert_chatbox_teacher'),
 ]
