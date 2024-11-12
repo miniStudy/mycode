@@ -2367,10 +2367,48 @@ def insert_suggestions_function(request):
 
 @teacher_login_required
 def teacher_chatbox(request):
+    context={}
     domain = request.get_host()
     teacher_id = request.session['fac_id']
     teacher_object = Faculties.objects.get(fac_id = teacher_id)
-    context = {
+    
+    Persons = Chatbox.objects.filter(chatbox_receiver=teacher_object.fac_email).values('chatbox_sender').distinct()
+    if request.GET.get('selected_person'):
+        selected_person = Students.objects.get(stud_guardian_email = request.GET.get('selected_person'))
+        chatbox_data = Chatbox.objects.filter( 
+        Q(chatbox_sender=teacher_object.fac_email,chatbox_receiver = selected_person.stud_guardian_email) |
+        Q(chatbox_receiver=teacher_object.fac_email, chatbox_sender = selected_person.stud_guardian_email)
+        )
+        context.update({'selected_person':selected_person})
+    else:
+        selected_person = Students.objects.get(stud_guardian_email = Persons[0]['chatbox_sender'])
+        context.update({'selected_person':selected_person})
+    
+
+    Unique_persons = []
+    for x in Persons:
+        a = Students.objects.get(stud_guardian_email=x['chatbox_sender'])
+        person_dict = {
+            'GuardianName': a.stud_guardian_name,
+            'StudentName' : a.stud_name,
+            'StudentBatch' : a.stud_batch,
+            'GuardianEmail' : a.stud_guardian_email,
+        }
+        Unique_persons.append(person_dict)
+    context.update({
+        'Unique_persons':Unique_persons,
         'faculty':teacher_object,
-    }
+        'chatbox_data':chatbox_data,
+    })
     return render(request, 'teacherpanel/show_chatbox.html',context)
+
+
+@teacher_login_required
+def insert_chatbox_teacher(request):
+    domain_name = request.get_host()
+    teacher_id = request.session['fac_id']
+    teacher_object = Faculties.objects.get(fac_id = teacher_id)
+    receiver = request.POST.get('chatbox_receiver')
+    chat = request.POST.get('chatbox_chat')
+    Chatbox.objects.create(chatbox_sender = teacher_object.fac_email,chatbox_receiver=receiver,chatbox_chat=chat,domain_name = domain_name)
+    return redirect('/teacherside/teacher_chatbox?selected_person={}'.format(receiver))
