@@ -46,20 +46,20 @@
         <ul class="navbar-nav flex-row align-items-center ms-auto">
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_complaint' %}">
+            <a class="nav-link" href="{% url 'add_complaint' %}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Complaint">
               <img src="/static/imgs/thumbs-dowm.png" class="me-2" width="30px"/>
             </a>
           </li>
           
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'parent_insert_suggestions' %}">
+            <a class="nav-link" href="{% url 'parent_insert_suggestions' %}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="suggestion">
               <img src="/static/imgs/suggestion.png" class="me-2" width="35px"/>
             </a>
           </li>
 
           <!-- User -->
           <li class="nav-item navbar-dropdown dropdown-user dropdown">
-            <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+            <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Profile">
               <div class="avatar avatar-online">
                 <img src="/media/uploads/default_profile.jpg" alt class="rounded-circle">
               </div>
