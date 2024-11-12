@@ -650,7 +650,7 @@ class Complaint(models.Model):
     complaint_message = models.TextField()
     complaint_date = models.DateField(auto_now_add=True)
     complaint_handle = models.BooleanField(default=0)
-    domain_name = models.CharField(max_length=100)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"{self.complaint_subject}" 

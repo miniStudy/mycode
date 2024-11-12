@@ -3608,8 +3608,6 @@ def insert_suggestions_function(request):
     domain = request.get_host()
     suggestion = suggestions_improvements.objects.filter(domain_name = domain)
     username = request.session['admin_name']
-
-
     context = {
         'title': 'suggestions_improvements',
         'suggestions':suggestion,
@@ -3622,3 +3620,16 @@ def insert_suggestions_function(request):
         suggestions_improvements.objects.create(si_user_name=username, si_user=si_user, si_suggestion=si_suggestion, domain_name = domain)
     
     return render(request, 'insert_update/suggestions.html', context)
+    
+
+def show_complaints_functions(request):
+    domain = request.get_host()
+    complaint_id = request.GET.get('complaint_id')
+    if complaint_id:
+        complaint = Complaint.objects.get(complaint_id = complaint_id)
+        complaint.complaint_handle = True
+        complaint.save()
+        return redirect('show_complaints')
+    complaints_data = Complaint.objects.filter(domain_name = domain, complaint_handle = 0)
+    context = {"complaints_data": complaints_data, "title": "Complaints"}
+    return render(request, "show_complaint.html", context)

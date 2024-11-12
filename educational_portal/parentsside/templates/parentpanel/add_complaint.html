@@ -1,0 +1,47 @@
+{% extends 'parentpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Complaint Message</h4></div> 
+   
+  <div class="errors">
+    {% if errors %}
+    <ul>
+        {% for field, field_errors in errors.items %}
+        <li>{{ field }}:</li>
+        <ul>
+            {% for error in field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  
+  <!-- Modal to add new record -->
+  <div class="card">
+    {% include 'message_show.html' %}
+    <div class="card-body">
+    <form action="{% url 'add_complaint' %}" method="post">
+        {% csrf_token %}
+              
+        <input type="hidden" class="form-control" name="complaint_parent" value="{{student_id}}" required/>
+        
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Complaint Subject</label>
+            <div class="input-group input-group-merge">
+              <input type="text" class="form-control" name="complaint_subject" required/>
+            </div>
+        </div>
+
+        <label for="si_suggestion" class="mb-2 mt-2">Message:</label>
+        <textarea id="si_suggestion" class="form-control mb-3" name="complaint_message" required></textarea>
+
+            
+            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+           
+    </form>
+</div>
+</div>
+
+{% endblock %}

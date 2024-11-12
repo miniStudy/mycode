@@ -164,4 +164,5 @@ urlpatterns = [
 
     
     path('admin_insert_suggestions/', adminview.insert_suggestions_function, name='admin_insert_suggestions'),
+    path('show_complaints/', adminview.show_complaints_functions, name='show_complaints'),
 ]

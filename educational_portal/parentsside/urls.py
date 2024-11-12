@@ -44,4 +44,6 @@ urlpatterns = [
     path('parentside_timetable/',parentview.show_parentside_timetable, name = 'parentside_timetable'),
 
     path('parent_insert_suggestions/',parentview.insert_suggestions_function, name = 'parent_insert_suggestions'),
+    path('add_complaint/',parentview.add_complaint_function, name = 'add_complaint'),
+    path('delete_complaint/',parentview.delete_complaint_function, name = 'delete_complaint'),
 ]
