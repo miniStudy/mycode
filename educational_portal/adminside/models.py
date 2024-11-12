@@ -643,4 +643,17 @@ class mail_variables(models.Model):
     class Meta:
         db_table = 'mail_variables'
 
+class Complaint(models.Model):
+    complaint_id = models.BigAutoField(primary_key=True)
+    complaint_parent = models.ForeignKey(Students, on_delete=models.CASCADE)
+    complaint_subject = models.CharField(max_length=255)
+    complaint_message = models.TextField()
+    complaint_date = models.DateField(auto_now_add=True)
+    complaint_handle = models.BooleanField(default=0)
+    domain_name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.complaint_subject}" 
+
+    class Meta:
+        db_table = 'Complaint'
