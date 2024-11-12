@@ -2367,12 +2367,12 @@ def insert_suggestions_function(request):
 
 @teacher_login_required
 def teacher_chatbox(request):
-    context={}
+    context={"title": "ChatBox"}
     domain = request.get_host()
     teacher_id = request.session['fac_id']
     teacher_object = Faculties.objects.get(fac_id = teacher_id)
     
-    Persons = Chatbox.objects.filter(chatbox_receiver=teacher_object.fac_email).values('chatbox_sender').distinct()
+    Persons = Chatbox.objects.filter(chatbox_receiver=teacher_object.fac_email, domain_name = domain).values('chatbox_sender').distinct()
     if request.GET.get('selected_person'):
         selected_person = Students.objects.get(stud_guardian_email = request.GET.get('selected_person'))
         chatbox_data = Chatbox.objects.filter( 
@@ -2380,6 +2380,7 @@ def teacher_chatbox(request):
         Q(chatbox_receiver=teacher_object.fac_email, chatbox_sender = selected_person.stud_guardian_email)
         )
         context.update({'selected_person':selected_person,'chatbox_data':chatbox_data})
+
     else:
         selected_person = Students.objects.get(stud_guardian_email = Persons[0]['chatbox_sender'])
         chatbox_data = Chatbox.objects.filter( 
@@ -2387,8 +2388,7 @@ def teacher_chatbox(request):
         Q(chatbox_receiver=teacher_object.fac_email, chatbox_sender = selected_person.stud_guardian_email)
         )
         context.update({'selected_person':selected_person,'chatbox_data':chatbox_data})
-    
-
+        
     Unique_persons = []
     for x in Persons:
         a = Students.objects.get(stud_guardian_email=x['chatbox_sender'])

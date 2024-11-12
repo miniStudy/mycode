@@ -24,7 +24,7 @@
             <img src="/media/uploads/default_profile.jpg" alt="Profile Image" class="rounded-circle me-2" width="30" height="30">
             <div>
                 <strong>{{ selected_person.stud_guardian_name }}</strong>
-                <div class="small text-muted">{{ selected_person.relationship }}</div>
+                <div class="small text-muted">{{ selected_person.stud_batch }}</div>
             </div>
         </div>
 
@@ -36,7 +36,8 @@
             <div class="d-flex justify-content-end mb-2">
                 <div class="card bg-primary text-white px-1 py-1 shadow-sm" style="max-width: 75%; word-wrap: break-word;">
                     <div class="card-body p-2">
-                        {{ x.chatbox_chat }}
+                        {{ x.chatbox_chat }} <br>
+                        <span class="fst-italic">{{ x.chatbox_datetime }}</span>
                         <div class="small text-end" style="font-size: 0.75em; opacity: 0.8;">{{ x.timestamp }}</div>
                     </div>
                 </div>
