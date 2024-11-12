@@ -657,3 +657,18 @@ class Complaint(models.Model):
 
     class Meta:
         db_table = 'Complaint'
+
+
+
+class Chatbox(models.Model):
+    chatbox_id = models.BigAutoField(primary_key=True)
+    chatbox_sender = models.CharField(max_length=100)
+    chatbox_receiver = models.CharField(max_length=100)
+    chatbox_chat = models.TextField()
+    domain_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.chatbox_sender}"
+    
+    class Meta:
+        db_table = 'Chatbox'
