@@ -7,10 +7,11 @@
         <h5 class="mb-3">Contacts</h5>
         <div>
             {% for person in Unique_persons %}
-            <a href="{% url 'teacher_chatbox' %}?selected_person={{person.GuardianEmail}}"><div class="d-flex align-items-center mb-3 rounded-3 {% if selected_person.stud_guardian_email == person.GuardianEmail %} bg-light border border-primary{% endif %}">
+            <a href="{% url 'teacher_chatbox' %}?selected_person={{person.GuardianEmail}}"><div class="d-flex p-2 align-items-center mb-3 rounded-3 {% if selected_person.stud_guardian_email == person.GuardianEmail %} bg-light border border-primary{% endif %}">
                 <img src="/media/uploads/default_profile.jpg" alt="Profile Image" class="rounded-circle me-2" width="40" height="40">
                 <div>
                     <strong class="ms-1">{{ person.GuardianName }}</strong>
+                    <div class="small text-muted ms-1">{{person.StudentName}} {{ person.StudentBatch }}</div>
                 </div>
             </div></a>
             {% endfor %}
