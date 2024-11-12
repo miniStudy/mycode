@@ -1,0 +1,120 @@
+{% extends 'parentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="row">
+    <!-- Sidebar for Unique Persons List -->
+    <div class="col-md-3 d-none d-md-block p-3" style="border-right: 1px solid #36445D; height: 80vh; overflow-y: auto;">
+        <h5 class="mb-3">Contacts</h5>
+        <div>
+            {% for person in Unique_persons %}
+            <a href="{% url 'parent_chatbox' %}?selected_person={{person.FacultyEmail}}"><div class="d-flex align-items-center mb-3 rounded-3 {% if selected_person.fac_email == person.FacultyEmail %} bg-light border border-primary{% endif %}">
+                <img src="/media/uploads/default_profile.jpg" alt="Profile Image" class="rounded-circle me-2" width="40" height="40">
+                <div>
+                    <strong class="ms-1">{{ person.FacultyName }}</strong>
+                </div>
+            </div></a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="col-12 col-md-9 d-flex flex-column chatsection">
+        <!-- Chat Header with Profile and Name -->
+        <div class="d-flex align-items-center border-bottom pb-2">
+            <img src="/media/uploads/default_profile.jpg" alt="Profile Image" class="rounded-circle me-2" width="30" height="30">
+            <div>
+                <strong>{{ selected_person.fac_name }}</strong>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-messages flex-grow-1 p-3" style="overflow-y: auto;">
+            {% for x in chatbox_data %}
+            {% if parent.stud_guardian_email == x.chatbox_sender %}
+            <!-- Outgoing message -->
+            <div class="d-flex justify-content-end mb-2">
+                <div class="card bg-primary text-white px-1 py-1 shadow-sm" style="max-width: 75%; word-wrap: break-word;">
+                    <div class="card-body p-2">
+                        {{ x.chatbox_chat }} <br>
+                        <span class="fst-italic">{{ x.chatbox_datetime }}</span>
+                        <div class="small text-end" style="font-size: 0.75em; opacity: 0.8;">{{ x.timestamp }}</div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Incoming message -->
+            <div class="d-flex justify-content-start mb-2">
+                <div class="card bg-light px-1 py-1 shadow-sm" style="max-width: 75%; word-wrap: break-word;">
+                    <div class="card-body p-2">
+                        {{ x.chatbox_chat }} <br>
+                        <span class="fst-italic text-muted">{{ x.chatbox_datetime }}</span>
+                        <div class="small text-end" style="font-size: 0.75em; opacity: 0.8;">{{ x.timestamp }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Message Input Box -->
+        <form action="{% url 'insert_chatbot_parent' %}" method="post">
+        {% csrf_token %}
+        <div class="input-group mt-3 p-2">
+            <input type="hidden" value="{{selected_person.fac_email}}" name="chatbox_receiver" />
+            <input type="text" class="form-control rounded-pill" name="chatbox_chat" placeholder="Type a message...">
+            <button class="btn btn-primary rounded-pill ms-2" type="submit">
+                <i class="fa fa-paper-plane"></i>
+            </button>
+        </div>
+    </form>
+    </div>
+</div>
+
+<!-- Responsive Styles -->
+<style>
+    .chatsection{
+        height: 85vh;
+    }
+    .chat-messages {
+        max-height: 65vh;
+        overflow-y: auto;
+    }
+
+    /* Adjust font sizes, padding, and spacing for mobile */
+    @media (max-width: 768px) {
+        .chat-messages {
+            max-height: 60vh;
+        }
+
+        .col-md-3 {
+            display: none;
+        }
+
+        .chat-messages .card {
+            font-size: 0.9em;
+            max-width: 85%;
+        }
+
+        .input-group .form-control {
+            font-size: 0.9em;
+            padding: 10px;
+        }
+    }
+
+    /* Fine-tune layout for very small screens */
+    @media (max-width: 576px) {
+
+        .chat-messages {
+            
+        }
+        .chat-messages .card {
+            max-width: 90%;
+            padding: 0.5em;
+        }
+
+        .input-group .btn {
+            padding: 8px 12px;
+        }
+    }
+</style>
+{% endblock %}

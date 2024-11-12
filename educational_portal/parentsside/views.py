@@ -512,4 +512,54 @@ def delete_complaint_function(request):
     
     return render(request, "parentpanel/add_complaint")
 
+
+
+@parent_login_required
+def parent_chatbox(request):
+    context={"title": "ChatBox"}
+    domain = request.get_host()
+    parent_id = request.session['parent_id']
+    parent_object = Students.objects.get(stud_id = parent_id)
     
+    Persons = Chatbox.objects.filter(chatbox_receiver=parent_object.stud_guardian_email, domain_name = domain).values('chatbox_sender').distinct()
+    if request.GET.get('selected_person'):
+        selected_person = Faculties.objects.get(fac_email = request.GET.get('selected_person'))
+        chatbox_data = Chatbox.objects.filter( 
+        Q(chatbox_sender=parent_object.stud_guardian_email,chatbox_receiver = selected_person.fac_email) |
+        Q(chatbox_receiver=parent_object.stud_guardian_email, chatbox_sender = selected_person.fac_email)
+        )
+        context.update({'selected_person':selected_person, 'chatbox_data': chatbox_data})
+    else:
+        selected_person = Faculties.objects.get(fac_email = Persons[0]['chatbox_sender'])
+        chatbox_data = Chatbox.objects.filter( 
+        Q(chatbox_sender=parent_object.stud_guardian_email,chatbox_receiver = selected_person.fac_email) |
+        Q(chatbox_receiver=parent_object.stud_guardian_email, chatbox_sender = selected_person.fac_email)
+        )
+        context.update({'selected_person':selected_person, 'chatbox_data': chatbox_data})
+    
+
+    Unique_persons = []
+    for x in Persons:
+        a = Faculties.objects.get(fac_email=x['chatbox_sender'])
+        person_dict = {
+            'FacultyEmail': a.fac_email,
+            'FacultyName' : a.fac_name,
+        }
+        Unique_persons.append(person_dict)
+    context.update({
+        'Unique_persons':Unique_persons,
+        'parent':parent_object,
+        'chatbox_data':chatbox_data,
+    })
+    return render(request, 'parentpanel/show_chat.html',context)
+
+
+@parent_login_required
+def insert_chatbot_parent(request):
+    domain_name = request.get_host()
+    parent_id = request.session['parent_id']
+    parent_object = Students.objects.get(stud_id = parent_id)
+    receiver = request.POST.get('chatbox_receiver')
+    chat = request.POST.get('chatbox_chat')
+    Chatbox.objects.create(chatbox_sender = parent_object.stud_guardian_email,chatbox_receiver=receiver,chatbox_chat=chat,domain_name = domain_name)
+    return redirect('/parentsside/parent_chatbox?selected_person={}'.format(receiver))
