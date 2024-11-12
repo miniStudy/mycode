@@ -22,20 +22,20 @@
   <div class="card">
     {% include 'message_show.html' %}
     <div class="card-body">
-
     <form action="{% url 'teacher_insert_suggestions' %}" method="post">
         {% csrf_token %}
-                    
-            <label for="si_user">User Role:</label>
-            <select id="si_user" name="si_user" required>
+                            
+            <label for="si_user" class="mb-2">User Role:</label>
+            <select id="si_user" name="si_user" class="form-select mb-3" required>
                 <option value="Teacher">Teacher</option>
-            </select><br><br>
-            <label for="si_suggestion">Suggestion:</label>
-            <textarea id="si_suggestion" name="si_suggestion" required></textarea><br><br>
+            </select>
 
-            <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
-            </div>
+            <label for="si_suggestion" class="mb-2">Suggestion:</label>
+            <textarea id="si_suggestion" class="form-control mb-3" name="si_suggestion" required></textarea>
+
+            
+            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+           
     </form>
 </div>
 </div>

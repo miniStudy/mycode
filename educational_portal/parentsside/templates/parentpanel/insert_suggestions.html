@@ -1,4 +1,4 @@
-{% extends 'parent/master.html' %}
+{% extends 'parentpanel/master.html' %}
  
 {% block contentsection %}
   <div class="mb-4"><h4>Suggestion or Improvement</h4></div> 
@@ -22,21 +22,20 @@
   <div class="card">
     {% include 'message_show.html' %}
     <div class="card-body">
-
     <form action="{% url 'parent_insert_suggestions' %}" method="post">
         {% csrf_token %}
-        
-            <label for="si_user">User Role:</label>
-            <select id="si_user" name="si_user" required>
+                            
+            <label for="si_user" class="mb-2">User Role:</label>
+            <select id="si_user" name="si_user" class="form-select mb-3" required>
                 <option value="Parent">Parent</option>
-            </select><br><br>
+            </select>
 
-            <label for="si_suggestion">Suggestion:</label>
-            <textarea id="si_suggestion" name="si_suggestion" required></textarea><br><br>
+            <label for="si_suggestion" class="mb-2">Suggestion:</label>
+            <textarea id="si_suggestion" class="form-control mb-3" name="si_suggestion" required></textarea>
 
-            <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
-            </div>
+            
+            <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+           
     </form>
 </div>
 </div>
