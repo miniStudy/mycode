@@ -683,12 +683,22 @@ def Student_add_doubts(request):
             s_name = request.session['stud_name']
             title = f'{s_name}: Needs Help with a Doubt!'
             message = f'{s_name}: Hey, batch mates! I’ve got some new doubts that need solving. Can anyone lend a hand❓I will appreciate your assist! 🙌'
+            notification = Notification(
+            notify_title=title,
+            notify_notification=message,
+            domain_name=domain)
+            notification.save()
             send_notification(playerids, title, message, request)
 
             fac_email = fac_object.fac_email
             s_name = request.session['stud_name']
             fac_title = f"{s_name}: Needs Help with a Doubt!"
             fac_message = "A new doubt has been added! Please check it out."
+            notification = Notification(
+            notify_title=title,
+            notify_notification=fac_message,
+            domain_name=domain)
+            notification.save()
             send_notification(fac_email, fac_title, fac_message, request)
 
 

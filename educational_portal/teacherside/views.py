@@ -650,6 +650,11 @@ def handle_attendance(request):
             status = 'Present' if student.stud_id in selected_ids else 'Absent'
             if student.stud_onesignal_player_id:
                 mess = f"Your attendance status for {noti_date} is {status}."
+                notification = Notification(
+                notify_title=title,
+                notify_notification=mess,
+                domain_name=domain)
+                notification.save()
                 for player_id in onesignal_player_id_list:
                     send_notification(player_id,title,mess, request)
         messages.success(request, "Attendance has been submitted!")    
@@ -858,6 +863,11 @@ def insert_update_syllabus(request):
 )
         player_ids = AdminData.objects.values_list('admin_onesignal_player_id', flat=True).exclude(admin_onesignal_player_id__isnull=True)
         player_ids_str = ",".join(player_ids)
+        notification = Notification(
+        notify_title=title,
+        notify_notification=message,
+        domain_name=domain)
+        notification.save()
         send_notification(player_ids_str,title,message, request)
         return redirect('teacher_syllabus')
     return render(request, 'teacherpanel/insert_update_syllabus.html', context)
@@ -949,6 +959,11 @@ def teacher_add_solution_function(request):
 
                 title = "Your Doubt Has Been Answered!"
                 message = f"Hello {student_name}, your doubt has been answered by the {fac_name}. Check it out!"
+                notification = Notification(
+                notify_title=title,
+                notify_notification=message,
+                domain_name=domain)
+                notification.save()
                 send_notification(playerid, title, message, request)
 
                 return redirect('/teacherside/teacher_doubts/?doubt_id={}'.format(id))
@@ -1161,6 +1176,11 @@ def teacher_save_offline_marks(request):
                 mess = (
                 f"Dear {student_name}, your score for the test '{test_name}' is {student_score}/{total_marks}. "
                 f"Keep up the hard work! Exam date: {date}.")
+                notification = Notification(
+                notify_title=title,
+                notify_notification=mess,
+                domain_name=domain)
+                notification.save()
                 send_notification(player_id, title, mess, request)
 
         else:
@@ -1534,6 +1554,11 @@ def announcements_insert_update_teacher(request):
             # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
             title = '📢 New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
+            notification = Notification(
+            notify_title=title,
+            notify_notification=mess,
+            domain_name=domain)
+            notification.save()
             for player_id in onesignal_player_id_list:
                 send_notification(player_id,title,mess, request)
             return redirect(url)

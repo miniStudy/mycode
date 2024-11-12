@@ -809,6 +809,13 @@ def insert_update_announcements(request):
 
             title = 'New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
+
+            notification = Notification(
+            notify_title=title,
+            notify_notification=mess,
+            domain_name=domain)
+            notification.save()
+
             for player_id in onesignal_player_id_list:
                 send_notification(player_id,title,mess,request)
 
@@ -1362,6 +1369,12 @@ def insert_update_timetable(request):
                 # ------------------------ Notification Updated --------------------------
                 mess = 'Your timetable has been updated.'
                 title = 'Timetable Updated!'
+                notification = Notification(
+                notify_title=title,
+                notify_notification=mess,
+                domain_name=domain)
+                notification.save()
+
                 for palayer_id in onesignal_player_id_list:
                     send_notification(palayer_id,title,mess, request)
                 return redirect(url)
@@ -1606,6 +1619,12 @@ def insert_events(request):
 
         title = "New Event"
         msg = f"Dear Student, thank you for participating in our recent event held on {formatted_event_date}. We hope you found it enjoyable and informative! Stay tuned for more events."
+        notification = Notification(
+        notify_title=title,
+        notify_notification=msg,
+        domain_name=domain)
+        notification.save()
+
         send_notification(student_player_id, title, msg, request)
         send_notification(parent_player_id, title, msg, request)
         #-------------------------End-------------------------------------------------------------
@@ -2179,6 +2198,12 @@ def send_meeting_mail(request):
 
             title = "Parent Meeting"
             msg = f"Dear Parent, we would like to inform you that a parent meeting is scheduled for {meeting_date} on {meeting_time}. Your presence is highly encouraged as we will be discussing important updates concerning your child's academic progress."
+            notification = Notification(
+            notify_title=title,
+            notify_notification=msg,
+            domain_name=domain)
+            notification.save()
+
             send_notification.delay(student_parent.guardian_onesignal_player_id, title, msg, request)
     return render(request, 'meeting_date.html')
 
@@ -2932,6 +2957,11 @@ def add_cheques_admin(request):
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been successfully withdraw on {date}."
 
+                    notification = Notification(
+                    notify_title=title,
+                    notify_notification=mess,
+                    domain_name=domain)
+                    notification.save()
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                 messages.success(request, "Cheque Updated Successfully")
 
@@ -2994,7 +3024,11 @@ def add_cheques_admin(request):
 
                     title = "Cheque Payment Update"
                     mess = f"Dear {student_name.stud_name}, your cheque of ₹{form.cleaned_data['cheque_amount']} "f"from {form.cleaned_data['cheque_bank']} has been processed on {date}."
-
+                    notification = Notification(
+                    notify_title=title,
+                    notify_notification=mess,
+                    domain_name=domain)
+                    notification.save()
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                     messages.success(request, "Cheque Added Successfully!")
 
@@ -3107,6 +3141,11 @@ def add_fees_collection_admin(request):
 
                 title = "Payment Update"
                 mess = f"Dear {student_name.stud_name}, your payment of ₹{form.cleaned_data['fees_paid']} "f"via {form.cleaned_data['fees_mode']} has been successfully processed on {date}."
+                notification = Notification(
+                notify_title=title,
+                notify_notification=mess,
+                domain_name=domain)
+                notification.save()
                 send_notification(student_name.stud_onesignal_player_id,title,mess, request)
                 return redirect(url)
             else:
