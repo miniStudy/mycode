@@ -171,4 +171,7 @@ urlpatterns = [
     path('show_expense/', adminview.show_expense_function, name='show_expense'),
     path('add_expense/', adminview.add_expense_function, name='add_expense'),
     path('delete_expense/', adminview.delete_expense_functions, name='delete_expense'),
+
+    path('show_groupps/', adminview.show_grouppp, name='show_groupps'),
+
 ]

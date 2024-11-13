@@ -3729,3 +3729,10 @@ def delete_expense_functions(request):
                 messages.error(request, f'<i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)}')
 
     return redirect('show_expense')
+
+
+
+
+@admin_login_required
+def show_grouppp(request):
+    return render(request,'show_groupps.html')
