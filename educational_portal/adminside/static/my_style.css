@@ -46,3 +46,6 @@
 .material_card img{transition: 0.3s ease;}
 .material_card:hover img{transform: scale(1.2);}
 .myborder{border:1px solid #88a9e6;}
+
+
+.shortcutIcons{width: 40px;}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Test Marks Notification - miniStudy</title>
+    <title></title>
     <style>
         body {
             font-family: Lato, sans-serif;
@@ -74,7 +74,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <a href="https://ministudy.in/"><img src="https://metrofoods.co.nz/1nobg.png" alt="miniStudy logo" style="width: 50%;" /></a>
+            <a href="https://ministudy.in/"><img src="{{logo}}" alt="logo" style="width: 50%;" /></a>
         </div>
         <div class="content">
             <h2 class="title">{{ title }}</h2>
@@ -92,13 +92,12 @@
             </dl>
             <p>Keep up the good work!</p>
             <p>Best regards,</p>
-            <p>miniStudy Team</p>
+            <p>{{institute_name}} Team</p>
         </div>
         <div class="footer">
-            <p><a href="https://ministudy.in/"><img src="https://metrofoods.co.nz/2nobg.png" alt="footer logo" width="25%" /></a></p>
             <p style="padding:10px;">
-                <span style="float: left;"><a href="mailto:mail@ministudy.in" style="color: white; text-decoration: none;">mail@ministudy.in</a></span>
-                <span style="float: right;"><a href="tel:8511962611" style="color: white; text-decoration: none;">+91 8511962611</a></span>
+                <span style="float: left;"><a href="mailto:mail@ministudy.in" style="color: white; text-decoration: none;">{{institute_email}}</a></span>
+                <span style="float: right;"><a href="tel:8511962611" style="color: white; text-decoration: none;">{{institute_number}}</a></span>
             </p>
         </div>
     </div>

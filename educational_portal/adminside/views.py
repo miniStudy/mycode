@@ -1610,25 +1610,25 @@ def insert_events(request):
 
         #------------------Telegram and Mail Message----------------------------------------------
         student_chat_ids = Students.objects.filter(domain_name = domain).values_list('stud_telegram_studentchat_id', flat=True)
-        student_player_id = Students.objects.filter(domain_name = domain).values_list('stud_onesignal_player_id', flat=True)
-        parent_player_id = Students.objects.filter(domain_name = domain).values_list('guardian_onesignal_player_id', flat=True)
+        student_player_id = Students.objects.filter(domain_name = domain)
         student_email_ids = Students.objects.filter(domain_name = domain).values_list('stud_email', flat=True)
         
         event_telegram_message_student(event_name,formatted_event_date, student_chat_ids)
         event_telegram_message_parent(event_name,formatted_event_date, student_email_ids)
 
-        title = "New Event"
-        msg = f"Dear Student, thank you for participating in our recent event held on {formatted_event_date}. We hope you found it enjoyable and informative! Stay tuned for more events."
+        title = "New Event : {}".format(event_name)
+        msg = f"We have added Latest Event Information, Please Check it out."
         notification = Notification(
         notify_title=title,
         notify_notification=msg,
         domain_name=domain)
         notification.save()
-
-        send_notification(student_player_id, title, msg, request)
-        send_notification(parent_player_id, title, msg, request)
+        for x in student_player_id:
+            if x.stud_onesignal_player_id:
+                send_notification(x.stud_onesignal_player_id, title, msg, request)
+            if x.guardian_onesignal_player_id:    
+                send_notification(x.guardian_onesignal_player_id, title, msg, request)
         #-------------------------End-------------------------------------------------------------
-        
         fs = FileSystemStorage(location='media/uploads/events/')
         for image in event_images:
             filename = fs.save(image.name, image)

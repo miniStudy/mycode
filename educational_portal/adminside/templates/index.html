@@ -4,10 +4,10 @@
 
 {% include 'message_show.html' %}
 <div class="mb-4">
-  <h4>{{title}}</h4>
+  <!-- <h4>{{title}}</h4> -->
 </div>
 
-<a href="{% url 'show_complaints' %}" 
+<!-- <a href="{% url 'show_complaints' %}" 
    class="btn mb-3" 
    style="background: linear-gradient(90deg, #4A90E2, #007AFF, #005BBB); 
           border: none; 
@@ -21,7 +21,58 @@
    onmouseover="this.style.background='linear-gradient(90deg, #357ABD, #0066CC, #004999)'; this.style.transform='scale(1.05)';" 
    onmouseout="this.style.background='linear-gradient(90deg, #4A90E2, #007AFF, #005BBB)'; this.style.transform='scale(1)';">
    Show Complaints
-</a>
+</a> -->
+<!-- notifications
+,Complaints,
+Expenses,
+payments,
+Faculty Access,
+Reports,
+Tests,
+Admin,
+Total Admissions, -->
+
+<div class="mb-3">
+  <div class="d-flex flex-wrap justify-content-start gap-3 gap-md-4">
+    <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Complaints">
+      <img src="/static/imgs/shortcuts/dislike.png" class="shortcutIcons"/>
+    </div>
+    <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Reports">
+      <img src="/static/imgs/shortcuts/statistics.png" class="shortcutIcons">
+    </div>
+    <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Faculty Access">
+      <img src="/static/imgs/shortcuts/secure-access.png" class="shortcutIcons">
+    </div>
+    <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Payments">
+      <img src="/static/imgs/shortcuts/money-bag.png" class="shortcutIcons">
+    </div>
+    <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Expenses">
+      <img src="/static/imgs/shortcuts/spending.png" class="shortcutIcons">
+    </div>
+    <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
+      <img src="/static/imgs/shortcuts/notification.png" class="shortcutIcons">
+    </div>
+    <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tests">
+      <img src="/static/imgs/shortcuts/exam-time.png" class="shortcutIcons">
+    </div>
+    <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Admin">
+      <img src="/static/imgs/shortcuts/user-gear.png" class="shortcutIcons">
+    </div>
+  </div>
+</div>
+
+<style>
+  .shortcutIcons {
+    max-width: 50px;
+    height: auto;
+  }
+  
+  @media (max-width: 768px) {
+    .shortcutIcons {
+      max-width: 30px;
+    }
+  }
+</style>
 
 
 <div class="row">
