@@ -51,5 +51,7 @@ urlpatterns = [
     path('parent_chatbox/',parentview.parent_chatbox, name = 'parent_chatbox'),
     path('insert_chatbot_parent/',parentview.insert_chatbot_parent, name = 'insert_chatbot_parent'),
 
+    path('show_notification_parent/',parentview.show_notification_parent_function, name = 'show_notification_parent'),
+
 
 ]

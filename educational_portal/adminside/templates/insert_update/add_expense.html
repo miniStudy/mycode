@@ -1,0 +1,76 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+
+{% include 'message_show.html' %}
+
+  <div class="mb-4"><h4>Expense</h4></div> 
+   
+  <div class="erroes">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+  </div>
+  <!-- Modal to add new record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">New Record</h5>
+    </div>
+    <div class="card-body">
+         
+        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_expense' %}">
+            {% csrf_token %}
+            <!-- Expense Name -->
+            <div class="col-sm-12">
+              <label class="form-label mb-2">Expense Name</label>
+              <div class="input-group input-group-merge">
+                <input type="text" class="form-control" name="expense_name" required />
+              </div>
+            </div>
+          
+            <!-- Expense Amount -->
+            <div class="col-sm-12">
+              <label class="form-label mb-2">Expense Amount</label>
+              <div class="input-group input-group-merge">
+                <input type="number" step="0.01" class="form-control" name="expense_amount" required />
+              </div>
+            </div>
+          
+            <!-- Expense Type (Dropdown) -->
+            <div class="col-sm-12">
+              <label class="form-label mb-2">Expense Type</label>
+              <div class="input-group input-group-merge">
+                <select class="form-select" name="expense_type" required>
+                  <option value="" disabled selected>Select expense type</option>
+                  <option value="Salary">Salary</option>
+                  <option value="Equipments">Equipments</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+          
+            <!-- Expense Description -->
+            <div class="col-sm-12">
+              <label class="form-label mb-2">Expense Description</label>
+              <div class="input-group input-group-merge">
+                <textarea class="form-control" name="expense_desc" rows="3"></textarea>
+              </div>
+            </div>
+          
+            <!-- Submit Button -->
+            <div class="col-sm-12">
+              <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+            </div>
+          </form>
+    </div>
+  </div>
+
+{% endblock %}

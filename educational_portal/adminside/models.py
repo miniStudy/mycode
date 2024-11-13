@@ -681,6 +681,7 @@ class Notification(models.Model):
     notify_title = models.TextField(max_length=155)
     notify_notification = models.TextField(max_length=255)
     notify_date = models.DateField(auto_now_add=True)
+    notify_user = models.CharField(max_length=155, null=True, blank=True)
     domain_name = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
@@ -688,3 +689,46 @@ class Notification(models.Model):
     
     class Meta:
         db_table = 'Notification'
+
+class Expense(models.Model):
+    class expense_options(models.TextChoices):
+        Salary = 'Salary','Salary'
+        Equipments = 'Equipments', 'Equipments'
+        Other = 'Other', 'Other'
+    expense_id = models.BigAutoField(primary_key=True)
+    expense_amount = models.FloatField()
+    expense_name = models.CharField(max_length=255)
+    expense_date = models.DateField(auto_now_add=True)
+    expense_desc = models.TextField(null=True, blank=True)
+    expense_type = models.CharField(choices=expense_options.choices, max_length=100,null=True,blank=True)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.expense_name} {self.expense_amount}"
+    
+    class Meta:
+        db_table = 'Expense'
+
+class Groups(models.Model):
+    group_id = models.BigAutoField(primary_key=True)
+    group_name = models.CharField(max_length=155)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.group_name}"
+    
+    class Meta:
+        db_table = 'Groups'
+
+class Materials(models.Model):
+    material_id = models.BigAutoField(primary_key=True)
+    material_name = models.CharField(max_length=155, null=True, blank=True)
+    material_file = models.FileField(upload_to ='uploads/')
+    material_icon = models.ImageField(upload_to='file_icons/', null=True,blank=True)
+    material_group_id = models.ForeignKey(Groups, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.material_group_id.group_name}"
+    
+    class Meta:
+        db_table = 'Materials'

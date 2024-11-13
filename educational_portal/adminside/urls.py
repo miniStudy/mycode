@@ -167,4 +167,8 @@ urlpatterns = [
     path('show_complaints/', adminview.show_complaints_functions, name='show_complaints'),
 
     path('show_notification/', adminview.show_notification_function, name='show_notification'),
+
+    path('show_expense/', adminview.show_expense_function, name='show_expense'),
+    path('add_expense/', adminview.add_expense_function, name='add_expense'),
+    path('delete_expense/', adminview.delete_expense_functions, name='delete_expense'),
 ]

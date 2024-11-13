@@ -116,3 +116,8 @@ class mail_variables_form(forms.ModelForm):
     class Meta:
         model = mail_variables
         fields = "__all__"
+
+class expense_form(forms.ModelForm):
+    class Meta:
+        model = Expense
+        fields = "__all__"

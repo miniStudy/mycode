@@ -653,6 +653,7 @@ def handle_attendance(request):
                 notification = Notification(
                 notify_title=title,
                 notify_notification=mess,
+                notify_user = 'student',
                 domain_name=domain)
                 notification.save()
                 for player_id in onesignal_player_id_list:
@@ -866,6 +867,7 @@ def insert_update_syllabus(request):
         notification = Notification(
         notify_title=title,
         notify_notification=message,
+        notify_user = 'admin',
         domain_name=domain)
         notification.save()
         send_notification(player_ids_str,title,message, request)
@@ -962,6 +964,7 @@ def teacher_add_solution_function(request):
                 notification = Notification(
                 notify_title=title,
                 notify_notification=message,
+                notify_user = 'student',
                 domain_name=domain)
                 notification.save()
                 send_notification(playerid, title, message, request)
@@ -1179,6 +1182,7 @@ def teacher_save_offline_marks(request):
                 notification = Notification(
                 notify_title=title,
                 notify_notification=mess,
+                notify_user = 'student',
                 domain_name=domain)
                 notification.save()
                 send_notification(player_id, title, mess, request)
@@ -1557,6 +1561,7 @@ def announcements_insert_update_teacher(request):
             notification = Notification(
             notify_title=title,
             notify_notification=mess,
+            notify_user = 'student',
             domain_name=domain)
             notification.save()
             for player_id in onesignal_player_id_list:
@@ -2444,3 +2449,11 @@ def insert_chatbox_teacher(request):
     chat = request.POST.get('chatbox_chat')
     Chatbox.objects.create(chatbox_sender = teacher_object.fac_email,chatbox_receiver=receiver,chatbox_chat=chat,domain_name = domain_name)
     return redirect('/teacherside/teacher_chatbox?selected_person={}'.format(receiver))
+
+
+@teacher_login_required
+def show_notification_teacher_function(request):
+    domain = request.get_host()
+    notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'teacher').order_by('-pk')
+    context = {'notification_data': notification_data, 'title': 'Notification'}
+    return render(request, 'teacherpanel/show_notification.html', context)

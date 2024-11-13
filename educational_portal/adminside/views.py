@@ -813,6 +813,7 @@ def insert_update_announcements(request):
             notification = Notification(
             notify_title=title,
             notify_notification=mess,
+            notify_user = 'student',
             domain_name=domain)
             notification.save()
 
@@ -1372,6 +1373,7 @@ def insert_update_timetable(request):
                 notification = Notification(
                 notify_title=title,
                 notify_notification=mess,
+                notify_user = 'student',
                 domain_name=domain)
                 notification.save()
 
@@ -1621,6 +1623,7 @@ def insert_events(request):
         notification = Notification(
         notify_title=title,
         notify_notification=msg,
+        notify_user = 'student',
         domain_name=domain)
         notification.save()
         for x in student_player_id:
@@ -2201,6 +2204,7 @@ def send_meeting_mail(request):
             notification = Notification(
             notify_title=title,
             notify_notification=msg,
+            notify_user = 'student',
             domain_name=domain)
             notification.save()
 
@@ -2960,6 +2964,7 @@ def add_cheques_admin(request):
                     notification = Notification(
                     notify_title=title,
                     notify_notification=mess,
+                    notify_user = 'student',
                     domain_name=domain)
                     notification.save()
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
@@ -3027,6 +3032,7 @@ def add_cheques_admin(request):
                     notification = Notification(
                     notify_title=title,
                     notify_notification=mess,
+                    notify_user = 'student',
                     domain_name=domain)
                     notification.save()
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
@@ -3144,6 +3150,7 @@ def add_fees_collection_admin(request):
                 notification = Notification(
                 notify_title=title,
                 notify_notification=mess,
+                notify_user = 'student',
                 domain_name=domain)
                 notification.save()
                 send_notification(student_name.stud_onesignal_player_id,title,mess, request)
@@ -3661,6 +3668,7 @@ def insert_suggestions_function(request):
     return render(request, 'insert_update/suggestions.html', context)
     
 
+@admin_login_required
 def show_complaints_functions(request):
     domain = request.get_host()
     complaint_id = request.GET.get('complaint_id')
@@ -3674,8 +3682,50 @@ def show_complaints_functions(request):
     return render(request, "show_complaint.html", context)
 
 
+@admin_login_required
 def show_notification_function(request):
     domain = request.get_host()
-    notification_data = Notification.objects.filter(domain_name = domain).order_by('-pk')
+    notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'admin').order_by('-pk')
     context = {'notification_data': notification_data, 'title': 'Notification'}
     return render(request, 'show_notification.html', context)
+
+
+@admin_login_required
+def show_expense_function(request):
+    domain = request.get_host()
+    expense_data = Expense.objects.filter(domain_name = domain)
+    total_amount = 0
+    for amount in expense_data:
+        total_amount += amount.expense_amount
+    context = {'expense_data': expense_data, 'title': 'Expense', 'total_amount': total_amount}
+    return render(request, "show_expense.html", context)
+
+@admin_login_required
+def add_expense_function(request):
+    context = {"title": "Expense"}
+    domain = request.get_host()
+    if request.method == 'POST':
+        form = expense_form(request.POST)
+        if form.is_valid():
+            form.instance.domain_name = domain
+            messages.success(request, 'Expense has been added successfully')
+            form.save()
+            return redirect('show_expense')
+
+    return render(request, "insert_update/add_expense.html", context)
+
+
+@admin_login_required
+def delete_expense_functions(request):
+    domain  = request.get_host()
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selection')
+        if selected_items:
+            selected_ids = [int(id) for id in selected_items]
+            try:
+                Expense.objects.filter(expense_id__in=selected_ids, domain_name = domain).delete()
+                messages.success(request, 'Expense Deleted Successfully')
+            except Exception as e:
+                messages.error(request, f'<i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)}')
+
+    return redirect('show_expense')
