@@ -100,4 +100,13 @@ urlpatterns = [
     path('insert_chatbox_teacher/',teacherview.insert_chatbox_teacher, name='insert_chatbox_teacher'),
 
     path('show_notification_teacher/',teacherview.show_notification_teacher_function, name='show_notification_teacher'),
+
+
+    path('show_group/', teacherview.show_group_function, name='show_group'),
+    path('add_group/', teacherview.add_group_function, name='add_group'),
+    path('delete_group/', teacherview.delete_group_function, name='delete_group'),
+
+    path('show_material/', teacherview.show_material_function, name='show_material'),
+    path('add_material/', teacherview.add_material_function, name='add_material'),
+    path('delete_material/', teacherview.delete_material_function, name='delete_material'),
 ]

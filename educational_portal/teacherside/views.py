@@ -2457,3 +2457,95 @@ def show_notification_teacher_function(request):
     notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'teacher').order_by('-pk')
     context = {'notification_data': notification_data, 'title': 'Notification'}
     return render(request, 'teacherpanel/show_notification.html', context)
+
+
+@teacher_login_required
+def show_group_function(request):
+    domain = request.get_host()
+    group_data = Groups.objects.filter(domain_name = domain)
+    context = {'group_data': group_data, 'title': 'Groups'}
+    return render(request, "teacherpanel/show_groupps.html", context)
+
+
+@teacher_login_required
+def add_group_function(request):
+    domain = request.get_host()
+    if request.method == 'POST':
+        form = group_form(request.POST)
+        if form.is_valid():
+            form.instance.domain_name = domain
+            messages.success(request, "Group added successfully")
+            form.save()
+            return redirect('show_group')
+    return render(request, "teacherpanel/add_group.html")
+
+
+@teacher_login_required
+def delete_group_function(request):
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        group_data = Groups.objects.get(group_id = pk)
+        group_data.delete()
+        messages.success(request, "Group deleted successully")
+        return redirect('show_group')
+    return render(request, "teacherpanel/show_group.html")
+
+
+teacher_login_required
+def show_material_function(request):
+    context = {}
+    domain = request.get_host()
+    group_id = request.GET.get('group_id')
+    materials_data = Materials.objects.filter(domain_name = domain, material_group_id__group_id = group_id)
+    context.update({'materials_data': materials_data, 'title': 'Materials', 'group_id': group_id})
+    return render(request, "teacherpanel/show_material.html", context)
+
+
+@teacher_login_required
+def add_material_function(request):
+    domain = request.get_host()
+    group_id = request.GET.get('group_id')
+    group_data = Groups.objects.filter(domain_name = domain, group_id = group_id)
+    context = {'group_data': group_data}
+    if request.method == 'POST':
+            group_id = request.POST.get('material_group_id')
+            group_obj = Groups.objects.get(group_id = group_id)
+            form = materials_form(request.POST, request.FILES)
+            if form.is_valid():
+                
+                check = Materials.objects.filter(material_name = form.data['material_name'], domain_name = domain).count()
+                pdf_file = form.cleaned_data['material_file']
+
+                if check >= 1:
+                    messages.error(request, '{} is already Exists'.format(form.data['material_name']))
+                else:
+                    form.instance.domain_name = domain
+                    material = form.save(commit=False)
+                    # Generate icon for the PDF file
+                    material.material_icon.save(
+                        pdf_file.name.replace('.pdf', '_icon.png'),
+                        generate_pdf_icon(pdf_file),
+                        save=False
+                    )
+                    material.material_name = pdf_file.name
+                    material.material_group_id = group_obj
+                    material.save()
+                    messages.success(request, 'Material Added Successfully')
+                    return redirect('show_material')
+            else:
+                filled_data = form.data
+                context.update({'filled_data': filled_data, 'errors': form.errors})
+                return render(request, 'teacherpanel/add_material.html', context)
+
+    return render(request, 'teacherpanel/add_material.html', context)
+
+@teacher_login_required
+def delete_material_function(request):
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        material_data = Materials.objects.get(material_id = pk)
+        material_data.delete()
+        messages.success(request, "Material Deleted Successfully")
+        return redirect('show_material')
+    
+    return render(request, "teacherpanel/show_material.html")

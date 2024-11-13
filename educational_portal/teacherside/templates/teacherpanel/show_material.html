@@ -1,0 +1,26 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Materials</h4></div> 
+
+{% include 'message_show.html' %}
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-inline-block" id="exportbtns"></div>
+      <a href="{% url 'add_material' %}?group_id={{group_id}}">
+          <button class="btn btn-primary">
+              <i class="fa-solid fa-plus me-2"></i> ADD
+          </button>
+      </a>
+    </div>
+
+<div class="d-flex flex-wrap justify-content-start gap-3 gap-md-4 mt-2">
+{% for material in materials_data %}
+<div class="card p-3 materialgroup">
+    <a href=""><img src="/media/{{material.material_icon}}" class="Materialsfolders" /></a>
+    <span class="mt-2">{{material.material_name}}<a href="{% url 'delete_material' %}?pk={{material.material_id}}"><img src="/static/imgs/shortcuts/delete.png" class="ms-3" style="width: 20px;" /></a></span>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

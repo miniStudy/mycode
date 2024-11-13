@@ -1,0 +1,46 @@
+{% extends 'teacherpanel/master.html' %}
+ 
+{% block contentsection %}
+
+{% include 'message_show.html' %}
+
+  <div class="mb-4"><h4>Group</h4></div> 
+   
+  <div class="erroes">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% endif %}
+  </div>
+  <!-- Modal to add new record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel">New Record</h5>
+    </div>
+    <div class="card-body">
+         
+        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_group' %}">
+            {% csrf_token %}
+            <!-- Expense Name -->
+            <div class="col-sm-12">
+              <label class="form-label mb-2">Group Name</label>
+              <div class="input-group input-group-merge">
+                <input type="text" class="form-control" name="group_name" required />
+              </div>
+            </div>    
+            <!-- Submit Button -->
+            <div class="col-sm-12">
+              <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+            </div>
+          </form>
+    </div>
+  </div>
+
+{% endblock %}
