@@ -17,10 +17,11 @@
 <div class="d-flex flex-wrap justify-content-start gap-3 gap-md-4 mt-2">
 {% for material in materials_data %}
 <div class="card p-3 materialgroup">
-    <a href=""><img src="/media/{{material.material_icon}}" class="Materialsfolders" /></a>
+    <a href="{% url 'admin_show_pdf' %}?pdf={{material.material_id}}"><img src="/media/{{material.material_icon}}" class="Materialsfolders" /></a>
     <span class="mt-2">{{material.material_name}}<a href="{% url 'delete_material' %}?pk={{material.material_id}}"><img src="/static/imgs/shortcuts/delete.png" class="ms-3" style="width: 20px;" /></a></span>
 </div>
 {% endfor %}
 </div>
 
 {% endblock %}
+

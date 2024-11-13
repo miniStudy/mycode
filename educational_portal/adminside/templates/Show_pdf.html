@@ -1,0 +1,68 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4 style="word-break: break-all;">{{pdf.material_name}}</h4></div> 
+
+{% include 'message_show.html' %}
+
+
+<!-- Include PDF.js library from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+
+<!-- Container for the PDF pages -->
+<div id="pdf-container" style="width: 100%; height: auto; overflow-y: auto; position: relative;"></div>
+
+<script>
+  const url = '/media/{{pdf.material_file}}'; // Your PDF file URL
+  const pdfContainer = document.getElementById('pdf-container');
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+
+  // Load the PDF document
+  pdfjsLib.getDocument(url).promise.then(pdf => {
+    const numPages = pdf.numPages;
+
+    // Loop through each page and render it in its own canvas
+    for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+      pdf.getPage(pageNumber).then(page => {
+        // Create a new canvas for each page
+        const canvas = document.createElement('canvas');
+        pdfContainer.appendChild(canvas);
+        
+        const containerWidth = pdfContainer.clientWidth;  // Get container width
+        const viewport = page.getViewport({ scale: 1 });  // Initial scale of 1 for calculations
+
+        // Calculate scale to fit the container width
+        const scale = containerWidth / viewport.width;
+        const adjustedViewport = page.getViewport({ scale: scale });
+        
+        // Set the canvas dimensions to match the scaled viewport
+        canvas.width = adjustedViewport.width * window.devicePixelRatio;
+        canvas.height = adjustedViewport.height * window.devicePixelRatio;
+        
+        // Set canvas style dimensions for display
+        canvas.style.width = adjustedViewport.width + "px";
+        canvas.style.height = adjustedViewport.height + "px";
+        
+        // Scale context for high DPI screens
+        const ctx = canvas.getContext('2d');
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+        const renderContext = {
+          canvasContext: ctx,
+          viewport: adjustedViewport
+        };
+        
+        page.render(renderContext);
+      });
+    }
+  });
+
+  // Disable right-click on the container
+  pdfContainer.oncontextmenu = function() { return false; };
+</script>
+
+
+
+
+{% endblock %}

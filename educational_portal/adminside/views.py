@@ -3849,3 +3849,14 @@ def delete_material_function(request):
         return redirect('show_material')
     
     return render(request, "show_material.html")
+
+
+@admin_login_required
+def admin_show_pdf(request):
+    context={}
+    if request.GET.get('pdf'):
+        pdf = Materials.objects.get(material_id = request.GET.get('pdf'))
+        context.update({
+            'pdf':pdf,
+        })
+    return render(request,'Show_pdf.html', context)    

@@ -179,4 +179,5 @@ urlpatterns = [
     path('show_material/', adminview.show_material_function, name='show_material'),
     path('add_material/', adminview.add_material_function, name='add_material'),
     path('delete_material/', adminview.delete_material_function, name='delete_material'),
+    path('admin_show_pdf/',adminview.admin_show_pdf, name="admin_show_pdf")
 ]
