@@ -126,3 +126,8 @@ class group_form(forms.ModelForm):
     class Meta:
         model = Groups
         fields = "__all__"
+
+class materials_form(forms.ModelForm):
+    class Meta:
+        model = Materials
+        fields = "__all__"

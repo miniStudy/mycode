@@ -35,6 +35,13 @@ from team_ministudy.models import *
 from django.contrib.auth.hashers import check_password
 
 
+
+import fitz  # PyMuPDF
+from PIL import Image
+import io
+from django.core.files.base import ContentFile
+
+
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import suggestions_improvements
 
@@ -3762,3 +3769,83 @@ def delete_group_function(request):
         messages.success(request, "Group deleted successully")
         return redirect('show_group')
     return render(request, "show_group.html")
+
+
+@admin_login_required
+def show_material_function(request):
+    context = {}
+    domain = request.get_host()
+    group_id = request.GET.get('group_id')
+    materials_data = Materials.objects.filter(domain_name = domain, material_group_id__group_id = group_id)
+    context.update({'materials_data': materials_data, 'title': 'Materials', 'group_id': group_id})
+    return render(request, "show_material.html", context)
+
+
+
+def generate_pdf_icon(pdf_file):
+    # Read the file content into memory
+    pdf_data = pdf_file.read()
+    # Open the PDF from the memory
+    doc = fitz.open(stream=pdf_data, filetype="pdf")
+    # Select the first page
+    page = doc.load_page(0)
+    # Render the page to an image
+    pix = page.get_pixmap()  
+    # Convert to PIL Image
+    image = Image.open(io.BytesIO(pix.tobytes("png")))
+    # Save image to BytesIO object
+    image_io = io.BytesIO()
+    image.save(image_io, format="PNG")
+    # Return a ContentFile that can be saved in the ImageField
+    return ContentFile(image_io.getvalue(), name=f"{pdf_file.name.split('.')[0]}_icon.png")
+
+
+@admin_login_required
+def add_material_function(request):
+    domain = request.get_host()
+    group_id = request.GET.get('group_id')
+    group_data = Groups.objects.filter(domain_name = domain, group_id = group_id)
+    context = {'group_data': group_data}
+    if request.method == 'POST':
+            group_id = request.POST.get('material_group_id')
+            group_obj = Groups.objects.get(group_id = group_id)
+            form = materials_form(request.POST, request.FILES)
+            if form.is_valid():
+                
+                check = Materials.objects.filter(material_name = form.data['material_name'], domain_name = domain).count()
+                pdf_file = form.cleaned_data['material_file']
+
+                if check >= 1:
+                    messages.error(request, '{} is already Exists'.format(form.data['material_name']))
+                else:
+                    form.instance.domain_name = domain
+                    material = form.save(commit=False)
+                    # Generate icon for the PDF file
+                    material.material_icon.save(
+                        pdf_file.name.replace('.pdf', '_icon.png'),
+                        generate_pdf_icon(pdf_file),
+                        save=False
+                    )
+                    material.material_name = pdf_file.name
+                    material.material_group_id = group_obj
+                    material.save()
+                    messages.success(request, 'Material Added Successfully')
+                    return redirect('show_material')
+            else:
+                filled_data = form.data
+                context.update({'filled_data': filled_data, 'errors': form.errors})
+                return render(request, 'insert_update/add_material.html', context)
+
+    return render(request, 'insert_update/add_material.html', context)
+
+
+@admin_login_required
+def delete_material_function(request):
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        material_data = Materials.objects.get(material_id = pk)
+        material_data.delete()
+        messages.success(request, "Material Deleted Successfully")
+        return redirect('show_material')
+    
+    return render(request, "show_material.html")

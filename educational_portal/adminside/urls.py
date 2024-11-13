@@ -175,4 +175,8 @@ urlpatterns = [
     path('show_group/', adminview.show_group_function, name='show_group'),
     path('add_group/', adminview.add_group_function, name='add_group'),
     path('delete_group/', adminview.delete_group_function, name='delete_group'),
+
+    path('show_material/', adminview.show_material_function, name='show_material'),
+    path('add_material/', adminview.add_material_function, name='add_material'),
+    path('delete_material/', adminview.delete_material_function, name='delete_material'),
 ]
