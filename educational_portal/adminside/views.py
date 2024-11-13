@@ -3736,7 +3736,7 @@ def show_group_function(request):
     domain = request.get_host()
     group_data = Groups.objects.filter(domain_name = domain)
     context = {'group_data': group_data, 'title': 'Groups'}
-    return render(request, "show_group.html", context)
+    return render(request, "show_groupps.html", context)
 
 
 @admin_login_required
@@ -3750,7 +3750,7 @@ def add_group_function(request):
             form.save()
             return redirect('show_group')
 
-    return render(request, "add_group.html")
+    return render(request, "insert_update/add_group.html")
 
 
 @admin_login_required
