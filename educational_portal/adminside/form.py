@@ -121,3 +121,8 @@ class expense_form(forms.ModelForm):
     class Meta:
         model = Expense
         fields = "__all__"
+
+class group_form(forms.ModelForm):
+    class Meta:
+        model = Groups
+        fields = "__all__"

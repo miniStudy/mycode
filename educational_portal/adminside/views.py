@@ -3729,3 +3729,37 @@ def delete_expense_functions(request):
                 messages.error(request, f'<i class="fa-solid fa-triangle-exclamation me-2"></i> An error occurred: {str(e)}')
 
     return redirect('show_expense')
+
+
+@admin_login_required
+def show_group_function(request):
+    domain = request.get_host()
+    group_data = Groups.objects.filter(domain_name = domain)
+    context = {'group_data': group_data, 'title': 'Groups'}
+    return render(request, "show_group.html", context)
+
+
+@admin_login_required
+def add_group_function(request):
+    domain = request.get_host()
+    if request.method == 'POST':
+        form = group_form(request.POST)
+        if form.is_valid():
+            form.instance.domain_name = domain
+            messages.success(request, "Group added successfully")
+            form.save()
+            return redirect('show_group')
+
+    return render(request, "add_group.html")
+
+
+@admin_login_required
+def delete_group_function(request):
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        group_data = Groups.objects.get(group_id = pk)
+        group_data.delete()
+        messages.success(request, "Group deleted successully")
+        return redirect('show_group')
+    
+    return render(request, "show_group.html")
