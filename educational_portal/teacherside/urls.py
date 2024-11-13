@@ -98,4 +98,6 @@ urlpatterns = [
 
     path('teacher_chatbox/',teacherview.teacher_chatbox, name='teacher_chatbox'),
     path('insert_chatbox_teacher/',teacherview.insert_chatbox_teacher, name='insert_chatbox_teacher'),
+
+    path('show_notification_teacher/',teacherview.show_notification_teacher_function, name='show_notification_teacher'),
 ]

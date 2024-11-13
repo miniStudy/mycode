@@ -1,0 +1,14 @@
+{% extends 'studentpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Notification</h4></div> 
+  
+
+{% include 'message_show.html' %}
+<!-- DataTable with Buttons -->
+{% for notify in notification_data %}
+{{notify.notify_title}}
+{{notify.notify_notification}}
+{{notify.notify_date}}
+{% endfor %}
+{% endblock %}

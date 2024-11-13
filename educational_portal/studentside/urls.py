@@ -67,4 +67,6 @@ urlpatterns = [
 
 
     path('student_insert_suggestions/', studentview.insert_suggestions_function, name='student_insert_suggestions'),
+
+    path('show_notification_student/', studentview.show_notification_student_function, name='show_notification_student'),
 ]

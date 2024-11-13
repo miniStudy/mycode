@@ -813,6 +813,7 @@ def insert_update_announcements(request):
             notification = Notification(
             notify_title=title,
             notify_notification=mess,
+            notify_user = 'student',
             domain_name=domain)
             notification.save()
 
@@ -1372,6 +1373,7 @@ def insert_update_timetable(request):
                 notification = Notification(
                 notify_title=title,
                 notify_notification=mess,
+                notify_user = 'student',
                 domain_name=domain)
                 notification.save()
 
@@ -1622,6 +1624,7 @@ def insert_events(request):
         notification = Notification(
         notify_title=title,
         notify_notification=msg,
+        notify_user = 'student',
         domain_name=domain)
         notification.save()
 
@@ -2201,6 +2204,7 @@ def send_meeting_mail(request):
             notification = Notification(
             notify_title=title,
             notify_notification=msg,
+            notify_user = 'student',
             domain_name=domain)
             notification.save()
 
@@ -2960,6 +2964,7 @@ def add_cheques_admin(request):
                     notification = Notification(
                     notify_title=title,
                     notify_notification=mess,
+                    notify_user = 'student',
                     domain_name=domain)
                     notification.save()
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
@@ -3027,6 +3032,7 @@ def add_cheques_admin(request):
                     notification = Notification(
                     notify_title=title,
                     notify_notification=mess,
+                    notify_user = 'student',
                     domain_name=domain)
                     notification.save()
                     send_notification(student_name.stud_onesignal_player_id,title,mess, request)
@@ -3144,6 +3150,7 @@ def add_fees_collection_admin(request):
                 notification = Notification(
                 notify_title=title,
                 notify_notification=mess,
+                notify_user = 'student',
                 domain_name=domain)
                 notification.save()
                 send_notification(student_name.stud_onesignal_player_id,title,mess, request)
@@ -3676,6 +3683,6 @@ def show_complaints_functions(request):
 
 def show_notification_function(request):
     domain = request.get_host()
-    notification_data = Notification.objects.filter(domain_name = domain).order_by('-pk')
+    notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'admin').order_by('-pk')
     context = {'notification_data': notification_data, 'title': 'Notification'}
     return render(request, 'show_notification.html', context)

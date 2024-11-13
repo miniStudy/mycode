@@ -686,6 +686,7 @@ def Student_add_doubts(request):
             notification = Notification(
             notify_title=title,
             notify_notification=message,
+            notify_user = 'student',
             domain_name=domain)
             notification.save()
             send_notification(playerids, title, message, request)
@@ -697,6 +698,7 @@ def Student_add_doubts(request):
             notification = Notification(
             notify_title=title,
             notify_notification=fac_message,
+            notify_user = 'teacher',
             domain_name=domain)
             notification.save()
             send_notification(fac_email, fac_title, fac_message, request)
@@ -1006,3 +1008,10 @@ def insert_suggestions_function(request):
         suggestions_improvements.objects.create(si_user_name=username, si_user=si_user, si_suggestion=si_suggestion, domain_name = domain)
     
     return render(request, 'studentpanel/insert_suggestions.html', context)
+
+
+def show_notification_student_function(request):
+    domain = request.get_host()
+    notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'admin').order_by('-pk')
+    context = {'notification_data': notification_data, 'title': 'Notification'}
+    return render(request, 'studentpanel/show_notification.html', context)

@@ -563,3 +563,11 @@ def insert_chatbot_parent(request):
     chat = request.POST.get('chatbox_chat')
     Chatbox.objects.create(chatbox_sender = parent_object.stud_guardian_email,chatbox_receiver=receiver,chatbox_chat=chat,domain_name = domain_name)
     return redirect('/parentsside/parent_chatbox?selected_person={}'.format(receiver))
+
+
+@parent_login_required
+def show_notification_parent_function(request):
+    domain = request.get_host()
+    notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'student').order_by('-pk')
+    context = {'notification_data': notification_data, 'title': 'Notification'}
+    return render(request, 'parentpanel/show_notification.html', context)

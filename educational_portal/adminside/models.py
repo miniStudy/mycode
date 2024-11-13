@@ -681,6 +681,7 @@ class Notification(models.Model):
     notify_title = models.TextField(max_length=155)
     notify_notification = models.TextField(max_length=255)
     notify_date = models.DateField(auto_now_add=True)
+    notify_user = models.CharField(max_length=155, null=True, blank=True)
     domain_name = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
