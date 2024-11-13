@@ -5,10 +5,10 @@ from django.db import connection
 
 
 
-def creation(request, institute_domain):
+def creation(request, institute_domain, institute_email):
     domain_name = request.get_host()
     board_creation(request, domain_name)
-    admin_creation(request, domain_name)
+    admin_creation(request, domain_name, institute_email)
 
 def board_creation(request, institute_domain):
     board = Boards.objects.create(
@@ -145,11 +145,11 @@ def insert_chapterwise_material(cm_chepter_id, cm_filename, cm_file, cm_file_ico
         cursor.execute(query, [cm_chepter_id, cm_filename, cm_file, cm_file_icon, domain_name])
 
 
-def admin_creation(institute_domain):
+def admin_creation(institute_domain, institute_email):
     admin = AdminData.objects.create(
             admin_name = 'admin',
             admin_pass = '12345678',
-            admin_email = 'example@gmail.com',
+            admin_email = institute_email,
             domain_name = institute_domain
         )
     admin.save()
