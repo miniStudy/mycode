@@ -726,6 +726,7 @@ class Materials(models.Model):
     material_file = models.FileField(upload_to ='uploads/')
     material_icon = models.ImageField(upload_to='file_icons/', null=True,blank=True)
     material_group_id = models.ForeignKey(Groups, on_delete=models.CASCADE)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"{self.material_group_id.group_name}"
