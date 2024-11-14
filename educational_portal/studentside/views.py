@@ -111,15 +111,26 @@ def student_home(request):
     overall_attendance_li = overall_attendance_li[:5]
 
     #=============== Test Result Dashboard ===============================================================
-    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id, domain_name = domain).values('tau_test_id__test_name', 'tau_obtained_marks').order_by('-pk')
+    test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id, domain_name = domain).values('tau_test_id__test_name', 'tau_obtained_marks','tau_total_marks').order_by('-pk')
 
     test_counts = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id, domain_name = domain).count()
-
-    test_result_list = []
-    test_name_list = []
+    
+    test_name_result_list = []
     for x in test_result_analysis:
-        test_name_list.append(x['tau_test_id__test_name'])
-        test_result_list.append(x['tau_obtained_marks'])
+        if x['tau_obtained_marks'] > 0:
+            percentage = (x['tau_obtained_marks'] / x['tau_total_marks']) * 100 if x['tau_total_marks'] else 0
+        else:
+            percentage = 0
+        color={}
+        if percentage > 70:
+            color.update({'color':'green'})
+        elif 50 < percentage <= 70:
+            color.update({'color':'orange'})
+        else:
+            color.update({'color':'red'})
+        test_name_result_list.append({'test_name' : x['tau_test_id__test_name'], 'test_result': x['tau_obtained_marks'],'tau_total_marks':x['tau_total_marks'],'color':color['color']})
+
+
     
     context.update({
         'title':'Home',
@@ -128,8 +139,7 @@ def student_home(request):
         'today_timetable': today_timetable,
         'overall_attendance_li':overall_attendance_li,
         'test_result_analysis':test_result_analysis,
-        'test_result_list':test_result_list,
-        'test_name_list': test_name_list,
+        'test_name_result_list':test_name_result_list,
         'test_counts':test_counts,
         'cusrrent_student':cusrrent_student,
         'subject_data': subject_data,

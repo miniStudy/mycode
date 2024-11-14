@@ -43,125 +43,140 @@
 {% endif %}
 </br>
 <div class="row">
-  <div class="col-md-3 mb-4">
-    <div class="card">
-      <a href="{% url 'Student_Timetable' %}">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div class="d-flex align-items-center gap-3">
-              <div class="avatar">
-                <span class="avatar-initial bg-label-warning rounded-circle"><i class="tf-icons fa-solid fa-clock fs-4"></i></span>
-              </div>
-              <div class="card-info">
-                <h5 class="card-title mb-0 me-2">Timetable</h5>
-                <small class="text-muted">View</small>
-              </div>
+  <div class="col-6 col-sm-6 col-md-3 mb-4">
+    <a href="{% url 'Student_Timetable' %}">
+    <div class="card card-border-shadow-warning">
+      <div class="card-body dashboardcardaddon1">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex align-items-center gap-2 gap-md-3">
+            <div class="avatar">
+              <span class="avatar-initial bg-label-warning rounded-circle"><i class="tf-icons fa-solid fa-clock fs-5"></i></span>
             </div>
-            <div id="incomeChart"></div>
+            <div class="card-info">
+              <h5 class="card-title mb-0 me-2">Timetable</h5>
+              <small class="dashboardmutedtext text-muted">View</small>
+            </div>
           </div>
         </div>
-      </a>
+      </div>
     </div>
+  </a>
   </div>
 
 
-  <div class="col-md-3 mb-4">
-    <div class="card">
-      <a href="{% url 'show_groups' %}">
-        <div class="card-body">
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+    <a href="{% url 'show_groups' %}">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1" >
           <div class="d-flex justify-content-between">
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2 gap-md-3">
               <div class="avatar">
                 <span class="avatar-initial bg-label-info rounded-circle"><i class="fa-solid fa-book-open fs-4"></i></span>
               </div>
               <div class="card-info">
                 <h5 class="card-title mb-0 me-2">Materials</h5>
-                <small class="text-muted">View</small>
+                <small class="dashboardmutedtext text-muted">View</small>
               </div>
             </div>
-            <div id="conversationChart"></div>
+      
           </div>
         </div>
-      </a>
-    </div>
+      </div>
+    </a>
   </div>
 
-  <div class="col-md-3 mb-4">
-    <div class="card">
-      <a href="{% url 'Student_Syllabus' %}">
-        <div class="card-body">
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+    <a href="{% url 'Student_Syllabus' %}">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1" >
           <div class="d-flex justify-content-between">
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2 gap-md-3">
               <div class="avatar">
                 <span class="avatar-initial bg-label-primary rounded-circle"><i class="tf-icons fa-solid fa-clipboard-list fs-4"></i></span>
               </div>
               <div class="card-info">
                 <h5 class="card-title mb-0 me-2">Syllabus</h5>
-                <small class="text-muted">View</small>
+                <small class="dashboardmutedtext text-muted">View</small>
               </div>
             </div>
-            <div id="conversationChart"></div>
+      
           </div>
-        </div>
-      </a>
-    </div>
-  </div>
-
-  <div class="col-md-3 mb-4">
-    <div class="card">
-      <a href="{% url 'Student_Attendence' %}">
-      <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div class="d-flex align-items-center gap-3">
-            <div class="avatar">
-              <span class="avatar-initial bg-label-danger rounded-circle"><i class="fa-brands fa-battle-net fs-4"></i></span>
-            </div>
-            <div class="card-info">
-              <h5 class="card-title mb-0 me-2">Attendance</h5>
-              <small class="text-muted">View</small>
-            </div>
-          </div>
-          <div id="incomeChart"></div>
         </div>
       </div>
-      </a>
-    </div>
+    </a>
+  </div>
+
+
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+    <a href="{% url 'Student_Attendence' %}">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-2 gap-md-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-danger rounded-circle"><i class="fa-brands fa-battle-net fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Attendance</h5>
+                <small class="dashboardmutedtext text-muted">View</small>
+              </div>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+    </a>
   </div>
 
 </div>
 
 
 <div class="row">
-  <div class="col-sm-6 col-lg-3 mb-4">
+
+
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-6 mb-4">
     <a href="{% url 'Student_Doubt' %}">
-    <div class="card card-border-shadow-success h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
-          <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-success"><i class="tf-icons fa-regular fa-circle-question fs-4"></i></span>
+      <div class="card card-border-shadow-danger">
+        <div class="card-body dashboardcardaddon1" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-2 gap-md-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-danger rounded-circle"><i class="tf-icons fa-regular fa-circle-question fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">New Doubts</h5>
+                <small class="dashboardmutedtext text-muted">View : {{current_doubts}}</small>
+              </div>
+            </div>
+      
           </div>
-          <h5 class="ms-1 mb-0">New Doubts ({{current_doubts}})</h5>
         </div>
-        <p class="mb-1">View</p>
       </div>
-    </div>
-  </a>
+    </a>
   </div>
-  <div class="col-sm-6 col-lg-3 mb-4">
+
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-6 mb-4">
     <a href="{% url 'Student_Announcement' %}">
-    <div class="card card-border-shadow-warning h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
-          <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-warning"><i class="tf-icons fa-solid fa-bullhorn fs-4"></i></span>
+      <div class="card card-border-shadow-warning">
+        <div class="card-body dashboardcardaddon1" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-2 gap-md-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-warning rounded-circle"><i class="tf-icons fa-solid fa-bullhorn fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Announcements</h5>
+                <small class="dashboardmutedtext text-muted">View : {{current_announcements}}</small>
+              </div>
+            </div>
+      
           </div>
-          <h5 class="ms-1 mb-0">New Announcements ({{current_announcements}})</h5>
         </div>
-        <p class="mb-1">View</p>
       </div>
-    </div>
-  </a>
+    </a>
   </div>
+
+
 </div>
 
 
@@ -201,9 +216,10 @@
 
 
 
-
-<div class="card mb-4" id="top_students">
-  <h5 class="card-header mb-2">Performance</h5>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-4" id="top_students">
+    <h5 class="card-header mb-2">Performance</h5>
 
 <div class="card-body">
   <div class="btn-group mb-3">
@@ -264,20 +280,40 @@
   </div>
 </div>
 </div>
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="card h-100">
-      
-        <h5 class="card-header mb-2">Test Analysis</h5>
-      
-      <div class="card-body">
-        <div class="table-responsive">
-        <div id="students_chart"></div>
-      </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive" style="max-height: 400px;">
+          <table class="display table table-bordered ">
+            <thead>
+              <tr>
+                <th>Test Name</th>
+                <th>Total Marks</th>
+                <th>Obtained Marks</th>
+              </tr>
+            </thead>
+            <tbody class="table-border-bottom-0" style="color: white !important;">
+              {% for x in test_name_result_list %}
+              <tr class="{%if x.color == 'green' %}alert-success{% elif x.color == 'orange' %}alert-warning{% else %}alert-danger{% endif %}">
+                
+                <td>{{x.test_name}}</td>
+                <td>{{x.tau_total_marks}}</td>
+                <td>{{x.test_result}}</td>
+                
+              </tr>
+              {% endfor %}
+            </tbody>
+            </table>
       </div>
     </div>
   </div>
 </div>
+</div>
+
+  
+
+
+
 
 {% endblock %}
