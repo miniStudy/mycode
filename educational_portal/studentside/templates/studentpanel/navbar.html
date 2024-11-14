@@ -34,16 +34,20 @@
         <ul class="navbar-nav flex-row align-items-center ms-auto">
           
 
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'student_insert_suggestions' %}">
-              <img src="/static/imgs/sugg.png" class="me-2" width="37px"/>
+          <li class="nav-item me-2 me-md-0">
+            <a class="nav-link" href="{% url 'student_insert_suggestions' %}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Suggestion">
+              <div class="card p-2 rounded-circle">
+                <img src="/static/imgs/suggestion.png" width="25px"/>
+              </div>
             </a>
           </li>
 
-          <li class="nav-item" style="margin: 0 10px;">
-            <a class="nav-link d-flex align-items-center justify-content-center" href="{% url 'show_notification_student' %}"
-               style="font-size: 1.5em; padding: 8px; border-radius: 50%; background: linear-gradient(135deg, #1e90ff, #4169e1); color: #fff; transition: background 0.3s ease, color 0.3s ease;">
-              <i class="fa-solid fa-comment"></i>
+
+          <li class="nav-item me-2 me-md-0">
+            <a class="nav-link" href="{% url 'show_notification_student' %}">
+              <div class="card p-2 rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
+                <img src="/static/imgs/shortcuts/notification.png" style="width: 25px;">
+              </div>
             </a>
           </li>
 

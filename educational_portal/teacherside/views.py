@@ -2342,7 +2342,9 @@ def show_notification_teacher_function(request):
 @teacher_login_required
 def teacher_show_group_function(request):
     domain = request.get_host()
-    group_data = Groups.objects.filter(domain_name = domain)
+    fac_id = request.session['fac_id']
+    faculty = Faculties.objects.get(fac_id = fac_id)
+    group_data = Materials_access.objects.filter(materialaccess_email = faculty.fac_email, domain_name = domain)
     context = {'group_data': group_data, 'title': 'Materials'}
     return render(request, "teacherpanel/show_groupps.html", context)
 

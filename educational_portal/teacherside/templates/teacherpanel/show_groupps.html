@@ -18,10 +18,9 @@
 <div class="d-flex flex-wrap justify-content-start gap-3 gap-md-4 mt-2">
 {% for group in group_data %}
 <div class="card p-3 materialgroup">
-    <a href="{% url 'teacher_show_material' %}?group_id={{group.group_id}}"><img src="/static/imgs/folder (1).png" class="Materialsfolders" /></a>
-    <span class="mt-2">{{group.group_name}}<a href="{% url 'teacher_delete_group' %}?pk={{group.group_id}}"><img src="/static/imgs/shortcuts/delete.png" class="ms-3" style="width: 20px;" /></a></span>
+    <a href="{% url 'teacher_show_material' %}?group_id={{group.materialaccess_group.group_id}}"><img src="/static/imgs/folder (1).png" class="Materialsfolders" /></a>
+    <span class="mt-2">{{group.materialaccess_group.group_name}}<a href="{% url 'teacher_delete_group' %}?pk={{group.materialaccess_group.group_id}}"><img src="/static/imgs/shortcuts/delete.png" class="ms-3" style="width: 20px;" /></a></span>
 </div>
 {% endfor %}
 </div>
-
 {% endblock %}
