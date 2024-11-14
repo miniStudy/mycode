@@ -53,5 +53,4 @@ urlpatterns = [
 
     path('show_notification_parent/',parentview.show_notification_parent_function, name = 'show_notification_parent'),
 
-
 ]
