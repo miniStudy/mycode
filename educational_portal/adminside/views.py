@@ -1158,8 +1158,10 @@ def delete_faculty_access(request):
 @admin_login_required
 def insert_update_faculties(request):
     domain = request.get_host()
+    group_data = Groups.objects.filter(domain_name = domain)
     context = {
         'title': 'Faculties',
+        'group_data':group_data,
     }
     # Update Logic
     if request.GET.get('pk'):
@@ -1195,7 +1197,16 @@ def insert_update_faculties(request):
                     form.instance.domain_name = domain
                     form.instance.fac_email = request.POST.get('fac_email')
                     instance = form.save()
-
+                    # ------------------give access to Faculties====================
+                    selected_groups = request.POST.getlist('material_group[]')
+                    for x in selected_groups:
+                        group_obj = Groups.objects.get(group_id = int(x))
+                        Materials_access.objects.update_or_create(
+                            materialaccess_email=request.POST.get('fac_email').lower(),
+                            materialaccess_group=group_obj,
+                            defaults={'domain_name': domain}
+                        )
+                    # ======================================================
                     fac_password = instance.fac_password
                     fac_name = form.cleaned_data['fac_name']
                     fac_email = [form.cleaned_data['fac_email']]
@@ -2515,30 +2526,6 @@ def delete_admin_batches(request):
 
     return redirect('admin_batches')
 
-
-
-@admin_login_required
-def show_admin_materials(request):
-    domain = request.get_host()
-    standard_data = Std.objects.filter(domain_name = domain)
-    subjects_data = Subject.objects.filter(domain_name = domain)
-    materials = Chepterwise_material.objects.filter(domain_name = domain).values('cm_id','cm_filename','cm_chepter__chep_sub__sub_id','cm_file','cm_file_icon','cm_chepter__chep_sub__sub_std__std_id')
-    selected_sub=None
-
-    context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, 'title' : 'Materials',}
-    if request.GET.get('std_id'):
-        std_id = int(request.GET.get('std_id'))
-        subjects_data = Subject.objects.filter(sub_std__std_id = std_id, domain_name = domain)
-        materials = [material for material in materials if material['cm_chepter__chep_sub__sub_std__std_id'] == std_id]
-        selected_std = Std.objects.get(std_id=std_id)
-        context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_id,'selected_std':selected_std})
-
-    if request.GET.get('sub_id'):
-        sub_id = request.GET.get('sub_id')
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id, domain_name = domain)
-        selected_sub = Subject.objects.get(sub_id=sub_id)
-        context.update({'materials': materials, 'selected_sub':selected_sub})
-    return render(request, 'show_materials.html', context)
 
 
 @admin_login_required

@@ -1597,133 +1597,13 @@ def announcements_delete_teacher(request):
 def teacher_materials(request):
     domain = request.get_host()
     fac_id = request.session['fac_id']
-    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain).values('fa_faculty__fac_id','fa_subject__sub_id','fa_batch__batch_std__std_id')
-    subject_access_list = []
-    std_access_list=[]
-    for x in faculty_access:
-        subject_access_list.append(x['fa_subject__sub_id'])
-        std_access_list.append(x['fa_batch__batch_std__std_id'])
-
-    standard_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain).values('std_id','std_name','std_board__brd_name')
-    subjects_data = Subject.objects.filter(sub_id__in = subject_access_list, domain_name = domain).values('sub_id','sub_name','sub_std__std_name','sub_std__std_id','sub_std__std_board__brd_name')
-    materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id__in = subject_access_list, domain_name = domain).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
-    selected_sub=None
-
-    context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, "title":'Materials'}
-    if request.GET.get('std_id'):
-        std_id = int(request.GET.get('std_id'))
-        subjects_data = Subject.objects.filter(sub_std__std_id = std_id, domain_name = domain).values('sub_id','sub_name','sub_std__std_name','sub_std__std_id','sub_std__std_board__brd_name')
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_std__std_id = std_id, domain_name = domain).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
-        std_data = Std.objects.get(std_id = std_id)
-        context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_data})
-
-    if request.GET.get('sub_id'):
-        sub_id = request.GET.get('sub_id')
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id, domain_name = domain).values('cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_file_icon', 'cm_filename', 'cm_chepter__chep_sub__sub_name', 'cm_id')
-        selected_sub = Subject.objects.get(sub_id=sub_id)
-        context.update({'materials': materials, 'selected_sub':selected_sub})
-
+    context={}
     return render(request, 'teacherpanel/show_materials.html', context)
 
 @teacher_login_required
 def teacher_insert_update_materials(request):
     domain = request.get_host()
-    chepter_data = Chepter.objects.filter(domain_name = domain).values('chep_name','chep_id','chep_sub__sub_name','chep_sub__sub_std__std_name','chep_sub__sub_std__std_board__brd_name')
-    context = {
-        'title': 'Materials',
-        'chepter_data': chepter_data,
-    }
-
-    if request.GET.get('get_std'):
-        get_std = int(request.GET['get_std'])
-        chepter_data = chepter_data.filter(chep_std__std_id=get_std)
-        context.update({'get_std': get_std, 'chepter_data': chepter_data})
-
-    if request.GET.get('get_subject'):
-        get_subject = int(request.GET['get_subject'])
-        chepter_data = chepter_data.filter(chep_sub__sub_id=get_subject)
-        context.update({'get_subject': get_subject, 'chepter_data': chepter_data})
-
-    # ================Update Logic============================
-    if request.GET.get('pk'):
-        if request.method == 'POST':
-            instance = get_object_or_404(Chepterwise_material, pk=request.GET['pk'])
-            form = teacher_materials_form(request.POST, request.FILES, instance=instance)
-            check = Chepterwise_material.objects.filter(domain_name = domain,
-                cm_filename=form.data['cm_filename'],
-                cm_chepter__chep_name=form.data['cm_chepter']
-            ).exclude(pk=request.GET['pk']).count()
-
-            if check >= 1:
-                messages.error(request, '{} is already Exists'.format(form.data['cm_filename']))
-            else:
-                if form.is_valid():
-                    form.instance.domain_name = domain
-                    material = form.save(commit=False)
-                    pdf_file = form.cleaned_data['cm_file']
-                    
-                    # Generate icon for the PDF file
-                    material.cm_file_icon.save(
-                        pdf_file.name.replace('.pdf', '_icon.png'),
-                        generate_pdf_icon(pdf_file),
-                        save=False
-                    )
-                    material.save()
-                    
-                    chap_obj = form.cleaned_data['cm_chepter']
-                    url = '/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(
-                        chap_obj.chep_sub.sub_std.std_id,
-                        chap_obj.chep_sub.sub_id
-                    )
-                    messages.success(request, 'Material Updated Successfully')
-                    return redirect(url)
-                else:
-                    filled_data = form.data
-                    context.update({'filled_data': filled_data, 'errors': form.errors})
-
-        update_data = Chepterwise_material.objects.get(cm_id=request.GET['pk'])
-        context.update({'update_data': update_data})
-    else:
-        # ===================Insert Logic===========================
-        if request.method == 'POST':
-            form = teacher_materials_form(request.POST, request.FILES)
-            if form.is_valid():
-                chap_obj = form.cleaned_data['cm_chepter'] 
-
-                url='/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(chap_obj.chep_sub.sub_std.std_id,chap_obj.chep_sub.sub_id)
-                    
-                check = Chepterwise_material.objects.filter(cm_filename = form.data['cm_filename'], cm_chepter__chep_name = form.data['cm_chepter'], domain_name = domain).count()
-                pdf_file = form.cleaned_data['cm_file']
-                chap_obj = form.cleaned_data['cm_chepter']
-                url = '/teacherside/teacher_materials/?std_id={}&sub_id={}'.format(
-                    chap_obj.chep_sub.sub_std.std_id,
-                    chap_obj.chep_sub.sub_id
-                )
-
-                check = Chepterwise_material.objects.filter(domain_name = domain,
-                    cm_filename=form.data['cm_filename'],
-                    cm_chepter__chep_name=form.data['cm_chepter']
-                ).count()
-
-                if check >= 1:
-                    messages.error(request, '{} is already Exists'.format(form.data['cm_filename']))
-                else:
-                    form.instance.domain_name = domain
-                    material = form.save(commit=False)
-                    # Generate icon for the PDF file
-                    material.cm_file_icon.save(
-                        pdf_file.name.replace('.pdf', '_icon.png'),
-                        generate_pdf_icon(pdf_file),
-                        save=False
-                    )
-                    material.save()
-                    messages.success(request, 'Material Added Successfully')
-                    return redirect(url)
-            else:
-                filled_data = form.data
-                context.update({'filled_data': filled_data, 'errors': form.errors})
-                return render(request, 'teacherpanel/insert_update_materials_teacher.html', context)
-
+    context={}
     return render(request, 'teacherpanel/insert_update_materials_teacher.html', context)
 
 

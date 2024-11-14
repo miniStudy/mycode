@@ -121,9 +121,6 @@ urlpatterns = [
     path('insert_update_batches/', adminview.insert_update_batches, name="insert_update_batches"),
     path('delete_batches/', adminview.delete_admin_batches, name="delete_batches"),
 
-    # =========================================Materials =============================================
-    path('admin_materials/', adminview.show_admin_materials, name="admin_materials"),
-
     # =========================================Admin Profile =========================================
     path('admin_profile/', adminview.show_admin_profile, name="admin_profile"),
 
