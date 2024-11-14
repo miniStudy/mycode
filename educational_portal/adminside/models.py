@@ -6,7 +6,7 @@ import random
 class AdminData(models.Model):
     admin_id = models.BigAutoField(primary_key=True)
     admin_name = models.CharField(max_length=20)
-    admin_pass = models.CharField(max_length=100, default='123456', null=True, blank=True)
+    admin_pass = models.CharField(max_length=400, default='123456', null=True, blank=True)
     admin_email = models.EmailField(unique=True)
     admin_otp = models.IntegerField(blank=True,null=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
@@ -27,7 +27,7 @@ class Faculties(models.Model):
     fac_address = models.TextField()
     fac_profile = models.ImageField(blank=True, null=True, upload_to='uploads/',default='uploads/default_profile.jpg')
     Subjects = models.CharField(max_length=100)
-    fac_password = models.CharField(max_length=100,null=True, blank=True,default='12345678')
+    fac_password = models.CharField(max_length=400,null=True, blank=True,default='12345678')
     fac_otp = models.IntegerField(blank=True,null=True)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
     fac_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
@@ -185,7 +185,7 @@ class Students(models.Model):
     stud_guardian_email = models.EmailField(max_length=200)
     stud_guardian_number = models.CharField(max_length=20)
     stud_guardian_profession = models.CharField(max_length=50,null=True,blank=True)
-    stud_guardian_password = models.CharField(max_length=100, null=True, blank=True, default='123456')
+    stud_guardian_password = models.CharField(max_length=400, null=True, blank=True, default='123456')
     stud_guardian_otp = models.CharField(blank=True,null=True,max_length=10)
     guardian_onesignal_player_id = models.CharField(max_length=200, null=True, blank=True)
     stud_address = models.TextField(blank=True, null=True)
@@ -733,3 +733,16 @@ class Materials(models.Model):
     
     class Meta:
         db_table = 'Materials'
+
+class Materials_access(models.Model):
+    material_access_id = models.BigAutoField(primary_key=True)
+    materialaccess_email = models.CharField(max_length=100)
+    materialaccess_group = models.ForeignKey(Groups, on_delete=models.CASCADE)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.materialaccess_email} {self.materialaccess_group}"
+    
+    class Meta:
+        db_table = "Material_access"
+

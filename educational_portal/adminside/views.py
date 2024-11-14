@@ -2224,12 +2224,13 @@ def insert_update_students(request):
     std_data = Std.objects.filter(domain_name = domain)
     batch_data = Batches.objects.filter(domain_name = domain)
     pack_data = Packs.objects.filter(domain_name = domain)
-
+    group_data = Groups.objects.filter(domain_name = domain)
     context = {
         'title' : 'Students',
         'std_data':std_data,
         'batch_data':batch_data,
         'pack_data':pack_data,
+        'group_data':group_data,
     }
 
     if request.GET.get('get_std'):
@@ -2275,6 +2276,16 @@ def insert_update_students(request):
             form.instance.stud_guardian_email = request.POST.get('stud_guardian_email').lower()
             form.instance.domain_name = domain
             instance = form.save()
+
+            # ------------------give access to student====================
+            selected_groups = request.POST.getlist('material_group[]')
+            for x in selected_groups:
+                group_obj = Groups.objects.get(group_id = int(x))
+                Materials_access.objects.update_or_create(
+                    materialaccess_email=request.POST.get('stud_email').lower(),
+                    materialaccess_group=group_obj,
+                    defaults={'domain_name': domain}
+                )
             # ----------Mail Send-------------------------------------------
             student_name = instance.stud_name
             student_email = [instance.stud_email]
