@@ -3,6 +3,7 @@ from adminside.models import *
 from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
+from teacherside.tasks import *
 import random
 import statistics
 from django.db.models import Sum,Count
@@ -558,10 +559,17 @@ def parent_chatbox(request):
 def insert_chatbot_parent(request):
     domain_name = request.get_host()
     parent_id = request.session['parent_id']
+    student_obj = Students.objects.get(stud_id = parent_id)
     parent_object = Students.objects.get(stud_id = parent_id)
     receiver = request.POST.get('chatbox_receiver')
     chat = request.POST.get('chatbox_chat')
     Chatbox.objects.create(chatbox_sender = parent_object.stud_guardian_email,chatbox_receiver=receiver,chatbox_chat=chat,domain_name = domain_name)
+    teacher_obj = Faculties.objects.get(fac_email = receiver)
+    if teacher_obj.fac_onesignal_player_id:
+        title = f"{student_obj.stud_guardian_name}"
+        msg = chat
+        playerid = teacher_obj.fac_onesignal_player_id
+        send_notification(playerid, title, msg, request) 
     return redirect('/parentsside/parent_chatbox?selected_person={}'.format(receiver))
 
 

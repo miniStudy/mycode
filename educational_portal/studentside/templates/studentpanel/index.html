@@ -268,13 +268,21 @@
         </tr>
         {% else %}
         <tr>
-          <td><img src="/static/imgs/hand2.png" class="me-2" style="width: 25px;" /> <span
+          <td><span class="fw-bold card d-inline-block p-2 rounded-circle border-none me-2">{{forloop.counter}}</span> <span
           class="fw-medium">{{x.stud_name}} {{ x.stud_lastname }}</span></td>
           <td>{{x.overall_result}}</td>
           <td>{{x.overall_attendance_studentwise}}</td>
         </tr>
         {% endif %}
         {% endfor %}
+        {% if myrank.rank > 5 %}
+        <tr>
+          <td><span class="fw-bold card d-inline-block p-2 rounded-circle border-none me-2">{{myrank.rank}})</span> <span
+          class="fw-medium">{{myrank.stud_name}} {{ myrank.stud_lastname }}</span></td>
+          <td>{{myrank.overall_result}}</td>
+          <td>{{myrank.overall_attendance_studentwise}}</td>
+        </tr>
+        {% endif %}
       </tbody>
     </table>
   </div>

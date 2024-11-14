@@ -28,33 +28,41 @@
   <div class="d-flex flex-wrap justify-content-start gap-3 gap-md-4">
 
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Suggestion">
-      <img src="/static/imgs/suggestion.png" class="shortcutIcons">
+      <a href="{% url 'admin_insert_suggestions' %}"><img src="/static/imgs/suggestion.png" class="shortcutIcons"></a>
     </div>
 
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Complaints">
-      <img src="/static/imgs/shortcuts/dislike.png" class="shortcutIcons"/>
+      <a href="{% url 'show_complaints' %}"><img src="/static/imgs/shortcuts/dislike.png" class="shortcutIcons"/></a>
     </div>
+
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Reports">
-      <img src="/static/imgs/shortcuts/statistics.png" class="shortcutIcons">
+      <a href="{% url 'adminside_report_card' %}"><img src="/static/imgs/shortcuts/statistics.png" class="shortcutIcons"></a>
     </div>
+
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Faculty Access">
-      <img src="/static/imgs/shortcuts/secure-access.png" class="shortcutIcons">
+      <a href="{% url 'faculty_access' %}"><img src="/static/imgs/shortcuts/secure-access.png" class="shortcutIcons"></a>
     </div>
+
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Payments">
-      <img src="/static/imgs/shortcuts/money-bag.png" class="shortcutIcons">
+      <a href="{% url 'payments_history_admin' %}"><img src="/static/imgs/shortcuts/money-bag.png" class="shortcutIcons"></a>
     </div>
+
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Expenses">
-      <img src="/static/imgs/shortcuts/spending.png" class="shortcutIcons">
+      <a href="{% url 'show_expense' %}"><img src="/static/imgs/shortcuts/spending.png" class="shortcutIcons"></a>
     </div>
+
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
-      <img src="/static/imgs/shortcuts/notification.png" class="shortcutIcons">
+      <a href="{% url 'show_notification' %}"><img src="/static/imgs/shortcuts/notification.png" class="shortcutIcons"></a>
     </div>
+
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tests">
-      <img src="/static/imgs/shortcuts/exam-time.png" class="shortcutIcons">
+      <a href="{% url 'admin_tests' %}"><img src="/static/imgs/shortcuts/exam-time.png" class="shortcutIcons"></a>
     </div>
+
     <div class="card p-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Admin">
-      <img src="/static/imgs/shortcuts/user-gear.png" class="shortcutIcons">
+      <a href="{% url 'show_admin' %}"><img src="/static/imgs/shortcuts/user-gear.png" class="shortcutIcons"></a>
     </div>
+
   </div>
 </div>
 

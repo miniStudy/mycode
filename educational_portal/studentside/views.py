@@ -43,6 +43,7 @@ def student_home(request):
     domain = request.get_host()
     std_id = request.session['stud_std']
     stud_id = request.session['stud_id']
+    student_obj = Students.objects.get(stud_id = stud_id)
     student_onesignal_player_id = request.session.get('deviceId', 'Error')
     logger.error("============================playerid:{}".format(student_onesignal_player_id))
     if student_onesignal_player_id != 'Error':
@@ -81,7 +82,8 @@ def student_home(request):
         get_subject = Subject.objects.filter(sub_std = student_std).first()
         context.update({'get_subject':get_subject})  
     
-
+    myrank = {}
+    rank = 0
     overall_attendance_li = []
     for x in students_li:
         total_attendence_studentwise = Attendance.objects.filter(atten_student__stud_id = x.stud_id, atten_timetable__tt_subject1__sub_id = get_subject.sub_id,  domain_name = domain).count()
@@ -104,12 +106,17 @@ def student_home(request):
         if student_id == x.stud_id: 
             current_student_overall_test_result = overall_result
 
-        overall_attendance_li.append({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result})
+        rank += 1
+        if student_obj.stud_email == x.stud_email:
+            myrank.update({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'stud_email': x.stud_email, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result, 'rank': rank})
+
+        overall_attendance_li.append({'stud_name':x.stud_name, 'stud_lastname':x.stud_lastname, 'stud_email': x.stud_email, 'overall_attendance_studentwise':overall_attendence_studentwise, 'overall_result':overall_result, 'rank': rank})
 
 
     overall_attendance_li = sorted(overall_attendance_li, key=lambda x: x['overall_result'], reverse=True)
+    
     overall_attendance_li = overall_attendance_li[:5]
-
+    
     #=============== Test Result Dashboard ===============================================================
     test_result_analysis = Test_attempted_users.objects.filter(tau_stud_id__stud_id = student_id, domain_name = domain).values('tau_test_id__test_name', 'tau_obtained_marks','tau_total_marks').order_by('-pk')
 
@@ -143,6 +150,7 @@ def student_home(request):
         'test_counts':test_counts,
         'cusrrent_student':cusrrent_student,
         'subject_data': subject_data,
+        'myrank': myrank
     })
     return render(request, 'studentpanel/index.html',context)
 
