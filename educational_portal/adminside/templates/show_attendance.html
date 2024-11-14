@@ -31,25 +31,24 @@
 
 <div class="row">
     {% for x, y in combined_data %}
-    <div class="col-md-3 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="avatar">
-                            <span class="avatar-initial bg-label-success rounded-circle">
-                              <i class="fa-solid fa-book fs-4"></i>
-                            </span>
-                        </div>
-                        <div class="card-info">
-                            <h5 class="card-title mb-0 me-2">{{ x }}%</h5>
-                            <small class="text-muted">{{ y }}</small>
-                        </div>
-                    </div>
-                    <div id="conversationChart"></div>
+    <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+      <a href="">
+        <div class="card card-border-shadow-info">
+          <div class="card-body dashboardcardaddon1 p-2 py-3 p-md-4" >
+            <div class="d-flex justify-content-between">
+              <div class="d-flex align-items-center gap-1 gap-md-1">
+                <div class="avatar">
+                  <span class="avatar-initial bg-label-success rounded-circle"><i class="fa-solid fa-book fs-4"></i></span>
                 </div>
+                <div class="card-info">
+                  <h5 class="card-title ms-1 mb-0">{{ x }}%</h5>
+                  <small class="dashboardmutedtext text-muted ms-1">{{ y }}</small>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+      </a>
     </div>
     {% endfor %}
 </div>
@@ -171,7 +170,7 @@
               <th>Total <i class="fa-solid fa-square-check text-success"></i></th>
               <th>Total <i class="fa-solid fa-square-xmark text-danger"></i></th>
               {% for dayy in days %}
-              <th style="max-width: 25px !important;width: 25px !important;">{{dayy}}</th>
+              <th style="min-width: 25px !important;">{{dayy}}</th>
               {% endfor %}
           
           </tr>
@@ -185,7 +184,7 @@
               <td>{{student.Absent_counter}}</td>
 
               {% for dayy in days %}
-                    <td style="max-width: 25px !important;width: 25px !important;">
+                    <td style="min-width: 25px !important;">
                     {% for day, records in student.Attendance.items %}
                     {% if dayy == day %}
                         {% if records %}
