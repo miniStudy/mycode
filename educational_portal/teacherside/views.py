@@ -2315,7 +2315,6 @@ def teacher_chatbox(request):
     context.update({
         'Unique_persons':Unique_persons,
         'faculty':teacher_object,
-        'chatbox_data':chatbox_data,
     })
     return render(request, 'teacherpanel/show_chatbox.html',context)
 
@@ -2324,10 +2323,17 @@ def teacher_chatbox(request):
 def insert_chatbox_teacher(request):
     domain_name = request.get_host()
     teacher_id = request.session['fac_id']
+    teacher_name = request.session['fac_name']
     teacher_object = Faculties.objects.get(fac_id = teacher_id)
     receiver = request.POST.get('chatbox_receiver')
-    chat = request.POST.get('chatbox_chat')
+    chat = request.POST.get('chatbox_chat')  
     Chatbox.objects.create(chatbox_sender = teacher_object.fac_email,chatbox_receiver=receiver,chatbox_chat=chat,domain_name = domain_name)
+    parent_obj = Students.objects.get(stud_guardian_email = receiver)
+    if parent_obj.guardian_onesignal_player_id:
+        title = f"{teacher_name}"
+        msg = chat
+        playerid = parent_obj.guardian_onesignal_player_id
+        send_notification(playerid, title, msg, request)    
     return redirect('/teacherside/teacher_chatbox?selected_person={}'.format(receiver))
 
 
