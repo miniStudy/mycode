@@ -1158,8 +1158,10 @@ def delete_faculty_access(request):
 @admin_login_required
 def insert_update_faculties(request):
     domain = request.get_host()
+    group_data = Groups.objects.filter(domain_name = domain)
     context = {
         'title': 'Faculties',
+        'group_data':group_data,
     }
     # Update Logic
     if request.GET.get('pk'):
@@ -1195,7 +1197,16 @@ def insert_update_faculties(request):
                     form.instance.domain_name = domain
                     form.instance.fac_email = request.POST.get('fac_email')
                     instance = form.save()
-
+                    # ------------------give access to Faculties====================
+                    selected_groups = request.POST.getlist('material_group[]')
+                    for x in selected_groups:
+                        group_obj = Groups.objects.get(group_id = int(x))
+                        Materials_access.objects.update_or_create(
+                            materialaccess_email=request.POST.get('fac_email').lower(),
+                            materialaccess_group=group_obj,
+                            defaults={'domain_name': domain}
+                        )
+                    # ======================================================
                     fac_password = instance.fac_password
                     fac_name = form.cleaned_data['fac_name']
                     fac_email = [form.cleaned_data['fac_email']]
@@ -2514,7 +2525,6 @@ def delete_admin_batches(request):
                 messages.error(request, f'An error occurred: {str(e)}')
 
     return redirect('admin_batches')
-
 
 @admin_login_required
 def show_admin_profile(request):

@@ -132,7 +132,6 @@ urlpatterns = [
     path('admin_delete_material/', adminview.admin_delete_material_function, name='admin_delete_material'),
     path('admin_show_pdf/',adminview.admin_show_pdf, name="admin_show_pdf"),
 
-
     # =========================================Admin Profile =========================================
     path('admin_profile/', adminview.show_admin_profile, name="admin_profile"),
 

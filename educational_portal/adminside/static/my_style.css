@@ -47,7 +47,10 @@
 .material_card:hover img{transform: scale(1.2);}
 .myborder{border:1px solid #88a9e6;}
 
-
 .shortcutIcons{width: 40px;}
 .materialgroup{width: 170px;}
 .Materialsfolders{width: 100%;}
+
+@media (max-width: 575.98px) {
+    .materialgroup{width: 46%;}
+}

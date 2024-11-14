@@ -11,44 +11,66 @@
 
 <!-- --------------------------------------------------------------------------------------- -->
 <div class="row">
-  <div class="col-sm-12 col-lg-4 mb-4">
-    <div class="card card-border-shadow-info h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
-          <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-info"><i class="fa-solid fa-sack-dollar fs-4"></i></span>
+  
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-4 mb-4">
+    <a href="">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1 p-2 py-3 p-md-4" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-1 gap-md-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-info rounded-circle"><i class="fa-solid fa-sack-dollar fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_fees_amount_after_discount}}</h5>
+                <small class="dashboardmutedtext text-muted ms-1">Total Fees</small>
+              </div>
+            </div>
+      
           </div>
-          <h4 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_fees_amount_after_discount}}</h4>
         </div>
-        <p class="mb-1">Total Fees</p>
       </div>
-    </div>
+    </a>
   </div>
-  <div class="col-sm-12 col-lg-4 mb-4">
-    <div class="card card-border-shadow-success h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
-          <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-success"><i class="fa-solid fa-circle-dollar-to-slot fs-4"></i></span>
+
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-4 mb-4">
+    <a href="">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1 p-2 py-3 p-md-4" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-1 gap-md-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-warning rounded-circle"><i class="fa-solid fa-circle-dollar-to-slot fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_amount_fees_paid}}</h5>
+                <small class="dashboardmutedtext text-muted ms-1">Paid Fees</small>
+              </div>
+            </div>
           </div>
-          <h4 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_amount_fees_paid}}</h4>
         </div>
-        <p class="mb-1">Paid Fees</p>
       </div>
-    </div>
+    </a>
   </div>
-  <div class="col-sm-12 col-lg-4 mb-4">
-    <div class="card card-border-shadow-warning h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
-          <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-warning"><i class="fa-solid fa-money-check-dollar fs-4"></i></span>
+
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-4 mb-4">
+    <a href="">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1 p-2 py-3 p-md-4" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-1 gap-md-3">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-danger rounded-circle"><i class="fa-solid fa-money-check-dollar fs-4"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_pending_fees}}</h5>
+                <small class="dashboardmutedtext text-muted ms-1">Pending Fees</small>
+              </div>
+            </div>
           </div>
-          <h4 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_pending_fees}}</h4>
         </div>
-        <p class="mb-1">Pending Fees</p>
       </div>
-    </div>
+    </a>
   </div>
 </div>
  <!-- =============================================================================================== -->
@@ -134,32 +156,44 @@
 
 
 <div class="row">
-  <div class="col-sm-12 col-lg-4 mb-4">
-    <div class="card card-border-shadow-danger h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
-          <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-danger"><i class="fa-solid fa-circle-dollar-to-slot"></i></span>
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-4 mb-4">
+    <a href="">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1 p-2 py-3 p-md-4" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-1 gap-md-1">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-success rounded-circle"><i class="fa-solid fa-circle-dollar-to-slot"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_cheque_amount_paid}}</h5>
+                <small class="dashboardmutedtext text-muted ms-1">Cheque Collections</small>
+              </div>
+            </div>
           </div>
-          <h4 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{total_cheque_amount_paid}}</h4>
         </div>
-        <p class="mb-1">Total Cheque Collections</p>
       </div>
-    </div>
+    </a>
   </div>
   
-  <div class="col-sm-12 col-lg-4 mb-4">
-    <div class="card card-border-shadow-info h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-2 pb-1">
-          <div class="avatar me-2">
-            <span class="avatar-initial rounded bg-label-info"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-4 mb-4">
+    <a href="">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1 p-2 py-3 p-md-4" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-1 gap-md-1">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-warning rounded-circle"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+              </div>
+              <div class="card-info">
+                <h5 class="card-title ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{final_pending_fees_after_cheque_amount}}</h5>
+                <small class="dashboardmutedtext text-muted ms-1">Final Pending Fees</small>
+              </div>
+            </div>
           </div>
-          <h4 class="ms-1 mb-0"><i class="fa-solid fa-indian-rupee-sign"></i> {{final_pending_fees_after_cheque_amount}}</h4>
         </div>
-        <p class="mb-1">Final Pending Fees</p>
       </div>
-    </div>
+    </a>
   </div>
 </div>
 

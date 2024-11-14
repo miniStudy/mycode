@@ -16,8 +16,8 @@
                     <span class="avatar-initial bg-label-danger rounded-circle"><i class="fa-brands fa-battle-net fs-4"></i></span>
                   </div>
                   <div class="card-info">
-                    <h5 class="card-title mb-0 me-2">{{overall_attendance}}%</h5>
-                    <small class="text-muted">Overall Attendance</small>
+                    <h5 class="mb-0 me-2">{{overall_attendance}}%</h5>
+                    <small class="text-muted">Attendance</small>
                   </div>
                 </div>
                 <div id="conversationChart"></div>
@@ -58,7 +58,7 @@
 <!-- DataTable with Buttons -->
 
 <div class="card">
-    <div class="card-body">
+    <div class="card-body p-2 p-4">
         <div class="d-flex justify-content-between align-items-center">
                 <div class="myheadfont">{{title}} Data</div>     
         </div>
@@ -100,7 +100,7 @@
           
 
           <form method="get" action="{% url 'admin_attendance' %}">
-            <div class="input-group mt-2 ms-2">
+            <div class="input-group mt-2 ms-1 ms-md-2">
               <input type="text" id="" name="searchhh" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
               <input type="hidden" name="get_std" value="{{get_std.std_id}}" />
               <input type="hidden" name="get_batch" value="{{get_batch.batch_id}}" />
@@ -144,7 +144,7 @@
 </div>  {% endcomment %}
 
 
-<br><br>
+
   <button class="btn btn-outline-primary btn-sm dropdown-toggle mb-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if selected_month %}{{selected_month}}{% else %}Select Month{% endif %}</button>
   <ul class="dropdown-menu">
     <li><a class="dropdown-item" href="{% url 'admin_attendance' %}?month=1&month_name=January">January</a></li>
@@ -162,7 +162,7 @@
   </ul>
 
 
-<div class="card-datatable table-responsive pt-0">
+<div class="card-datatable table-responsive p-0 pt-0">
   <table id="data-table" class="display table table-bordered" style="width:100%">
       <thead>
           <tr>
@@ -171,7 +171,7 @@
               <th>Total <i class="fa-solid fa-square-check text-success"></i></th>
               <th>Total <i class="fa-solid fa-square-xmark text-danger"></i></th>
               {% for dayy in days %}
-              <th>{{dayy}}</th>
+              <th style="max-width: 25px !important;width: 25px !important;">{{dayy}}</th>
               {% endfor %}
           
           </tr>
@@ -185,7 +185,7 @@
               <td>{{student.Absent_counter}}</td>
 
               {% for dayy in days %}
-                    <td>
+                    <td style="max-width: 25px !important;width: 25px !important;">
                     {% for day, records in student.Attendance.items %}
                     {% if dayy == day %}
                         {% if records %}
