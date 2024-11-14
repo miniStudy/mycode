@@ -2460,15 +2460,16 @@ def show_notification_teacher_function(request):
 
 
 @teacher_login_required
-def show_group_function(request):
+def teacher_show_group_function(request):
     domain = request.get_host()
     group_data = Groups.objects.filter(domain_name = domain)
-    context = {'group_data': group_data, 'title': 'Groups'}
+    context = {'group_data': group_data, 'title': 'Materials'}
     return render(request, "teacherpanel/show_groupps.html", context)
 
 
 @teacher_login_required
-def add_group_function(request):
+def teacher_add_group_function(request):
+    context = {'title': Materials}
     domain = request.get_host()
     if request.method == 'POST':
         form = group_form(request.POST)
@@ -2477,11 +2478,11 @@ def add_group_function(request):
             messages.success(request, "Group added successfully")
             form.save()
             return redirect('show_group')
-    return render(request, "teacherpanel/add_group.html")
+    return render(request, "teacherpanel/add_group.html", context)
 
 
 @teacher_login_required
-def delete_group_function(request):
+def teacher_delete_group_function(request):
     if request.GET.get('pk'):
         pk = request.GET.get('pk')
         group_data = Groups.objects.get(group_id = pk)
@@ -2492,7 +2493,7 @@ def delete_group_function(request):
 
 
 teacher_login_required
-def show_material_function(request):
+def teacher_show_material_function(request):
     context = {}
     domain = request.get_host()
     group_id = request.GET.get('group_id')
@@ -2502,11 +2503,11 @@ def show_material_function(request):
 
 
 @teacher_login_required
-def add_material_function(request):
+def teacher_add_material_function(request):
     domain = request.get_host()
     group_id = request.GET.get('group_id')
     group_data = Groups.objects.filter(domain_name = domain, group_id = group_id)
-    context = {'group_data': group_data}
+    context = {'group_data': group_data, 'title': Materials}
     if request.method == 'POST':
             group_id = request.POST.get('material_group_id')
             group_obj = Groups.objects.get(group_id = group_id)
@@ -2540,7 +2541,7 @@ def add_material_function(request):
     return render(request, 'teacherpanel/add_material.html', context)
 
 @teacher_login_required
-def delete_material_function(request):
+def teacher_delete_material_function(request):
     if request.GET.get('pk'):
         pk = request.GET.get('pk')
         material_data = Materials.objects.get(material_id = pk)
@@ -2549,3 +2550,13 @@ def delete_material_function(request):
         return redirect('show_material')
     
     return render(request, "teacherpanel/show_material.html")
+
+@teacher_login_required
+def teacher_show_pdf(request):
+    context={}
+    if request.GET.get('pdf'):
+        pdf = Materials.objects.get(material_id = request.GET.get('pdf'))
+        context.update({
+            'pdf':pdf,
+        })
+    return render(request,'teacherpanel/show_pdf.html', context)  

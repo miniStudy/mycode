@@ -2516,31 +2516,6 @@ def delete_admin_batches(request):
     return redirect('admin_batches')
 
 
-
-@admin_login_required
-def show_admin_materials(request):
-    domain = request.get_host()
-    standard_data = Std.objects.filter(domain_name = domain)
-    subjects_data = Subject.objects.filter(domain_name = domain)
-    materials = Chepterwise_material.objects.filter(domain_name = domain).values('cm_id','cm_filename','cm_chepter__chep_sub__sub_id','cm_file','cm_file_icon','cm_chepter__chep_sub__sub_std__std_id')
-    selected_sub=None
-
-    context = {'standard_data':standard_data, 'subjects_data':subjects_data, 'materials':materials, 'title' : 'Materials',}
-    if request.GET.get('std_id'):
-        std_id = int(request.GET.get('std_id'))
-        subjects_data = Subject.objects.filter(sub_std__std_id = std_id, domain_name = domain)
-        materials = [material for material in materials if material['cm_chepter__chep_sub__sub_std__std_id'] == std_id]
-        selected_std = Std.objects.get(std_id=std_id)
-        context.update({'materials': materials,'subjects_data': subjects_data, 'std':std_id,'selected_std':selected_std})
-
-    if request.GET.get('sub_id'):
-        sub_id = request.GET.get('sub_id')
-        materials = Chepterwise_material.objects.filter(cm_chepter__chep_sub__sub_id = sub_id, domain_name = domain)
-        selected_sub = Subject.objects.get(sub_id=sub_id)
-        context.update({'materials': materials, 'selected_sub':selected_sub})
-    return render(request, 'show_materials.html', context)
-
-
 @admin_login_required
 def show_admin_profile(request):
     domain = request.get_host()
@@ -3750,7 +3725,7 @@ def delete_expense_functions(request):
 
 
 @admin_login_required
-def show_group_function(request):
+def admin_show_group_function(request):
     domain = request.get_host()
     group_data = Groups.objects.filter(domain_name = domain)
     context = {'group_data': group_data, 'title': 'Groups'}
@@ -3758,7 +3733,7 @@ def show_group_function(request):
 
 
 @admin_login_required
-def add_group_function(request):
+def admin_add_group_function(request):
     domain = request.get_host()
     if request.method == 'POST':
         form = group_form(request.POST)
@@ -3772,7 +3747,7 @@ def add_group_function(request):
 
 
 @admin_login_required
-def delete_group_function(request):
+def admin_delete_group_function(request):
     if request.GET.get('pk'):
         pk = request.GET.get('pk')
         group_data = Groups.objects.get(group_id = pk)
@@ -3783,7 +3758,7 @@ def delete_group_function(request):
 
 
 @admin_login_required
-def show_material_function(request):
+def admin_show_material_function(request):
     context = {}
     domain = request.get_host()
     group_id = request.GET.get('group_id')
@@ -3812,7 +3787,7 @@ def generate_pdf_icon(pdf_file):
 
 
 @admin_login_required
-def add_material_function(request):
+def admin_add_material_function(request):
     domain = request.get_host()
     group_id = request.GET.get('group_id')
     group_data = Groups.objects.filter(domain_name = domain, group_id = group_id)
@@ -3851,7 +3826,7 @@ def add_material_function(request):
 
 
 @admin_login_required
-def delete_material_function(request):
+def admin_delete_material_function(request):
     if request.GET.get('pk'):
         pk = request.GET.get('pk')
         material_data = Materials.objects.get(material_id = pk)

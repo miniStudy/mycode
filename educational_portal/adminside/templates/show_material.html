@@ -7,7 +7,7 @@
 
     <div class="d-flex justify-content-between align-items-center">
         <div class="d-inline-block" id="exportbtns"></div>
-      <a href="{% url 'add_material' %}?group_id={{group_id}}">
+      <a href="{% url 'admin_add_material' %}?group_id={{group_id}}">
           <button class="btn btn-primary">
               <i class="fa-solid fa-plus me-2"></i> ADD
           </button>
@@ -18,7 +18,7 @@
 {% for material in materials_data %}
 <div class="card p-3 materialgroup">
     <a href="{% url 'admin_show_pdf' %}?pdf={{material.material_id}}"><img src="/media/{{material.material_icon}}" class="Materialsfolders" /></a>
-    <span class="mt-2">{{material.material_name}}<a href="{% url 'delete_material' %}?pk={{material.material_id}}"><img src="/static/imgs/shortcuts/delete.png" class="ms-3" style="width: 20px;" /></a></span>
+    <span class="mt-2">{{material.material_name}}<a href="{% url 'admin_delete_material' %}?pk={{material.material_id}}"><img src="/static/imgs/shortcuts/delete.png" class="ms-3" style="width: 20px;" /></a></span>
 </div>
 {% endfor %}
 </div>

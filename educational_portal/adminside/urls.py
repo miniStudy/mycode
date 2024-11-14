@@ -121,8 +121,17 @@ urlpatterns = [
     path('insert_update_batches/', adminview.insert_update_batches, name="insert_update_batches"),
     path('delete_batches/', adminview.delete_admin_batches, name="delete_batches"),
 
+
     # =========================================Materials =============================================
-    path('admin_materials/', adminview.show_admin_materials, name="admin_materials"),
+    path('admin_show_group/', adminview.admin_show_group_function, name='admin_show_group'),
+    path('admin_add_group/', adminview.admin_add_group_function, name='admin_add_group'),
+    path('admin_delete_group/', adminview.admin_delete_group_function, name='admin_delete_group'),
+
+    path('admin_show_material/', adminview.admin_show_material_function, name='admin_show_material'),
+    path('admin_add_material/', adminview.admin_add_material_function, name='admin_add_material'),
+    path('admin_delete_material/', adminview.admin_delete_material_function, name='admin_delete_material'),
+    path('admin_show_pdf/',adminview.admin_show_pdf, name="admin_show_pdf"),
+
 
     # =========================================Admin Profile =========================================
     path('admin_profile/', adminview.show_admin_profile, name="admin_profile"),
@@ -172,12 +181,5 @@ urlpatterns = [
     path('add_expense/', adminview.add_expense_function, name='add_expense'),
     path('delete_expense/', adminview.delete_expense_functions, name='delete_expense'),
 
-    path('show_group/', adminview.show_group_function, name='show_group'),
-    path('add_group/', adminview.add_group_function, name='add_group'),
-    path('delete_group/', adminview.delete_group_function, name='delete_group'),
-
-    path('show_material/', adminview.show_material_function, name='show_material'),
-    path('add_material/', adminview.add_material_function, name='add_material'),
-    path('delete_material/', adminview.delete_material_function, name='delete_material'),
-    path('admin_show_pdf/',adminview.admin_show_pdf, name="admin_show_pdf")
+    
 ]

@@ -102,11 +102,12 @@ urlpatterns = [
     path('show_notification_teacher/',teacherview.show_notification_teacher_function, name='show_notification_teacher'),
 
 
-    path('show_group/', teacherview.show_group_function, name='show_group'),
-    path('add_group/', teacherview.add_group_function, name='add_group'),
-    path('delete_group/', teacherview.delete_group_function, name='delete_group'),
+    path('teacher_show_group/', teacherview.teacher_show_group_function, name='teacher_show_group'),
+    path('teacher_add_group/', teacherview.teacher_add_group_function, name='teacher_add_group'),
+    path('teacher_delete_group/', teacherview.teacher_delete_group_function, name='teacher_delete_group'),
 
-    path('show_material/', teacherview.show_material_function, name='show_material'),
-    path('add_material/', teacherview.add_material_function, name='add_material'),
-    path('delete_material/', teacherview.delete_material_function, name='delete_material'),
+    path('teacher_show_material/', teacherview.teacher_show_material_function, name='teacher_show_material'),
+    path('teacher_add_material/', teacherview.teacher_add_material_function, name='teacher_add_material'),
+    path('teacher_delete_material/', teacherview.teacher_delete_material_function, name='teacher_delete_material'),
+    path('teacher_show_pdf/', teacherview.teacher_show_pdf, name='teacher_show_pdf'),
 ]

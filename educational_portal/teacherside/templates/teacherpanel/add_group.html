@@ -26,7 +26,7 @@
     </div>
     <div class="card-body">
          
-        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_group' %}">
+        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'teacher_add_group' %}">
             {% csrf_token %}
             <!-- Expense Name -->
             <div class="col-sm-12">

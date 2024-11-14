@@ -1,0 +1,20 @@
+{% extends 'studentpanel/master.html' %}
+
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Materials</h4>
+</div>
+
+{% include 'message_show.html' %}
+<!-- DataTable with Buttons -->
+
+<div class="d-flex flex-wrap justify-content-start gap-3 gap-md-4 mt-2">
+  {% for group in groups_data %}
+  <div class="card p-3 materialgroup">
+    <a href="{% url 'show_student_material' %}?group_id={{group.materialaccess_group.group_id}}"><img src="/static/imgs/folder (1).png" class="Materialsfolders" /></a>
+    <span class="mt-2">{{group.materialaccess_group.group_name}}></span>
+</div>
+  {% endfor %}
+</div>
+{% endblock %}

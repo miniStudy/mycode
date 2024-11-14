@@ -1,0 +1,18 @@
+{% extends 'studentpanel/master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Materials</h4></div> 
+
+{% include 'message_show.html' %}
+
+
+<div class="d-flex flex-wrap justify-content-start gap-3 gap-md-4 mt-2">
+{% for material in materials_data %}
+<div class="card p-3 materialgroup">
+    <a href="{% url 'student_show_pdf' %}?pdf={{material.material_id}}"><img src="/media/{{material.material_icon}}"          class="Materialsfolders" /></a>
+    <span class="mt-2">{{material.material_name}}></span>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

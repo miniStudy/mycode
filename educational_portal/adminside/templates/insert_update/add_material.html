@@ -25,7 +25,7 @@
         <h5 class="offcanvas-title" id="exampleModalLabel">Add Record</h5>
     </div>
     <div class="card-body">
-        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_material' %}" enctype="multipart/form-data">
+        <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'admin_add_material' %}" enctype="multipart/form-data">
             {% csrf_token %}
 
             <div class="col-sm-12">

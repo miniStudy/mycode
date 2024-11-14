@@ -323,22 +323,25 @@ def show_chepters(request):
 
 
 @student_login_required
-def show_materials(request):
+def show_groups(request):
     domain = request.get_host()
     title = 'Materials'
-    student_std = request.session['stud_std']
     student_id = request.session['stud_id']
     student = Students.objects.get(stud_id=student_id)
-    subjects = student.stud_pack.pack_subjects.filter(domain_name = domain)
-              
-    materials = Chepterwise_material.objects.filter(cm_chepter__chep_std__std_id = student_std, domain_name = domain).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name','cm_chepter__chep_sub__sub_id','cm_file_icon')
-    selected_sub=None
-    if request.GET.get('sub_id'):
-        id = request.GET['sub_id']
-        materials = materials.filter(cm_chepter__chep_sub__sub_id = id, domain_name = domain).values('cm_filename', 'cm_chepter__chep_sub__sub_id', 'cm_file', 'cm_chepter__chep_sub__sub_name','cm_chepter__chep_sub__sub_id','cm_file_icon')
-        selected_sub = Subject.objects.get(sub_id=id)
+    groups_data = Materials_access.objects.filter(materialaccess_email = student.stud_email, domain_name = domain)   
+    context = {'groups_data': groups_data, 'title': title}
+    return render(request, 'studentpanel/show_groups.html', context)
 
-    return render(request, 'studentpanel/materials.html',{'materials':materials, 'subjects':subjects,'selected_sub':selected_sub, 'title':title})
+
+@student_login_required
+def show_student_material(request):
+    context = {}
+    domain = request.get_host()
+    group_id = request.GET.get('group_id')
+    materials_data = Materials.objects.filter(domain_name = domain, material_group_id__group_id = group_id)
+    context.update({'materials_data': materials_data, 'title': 'Materials', 'group_id': group_id})
+    return render(request, "studentpanel/show_material.html", context)
+
 
 @student_login_required
 def show_timetables(request):
@@ -1010,8 +1013,20 @@ def insert_suggestions_function(request):
     return render(request, 'studentpanel/insert_suggestions.html', context)
 
 
+@student_login_required
 def show_notification_student_function(request):
     domain = request.get_host()
     notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'admin').order_by('-pk')
     context = {'notification_data': notification_data, 'title': 'Notification'}
     return render(request, 'studentpanel/show_notification.html', context)
+
+
+@student_login_required
+def student_show_pdf(request):
+    context={}
+    if request.GET.get('pdf'):
+        pdf = Materials.objects.get(material_id = request.GET.get('pdf'))
+        context.update({
+            'pdf':pdf,
+        })
+    return render(request,'studentpanel/show_pdf.html', context)
