@@ -13,6 +13,8 @@ from django.http import Http404,JsonResponse
 from django.contrib.auth.hashers import check_password
 
 from team_ministudy.forms import suggestions_improvements_Form
+from django.contrib.auth.hashers import make_password
+
 
 from .forms import *
 from django.db.models import OuterRef, Subquery, BooleanField,Q
@@ -245,8 +247,9 @@ def student_handle_set_new_password(request):
         if password == conf_password:
              obj = Students.objects.filter(stud_otp = otp, domain_name = domain).count()
              if obj == 1:
+                  hashed_password = make_password(password)
                   data = Students.objects.get(stud_otp = otp)
-                  data.stud_pass = password
+                  data.stud_pass = hashed_password
                   data.stud_otp = otp
                   data.save()
                   response = redirect("Student_Login")
@@ -685,24 +688,24 @@ def Student_add_doubts(request):
 
             student_std_id = request.session['stud_std']
             student_batch_id = request.session['stud_batch']
-            student_list = Students.objects.filter(stud_std__std_id=student_std_id, stud_batch__batch_id=student_batch_id)
+            playerids = Students.objects.filter(stud_std__std_id=student_std_id, stud_batch__batch_id=student_batch_id).values('stud_onesignal_player_id', 'stud_telegram_studentchat_id')
 
-            playerids = [player.stud_onesignal_player_id for player in student_list]
-
-            student_chat_ids = [chat.stud_telegram_studentchat_id for chat in student_list]
+            student_chat_ids = [chat['stud_telegram_studentchat_id'] for chat in playerids]
             date = datetime.today()
             s_name = request.session['stud_name']
             title = f'{s_name}: Needs Help with a Doubt!'
-            message = f'{s_name}: Hey, batch mates! I’ve got some new doubts that need solving. Can anyone lend a hand❓I will appreciate your assist! 🙌'
+            message = 'Hey, batch mates! I’ve got some new doubts that need solving. Can anyone lend a hand? I will appreciate your assist!'
             notification = Notification(
             notify_title=title,
             notify_notification=message,
             notify_user = 'student',
             domain_name=domain)
             notification.save()
-            send_notification(playerids, title, message, request)
+            for playerid in playerids:
+                if playerid['stud_onesignal_player_id']:
+                    send_notification(playerid['stud_onesignal_player_id'], title, message, request)
 
-            fac_email = fac_object.fac_email
+            playerid = fac_object.fac_onesignal_player_id
             s_name = request.session['stud_name']
             fac_title = f"{s_name}: Needs Help with a Doubt!"
             fac_message = "A new doubt has been added! Please check it out."
@@ -712,7 +715,7 @@ def Student_add_doubts(request):
             notify_user = 'teacher',
             domain_name=domain)
             notification.save()
-            send_notification(fac_email, fac_title, fac_message, request)
+            send_notification(playerid, fac_title, fac_message, request)
 
 
             doubt_telegram_message_student(doubt_subject, date, student_chat_ids)
@@ -1024,7 +1027,7 @@ def insert_suggestions_function(request):
 @student_login_required
 def show_notification_student_function(request):
     domain = request.get_host()
-    notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'admin').order_by('-pk')
+    notification_data = Notification.objects.filter(domain_name = domain, notify_user = 'student').order_by('-pk')
     context = {'notification_data': notification_data, 'title': 'Notification'}
     return render(request, 'studentpanel/show_notification.html', context)
 

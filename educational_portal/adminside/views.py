@@ -201,10 +201,10 @@ def insert_update_admin_page(request):
     if request.method == 'POST':
         form = admin_form(request.POST)
         if form.is_valid():
+            original_password = '123456'
             hashed_password = make_password('123456')
             form.instance.admin_pass = hashed_password
             form.instance.domain_name = domain
-            admin_password = form.instance.admin_pass
             admin_name = form.cleaned_data['admin_name']
             admin_email = form.cleaned_data['admin_email']
             form.save()
@@ -233,7 +233,8 @@ def insert_update_admin_page(request):
             context_data.update({
             'title': "Admin Register",
             'name': admin_name,
-            'password': admin_password
+            'email': admin_email,
+            'password': original_password
             })
             htmly = Template(htmly)
             html_content = htmly.render(Context(context_data))
@@ -276,8 +277,7 @@ def admin_login_handle(request):
         if val==1:
             Data = AdminData.objects.filter(admin_email=email, domain_name = domain)
             admin_id = AdminData.objects.get(admin_id = Data[0] .admin_id)
-            # if check_password(password, admin_id.admin_pass):
-            if 1:
+            if check_password(password, admin_id.admin_pass):
                 for item in Data:
                     request.session['admin_id'] = item.admin_id
                     request.session['admin_name'] = item.admin_name
@@ -352,7 +352,8 @@ def admin_handle_set_new_password(request):
              obj = AdminData.objects.filter(admin_otp = otp, domain_name = domain).count()
              if obj == 1:
                   data = AdminData.objects.get(admin_otp = otp)
-                  data.admin_pass = password
+                  hashed_password = make_password(password)
+                  data.admin_pass = hashed_password
                   data.admin_otp = None
                   data.save()
                   response = redirect("Admin Login")
