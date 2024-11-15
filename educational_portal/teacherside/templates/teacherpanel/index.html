@@ -5,89 +5,93 @@
 
   <a href="{% url 'teacher_chatbox' %}">chatbox</a>
   <div class="row">
-    <div class="col-md-3 mb-4">
-      <div class="card">
-        <a href="{% url 'teacher_timetable' %}">
-          <div class="card-body">
+
+    <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+      <a href="{% url 'teacher_timetable' %}">
+        <div class="card card-border-shadow-info">
+          <div class="card-body dashboardcardaddon1" >
             <div class="d-flex justify-content-between">
-              <div class="d-flex align-items-center gap-3">
+              <div class="d-flex align-items-center gap-2 gap-md-3">
                 <div class="avatar">
                   <span class="avatar-initial bg-label-warning rounded-circle"><i class="tf-icons fa-solid fa-clock fs-4"></i></span>
                 </div>
                 <div class="card-info">
                   <h5 class="card-title mb-0 me-2">Timetable</h5>
-                  <small class="text-muted">View</small>
+                  <small class="dashboardmutedtext text-muted">View</small>
                 </div>
               </div>
-              <div id="incomeChart"></div>
+        
             </div>
           </div>
-        </a>
-      </div>
+        </div>
+      </a>
     </div>
 
-    <div class="col-md-3 mb-4">
-      <div class="card">
-        <a href="{% url 'teacher_show_group' %}">
-          <div class="card-body">
+
+    <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+      <a href="{% url 'teacher_show_group' %}">
+        <div class="card card-border-shadow-info">
+          <div class="card-body dashboardcardaddon1" >
             <div class="d-flex justify-content-between">
-              <div class="d-flex align-items-center gap-3">
+              <div class="d-flex align-items-center gap-2 gap-md-3">
                 <div class="avatar">
                   <span class="avatar-initial bg-label-info rounded-circle"><i class="fa-solid fa-book-open fs-4"></i></span>
                 </div>
                 <div class="card-info">
                   <h5 class="card-title mb-0 me-2">Materials</h5>
-                  <small class="text-muted">View</small>
+                  <small class="dashboardmutedtext text-muted">View</small>
                 </div>
               </div>
-              <div id="conversationChart"></div>
+        
             </div>
           </div>
-        </a>
-      </div>
+        </div>
+      </a>
     </div>
-  
-    <div class="col-md-3 mb-4">
-      <div class="card">
-        <a href="{% url 'teacher_syllabus' %}">
-          <div class="card-body">
+
+    <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+      <a href="{% url 'teacher_syllabus' %}">
+        <div class="card card-border-shadow-info">
+          <div class="card-body dashboardcardaddon1" >
             <div class="d-flex justify-content-between">
-              <div class="d-flex align-items-center gap-3">
+              <div class="d-flex align-items-center gap-2 gap-md-3">
                 <div class="avatar">
                   <span class="avatar-initial bg-label-primary rounded-circle"><i class="tf-icons fa-solid fa-clipboard-list fs-4"></i></span>
                 </div>
                 <div class="card-info">
                   <h5 class="card-title mb-0 me-2">Syllabus</h5>
-                  <small class="text-muted">View</small>
+                  <small class="dashboardmutedtext text-muted">View</small>
                 </div>
               </div>
-              <div id="conversationChart"></div>
+        
             </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  
-    <div class="col-md-3 mb-4">
-      <div class="card">
-        <a href="{% url 'teacher_attendance' %}">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <div class="d-flex align-items-center gap-3">
-              <div class="avatar">
-                <span class="avatar-initial bg-label-danger rounded-circle"><i class="fa-brands fa-battle-net fs-4"></i></span>
-              </div>
-              <div class="card-info">
-                <h5 class="card-title mb-0 me-2">Attendance</h5>
-                <small class="text-muted">View</small>
-              </div>
-            </div>
-            <div id="incomeChart"></div>
           </div>
         </div>
-        </a>
-      </div>
+      </a>
     </div>
+
+
+    <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+      <a href="{% url 'teacher_attendance' %}">
+        <div class="card card-border-shadow-info">
+          <div class="card-body dashboardcardaddon1" >
+            <div class="d-flex justify-content-between">
+              <div class="d-flex align-items-center gap-2 gap-md-3">
+                <div class="avatar">
+                  <span class="avatar-initial bg-label-danger rounded-circle"><i class="fa-brands fa-battle-net fs-4"></i></span>
+                </div>
+                <div class="card-info">
+                  <h5 class="card-title mb-0 me-2">Attendance</h5>
+                  <small class="dashboardmutedtext text-muted">View</small>
+                </div>
+              </div>
+        
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
   </div>
 
    <div class="row">
@@ -220,7 +224,7 @@
       </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6 mt-4 mt-md-0">
       <div class="card h-100">
         <div class="card-header">
           <h5 class="card-title mb-2">Students Ratio</h5>

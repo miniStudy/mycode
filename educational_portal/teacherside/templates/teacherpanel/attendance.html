@@ -8,50 +8,50 @@
 <!-- DataTable with Buttons -->
 
 {% if overall_attendance %}
+
 <div class="row">
-    <div class="col-md-12 mb-4">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                  <div class="avatar">
-                    <span class="avatar-initial bg-label-danger rounded-circle"><i class="fa-brands fa-battle-net fs-4"></i></span>
-                  </div>
-                  <div class="card-info">
-                    <h5 class="card-title mb-0 me-2">{{overall_attendance}}%</h5>
-                    <small class="text-muted">Overall Attendance</small>
-                  </div>
+  <div class="col-md-12 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar">
+                  <span class="avatar-initial bg-label-danger rounded-circle"><i class="fa-brands fa-battle-net fs-4"></i></span>
                 </div>
-                <div id="conversationChart"></div>
+                <div class="card-info">
+                  <h5 class="mb-0 me-2">{{overall_attendance}}%</h5>
+                  <small class="text-muted">Attendance</small>
+                </div>
               </div>
+              <div id="conversationChart"></div>
             </div>
           </div>
         </div>
-        </div>
+      </div>
+      </div>     
 {% endif %} 
 
 
 <div class="row">
   {% for x, y in combined_data %}
-  <div class="col-md-3 mb-4">
-      <div class="card">
-          <div class="card-body">
-              <div class="d-flex justify-content-between">
-                  <div class="d-flex align-items-center gap-3">
-                      <div class="avatar">
-                          <span class="avatar-initial bg-label-success rounded-circle">
-                            <i class="fa-solid fa-book fs-4"></i>
-                          </span>
-                      </div>
-                      <div class="card-info">
-                          <h5 class="card-title mb-0 me-2">{{ x }}%</h5>
-                          <small class="text-muted">{{ y }}</small>
-                      </div>
-                  </div>
-                  <div id="conversationChart"></div>
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+    <a href="">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1 p-2 py-3 p-md-4" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-1 gap-md-1">
+              <div class="avatar">
+                <span class="avatar-initial bg-label-success rounded-circle"><i class="fa-solid fa-book fs-4"></i></span>
               </div>
+              <div class="card-info">
+                <h5 class="card-title ms-1 mb-0">{{ x }}%</h5>
+                <small class="dashboardmutedtext text-muted ms-1">{{ y }}</small>
+              </div>
+            </div>
           </div>
+        </div>
       </div>
+    </a>
   </div>
 {% endfor %}
 </div>
@@ -92,24 +92,22 @@
               {% endfor %}
             </ul>
             <a href="{% url 'teacher_export_data' %}?get_std={{ get_std.std_id }}&get_sub={{ get_batch.batch_id }}&model_name=attendance"><button  type="button" class="btn btn-outline-primary ms-2 mt-2"><i class="fa-solid fa-file-export"></i></button></a>
-
-            <form method="get" action="{% url 'teacher_attendance' %} ">
-              <div class="input-group mt-2 ms-2" >
-                <input 
-                  type="date" 
-                  name="atten_date" 
-                  class="form-control btn-outline-primary"
-                  {% if atten_date %} value="{{ atten_date }}" {% endif %} 
-                  style="padding: 2px 10px; width: 150px !important;" aria-label="Input group example"
-                  aria-describedby="btnGroupAddon"
-                />
-                <button id="searchButton" class="input-group-text btn-outline-primary" id="btnGroupAddon" type="submit"><i class="fa-regular fa-calendar-check"></i></button>
-              </div>
-            </form>
-
           </div>
+          <form method="get" action="{% url 'teacher_attendance' %} ">
+            <div class="input-group mt-2 ms-0 ms-md-2" >
+              <input 
+                type="date" 
+                name="atten_date" 
+                class="form-control btn-outline-primary"
+                {% if atten_date %} value="{{ atten_date }}" {% endif %} 
+                style="padding: 2px 10px; width: 150px !important;" aria-label="Input group example"
+                aria-describedby="btnGroupAddon"
+              />
+              <button id="searchButton" class="input-group-text btn-outline-primary" id="btnGroupAddon" type="submit"><i class="fa-regular fa-calendar-check"></i></button>
+            </div>
+          </form>
           <form method="get" action="{% url 'teacher_attendance' %}">
-            <div class="input-group mt-2">
+            <div class="input-group mt-2 ms-0 ms-md-2">
               <input type="text" id="" name="searchhh" class="form-control" style="padding: 2px;width: 100px !important;" placeholder="Search..." aria-label="Input group example" aria-describedby="btnGroupAddon">
               <input type="hidden" name="get_std" value="{{get_std.std_id}}" />
               <input type="hidden" name="get_batch" value="{{get_batch.batch_id}}" />
