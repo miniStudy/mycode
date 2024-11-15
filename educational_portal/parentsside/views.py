@@ -14,6 +14,8 @@ from team_ministudy.models import suggestions_improvements
 from parentsside.decorators import *
 from django.contrib.auth.hashers import check_password
 from studentside.forms import *
+from django.contrib.auth.hashers import make_password
+
 
 # mail integration 
 from django.core.mail import send_mail
@@ -196,8 +198,9 @@ def parent_handle_set_new_password(request):
         if password == conf_password:
              obj = Students.objects.filter(stud_guardian_otp = otp, domain_name = domain).count()
              if obj == 1:
+                  hashed_password = make_password(password)
                   data = Students.objects.get(stud_guardian_otp = otp)
-                  data.stud_guardian_password = password
+                  data.stud_guardian_password = hashed_password
                   data.stud_guardian_otp = None
                   data.domain_name = domain
                   data.save()
@@ -520,8 +523,11 @@ def parent_chatbox(request):
     context={"title": "ChatBox"}
     domain = request.get_host()
     parent_id = request.session['parent_id']
+    
     parent_object = Students.objects.get(stud_id = parent_id)
     
+    contact_list = Faculty_Access.objects.filter(fa_batch__batch_id = parent_object.stud_batch.batch_id, domain_name = domain).values('fa_faculty__fac_email').distinct()
+
     Persons = Chatbox.objects.filter(chatbox_receiver=parent_object.stud_guardian_email, domain_name = domain).values('chatbox_sender').distinct()
     if request.GET.get('selected_person'):
         selected_person = Faculties.objects.get(fac_email = request.GET.get('selected_person'))
@@ -547,6 +553,15 @@ def parent_chatbox(request):
             'FacultyName' : a.fac_name,
         }
         Unique_persons.append(person_dict)
+    for x in contact_list:
+        a = Faculties.objects.get(fac_email=x['fa_faculty__fac_email'])
+        person_dict = {
+            'FacultyEmail': a.fac_email,
+            'FacultyName' : a.fac_name,
+        }
+        if person_dict not in Unique_persons:
+            Unique_persons.append(person_dict)
+
     context.update({
         'Unique_persons':Unique_persons,
         'parent':parent_object,
@@ -557,6 +572,7 @@ def parent_chatbox(request):
 
 @parent_login_required
 def insert_chatbot_parent(request):
+    context = {'title': 'ChatBox'}
     domain_name = request.get_host()
     parent_id = request.session['parent_id']
     student_obj = Students.objects.get(stud_id = parent_id)
@@ -570,7 +586,7 @@ def insert_chatbot_parent(request):
         msg = chat
         playerid = teacher_obj.fac_onesignal_player_id
         send_notification(playerid, title, msg, request) 
-    return redirect('/parentsside/parent_chatbox?selected_person={}'.format(receiver))
+    return redirect('/parentsside/parent_chatbox?selected_person={}'.format(receiver), context)
 
 
 @parent_login_required

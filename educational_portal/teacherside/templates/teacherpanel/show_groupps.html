@@ -6,14 +6,14 @@
 
 {% include 'message_show.html' %}
 
-    <div class="d-flex justify-content-between align-items-center">
+    {% comment %} <div class="d-flex justify-content-between align-items-center">
         <div class="d-inline-block" id="exportbtns"></div>
       <a href="{% url 'teacher_add_group' %}">
           <button class="btn btn-primary">
               <i class="fa-solid fa-plus me-2"></i> ADD
           </button>
       </a>
-    </div>
+    </div> {% endcomment %}
 
 <div class="d-flex flex-wrap justify-content-start gap-3 gap-md-4 mt-2">
 {% for group in group_data %}

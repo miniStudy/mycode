@@ -7,8 +7,10 @@
 {% include 'message_show.html' %}
 <!-- DataTable with Buttons -->
 {% for notify in notification_data %}
-{{notify.notify_title}}
+<div class="alert-success p-3">
+<h5>{{notify.notify_title}}</h5>
 {{notify.notify_notification}}
 {{notify.notify_date}}
+</div>
 {% endfor %}
 {% endblock %}

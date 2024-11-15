@@ -14,6 +14,7 @@ from django.db.models import Count, Case, When, IntegerField
 from team_ministudy.forms import suggestions_improvements_Form
 from team_ministudy.models import NewInstitution, suggestions_improvements
 from teacherside.tasks import *
+from django.contrib.auth.hashers import make_password
 from teacherside.tasks import send_notification
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -205,26 +206,26 @@ def teacher_login_handle(request):
                 except Faculties.DoesNotExist:
                     messages.error(request, "Faculties with this OneSignal player ID does not exist.")
             Data = Faculties.objects.filter(fac_email=email, domain_name = domain)
-            fac_id = Faculties.objects.get(fac_id = Data[0] .fac_id)
-            # if check_password(password, fac_id.fac_password):
-            if 1:
-                for item in Data:
-                    request.session['fac_id'] = item.fac_id
-                    request.session['fac_name'] = item.fac_name
-                    request.session['fac_profile'] = '{}'.format(item.fac_profile)
-                    request.session['fac_logged_in'] = 'yes'
+            if Data:
+                fac_id = Faculties.objects.get(fac_id = Data[0] .fac_id)
+                if check_password(password, fac_id.fac_password):
+                    for item in Data:
+                        request.session['fac_id'] = item.fac_id
+                        request.session['fac_name'] = item.fac_name
+                        request.session['fac_profile'] = '{}'.format(item.fac_profile)
+                        request.session['fac_logged_in'] = 'yes'
 
-                if request.POST.get("remember"):
-                    response = redirect("teacher_home")
-                    response.set_cookie('fac_email', email) 
-                    response.set_cookie('fac_password', password)   
-                    return response
-                
-                messages.success(request, 'Logged In Successfully')
-                return redirect('teacher_home')
-            else:
-                messages.error(request, "password Wrong")
-                return redirect('teacher_login')
+                    if request.POST.get("remember"):
+                        response = redirect("teacher_home")
+                        response.set_cookie('fac_email', email) 
+                        response.set_cookie('fac_password', password)   
+                        return response
+                    
+                    messages.success(request, 'Logged In Successfully')
+                    return redirect('teacher_home')
+                else:
+                    messages.error(request, "password Wrong")
+                    return redirect('teacher_login')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('teacher_login')
@@ -278,8 +279,9 @@ def teacher_handle_set_new_password(request):
         if password == conf_password:
              obj = Faculties.objects.filter(fac_otp = otp).count()
              if obj == 1:
+                  hashed_password = make_password(password)
                   data = Faculties.objects.get(fac_otp = otp)
-                  data.fac_password = password
+                  data.fac_password = hashed_password
                   data.fac_otp = otp
                   data.save()
                   response = redirect("teacher_login")
@@ -643,19 +645,19 @@ def handle_attendance(request):
         attendance_telegram_message_parent('Absent', date, telegram_parent_absent_list)
 
         #---------------------------Notification send ---------------------------------------
-        title = '📋 Attendance Update'
-        noti_date = datetime.now().strftime('%Y-%m-%d')
+        title = 'Attendance Update'
+        noti_date = datetime.now().strftime('%Y-%m-%d %H:%M')
 
         for student in students_all:
             status = 'Present' if student.stud_id in selected_ids else 'Absent'
             if student.stud_onesignal_player_id:
                 mess = f"Your attendance status for {noti_date} is {status}."
-                notification = Notification(
-                notify_title=title,
-                notify_notification=mess,
-                notify_user = 'student',
-                domain_name=domain)
-                notification.save()
+                # notification = Notification(
+                # notify_title=title,
+                # notify_notification=mess,
+                # notify_user = 'student',
+                # domain_name=domain)
+                # notification.save()
                 for player_id in onesignal_player_id_list:
                     send_notification(player_id,title,mess, request)
         messages.success(request, "Attendance has been submitted!")    
@@ -862,15 +864,17 @@ def insert_update_syllabus(request):
         f"The syllabus for chapter '{chep_obj.chep_name}' "
         f"in batch '{batch_obj.batch_name}' has been successfully completed."
 )
-        player_ids = AdminData.objects.values_list('admin_onesignal_player_id', flat=True).exclude(admin_onesignal_player_id__isnull=True)
-        player_ids_str = ",".join(player_ids)
+        player_ids = AdminData.objects.filter(domain_name = domain).values('admin_onesignal_player_id')
+        print(player_ids)
         notification = Notification(
         notify_title=title,
         notify_notification=message,
         notify_user = 'admin',
         domain_name=domain)
         notification.save()
-        send_notification(player_ids_str,title,message, request)
+        for playerid in player_ids:
+            if playerid['admin_onesignal_player_id']:
+                send_notification(playerid['admin_onesignal_player_id'],title,message, request)
         return redirect('teacher_syllabus')
     return render(request, 'teacherpanel/insert_update_syllabus.html', context)
 
@@ -1556,7 +1560,7 @@ def announcements_insert_update_teacher(request):
                 if x.stud_onesignal_player_id:
                     onesignal_player_id_list.append(x.stud_onesignal_player_id)
             # announcement_mail(form.cleaned_data['announce_title'],form.cleaned_data['announce_msg'],students_email_list)
-            title = '📢 New Announcement'
+            title = 'New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
             notification = Notification(
             notify_title=title,
@@ -1976,6 +1980,19 @@ def today_learning_insert_update(request):
         if form.is_valid():
             form.instance.domain_name = domain
             form.save()
+
+            batch = Batches.objects.get(batch_id = request.POST.get('today_teaching_batches_id'))
+            students = Students.objects.filter(stud_batch__batch_id = batch.batch_id).values('stud_onesignal_player_id', 'guardian_onesignal_player_id')
+            title = "Today's Learning Update"
+            mess = form.instance.today_teaching_desc
+
+            for playerid in students:
+                if playerid['stud_onesignal_player_id']:
+                    send_notification(playerid['stud_onesignal_player_id'], title, mess, request)
+                
+                if playerid['guardian_onesignal_player_id']:
+                    send_notification(playerid['guardian_onesignal_player_id'], title, mess, request)
+
             messages.success(request, 'Today learning Added Sucessfully!')
             return redirect(url)
         else:
@@ -2277,7 +2294,7 @@ def insert_suggestions_function(request):
 
 @teacher_login_required
 def teacher_chatbox(request):
-    context={"title": "ChatBox"}
+    context={"title": "Chatbox"}
     domain = request.get_host()
     teacher_id = request.session['fac_id']
     teacher_object = Faculties.objects.get(fac_id = teacher_id)
@@ -2357,7 +2374,7 @@ def teacher_show_group_function(request):
 
 @teacher_login_required
 def teacher_add_group_function(request):
-    context = {'title': Materials}
+    context = {'title': 'Materials'}
     domain = request.get_host()
     if request.method == 'POST':
         form = group_form(request.POST)
@@ -2365,7 +2382,7 @@ def teacher_add_group_function(request):
             form.instance.domain_name = domain
             messages.success(request, "Group added successfully")
             form.save()
-            return redirect('show_group')
+            return redirect('teacher_show_group')
     return render(request, "teacherpanel/add_group.html", context)
 
 
@@ -2402,7 +2419,7 @@ def teacher_add_material_function(request):
             form = materials_form(request.POST, request.FILES)
             if form.is_valid():
                 
-                check = Materials.objects.filter(material_name = form.data['material_name'], domain_name = domain).count()
+                check = Materials.objects.filter(material_name = form.cleaned_data['material_name'], domain_name = domain).count()
                 pdf_file = form.cleaned_data['material_file']
 
                 if check >= 1:
@@ -2423,7 +2440,7 @@ def teacher_add_material_function(request):
                     return redirect('show_material')
             else:
                 filled_data = form.data
-                context.update({'filled_data': filled_data, 'errors': form.errors})
+                context.update({'filled_data': filled_data, 'errors': form.errors, 'title': 'Materials'})
                 return render(request, 'teacherpanel/add_material.html', context)
 
     return render(request, 'teacherpanel/add_material.html', context)

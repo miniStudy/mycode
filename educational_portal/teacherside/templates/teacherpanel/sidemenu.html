@@ -100,6 +100,13 @@
         </a>
       </li>
 
+      <li class="menu-item {% if title == 'Chatbox' %} active {% endif %}">
+        <a href="{% url 'teacher_chatbox' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-comment-dots"></i>
+          <div>Chatbox</div>
+        </a>
+      </li>
+
       <li class="menu-item {% if title == 'Events' %} active {% endif %}">
         <a href="{% url 'teacher_events' %}" class="menu-link">
           <i class="menu-icon tf-icons fa-brands fa-galactic-republic"></i>
