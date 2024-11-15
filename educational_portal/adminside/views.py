@@ -406,7 +406,7 @@ def home(request):
     # sending push Notification
     onesignal_player_id = request.session.get('deviceId', 'Error')
     if onesignal_player_id != 'Error':      
-        admindata = AdminData.objects.get(admin_id=1)
+        admindata = AdminData.objects.get(admin_id= request.session.get('admin_id'))
         admindata.admin_onesignal_player_id = onesignal_player_id
         # logger.error("============================databaseplayerid:{}".format(admindata.admin_onesignal_player_id))
         admindata.save()
