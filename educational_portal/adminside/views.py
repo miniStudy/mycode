@@ -817,6 +817,9 @@ def insert_update_announcements(request):
             title = 'New Announcement'
             mess = f"{form.cleaned_data['announce_title']}: {form.cleaned_data['announce_msg']}"
 
+            for player_id in onesignal_player_id_list:
+                send_notification(player_id,title,mess,request)
+                
             notification = Notification(
             notify_title=title,
             notify_notification=mess,
@@ -824,8 +827,7 @@ def insert_update_announcements(request):
             domain_name=domain)
             notification.save()
 
-            for player_id in onesignal_player_id_list:
-                send_notification(player_id,title,mess,request)
+            
 
             # -------------One Single Player Id------------------------------------------------------------------------       
             return redirect(url)         
