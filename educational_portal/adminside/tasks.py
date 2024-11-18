@@ -449,7 +449,6 @@ def doubt_telegram_message_student(doubt_topic, doubt_date, student_chat_ids):
 
 def send_notification(playerid,title,message, request):
     url = "https://onesignal.com/api/v1/notifications"
-
     payload = json.dumps({
     "app_id": "9d720639-6e9a-466a-9c95-be085af75a7f",
     "include_player_ids": [

@@ -6,9 +6,8 @@ from django.db import connection
 
 
 def creation(request, institute_domain, institute_email):
-    domain_name = request.get_host()
-    board_creation(request, domain_name)
-    admin_creation(request, domain_name, institute_email)
+    board_creation(request, institute_domain)
+    admin_creation(request, institute_domain, institute_email)
 
 def board_creation(request, institute_domain):
     board = Boards.objects.create(
@@ -120,7 +119,7 @@ def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
             lenth = len(return_list[1])
             if counter < lenth:
                 path =  "MiniSudy-Materials/{}".format(return_list[1][counter])
-                insert_chapterwise_material(chapter.chep_id, chapter.chep_name, path, domain_name=institute_domain)
+                # insert_chapterwise_material(chapter.chep_id, chapter.chep_name, path, domain_name=institute_domain)
             counter += 1
 
     chepter_list = chapter_list_func(chep_sub, chep_std)
@@ -144,12 +143,13 @@ def insert_chapterwise_material(cm_chepter_id, cm_filename, cm_file, cm_file_ico
         # Execute the query with the provided data
         cursor.execute(query, [cm_chepter_id, cm_filename, cm_file, cm_file_icon, domain_name])
 
-
-def admin_creation(institute_domain, institute_email):
+from django.contrib.auth.hashers import make_password
+def admin_creation(request, institute_domain, institute_email):
     admin = AdminData.objects.create(
             admin_name = 'admin',
             admin_pass = '12345678',
             admin_email = institute_email,
             domain_name = institute_domain
         )
+    admin.admin_pass = make_password('12345678')
     admin.save()
