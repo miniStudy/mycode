@@ -116,6 +116,7 @@ def remove_institute_function(request):
         Chatbox.objects.filter(domain_name = remove_data.institute_domain).delete()
         Expense.objects.filter(domain_name = remove_data.institute_domain).delete()
         Groups.objects.filter(domain_name = remove_data.institute_domain).delete()
+        Faculties.objects.filter(domain_name = remove_data.institute_domain).delete()
         remove_data.delete()  
         messages.success(request, 'Institute deleted successfully!')
         return redirect('show_institute')
