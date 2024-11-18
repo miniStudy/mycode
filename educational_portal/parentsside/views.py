@@ -114,7 +114,7 @@ def parent_login_handle(request):
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
-        val = Students.objects.filter(stud_guardian_email=email,stud_guardian_password=password, domain_name = domain).count()
+        val = Students.objects.filter(stud_guardian_email=email, domain_name = domain).count()
         if val==1:
             guardian_onesignal_player_id = request.session.get('deviceId', 'Error')
             if guardian_onesignal_player_id != 'Error':
@@ -126,8 +126,7 @@ def parent_login_handle(request):
                     messages.error(request, "Parent with this OneSignal player ID does not exist.")
             Data = Students.objects.filter(stud_guardian_email=email, domain_name = domain)
             student_id = Students.objects.get(stud_id = Data[0] .stud_id)
-            # if check_password(password, student_id.stud_guardian_password):
-            if 1:
+            if check_password(password, student_id.stud_guardian_password):
                 for item in Data:
                     request.session['parent_id'] = item.stud_id
                     request.session['parent_name'] = item.stud_guardian_name
@@ -142,11 +141,14 @@ def parent_login_handle(request):
                 messages.success(request, 'Logged In Successfully')
                 
                 return redirect('parent_home')
+            else:
+                messages.error(request, "Password Wrong!.")
+                return redirect('parent_login')
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('parent_login')
     else:
-        return redirect('teacher_login')
+        return redirect('parent_login')
 
 def parent_forget_password(request):
     title = 'Forget Password'  

@@ -2458,7 +2458,7 @@ def teacher_delete_material_function(request):
 
 @teacher_login_required
 def teacher_show_pdf(request):
-    context={}
+    context={"title": "Materials"}
     if request.GET.get('pdf'):
         pdf = Materials.objects.get(material_id = request.GET.get('pdf'))
         context.update({

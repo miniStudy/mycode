@@ -1043,7 +1043,7 @@ def show_notification_student_function(request):
 
 @student_login_required
 def student_show_pdf(request):
-    context={}
+    context={"title": "Materials"}
     if request.GET.get('pdf'):
         pdf = Materials.objects.get(material_id = request.GET.get('pdf'))
         context.update({

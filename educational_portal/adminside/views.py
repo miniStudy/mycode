@@ -1196,7 +1196,7 @@ def insert_update_faculties(request):
                     messages.error(request, '{} is already Exists'.format(form.data['fac_email']))
                 else:
                     hashed_password = make_password('123456')
-                    form.instance.admin_pass = hashed_password
+                    form.instance.fac_password = hashed_password
                     form.instance.domain_name = domain
                     form.instance.fac_email = request.POST.get('fac_email')
                     instance = form.save()
@@ -3855,7 +3855,7 @@ def admin_delete_material_function(request):
 
 @admin_login_required
 def admin_show_pdf(request):
-    context={}
+    context={"title": "Materials"}
     if request.GET.get('pdf'):
         pdf = Materials.objects.get(material_id = request.GET.get('pdf'))
         context.update({
