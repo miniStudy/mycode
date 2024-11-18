@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            background: linear-gradient(135deg, #1e90ff, #87cefa);
+            color: rgb(0, 0, 0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 18px;
+            border-radius: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 1px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        input[type="file"] {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #1e90ff;
+            background-color: #fff;
+            border: none;
+            border-radius: 1px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #1e90ff;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-link {
+            margin-top: 10px;
+            color: blue;
+            text-decoration: underline;
+            text-align: center;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Add Distributer Institute</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="distributer">Distributor:</label>
+            <select id="distributer" name="distributer_institute_distributer_id" required>
+                <option value="" disabled selected>Select Distributor</option>
+                {% for distributer in distributors %}
+                <option value="{{ distributer.distributer_id }}">{{ distributer.distributer_name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="domain_name">Domain Name:</label>
+            <input type="text" id="domain_name" name="domain_name" placeholder="Enter domain name" required>
+
+            <button type="submit">Add Distributer Institute</button>
+        </form>
+        <a href="{% url 'show_distributer_institute' %}" class="back-link">Back to Distributer Institutes</a>
+    </div>
+</body>
+</html>

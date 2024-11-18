@@ -249,3 +249,63 @@ def delete_question_bank(request):
 
     # Redirect back to the list of questions
     return redirect('show_question_bank')
+
+
+def show_distributer_function(request):
+    context = {"title": "Distributer"}
+    distributer_data = Distributor.objects.all()
+    context.update({'distributer_data': distributer_data})
+    return render(request, "ministudy/show_distributer.html", context)
+
+def add_distributer_function(request):
+    context = {"title": "Distributer"}
+    domain = request.get_host()
+    if request.method == 'POST':
+        form = distributor_form(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.domain_name = domain
+            messages.success(request, "Distributer added successfully.")
+            form.save()
+            return redirect('show_distributer')
+
+    return render(request, "ministudy/add_distributer.html", context)
+
+def delete_distributer_function(request):
+    context = {"title": "Distributer"}
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        distributer_data = Distributor.objects.get(distributer_id = pk)
+        distributer_data.delete()
+        messages.success(request, "Distributer deleted successfully.")
+        return redirect('show_distributer')
+    
+    return render(request, "ministudy/show_distributer.html", context)
+
+def show_distributer_institute_function(request):
+    distributer_institute_data = Distributer_Institute.objects.all()
+    context = {'distributer_institute_data': distributer_institute_data}
+    return render(request, "ministudy/show_distributer_institute.html", context)
+
+
+def add_distributer_institute_function(request):
+    distributors = Distributor.objects.all()
+    context = {'distributors': distributors}
+    if request.method == 'POST':
+        form = distributer_institute_form(request.POST)
+        if form.is_valid():
+            messages.success(request, "Distributer Institute added successfully.")
+            form.save()
+            return redirect('show_distributer_institute')
+        
+    return render(request, "ministudy/add_distributer_institute.html", context)
+
+def delete_distributer_institute_function(request):
+    context = {"title": "Distributer Institute"}
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        distributer_data = Distributer_Institute.objects.get(distributer_institute_id = pk)
+        distributer_data.delete()
+        messages.success(request, "Distributer Institute deleted successfully.")
+        return redirect('show_distributer_institute')
+    
+    return render(request, "ministudy/show_distributer_institute.html", context)

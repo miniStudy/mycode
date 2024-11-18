@@ -16,3 +16,13 @@ class suggestions_improvements_Form(forms.ModelForm):
     class Meta:  
         model = suggestions_improvements  
         fields = "__all__"
+
+class distributor_form(forms.ModelForm):  
+    class Meta:  
+        model = Distributor  
+        fields = "__all__"
+
+class distributer_institute_form(forms.ModelForm):  
+    class Meta:  
+        model = Distributer_Institute  
+        fields = "__all__"
