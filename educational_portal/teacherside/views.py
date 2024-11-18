@@ -243,7 +243,7 @@ def teacher_forget_password(request):
 def teacher_handle_forget_password(request):
      if request.method == "POST":
           email2 = request.POST['email']
-          val = AdminData.objects.filter(admin_email=email2).count()
+          val = Faculties.objects.filter(fac_email=email2).count()
           if val!=1:
             messages.error(request, "Email is Wrong")
             url = f"{reverse('teacher_forget_password')}?email={email2}"
