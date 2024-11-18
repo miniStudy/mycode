@@ -1,3 +1,5 @@
+# app Link - https://drive.google.com/file/d/1PRoRiClAdlIs3T-SrTZru_cMVGd11tts/view?usp=sharing
+
 from django.shortcuts import render,get_object_or_404,redirect,HttpResponse
 from adminside.form import *
 from adminside.models import *
