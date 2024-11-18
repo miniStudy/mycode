@@ -1755,6 +1755,11 @@ def insert_update_tests(request):
                     messages.error(request, '{} already exists'.format(form.data['test_name']))
                 else:
                     form.instance.domain_name = domain
+                    if request.POST.get('test_chap'):
+                        chap_object = Chepter.objects.get(chep_id = request.POST.get('test_chap'))
+                        if chap_object.chep_std.std_name != '10':
+                                messages.error(request, "In demo application, our AI is only available for 10 standard!")
+                                return redirect('admin_tests')
                     test_instance = form.save()
 
                     # Check for auto-generate test
@@ -1763,7 +1768,8 @@ def insert_update_tests(request):
                         two_mark_count = int(request.POST.get('two_mark_questions', 0))
                         three_mark_count = int(request.POST.get('three_mark_questions', 0))
                         four_mark_count = int(request.POST.get('four_mark_questions', 0))
-                        chap_object = Chepter.objects.get(chep_id = request.POST.get('test_chap'))
+                        chap_object = Chepter.objects.get(chep_id = request.POST.get('test_chap'), domain_name = domain)
+                        
 
                         # Function to get questions by weightage
                         def get_questions_by_weightage(weightage, count):

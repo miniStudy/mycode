@@ -1176,7 +1176,7 @@ def teacher_save_offline_marks(request):
             marks_mail.delay(student_names, student_marks, test_date, test_name, total_marks, parent_email_ids, htmly)
             
 
-            title = "📢 Marks Update"
+            title = "Marks Update"
             for index, player_id in enumerate(onesignal_player_ids):
                 student_name = Students.objects.get(stud_id=student_ids[index]).stud_name
                 student_score = student_marks[index]
@@ -1274,6 +1274,11 @@ def insert_update_tests(request):
                     messages.error(request, '{} already exists'.format(form.data['test_name']))
                 else:
                     form.instance.domain_name = domain
+                    if request.POST.get('test_chap'):
+                        chap_object = Chepter.objects.get(chep_id = request.POST.get('test_chap'))
+                        if chap_object.chep_std.std_name != '10':
+                                messages.error(request, "In demo application, our AI is only available for 10 standard!")
+                                return redirect('teacher_tests')
                     test_instance = form.save()
                     
 
