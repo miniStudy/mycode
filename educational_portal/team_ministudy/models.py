@@ -50,3 +50,32 @@ class suggestions_improvements(models.Model):
 
     class Meta:
         db_table = 'suggestions_improvements'
+
+
+class Distributor(models.Model):
+    distributer_id = models.BigAutoField(primary_key=True)
+    distributer_name = models.CharField(max_length=155)
+    distributer_number = models.CharField(max_length=15)
+    distributer_email = models.EmailField(unique=True)
+    distributer_password = models.CharField(max_length=155, default='12345678')
+    distributer_document = models.FileField(upload_to ='uploads/')
+    distributer_address = models.TextField()
+
+
+    def __str__(self):
+        return f"{self.distributer_name}"
+
+    class Meta:
+        db_table = 'Distributor'
+
+class Distributer_Institute(models.Model):
+    distributer_institute_id = models.BigAutoField(primary_key=True)
+    distributer_institute_distributer_id = models.ForeignKey(Distributor, on_delete=models.CASCADE)
+    distributer_institute_date = models.DateField(auto_now_add=True)
+    domain_name = models.CharField(blank=True,null=True,max_length=100)
+
+    def __str__(self):
+        return f"{self.distributer_institute_distributer_id.distributer_name} - {self.distributer_institute_date}"
+
+    class Meta:
+        db_table = 'Distributer_Institute'

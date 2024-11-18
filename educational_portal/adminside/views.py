@@ -3551,7 +3551,7 @@ def institute_main_send_function(request):
 def show_mail_templates_function(request):
     domain = request.get_host()
     mail_name = request.GET.get('mail_name','Introduction_mail')
-    templates = mail_templates.objects.filter(domain_name = domain,mail_temp_type = mail_name)
+    templates = mail_templates.objects.filter(mail_temp_type = mail_name)
     template_variables = mail_variables.objects.filter(mail_variables_type = mail_name)
     context = {
         'templates':templates,
@@ -3565,7 +3565,7 @@ def show_mail_templates_function(request):
         get_object = mail_templates.objects.get(mail_temp_id = pk)
         domain_name = get_object.domain_name
         mail_type = get_object.mail_temp_type
-        mail_templates.objects.filter(domain_name=domain_name, mail_temp_type=mail_type).update(mail_temp_selected=0)
+        mail_templates.objects.filter(mail_temp_type=mail_type).update(mail_temp_selected=0)
         get_object.mail_temp_selected = 1
         get_object.save()
 
