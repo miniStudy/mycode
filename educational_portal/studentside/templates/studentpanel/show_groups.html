@@ -13,7 +13,7 @@
   {% for group in groups_data %}
   <div class="card p-3 materialgroup">
     <a href="{% url 'show_student_material' %}?group_id={{group.materialaccess_group.group_id}}"><img src="/static/imgs/folder (1).png" class="Materialsfolders" /></a>
-    <span class="mt-2">{{group.materialaccess_group.group_name}}></span>
+    <span class="mt-2">{{group.materialaccess_group.group_name}}</span>
 </div>
   {% endfor %}
 </div>

@@ -3739,12 +3739,13 @@ def delete_expense_functions(request):
 def admin_show_group_function(request):
     domain = request.get_host()
     group_data = Groups.objects.filter(domain_name = domain)
-    context = {'group_data': group_data, 'title': 'Groups'}
+    context = {'group_data': group_data, 'title': 'Materials'}
     return render(request, "show_groupps.html", context)
 
 
 @admin_login_required
 def admin_add_group_function(request):
+    context = {'title': 'Materials'}
     domain = request.get_host()
     if request.method == 'POST':
         form = group_form(request.POST)
@@ -3752,20 +3753,21 @@ def admin_add_group_function(request):
             form.instance.domain_name = domain
             messages.success(request, "Group added successfully")
             form.save()
-            return redirect('show_group')
+            return redirect('admin_show_group')
 
-    return render(request, "insert_update/add_group.html")
+    return render(request, "insert_update/add_group.html", context)
 
 
 @admin_login_required
 def admin_delete_group_function(request):
+    context = {"title": "Materials"}
     if request.GET.get('pk'):
         pk = request.GET.get('pk')
         group_data = Groups.objects.get(group_id = pk)
         group_data.delete()
         messages.success(request, "Group deleted successully")
-        return redirect('show_group')
-    return render(request, "show_group.html")
+        return redirect('admin_show_group')
+    return render(request, "show_groupps.html", context)
 
 
 @admin_login_required
@@ -3827,7 +3829,8 @@ def admin_add_material_function(request):
                     material.material_group_id = group_obj
                     material.save()
                     messages.success(request, 'Material Added Successfully')
-                    return redirect('show_material')
+                    url = '/adminside/admin_show_material/?group_id={}'.format(group_obj.group_id)
+                    return redirect(url)
             else:
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
@@ -3843,7 +3846,7 @@ def admin_delete_material_function(request):
         material_data = Materials.objects.get(material_id = pk)
         material_data.delete()
         messages.success(request, "Material Deleted Successfully")
-        return redirect('show_material')
+        return redirect('admin_show_material')
     
     return render(request, "show_material.html")
 
