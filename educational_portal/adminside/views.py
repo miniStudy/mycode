@@ -171,21 +171,7 @@ def send_report_card(request):
 
 
 
-def mail_send(request):
-    # ------------mail sending ---------------
-        sub = 'Offer Letter from miniStudy'
-        mess = 'Offer Letter'
-        email_from = 'miniStudy <mail@ministudy.in>'
-        recp_list = ['mail.trushalpatel@gmail.com','sakahisharma88172@gmail.com']
-        # send_mail(sub,mess,email_from,recp_list)
-        htmly = get_template('Email/sakshi_offer_letter.html')
-        # d = {'pname': pname,'qty':qty,'size': ring_size,'clr':ring_color,'uname':fname,'uemail':email,'ucontact':cnumber}
-        text_content = ''
-        html_content = htmly.render()
-        msg = EmailMultiAlternatives(sub, text_content, email_from, recp_list)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-        return redirect('Admin Home')
+
 
 
 
