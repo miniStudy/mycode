@@ -218,7 +218,7 @@ def student_handle_forgot_password(request):
     domain = request.get_host()
     if request.method == "POST":
         email2 = request.POST['email']
-        val = AdminData.objects.filter(admin_email=email2, domain_name = domain).count()
+        val = Students.objects.filter(stud_email=email2, domain_name = domain).count()
         if val!=1:
             messages.error(request, "Email is Wrong")
             url = f"{reverse('Student_Forgot_Password')}?email={email2}"
