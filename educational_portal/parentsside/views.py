@@ -163,7 +163,7 @@ def parent_handle_forget_password(request):
      domain = request.get_host()
      if request.method == "POST":
           email2 = request.POST['email']
-          val = AdminData.objects.filter(admin_email=email2, domain_name = domain).count()
+          val = Students.objects.filter(stud_guardian_email=email2, domain_name = domain).count()
           if val!=1:
             messages.error(request, "Email is Wrong")
             url = f"{reverse('parent_forget_password')}?email={email2}"
