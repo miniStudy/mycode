@@ -22,7 +22,7 @@ def sub():
     msg     = "Congratulations for your success"  
     to      = "tmp1221pmt@gmail.com"
     fromm = settings.EMAIL_HOST_USER
-    send_mail(subject, msg, fromm, [to])  
+    # send_mail(subject, msg, fromm, [to])  
     return 1
 
 

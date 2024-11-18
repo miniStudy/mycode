@@ -167,17 +167,12 @@ def send_report_card(request):
     # return HttpResponse("Email sent successfully!")
     return render(request, 'reportcardtable.html',context)
 
-# -----------------------------auth Start---------------------------
-
-
-
-
-
-
+# -----------------------------auth Start ---------------------------
 
 def show_admin_page(request):
     domain = request.get_host()
     admin_data = AdminData.objects.filter(domain_name = domain)
+
     context = {'admin_data': admin_data, 'title': 'Admin'}
     return render(request, 'show_admin.html', context)
 
