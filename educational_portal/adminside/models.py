@@ -78,7 +78,7 @@ class Subject(models.Model):
 
 class Chepter(models.Model):
     chep_id = models.BigAutoField(primary_key=True)
-    chep_name = models.CharField(max_length=100)
+    chep_name = models.TextField()
     chep_sub = models.ForeignKey(Subject,on_delete=models.CASCADE,null=True,blank=True)
     chep_sem = models.CharField(max_length=20,blank=True)
     chep_std = models.ForeignKey(Std,on_delete=models.CASCADE)
