@@ -738,6 +738,7 @@ def Student_add_doubts(request):
 def Student_doubt_solution_section(request):
     domain = request.get_host()
     student_id = request.session['stud_id']
+    student_data = Students.objects.get(stud_id = student_id)
     context = {'student_id':student_id, 'title': 'Doubts'}
     if request.GET.get('doubt_id'):
         doubt_id = request.GET.get('doubt_id')
@@ -750,6 +751,7 @@ def Student_doubt_solution_section(request):
             student_id = form.cleaned_data['solution_stud_id']
             doubt_id = form.cleaned_data['solution_doubt_id']
             id = doubt_id.doubt_id
+            id = doubt_id.doubt_id
             count_sol = Doubt_solution.objects.filter(solution_stud_id = student_id, solution_doubt_id__doubt_id=id, domain_name = domain).count()
             if count_sol == 1:
                 messages.error(request, "Cannot add more than one solution!")
@@ -758,6 +760,20 @@ def Student_doubt_solution_section(request):
                 form.instance.domain_name = domain
                 form.save()
                 messages.success(request, "You'r solution has been added!")
+                doubt = Doubt_section.objects.get(doubt_id = id)
+                playerid = doubt.doubt_stud_id.stud_onesignal_player_id
+                student_name = doubt.doubt_stud_id.stud_name
+                stud_name = student_data.stud_name
+
+                title = "Your Doubt Has Been Answered!"
+                message = f"Hello {student_name}, your doubt has been answered by your classmate {stud_name}. Check it out!"
+                notification = Notification(
+                notify_title=title,
+                notify_notification=message,
+                notify_user = 'student',
+                domain_name=domain)
+                notification.save()
+                send_notification(playerid, title, message, request)
                 return redirect('/studentside/Student_Show_Solution/?doubt_id={}'.format(id))
         else:
             print('hello wolrd')    

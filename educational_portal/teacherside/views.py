@@ -557,7 +557,6 @@ def teacher_edit_attendance(request):
 
 
 
-
 @teacher_login_required
 def insert_update_attendance(request):
      domain = request.get_host()
