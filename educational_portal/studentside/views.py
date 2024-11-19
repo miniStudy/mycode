@@ -1,4 +1,5 @@
 from django.shortcuts import render,get_object_or_404,redirect
+from rest_framework.response import Response
 from adminside.models import *
 from django.contrib import messages
 from django.urls import reverse
@@ -14,6 +15,15 @@ from django.contrib.auth.hashers import check_password
 
 from team_ministudy.forms import suggestions_improvements_Form
 from django.contrib.auth.hashers import make_password
+
+
+
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework import status
+from rest_framework.response import Response
+
+
 
 
 from .forms import *
@@ -476,13 +486,12 @@ def show_test(request):
     return render(request, 'studentpanel/test.html', context)
 
 
+@api_view(['GET'])
 @student_login_required
 def show_test_questions(request, id):
     domain = request.get_host()
-    domain = None
     student_id = Students.objects.get(stud_id=request.session['stud_id'])
     test = Chepterwise_test.objects.get(test_id=id)
-
     # Check if test start time is in session
     if 'start_time' not in request.session:
         request.session['start_time'] = str(now())
@@ -494,8 +503,8 @@ def show_test_questions(request, id):
     remaining_time = test_duration - elapsed_time
 
     # If time is up, redirect to submission
-    if remaining_time <= timedelta(0):
-        return redirect('/studentside/Student_Test_Submission/')
+    # if remaining_time <= timedelta(0):
+    #     return redirect('/studentside/Student_Test_Submission/')
 
     if request.GET.get('que_id'):
         que_id = request.GET.get('que_id')
@@ -547,29 +556,31 @@ def show_test_questions(request, id):
             Test_submission.objects.get(ts_stud_id__stud_id=student_id.stud_id, ts_que_id__tq_id=clear_id, domain_name = domain).delete()
             return redirect('/studentside/Student_Test_Q/{}/?que_id={}'.format(id, clear_id))
 
-        context = {
-            'test_questions_all': test_questions_all,
-            'test_question': test_question,
-            'test_id': id,
+
+        return Response({
+            'test_question_all': test_questions_all.values('tq_id'),
+            'test_question':  test_question.values('tq_id', 'tq_question', 'tq_q_type', 'tq_weightage', 'tq_hint', 'tq_optiona', 'tq_optionb', 'tq_optionc', 'tq_optiond'),
+            'test_id':  id,
             'next_id': next_id,
-            'prev_id': prev_id,
-            'get_answer': get_answer,
-            'student_id': student_id,
-            'remaining_time': remaining_time.total_seconds(),  # Pass remaining time in seconds
-            'title': 'Test Questions',
-        }   
-        return render(request, 'studentpanel/testque.html', context)
+            'prev_id':  prev_id,
+            'get_answer':  get_answer,
+            'student_id':  student_id.stud_id,
+            'remaining_time':  remaining_time.total_seconds()
+        })
     else:
         no_que = "No questions available right now!"
-    context = {
-        'test_questions_all': test_questions_all,
-        'test_question': test_question,
-        'test_id': id,
-        'no_que': no_que,
-        'student_id': student_id,
-        'remaining_time': remaining_time.total_seconds()  # Pass remaining time in seconds
-    }
-    return render(request, 'studentpanel/testque.html', context)
+    return Response({
+            'test_question_all': test_questions_all.values('tq_id'),
+            'test_question':  test_question.values('tq_question'),
+            'test_id':  id,
+            'next_id': next_id,
+            'prev_id':  prev_id,
+            'no_que': no_que,
+            'get_answer':  get_answer,
+            'student_id':  student_id.stud_id,
+            'remaining_time':  remaining_time.total_seconds()
+        })
+
 
 @student_login_required
 def Student_Test_Submission(request):

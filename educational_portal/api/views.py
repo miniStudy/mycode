@@ -3520,3 +3520,5 @@ def api_today_learning_delete(request):
         'status': False,
         'message': 'Something is wrong'
     })
+
+
