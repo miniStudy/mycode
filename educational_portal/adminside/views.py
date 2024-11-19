@@ -243,6 +243,9 @@ def delete_admin_page(request):
 
 def admin_login_page(request):  
     login=1
+    domain  = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
+    request.session['institute_logo'] = Institute_data.institute_logo.url
     if request.COOKIES.get("admin_email"):
             cookie_email = request.COOKIES['admin_email'].lower()
             cookie_pass = request.COOKIES['admin_password']
@@ -253,6 +256,7 @@ def admin_login_page(request):
 
 def admin_login_handle(request):
     domain = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
@@ -265,6 +269,7 @@ def admin_login_handle(request):
                     request.session['admin_id'] = item.admin_id
                     request.session['admin_name'] = item.admin_name
                     request.session['admin_logged_in'] = 'yes'
+                    request.session['institute_logo'] = Institute_data.institute_logo.url
 
                 if request.POST.get("remember"):
                     response = redirect("Admin Home")
@@ -286,7 +291,11 @@ def admin_login_handle(request):
 
 
 
-def admin_Forgot_Password(request):  
+def admin_Forgot_Password(request):
+    domain  = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
+    logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+
     login=2
     if request.COOKIES.get("admin_email"):
             cookie_email = request.COOKIES['admin_email']
