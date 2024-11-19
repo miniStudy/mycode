@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributer Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            background: linear-gradient(135deg, #6a1b9a, #ab47bc);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ffe082;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        .stats-card {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .stats-card h2 {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+            color: #ffcc80;
+        }
+
+        .stats-card p {
+            font-size: 1.2rem;
+            margin: 5px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table, th, td {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            font-size: 1rem;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        a.add-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #6a1b9a;
+            background-color: #ffcc80;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        a.add-button:hover {
+            background-color: #ffe082;
+            color: #6a1b9a;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Distributor Dashboard</h1>
+        <a href="{% url 'distributer_login' %}" class="add-button">Login</a>
+        <a href="" class="add-button">My Profile</a>
+
+        <div class="stats-card" style="margin-top: 8px">
+            <h2>Statistics</h2>
+            <p><strong>Total Students:</strong> {{ total_numbers_of_students }}</p>
+            <p><strong>Total Amount:</strong> ₹{{ total_numbers_amount }}</p>
+            <p><strong>Total Paid Amount:</strong> ₹{{ total_paid_amount }}</p>
+            <p><strong>Remaining Amount:</strong> ₹{{ remaining_amount }}</p>
+        </div>
+        <h2>Institute-wise Student Count</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Domain</th>
+                    <th>Student Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for domain, count in count_disc.items %}
+                <tr>
+                    <td>{{ domain }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align: center;">
+            <a href="{% url 'show_distributer' %}" class="add-button">Show Distributors</a>
+            <a href="{% url 'show_distributer_institute' %}" class="add-button">Show Institutes</a>
+            <a href="{% url 'show_distributer_payment' %}" class="add-button">Show Payments</a>
+        </div>
+    </div>
+</body>
+</html>

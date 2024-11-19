@@ -5,3 +5,4 @@ from team_ministudy.models import *
 admin.site.register(NewInstitution)
 admin.site.register(MinistudyPayment)
 admin.site.register(suggestions_improvements)
+admin.site.register(Distributor)

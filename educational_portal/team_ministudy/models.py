@@ -1,6 +1,7 @@
 from django.db import models
 from adminside.models import *
 
+
 # Create your models here.
 
 class NewInstitution(models.Model):
@@ -79,3 +80,15 @@ class Distributer_Institute(models.Model):
 
     class Meta:
         db_table = 'Distributer_Institute'
+
+class Distributer_Payment(models.Model):
+    distributer_payment_id = models.BigAutoField(primary_key=True)
+    distributer_payment_distributer_id = models.ForeignKey(Distributor, on_delete=models.CASCADE)
+    distributer_payment = models.IntegerField()
+    distributer_payment_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.distributer_payment_distributer_id.distributer_name} - {self.distributer_payment}"
+
+    class Meta:
+        db_table = 'Distributer_Payment'

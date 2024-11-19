@@ -116,36 +116,69 @@
           </form>
           </div>
 
-<div class="card-datatable table-responsive pt-0">
-    <table id="example" class="display table table-bordered" style="width:100%">
-        <thead>
-            <tr>
-                <th>Roll No.</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>tutor</th>
-                <th>Attendance</th>
-                <th>Student</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for x in data %}
-            <tr>
-                <td>{{ x.atten_student__stud_roll_no }}</td>
-                <td>{{x.atten_date|date:"d-m-Y"}}
-                  {% if x.atten_timetable__tt_day == 'SUNDAY' %}/ SUN {% elif x.atten_timetable__tt_day == 'MONDAY' %}/ MON {% elif x.atten_timetable__tt_day == 'TUESDAY' %}/ TUE {% elif x.atten_timetable__tt_day == 'WEDNESDAY' %}/ WED {% elif x.atten_timetable__tt_day == 'FRIDAY' %}/ FRI {% elif x.atten_timetable__tt_day == 'SATURDAY' %}/ SAT {% else %} {% endif %}
-                 </td>
-                <td>{{ x.atten_timetable__tt_time1 }} </td>
-                <td>{{ x.atten_timetable__tt_subject1__sub_name }}</td>
-                <td>{{ x.atten_timetable__tt_tutor1__fac_name }}</td>
-                <td>{% if x.atten_present %}<i class="fa-solid fa-square-check text-success"></i>{% else %}<i class="fa-solid fa-square-xmark text-danger"></i>{% endif %}</td>
-                <td>{{ x.atten_student__stud_name }} {{ x.atten_student__stud_lastname }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-  </div> 
+
+
+  <button class="btn btn-outline-primary btn-sm dropdown-toggle mb-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% if selected_month %}{{selected_month}}{% else %}Select Month{% endif %}</button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=1&month_name=January">January</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=2&month_name=February">February</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=3&month_name=March">March</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=4&month_name=April">April</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=5&month_name=May">May</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=6&month_name=June">June</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=7&month_name=July">July</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=8&month_name=August">August</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=9&month_name=September">September</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=10&month_name=October">October</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=11&month_name=November">November</a></li>
+    <li><a class="dropdown-item" href="{% url 'teacher_attendance' %}?month=12&month_name=December">December</a></li>
+  </ul>
+
+
+<div class="card-datatable table-responsive p-0 pt-0">
+  <table id="data-table" class="display table table-bordered" style="width:100%">
+      <thead>
+          <tr>
+              <th>Roll No.</th>
+              <th>Student</th>
+              <th>Total <i class="fa-solid fa-square-check text-success"></i></th>
+              <th>Total <i class="fa-solid fa-square-xmark text-danger"></i></th>
+              {% for dayy in days %}
+              <th style="min-width: 25px !important;">{{dayy}}</th>
+              {% endfor %}
+          
+          </tr>
+      </thead>
+      <tbody>
+        {% for student in attendance_list %}
+          <tr>
+              <td>{{student.Roll}}</td>
+              <td>{{student.Name}}</td>
+              <td>{{student.Present_counter}}</td>
+              <td>{{student.Absent_counter}}</td>
+
+              {% for dayy in days %}
+                    <td style="min-width: 25px !important;">
+                    {% for day, records in student.Attendance.items %}
+                    {% if dayy == day %}
+                        {% if records %}
+                        {% for record in records %}
+                        {% if record.attendance_status %}
+                        {% if record.attendance_status == 'Present' %} {{record.time}} {{ record.subject_name }} <i class="fa-solid fa-square-check text-success"></i>{% else %} {{record.time}} {{ record.subject_name }} <i class="fa-solid fa-square-xmark text-danger"></i>{% endif %} <br>                      
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    {% endif %}    
+                    {% endfor %}
+                  </td>
+              {% endfor %}    
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div> 
+
+
      <!-- Pagination -->
      {% for x in data.paginator.page_range %}
      <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}&searchhh={{searchhh}}" class="btn btn-sm btn-outline-secondary mt-3 ms-1 {% if data.number == x %} btn-outline-primary {% endif %} mt-3">{{ x }}</a>

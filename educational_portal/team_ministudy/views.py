@@ -6,6 +6,7 @@ from team_ministudy.forms import *
 from datetime import timedelta
 from django.utils.timezone import now
 import pandas as pd
+from django.db.models import Sum, Count
 from django.core.paginator import Paginator
 
 
@@ -250,6 +251,23 @@ def delete_question_bank(request):
     # Redirect back to the list of questions
     return redirect('show_question_bank')
 
+def distributer_login_function(request):
+    if request.method == 'POST':
+        distributer_email = request.POST.get('distributer_email')
+        distributer_password = request.POST.get('distributer_password')
+        check = Distributor.objects.filter(distributer_email = distributer_email, distributer_password = distributer_password).count()
+        if check == 1:
+            distributer_ob = Distributor.objects.get(distributer_email = distributer_email)
+
+            request.session['distributer_id'] = distributer_ob.distributer_id
+            request.session['distributer_name'] = distributer_ob.distributer_name
+            request.session['distributer_email'] = distributer_ob.distributer_email
+            messages.success(request, f'Hi! {distributer_ob.distributer_name}, you have been login successfully.')
+            return redirect('show_distributer_dashboard')
+        else:
+            messages.error(request, "Invalid Email or Password!")
+            return redirect('distributer_login')
+    return render(request, "ministudy/distributer_login.html")
 
 def show_distributer_function(request):
     context = {"title": "Distributer"}
@@ -309,3 +327,57 @@ def delete_distributer_institute_function(request):
         return redirect('show_distributer_institute')
     
     return render(request, "ministudy/show_distributer_institute.html", context)
+
+def show_distributer_payment_function(request):
+    distributer_payment_data = Distributer_Payment.objects.all()
+    context = {'distributer_payment_data': distributer_payment_data}
+    return render(request, "ministudy/show_distributer_payment.html", context)
+
+def add_distributer_payment_function(request):
+    distributors = Distributor.objects.all()
+    context = {'distributors': distributors}
+    if request.method == 'POST':
+        form = distributer_payment_form(request.POST)
+        if form.is_valid():
+            messages.success(request, "Distributer Payment added successfully.")
+            form.save()
+            return redirect('show_distributer_payment')
+    return render(request, "ministudy/add_distributer_payment.html", context)
+
+def delete_distributer_payment_function(request):
+    if request.GET.get('pk'):
+        pk = request.GET.get('pk')
+        distributer_data = Distributer_Payment.objects.get(distributer_payment_id = pk)
+        distributer_data.delete()
+        messages.success(request, "Distributer Payment deleted successfully.")
+        return redirect('show_distributer_payment')
+    
+    return render(request, "ministudy/show_distributer_payment.html")
+
+def show_distributer_dashboard_function(request):
+    distributer = Distributor.objects.get(distributer_id = 1)
+    count_disc = {}
+    total_numbers_amount = 0
+
+    for domain in Distributer_Institute.objects.filter(distributer_institute_distributer_id = distributer).values_list('domain_name', flat=True):
+        student_count = Students.objects.filter(domain_name=domain).count()
+        if domain in count_disc:
+            count_disc[domain] += student_count
+        else:
+            count_disc[domain] = student_count
+
+        domain_amount = student_count * 50
+        total_numbers_amount += domain_amount
+
+    total_numbers_of_students = sum(count_disc.values())
+
+    total_paid_amount = Distributer_Payment.objects.filter(distributer_payment_distributer_id=distributer).aggregate(total_payment=Sum('distributer_payment'))['total_payment'] or 0
+
+    if total_numbers_amount >= total_paid_amount:
+        remaining_amount = total_numbers_amount - total_paid_amount
+    else:
+        remaining_amount = 0
+
+    context = {'total_numbers_of_students': total_numbers_of_students, 'total_numbers_amount': total_numbers_amount, 'total_paid_amount': total_paid_amount, 'remaining_amount': remaining_amount, 'count_disc': count_disc}
+
+    return render(request, "ministudy/distributer_dashboard.html", context)

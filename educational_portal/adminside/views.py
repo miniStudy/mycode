@@ -2358,8 +2358,6 @@ def delete_students(request):
     return redirect('students_dataAdmin')
 
 
-
-
 @admin_login_required
 def show_inquiries(request):
     domain = request.get_host()

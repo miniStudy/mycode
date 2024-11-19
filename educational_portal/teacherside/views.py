@@ -354,30 +354,30 @@ def teacher_timetable(request):
 
 @teacher_login_required
 def teacher_attendance(request):
-     domain = request.get_host()
-     fac_id = request.session['fac_id']
-     faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
-     batch_access_list = []
-     std_access_list=[]
-     for x in faculty_access:
+    domain = request.get_host()
+    fac_id = request.session['fac_id']
+    faculty_access = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id, domain_name = domain)
+    batch_access_list = []
+    std_access_list=[]
+    for x in faculty_access:
         batch_access_list.append(x.fa_batch.batch_id)
         std_access_list.append(x.fa_batch.batch_std.std_id)
 
-     data = Attendance.objects.filter(domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date', 'atten_student__stud_roll_no').order_by('-atten_date', '-atten_timetable__tt_time1')
-     data = paginatoorrr(data,request)
-     std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)   
-     batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
-     stud_data = Students.objects.filter(domain_name = domain)
-     subj_data = Subject.objects.filter(domain_name = domain)
+    data = Attendance.objects.filter(domain_name = domain).values('atten_timetable__tt_day','atten_timetable__tt_time1','atten_timetable__tt_subject1__sub_name','atten_timetable__tt_tutor1__fac_name','atten_present','atten_student__stud_name','atten_student__stud_lastname','atten_date', 'atten_student__stud_roll_no').order_by('-atten_date', '-atten_timetable__tt_time1')
+    data = paginatoorrr(data,request)
+    std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)   
+    batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
+    stud_data = Students.objects.filter(domain_name = domain)
+    subj_data = Subject.objects.filter(domain_name = domain)
      
-     today = timezone.localdate()
-     today_records = Attendance.objects.filter(atten_date__contains=today, domain_name = domain)
+    today = timezone.localdate()
+    today_records = Attendance.objects.filter(atten_date__contains=today, domain_name = domain)
      
      
-     distinct_data = today_records.annotate(date=TruncDate('atten_date'),
+    distinct_data = today_records.annotate(date=TruncDate('atten_date'),
         hour=TruncHour('atten_date'), minute=TruncMinute('atten_date')).values('date', 'hour', 'minute','atten_timetable').distinct()
-     li = []
-     for x in distinct_data:
+    li = []
+    for x in distinct_data:
         date_hour = x['hour'].hour
         date_minute = x['minute'].minute
         date_data = x['minute'].date()
@@ -387,7 +387,7 @@ def teacher_attendance(request):
    
    
 
-     context ={
+    context ={
           'data' : data,
           'title' : 'Attendance',
           'std_data' : std_data,
@@ -397,7 +397,7 @@ def teacher_attendance(request):
           'li':li,
     }
     
-     if request.GET.get('get_std'):
+    if request.GET.get('get_std'):
           get_std = int(request.GET['get_std'])
           if get_std == 0:
                pass
@@ -410,7 +410,7 @@ def teacher_attendance(request):
                get_std = Std.objects.get(std_id = get_std)
                context.update({'data':data,'batch_data':batch_data,'get_std':get_std, 'stud_data':stud_data,'sub_data':subj_data})
      
-     if request.GET.get('get_batch'):
+    if request.GET.get('get_batch'):
         get_batch = int(request.GET['get_batch'])
         if get_batch == 0:
             pass
@@ -421,7 +421,7 @@ def teacher_attendance(request):
             get_batch = Batches.objects.get(batch_id = get_batch)
             context.update({'data':data,'get_batch':get_batch,'stud_data':stud_data}) 
 
-     if request.GET.get('get_student'):
+    if request.GET.get('get_student'):
         get_student = int(request.GET['get_student'])
         if get_student == 0:
             pass
@@ -430,7 +430,7 @@ def teacher_attendance(request):
             get_student = Students.objects.get(stud_id = get_student)
             context.update({'data':data,'get_student':get_student})  
 
-     if request.GET.get('atten_date'):
+    if request.GET.get('atten_date'):
         atten_date = request.GET.get('atten_date')
         context.update({'atten_date':atten_date})
         if atten_date:
@@ -445,16 +445,16 @@ def teacher_attendance(request):
             context.update({'data': data, 'get_date': get_date})                     
 
 
-     attendance_present = Attendance.objects.filter(atten_present = True, domain_name = domain).count()
-     attendance_all = Attendance.objects.filter(domain_name = domain).count()
-     if attendance_all>0:
+    attendance_present = Attendance.objects.filter(atten_present = True, domain_name = domain).count()
+    attendance_all = Attendance.objects.filter(domain_name = domain).count()
+    if attendance_all>0:
         overall_attendance = round((attendance_present/attendance_all) * 100,2)
         context.update({'overall_attendance':overall_attendance})
 
-     sub_list = subj_data.all().values('sub_name').distinct()
-     subject_wise_attendance = []
-     subjects = []
-     for x in sub_list:
+    sub_list = subj_data.all().values('sub_name').distinct()
+    subject_wise_attendance = []
+    subjects = []
+    for x in sub_list:
         sub_name = x['sub_name']
         sub_one = Attendance.objects.filter(atten_present = True,atten_timetable__tt_subject1__sub_name=sub_name, domain_name = domain).count()
         sub_all = Attendance.objects.filter(atten_timetable__tt_subject1__sub_name = sub_name, domain_name = domain).count()
@@ -463,11 +463,53 @@ def teacher_attendance(request):
             subject_wise_attendance.append(sub_attendance)
             subjects.append(sub_name)
             
-     combined_data = zip(subject_wise_attendance, subjects)
+    combined_data = zip(subject_wise_attendance, subjects)
 
-     context.update({'combined_data': combined_data})
+    context.update({'combined_data': combined_data})
+    attendance_list = []
 
-     if request.GET.get('searchhh'):
+    for id in Students.objects.filter(domain_name = domain):
+            if request.GET.get("month"):
+                selected_month = request.GET.get("month")
+                selected_month_name = request.GET.get("month_name")
+                get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=selected_month, domain_name = domain)
+                context.update({'selected_month': selected_month_name})
+            else:
+                get_student_records = Attendance.objects.filter(atten_student__stud_id=id.stud_id, atten_date__month=1, domain_name = domain)
+            
+            # Initialize a dictionary for each student to store their name and attendance
+            attendance_disc = {
+                'Name': id.stud_name,
+                'Roll': id.stud_roll_no,
+                'Attendance': {},
+                'Present_counter': 0,
+                'Absent_counter': 0,
+            }
+
+            # Loop through each day of the month (1 to 31)
+            for day in range(1, 32):
+                # Default to "Absent" for each day, will update to "Present" if record is found
+                attendance_disc['Attendance'][day] = ''
+                a_list = []
+                for stud in get_student_records:
+                    if stud.atten_date.day == day:
+                        # Update attendance status for this day if a record is found
+                        tt = 'Present' if stud.atten_present else 'Absent'
+                        if stud.atten_present == 1:
+                            attendance_disc['Present_counter'] += 1
+                        elif stud.atten_present == 0:
+                            attendance_disc['Absent_counter'] += 1
+                        a_list.append({"attendance_status": tt, "subject_name": stud.atten_timetable.tt_subject1.sub_name, "time": stud.atten_timetable.tt_time1})
+                        # Stop searching once the attendance is found for the day
+                attendance_disc['Attendance'][day] = a_list
+            # Add the completed dictionary for the student to the attendance list
+            attendance_list.append(attendance_disc)
+
+        # Output attendance list
+            days_list = list(range(1, 32))
+            context.update({'attendance_list': attendance_list, 'days': days_list})
+
+    if request.GET.get('searchhh'):
         searchhh = request.GET['searchhh']
         if searchhh:
             data = Attendance.objects.filter(
@@ -482,7 +524,7 @@ def teacher_attendance(request):
             data = paginatoorrr(data, request)
             context.update({'data':data,'searchhh':searchhh})  
 
-     return render(request, 'teacherpanel/attendance.html',context)
+    return render(request, 'teacherpanel/attendance.html',context)
 
 def teacher_edit_attendance(request):
     context = {'title' : 'Attendance'}
@@ -511,7 +553,6 @@ def teacher_edit_attendance(request):
     else:
         messages.error(request, 'Please! Select Standard And Batch')
         return redirect('teacher_attendance')
-    print(context.title)
     return render(request, 'teacherpanel/teacher_edit_attendance.html', context)
 
 

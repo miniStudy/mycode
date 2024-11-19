@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributor Login</title>
+    <style>
+        /* General Body Styling */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Card Styling */
+        .login-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Title Styling */
+        .login-card h2 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        /* Input Field Styling */
+        .login-card input[type="email"],
+        .login-card input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        /* Submit Button Styling */
+        .login-card button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-card button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Forgot Password Link Styling */
+        .login-card a {
+            display: block;
+            margin-top: 1rem;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .login-card a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>Distributor Login</h2>
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <p style="color: red;">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="POST" action="{% url 'distributer_login' %}">
+            {% csrf_token %}
+            <input type="email" name="distributer_email" placeholder="Enter your email" required>
+            <input type="password" name="distributer_password" placeholder="Enter your password" required>
+            <button type="submit">Login</button>
+            <a href="">Forgot Password?</a>
+        </form>
+    </div>
+</body>
+</html>

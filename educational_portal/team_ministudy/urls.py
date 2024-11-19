@@ -27,6 +27,13 @@ urlpatterns = [
 
     path('show_distributer_institute/', ministudyview.show_distributer_institute_function, name="show_distributer_institute"),
     path('add_distributer_institute/', ministudyview.add_distributer_institute_function, name="add_distributer_institute"),
-    path('delete_distributer_institute/', ministudyview.delete_distributer_institute_function, name="delete_distributer_institute")
+    path('delete_distributer_institute/', ministudyview.delete_distributer_institute_function, name="delete_distributer_institute"),
+
+    path('show_distributer_payment/', ministudyview.show_distributer_payment_function, name="show_distributer_payment"),
+    path('add_distributer_payment/', ministudyview.add_distributer_payment_function, name="add_distributer_payment"),
+    path('delete_distributer_payment/', ministudyview.delete_distributer_payment_function, name="delete_distributer_payment"),
+
+    path('show_distributer_dashboard/', ministudyview.show_distributer_dashboard_function, name="show_distributer_dashboard"),
+    path('distributer_login/', ministudyview.distributer_login_function, name="distributer_login"),
 ]
 

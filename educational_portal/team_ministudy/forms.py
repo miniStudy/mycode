@@ -26,3 +26,8 @@ class distributer_institute_form(forms.ModelForm):
     class Meta:  
         model = Distributer_Institute  
         fields = "__all__"
+
+class distributer_payment_form(forms.ModelForm):  
+    class Meta:  
+        model = Distributer_Payment 
+        fields = "__all__"
