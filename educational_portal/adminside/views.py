@@ -3858,3 +3858,37 @@ def admin_show_pdf(request):
             'pdf':pdf,
         })
     return render(request,'Show_pdf.html', context)    
+
+
+@admin_login_required
+def add_adminlead_function(request):
+    context = {'title': 'AdminLead'}
+    domain = request.get_host()
+    if request.method == 'POST':
+        form = adminlead_form(request.POST)
+        if form.is_valid():
+            form.instance.domain_name = domain
+            messages.success(request, "AdmimLead has been added successfully.")
+            form.save()
+            return redirect('show_adminlead')
+    return render(request, "insert_update/add_adminlead.html", context)
+
+
+@admin_login_required
+def show_adminlead_function(request):
+    context = {'title': 'AdminLead'}
+    domain = request.get_host()
+    adminlead_data = AdminLead.objects.filter(domain_name = domain)
+    context.update({'adminlead_data': adminlead_data})
+    return render (request, "show_adminlead.html", context)
+
+
+def delete_adminlead_function(request):
+    if request.POST.get('pk'):
+        pk = request.POST.get('pk')
+        adminlead_data = AdminLead.objects.get(adminlead_id = pk)
+        adminlead_data.delete()
+        messages.success(request, "Admin Lead deleted successfully")
+        return redirect('show_adminlead')
+    
+    return render (request, "show_adminlead.html")
