@@ -122,14 +122,14 @@ def chapter_creation(institute_domain, chep_name, chep_sub, chep_std):
                 # insert_chapterwise_material(chapter.chep_id, chapter.chep_name, path, domain_name=institute_domain)
             counter += 1
 
-    chepter_list = chapter_list_func(chep_sub, chep_std)
-    for x in chepter_list:           
-        chapter = Chepter.objects.create(
-            chep_name = x,
-            chep_sub = chep_sub,
-            chep_std = chep_std,
-            domain_name = institute_domain
-        )
+    # chepter_list = chapter_list_func(chep_sub, chep_std)
+    # for x in chepter_list:           
+    #     chapter = Chepter.objects.create(
+    #         chep_name = x,
+    #         chep_sub = chep_sub,
+    #         chep_std = chep_std,
+    #         domain_name = institute_domain
+    #     )
 
     
     

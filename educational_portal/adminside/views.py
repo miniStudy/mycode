@@ -962,7 +962,7 @@ def show_chepters(request):
     data = paginatoorrr(data, request)
     context ={
         'data' : data,
-        'title' : 'Chepters',
+        'title' : 'Chapters',
         'std_data' : std_data,
         'subject_data':subject_data,
     }
@@ -1008,7 +1008,7 @@ def insert_update_chepters(request):
     std_data = Std.objects.filter(domain_name = domain)
     subject_data = Subject.objects.filter(domain_name = domain)
     context = {
-        'title' : 'Chepters',
+        'title' : 'Chapters',
         'std_data':std_data,
         'subject_data':subject_data,
     }

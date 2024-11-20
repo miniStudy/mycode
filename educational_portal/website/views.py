@@ -11,7 +11,6 @@ def firstpage(request):
     if request.GET.get("deviceId"):
         deviceId = request.GET.get('deviceId','1')
         if deviceId != '123':
-            
             request.session['deviceId'] = deviceId
         context.update({'deviceId':deviceId})
 
