@@ -72,6 +72,12 @@
           <div>Leads</div>
         </a>
       </li>
+      <li class="menu-item {% if title == 'AdminLead' %} active {% endif %}">
+        <a href="{% url 'show_adminlead' %}" class="menu-link">
+          <i class="menu-icon tf-icons fa-solid fa-clipboard-question"></i>
+          <div>Admin Leads</div>
+        </a>
+      </li>
       <li class="menu-item {% if title == 'Students' %} active {% endif %}">
         <a href="{% url 'students_dataAdmin' %}" class="menu-link">
           <i class="menu-icon tf-icons fa-solid fa-graduation-cap"></i>

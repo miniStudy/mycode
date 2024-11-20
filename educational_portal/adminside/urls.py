@@ -180,5 +180,9 @@ urlpatterns = [
     path('add_expense/', adminview.add_expense_function, name='add_expense'),
     path('delete_expense/', adminview.delete_expense_functions, name='delete_expense'),
 
-    
+
+    path('show_adminlead/', adminview.show_adminlead_function, name='show_adminlead'),
+    path('add_adminlead/', adminview.add_adminlead_function, name='add_adminlead'),
+    path('delete_adminlead/', adminview.delete_adminlead_function, name='delete_adminlead'),
+
 ]

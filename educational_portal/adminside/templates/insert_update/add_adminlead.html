@@ -1,0 +1,103 @@
+{% extends 'master.html' %}
+ 
+{% block contentsection %}
+  <div class="mb-4"><h4>Add Admin Lead</h4></div> 
+   
+  <div class="errors">
+    {% if errors %}
+    <ul>
+    {% for field, field_errors in errors.items %}
+    <li>{{ field }}</li>
+        <ul>
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% include "message_show.html" %}
+  <!-- Modal to add or update student record -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="offcanvas-title" id="exampleModalLabel"></h5>
+    </div>
+    <div class="card-body">
+      <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_adminlead' %}">
+        {% csrf_token %}
+        <div class="col-sm-12">
+          <label class="form-label mb-2">Name</label>
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control" name="adminlead_name" placeholder="Enter your name" required/>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Email</label>
+            <div class="input-group input-group-merge">
+              <input type="email" class="form-control" name="adminlead_email" placeholder="Enter your email" required/>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Contact</label>
+            <div class="input-group input-group-merge">
+                <input type="text" class="form-control" name="adminlead_contact" placeholder="Enter your contact number" required/>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Standard</label>
+            <div class="input-group input-group-merge">
+                <input type="text" class="form-control" name="adminlead_standard" placeholder="Enter standard" required/>
+            </div>
+        </div>
+
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Subject</label>
+            <div class="input-group input-group-merge">
+                <input type="text" class="form-control" name="adminlead_subject" placeholder="Enter subject" required/>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+        <label class="form-label mb-2">Last talk date</label>
+        <div class="input-group input-group-merge">
+            <input type="date" class="form-control" name="adminlead_last_talkdate" placeholder="Enter last talk date" required/>
+        </div>
+        </div>
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Future talk date</label>
+            <div class="input-group input-group-merge">
+            <input type="date" class="form-control" name="adminlead_future_talkdate" placeholder="Enter furure talk date" required/>
+            </div>
+        </div>
+        
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Admin Label</label>
+            <div class="input-group input-group-merge">
+              <select class="form-select" name="adminlead_level" required>
+                <option value="Warm">Warm</option>
+                <option value="Medium">Medium</option>
+                <option value="Cold">Cold</option>
+              </select>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <label class="form-label mb-2">Conversion Details</label>
+            <div class="input-group input-group-merge">
+                <input type="text" class="form-control" name="adminlead_conversiondetails" placeholder="Enter admin conversion details" required/>
+            </div>
+        </div>
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary data-submit me-sm-3 me-1 mt-2">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -131,3 +131,9 @@ class materials_form(forms.ModelForm):
     class Meta:
         model = Materials
         fields = "__all__"
+
+
+class adminlead_form(forms.ModelForm):
+    class Meta:
+        model = AdminLead
+        fields = "__all__"

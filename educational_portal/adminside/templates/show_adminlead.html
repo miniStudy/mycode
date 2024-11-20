@@ -1,0 +1,95 @@
+{% extends 'master.html' %}
+
+{% block contentsection %}
+<div class="mb-4"><h4>Admin Leads</h4></div>
+
+{% include 'message_show.html' %}
+
+
+<!-- DataTable with Buttons -->
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="myheadfont">{{ title }} Data</div>
+      <div>
+        <div class="d-inline-block" id="exportbtns"></div>
+        <a href="{% url 'add_adminlead' %}">
+          <button class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i> ADD
+          </button>
+        </a>
+      </div>
+    </div>
+    
+
+    <form action="{% url 'delete_adminlead' %}" method="POST">
+      {% csrf_token %}
+      <div class="card-datatable table-responsive pt-0 mt-3">
+        <table id="data-table" class="display table table-bordered" style="width:100%">
+          <thead>
+            <tr>
+              <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Email</th>
+              <th>Standard</th>
+              <th>Subject</th>
+              <th>Last Talk Date</th>
+              <th>Future Talk Date</th>
+              <th>Admin Label</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in adminlead_data %}
+            <tr>
+              <td><input type="checkbox" class="form-check-input" value="{{ data.adminlead_id }}" name="selection" /></td>
+              <td>{{ data.adminlead_name }}</td>
+              <td>{{ data.adminlead_contact }}</td>
+              <td>{{ data.adminlead_email }}</td>
+              <td>{{ data.adminlead_standard }}</td>
+              <td>{{ data.adminlead_subject }}</td>
+              <td>{{ data.adminlead_last_talkdate }}</td>
+              <td>{{ data.adminlead_future_talkdate }}</td>
+              <td>{{ data.adminlead_level }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      
+      
+      {% comment %} <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2 flex-wrap" role="group" aria-label="First group">
+          {% for x in data.paginator.page_range %}
+          <a href="?page={{x}}&get_std={{get_std.std_id}}&get_batch={{get_batch.batch_id}}&searchhh={{searchhh}}"><button type="button" class="btn btn-sm btn-outline-secondary mt-3 ms-1{% if data.number == x %} btn-outline-primary{% endif %}">{{x}}</button></a>
+          {% endfor %}
+        </div>
+      </div> {% endcomment %}
+
+      <!-- Confirm Delete Modal -->
+      <div class="modal fade" id="confirmdeletemodel" tabindex="-1" aria-labelledby="confirmdeletemodelLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmdeletemodelLabel"><i class="fa-solid fa-trash me-2"></i> Confirm Delete</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this data ..?<br>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

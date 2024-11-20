@@ -746,3 +746,25 @@ class Materials_access(models.Model):
     class Meta:
         db_table = "Material_access"
 
+class AdminLead(models.Model):
+    class leadlevel_options(models.TextChoices):
+        Warm = 'Warm','Warm'
+        Medium = 'Medium', 'Medium'
+        Cold = 'Cold', 'Cold'
+    adminlead_id = models.BigAutoField(primary_key=True)
+    adminlead_name = models.CharField(max_length=155)
+    adminlead_email = models.EmailField(unique=True)
+    adminlead_contact = models.IntegerField()
+    adminlead_standard = models.CharField(max_length=50)
+    adminlead_subject = models.CharField(max_length=155)
+    adminlead_last_talkdate = models.DateField()
+    adminlead_future_talkdate = models.DateField()
+    adminlead_level = models.CharField(choices=leadlevel_options.choices, max_length=100)
+    adminlead_conversiondetails = models.CharField(max_length=255)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.adminlead_name}"
+    
+    class Meta:
+        db_table = "AdminLead"
