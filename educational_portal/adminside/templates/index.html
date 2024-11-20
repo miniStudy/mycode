@@ -95,7 +95,6 @@
                 <small class="dashboardmutedtext text-muted">View</small>
               </div>
             </div>
-      
           </div>
         </div>
       </div>
@@ -227,6 +226,25 @@
     </div>
   </a>
   </div>
+  {% for data in today_follow_up_data %}
+  <div class=" col-6 col-xs-6 col-sm-6 col-md-3 mb-4">
+      <div class="card card-border-shadow-info">
+        <div class="card-body dashboardcardaddon1" >
+          <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center gap-2 gap-md-3">
+              <div class="card-info">
+                <h5 class="card-title mb-0 me-2">Today's Follow Up</h5>
+                <small class="dashboardmutedtext text-muted">Name: {{data.adminlead_name}}</small><br>
+                <small class="dashboardmutedtext text-muted">Contact: {{data.adminlead_contact}}</small><br>
+                <small class="dashboardmutedtext text-muted">Email: {{data.adminlead_email}}</small><br>
+                <small class="dashboardmutedtext text-muted">Follow Up date: {{data.adminlead_future_talkdate}}</small>
+              </div>
+            </div>    
+          </div>
+        </div>
+      </div>
+  </div>
+  {% endfor %}
 </div>
 
 

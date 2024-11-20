@@ -511,6 +511,16 @@ def home(request):
         'total_inquiries':total_inquiries,
         'total_conversion': count,
     })
+
+    today_follow_up = []
+    future_talk_dates = AdminLead.objects.values_list('adminlead_future_talkdate', flat=True)
+    for future_date in future_talk_dates:
+        if future_date == datetime.datetime.today().date():
+            today_follow_up.append(future_date)
+
+    today_follow_up_data = AdminLead.objects.filter(adminlead_future_talkdate__in = today_follow_up)
+    context.update({'today_follow_up_data': today_follow_up_data})
+
     return render(request, 'index.html',context)
 
 @admin_login_required
@@ -3552,7 +3562,6 @@ def institute_main_send_function(request):
             print(df)
         except Exception as e:
             return render(request, 'show_inquiries.html', {'error': f"Error reading file: {str(e)}"})
-    
         if 'Email' not in df.columns:
             return render(request, 'show_inquiries.html', {'error': 'Excel file must contain "institute email" column.'})
         else:
@@ -3780,20 +3789,13 @@ def admin_show_material_function(request):
 
 
 def generate_pdf_icon(pdf_file):
-    # Read the file content into memory
     pdf_data = pdf_file.read()
-    # Open the PDF from the memory
     doc = fitz.open(stream=pdf_data, filetype="pdf")
-    # Select the first page
     page = doc.load_page(0)
-    # Render the page to an image
     pix = page.get_pixmap()  
-    # Convert to PIL Image
     image = Image.open(io.BytesIO(pix.tobytes("png")))
-    # Save image to BytesIO object
     image_io = io.BytesIO()
     image.save(image_io, format="PNG")
-    # Return a ContentFile that can be saved in the ImageField
     return ContentFile(image_io.getvalue(), name=f"{pdf_file.name.split('.')[0]}_icon.png")
 
 
@@ -3833,7 +3835,6 @@ def admin_add_material_function(request):
                 filled_data = form.data
                 context.update({'filled_data': filled_data, 'errors': form.errors})
                 return render(request, 'insert_update/add_material.html', context)
-
     return render(request, 'insert_update/add_material.html', context)
 
 
@@ -3870,7 +3871,22 @@ def add_adminlead_function(request):
             form.instance.domain_name = domain
             messages.success(request, "AdmimLead has been added successfully.")
             form.save()
+            
+            onesignal_player_id_list = AdminData.objects.values_list('admin_onesignal_player_id', flat=True)
+            title = 'Follow Up'
+            mess = f"A new follow up has to be contact today"
+
+            for player_id in onesignal_player_id_list:
+                send_notification(player_id,title,mess,request)
+                
+            notification = Notification(
+            notify_title=title,
+            notify_notification=mess,
+            notify_user = 'admin',
+            domain_name=domain)
+            notification.save()
             return redirect('show_adminlead')
+        
     return render(request, "insert_update/add_adminlead.html", context)
 
 

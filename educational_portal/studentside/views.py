@@ -1032,7 +1032,7 @@ def today_study_page(request):
     domain = request.get_host()
     student_standard = request.session['stud_std']
     student_batch = request.session['stud_batch']
-    todays_study_data = Today_Teaching.objects.filter(today_teaching_chap_id__chep_std__std_id = student_standard, today_teaching_batches_id__batch_id = student_batch, domain_name = domain).order_by('-today_teaching_chap_id')[:3]
+    todays_study_data = Today_Teaching.objects.filter(today_teaching_chap_id__chep_std__std_id = student_standard, today_teaching_batches_id__batch_id = student_batch, domain_name = domain).order_by('-today_teaching_chap_id')[:30]
 
     context = {
         'title': 'Today-Learning',

@@ -753,8 +753,8 @@ class AdminLead(models.Model):
         Cold = 'Cold', 'Cold'
     adminlead_id = models.BigAutoField(primary_key=True)
     adminlead_name = models.CharField(max_length=155)
-    adminlead_email = models.EmailField(unique=True)
-    adminlead_contact = models.IntegerField()
+    adminlead_email = models.EmailField(null=True, blank=True)
+    adminlead_contact = models.IntegerField(null=True, blank=True)
     adminlead_standard = models.CharField(max_length=50)
     adminlead_subject = models.CharField(max_length=155)
     adminlead_last_talkdate = models.DateField()
