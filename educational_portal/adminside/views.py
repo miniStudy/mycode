@@ -3552,7 +3552,7 @@ def institute_main_send_function(request):
             print(df)
         except Exception as e:
             return render(request, 'show_inquiries.html', {'error': f"Error reading file: {str(e)}"})
-
+    
         if 'Email' not in df.columns:
             return render(request, 'show_inquiries.html', {'error': 'Excel file must contain "institute email" column.'})
         else:
@@ -3862,7 +3862,7 @@ def admin_show_pdf(request):
 
 @admin_login_required
 def add_adminlead_function(request):
-    context = {'title': 'AdminLead'}
+    context = {'title': 'Leads'}
     domain = request.get_host()
     if request.method == 'POST':
         form = adminlead_form(request.POST)
@@ -3876,11 +3876,11 @@ def add_adminlead_function(request):
 
 @admin_login_required
 def show_adminlead_function(request):
-    context = {'title': 'AdminLead'}
+    context = {'title': 'Leads'}
     domain = request.get_host()
     adminlead_data = AdminLead.objects.filter(domain_name = domain)
     context.update({'adminlead_data': adminlead_data})
-    return render (request, "show_adminlead.html", context)
+    return render (request, "show_inquiries.html", context)
 
 
 def delete_adminlead_function(request):
