@@ -22,10 +22,13 @@
         <img src="{{request.session.institute_logo}}" style="width: 200px;box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" />
     </div>
     <br><br>
+    
+    
     <a href="{% url 'Admin Home' %}"><div class="panel-section">Admin Panel</div></a>
     <a href="{% url 'Student_home' %}"><div class="panel-section">Student Panel</div></a>
     <a href="{% url 'teacher_home' %}"><div class="panel-section">Teacher Panel</div></a>
     <a href="{% url 'parent_home' %}"><div class="panel-section">Parents Panel</div></a>
+    <!-- <a href="{% url 'Admin Home' %}"><div class="panel-section">{{request.session.deviceId}}</div></a> -->
     </div> 
     </section>
     
