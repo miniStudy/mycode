@@ -613,6 +613,9 @@ def show_syllabus(request):
 def student_inquiries_data(request):
     title = 'Inquiries'
     domain = request.get_host()
+    get_institute_logo = NewInstitution.objects.get(institute_domain = domain)
+    logo = get_institute_logo.institute_logo.url
+
     standard_data = Std.objects.filter(domain_name = domain)
     package_data = Packs.objects.filter(domain_name = domain)
     subjects = Subject.objects.filter(domain_name=domain)
@@ -641,7 +644,7 @@ def student_inquiries_data(request):
     return render(
         request, 
         'studentpanel/inquiries.html', 
-        {'form': form, 'standard_data': standard_data, 'package_data': package_data, 'subjects_data': subjects_data, 'title': title}
+        {'form': form, 'standard_data': standard_data, 'package_data': package_data, 'subjects_data': subjects_data, 'title': title, 'logo': logo}
     )
 
 @student_login_required
