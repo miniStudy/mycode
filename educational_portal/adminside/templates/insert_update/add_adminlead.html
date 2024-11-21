@@ -20,9 +20,6 @@
   {% include "message_show.html" %}
   <!-- Modal to add or update student record -->
   <div class="card">
-    <div class="card-header">
-      <h5 class="offcanvas-title" id="exampleModalLabel"></h5>
-    </div>
     <div class="card-body">
       <form class="add-new-record pt-0 row g-2" id="form-add-new-record" method="POST" action="{% url 'add_adminlead' %}">
         {% csrf_token %}
@@ -63,7 +60,7 @@
         </div>
 
         <div class="col-sm-12">
-        <label class="form-label mb-2">Last talk date</label>
+        <label class="form-label mb-2">Today's date</label>
         <div class="input-group input-group-merge">
             <input type="date" class="form-control" name="adminlead_last_talkdate" placeholder="Enter last talk date" required/>
         </div>
@@ -91,7 +88,7 @@
         <div class="col-sm-12">
             <label class="form-label mb-2">Conversion Details</label>
             <div class="input-group input-group-merge">
-                <input type="text" class="form-control" name="adminlead_conversiondetails" placeholder="Enter admin conversion details" required/>
+                <input type="text" class="form-control" name="adminlead_conversiondetails" placeholder="Enter Lead conversion details" required/>
             </div>
         </div>
         <div class="col-sm-12">
