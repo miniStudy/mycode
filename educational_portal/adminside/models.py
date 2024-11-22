@@ -771,9 +771,19 @@ class AdminLead(models.Model):
 
 
 
-# class Practice_test(models.Model):
-#     practice_test_id = models.BigAutoField(primary_key=True)
-#     practice_test_name = models.CharField(max_length=100)
-#     practice_test_chapter_name = models.CharField(max_length=300)
-#     Practice_test_std = models.CharField(max_length=100)
-#     Practice_test_subject = models.CharField(max_length=100)        
+class Practice_test(models.Model):
+    practice_test_id = models.BigAutoField(primary_key=True)
+    practice_test_name = models.CharField(max_length=100)
+    practice_test_chapter_name = models.CharField(max_length=300)
+    Practice_test_std = models.CharField(max_length=100)
+    Practice_test_subject = models.CharField(max_length=100) 
+
+    def __str__(self):
+        return f"{self.practice_test_name}"
+
+    class Meta:
+        db_table = "Practice_test" 
+
+
+# class practice_test_questions(models.Model):
+
