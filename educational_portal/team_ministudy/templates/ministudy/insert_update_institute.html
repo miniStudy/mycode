@@ -51,6 +51,21 @@
             id="logo" 
             {% if not update_data %} required {% endif %}>
         </div>
+
+        <div class="mb-3">
+          <label for="logo" class="form-label">Institute Logo:</label>
+          {% if update_data and update_data.institute_logo_icon %}
+            <div class="mb-2">
+              <img src="{{ update_data.institute_logo_icon.url }}" alt="Current Logo" width="150" height="150" />
+            </div>
+          {% endif %}
+          <input 
+            type="file" 
+            name="institute_logo_icon" 
+            class="form-control" 
+            id="logo" 
+            {% if not update_data %} required {% endif %}>
+        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>

@@ -12,6 +12,7 @@ class NewInstitution(models.Model):
     institute_lock = models.BooleanField(default=False, null=True, blank=True)
     institute_joining_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     institute_logo = models.ImageField(upload_to='institution_logos/')
+    institute_logo_icon = models.ImageField(upload_to='institution_logos/')
     institute_domain = models.CharField(max_length=155, unique=True)
 
     def __str__(self):
