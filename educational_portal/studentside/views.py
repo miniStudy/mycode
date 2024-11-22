@@ -487,10 +487,9 @@ def show_test(request):
 
 
 @api_view(['GET'])
-@student_login_required
 def show_test_questions(request, id):
     domain = request.get_host()
-    student_id = Students.objects.get(stud_id=request.session['stud_id'])
+    student_id = Students.objects.get(stud_id=45)
     test = Chepterwise_test.objects.get(test_id=id)
     # Check if test start time is in session
     if 'start_time' not in request.session:
