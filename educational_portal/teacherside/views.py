@@ -192,6 +192,7 @@ def teacher_login_page(request):
 
 def teacher_login_handle(request):
     domain = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
@@ -214,6 +215,8 @@ def teacher_login_handle(request):
                         request.session['fac_name'] = item.fac_name
                         request.session['fac_profile'] = '{}'.format(item.fac_profile)
                         request.session['fac_logged_in'] = 'yes'
+                        request.session['institute_logo'] = Institute_data.institute_logo.url
+                        request.session['institute_logo_icon'] = Institute_data.institute_logo_icon.url
 
                     if request.POST.get("remember"):
                         response = redirect("teacher_home")

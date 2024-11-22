@@ -177,6 +177,7 @@ def student_login_page(request):
 
 def student_login_handle(request):
     domain = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
@@ -197,6 +198,8 @@ def student_login_handle(request):
                     request.session['stud_std'] = item.stud_std.std_id
                     request.session['stud_profile'] = '{}'.format(item.stud_profile)
                     request.session['stud_logged_in'] = 'yes'
+                    request.session['institute_logo'] = Institute_data.institute_logo.url
+                    request.session['institute_logo_icon'] = Institute_data.institute_logo_icon.url
                 
                 if request.POST.get("remember"):
                     response = redirect("Student_home")
