@@ -768,3 +768,7 @@ class AdminLead(models.Model):
     
     class Meta:
         db_table = "AdminLead"
+
+
+
+        
