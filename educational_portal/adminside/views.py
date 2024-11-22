@@ -270,6 +270,7 @@ def admin_login_handle(request):
                     request.session['admin_name'] = item.admin_name
                     request.session['admin_logged_in'] = 'yes'
                     request.session['institute_logo'] = Institute_data.institute_logo.url
+                    request.session['institute_logo_icon'] = Institute_data.institute_logo_icon.url
 
                 if request.POST.get("remember"):
                     response = redirect("Admin Home")
