@@ -1249,9 +1249,9 @@ def insert_update_faculties(request):
                         })
 
                     context_data.update({
-                    'title': "Student Register",
+                    'title': "Teacher Register",
                     'name': fac_name,
-                    'password': fac_password
+                    'password': '123456'
                     })
                     htmly = Template(htmly)
                     html_content = htmly.render(Context(context_data))
@@ -2301,7 +2301,7 @@ def insert_update_students(request):
         form = student_form(request.POST)
         if form.is_valid():
             hashed_password = make_password('12345678')
-            hashed_password_parent = make_password('123456')
+            hashed_password_parent = make_password('12345678')
             form.instance.stud_pass = hashed_password
             form.instance.stud_guardian_password = hashed_password_parent
             form.instance.stud_email = request.POST.get('stud_email').lower()
@@ -2320,8 +2320,9 @@ def insert_update_students(request):
                 )
             # ----------Mail Send-------------------------------------------
             student_name = instance.stud_name
+            parent_name = instance.stud_guardian_name
+            parent_email = instance.stud_guardian_email
             student_email = [instance.stud_email]
-            student_password = instance.stud_pass
 
 
             htmly = mail_templates.objects.get(mail_temp_type = 'Admin_mail', mail_temp_selected=1).mail_temp_html
@@ -2330,7 +2331,7 @@ def insert_update_students(request):
                 Institute_data = NewInstitution.objects.get(institute_domain = domain)
                 
                 logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
-                app_url = Institute_data.institute_admin_app
+                app_url = Institute_data.institute_student_app
                 context_data.update({
                     'app_url': app_url,
                     'logo':logo,
@@ -2349,12 +2350,24 @@ def insert_update_students(request):
             context_data.update({
             'title': "Student Register",
             'name': student_name,
-            'password': student_password
+            'email': request.POST.get('stud_email').lower(),
+            'password': '12345678',
             })
             htmly = Template(htmly)
             html_content = htmly.render(Context(context_data))
             student_email_send.delay(student_email, html_content)
-            
+
+            # Parent send mail
+            context_data.update({
+            'title': "Parent Register",
+            'name': parent_name,
+            'email': request.POST.get('stud_guardian_email').lower(),
+            'password': '12345678',
+            })
+            htmly = Template(htmly)
+            html_content = htmly.render(Context(context_data))
+            student_email_send.delay(parent_email, html_content)
+
             student_std = request.POST.get('stud_std')
             student_batch = request.POST.get('stud_batch')
 
