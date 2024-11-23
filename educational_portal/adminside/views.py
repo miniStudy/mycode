@@ -242,6 +242,8 @@ def delete_admin_page(request):
 
 
 def admin_login_page(request):  
+    domain = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
     login=1
     domain  = request.get_host()
     Institute_data = NewInstitution.objects.get(institute_domain = domain)
@@ -251,7 +253,7 @@ def admin_login_page(request):
             cookie_pass = request.COOKIES['admin_password']
             return render(request, 'master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':'login'})
     else:
-            return render(request, 'master_auth.html',{'login_set':login, 'title':'login'})
+            return render(request, 'master_auth.html',{'login_set':login, 'title':'login', 'Institute_data': Institute_data})
 
 
 def admin_login_handle(request):
