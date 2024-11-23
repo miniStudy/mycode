@@ -29,19 +29,51 @@ def show_institute_function(request):
     return render(request, 'ministudy/show_institute.html', context)
 
 
+# def insert_update_institute_function(request):
+#     if request.GET.get('pk'):
+#         pk = request.GET['pk']
+#         instance = get_object_or_404(NewInstitution, pk=pk)
+#         if request.method == "POST":
+#             form = Institute_Form(request.POST, instance = instance)
+#             if form.is_valid():
+#                 form.save()
+#                 return redirect('show_institute')
+#             else:
+#                 return render(request, 'ministudy/insert_update_institute.html')
+#         else:
+#             return render(request, 'ministudy/insert_update_institute.html')
+
+#     if request.GET.get('update_id'):
+#         update_id = request.GET.get('update_id')
+#         update_data = get_object_or_404(NewInstitution, institute_id=update_id)
+#         context = {'update_data': update_data}
+#         return render(request, 'ministudy/insert_update_institute.html', context)
+    
+#     if request.method == 'POST':
+#         institute_name = request.POST['institute_name']
+#         institute_email = request.POST['institute_email']
+#         institute_contact = request.POST['institute_contact']
+#         institute_domain = request.POST['institute_domain']
+#         institute_logo = request.FILES['institute_logo']
+#         institute_logo_icon = request.FILES['institute_logo_icon']
+#         institute_admin_app = request.FILES['institute_admin_app']
+#         institute_student_app = request.FILES['institute_student_app']
+#         institute_teacher_app = request.FILES['institute_teacher_app']
+#         institute_parent_app = request.FILES['institute_parent_app']
+#         institute_admin_app_version = request.POST['institute_admin_app_version']
+#         institute_student_app_version = request.POST['institute_student_app_version']
+#         institute_teacher_app_version = request.POST['institute_teacher_app_version']
+#         institute_parent_app_version = request.POST['institute_parent_app_version']
+#         print(request.POST['institute_admin_app_version'])
+#         NewInstitution.objects.create(institute_name = institute_name, institute_email = institute_email, institute_contact = institute_contact, institute_logo = institute_logo, institute_logo_icon = institute_logo_icon, institute_domain = institute_domain, institute_admin_app = institute_admin_app, institute_student_app = institute_student_app, institute_teacher_app = institute_teacher_app, institute_parent_app = institute_parent_app, institute_admin_app_version = institute_admin_app_version, institute_student_app_version = institute_student_app_version, institute_teacher_app_version = institute_teacher_app_version, institute_parent_app_version = institute_parent_app_version)
+#         creation(request, institute_domain, institute_email)
+#         return redirect('show_institute')
+#     return render(request, 'ministudy/insert_update_institute.html')
+
+
 def insert_update_institute_function(request):
-    if request.GET.get('pk'):
-        pk = request.GET['pk']
-        instance = get_object_or_404(NewInstitution, pk=pk)
-        if request.method == "POST":
-            form = Institute_Form(request.POST, instance = instance)
-            if form.is_valid():
-                form.save()
-                return redirect('show_institute')
-            else:
-                return render(request, 'ministudy/insert_update_institute.html')
-        else:
-            return render(request, 'ministudy/insert_update_institute.html')
+    pk = request.GET.get('pk')  # Fetch the primary key if present
+    instance = get_object_or_404(NewInstitution, pk=pk) if pk else None
 
     if request.GET.get('update_id'):
         update_id = request.GET.get('update_id')
@@ -50,17 +82,23 @@ def insert_update_institute_function(request):
         return render(request, 'ministudy/insert_update_institute.html', context)
     
     if request.method == 'POST':
-        institute_name = request.POST['institute_name']
-        institute_email = request.POST['institute_email']
-        institute_contact = request.POST['institute_contact']
-        institute_domain = request.POST['institute_domain']
-        institute_logo = request.FILES['institute_logo']
-        institute_logo_icon = request.FILES['institute_logo_icon']
+        # Handle form submission for both creation and update
+        form = Institute_Form(request.POST, request.FILES, instance=instance)
+        if form.is_valid():
+            form.save()
+            if pk:
+                pass
+            else:    
+                creation(request, request.POST.get('institute_domain'), request.POST.get('institute_email'))
+            return redirect('show_institute')
+        else:
+            # Re-render form with validation errors
+            return render(request, 'ministudy/insert_update_institute.html', {'form': form, 'update_data': instance})
 
-        NewInstitution.objects.create(institute_name = institute_name, institute_email = institute_email, institute_contact = institute_contact, institute_logo = institute_logo, institute_logo_icon = institute_logo_icon, institute_domain = institute_domain)
-        creation(request, institute_domain, institute_email)
-        return redirect('show_institute')
-    return render(request, 'ministudy/insert_update_institute.html')
+    # Handle GET request
+    context = {'form': Institute_Form(instance=instance), 'update_data': instance}
+    return render(request, 'ministudy/insert_update_institute.html', context)
+
 
 def show_ministudy_payment_function(request):
     ministudy_payment_data = MinistudyPayment.objects.all()

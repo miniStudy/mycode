@@ -66,6 +66,86 @@
             id="logo1" 
             {% if not update_data %} required {% endif %}>
         </div>
+
+        <div class="mb-3">
+          <label for="logo2" class="form-label">Institute Admin App:</label>
+          {% if update_data and update_data.institute_admin_app %}
+            <div class="mb-2">
+              {{ update_data.institute_admin_app.url }}
+            </div>
+          {% endif %}
+          <input 
+            type="file" 
+            name="institute_admin_app" 
+            class="form-control" 
+            id="logo2" 
+            {% if not update_data %} required {% endif %}>
+        </div>
+
+        <div class="mb-3">
+          <label for="logo3" class="form-label">Institute Student App:</label>
+          {% if update_data and update_data.institute_student_app %}
+            <div class="mb-2">
+              {{ update_data.institute_student_app.url }}
+            </div>
+          {% endif %}
+          <input 
+            type="file" 
+            name="institute_student_app" 
+            class="form-control" 
+            id="logo3" 
+            {% if not update_data %} required {% endif %}>
+        </div>
+
+        <div class="mb-3">
+          <label for="logo4" class="form-label">Institute Teacher App:</label>
+          {% if update_data and update_data.institute_teacher_app %}
+            <div class="mb-2">
+              {{ update_data.institute_teacher_app.url }}
+            </div>
+          {% endif %}
+          <input 
+            type="file" 
+            name="institute_teacher_app" 
+            class="form-control" 
+            {% if not update_data %} required {% endif %}>
+        </div>
+
+        <div class="mb-3">
+          <label for="logo5" class="form-label">Institute Parent App:</label>
+          {% if update_data and update_data.institute_parent_app %}
+            <div class="mb-2">
+              {{ update_data.institute_parent_app.url }}
+            </div>
+          {% endif %}
+          <input 
+            type="file" 
+            name="institute_parent_app" 
+            class="form-control" 
+            id="logo5" 
+            {% if not update_data %} required {% endif %}>
+        </div>
+
+        <div class="mb-3">
+          <label for="contact" class="form-label">Admin App Version:</label>
+          <input type="text" name="institute_admin_app_version" {% if update_data %} value="{{update_data.institute_admin_app_version}}" {% endif %} class="form-control" id="contact" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="contact" class="form-label">Student App Version:</label>
+          <input type="text" name="institute_student_app_version" {% if update_data %} value="{{update_data.institute_student_app_version}}" {% endif %} class="form-control" id="contact" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="contact" class="form-label">Teacher App Version:</label>
+          <input type="text" name="institute_teacher_app_version" {% if update_data %} value="{{update_data.institute_teacher_app_version}}" {% endif %} class="form-control" id="contact" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="contact" class="form-label">Parent App Version:</label>
+          <input type="text" name="institute_parent_app_version" {% if update_data %} value="{{update_data.institute_parent_app_version}}" {% endif %} class="form-control" id="contact" required>
+        </div>
+
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>

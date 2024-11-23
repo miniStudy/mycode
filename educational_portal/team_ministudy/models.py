@@ -14,6 +14,14 @@ class NewInstitution(models.Model):
     institute_logo = models.ImageField(upload_to='institution_logos/')
     institute_logo_icon = models.ImageField(upload_to='institution_logos/')
     institute_domain = models.CharField(max_length=155, unique=True)
+    institute_admin_app = models.FileField(upload_to='institute_app/', null=True, blank=True)
+    institute_student_app = models.FileField(upload_to='institute_app/', null=True, blank=True)
+    institute_teacher_app = models.FileField(upload_to='institute_app/', null=True, blank=True)
+    institute_parent_app = models.FileField(upload_to='institute_app/', null=True, blank=True)
+    institute_admin_app_version = models.CharField(max_length=20, null=True, blank=True)
+    institute_student_app_version = models.CharField(max_length=20, null=True, blank=True)
+    institute_teacher_app_version = models.CharField(max_length=20, null=True, blank=True)
+    institute_parent_app_version = models.CharField(max_length=20, null=True, blank=True)
 
     def __str__(self):
         return f"{self.institute_name} - {self.institute_email}"
