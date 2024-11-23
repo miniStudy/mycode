@@ -231,6 +231,7 @@ def insert_update_admin_page(request):
             return redirect('show_admin')
         else:
             form = admin_form()
+            messages.error(request, "Email already exist enter correct email.")
     return render(request, "insert_update/add_admin.html", context)
 
 def delete_admin_page(request):
