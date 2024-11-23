@@ -199,7 +199,6 @@ def insert_update_admin_page(request):
                 Institute_data = NewInstitution.objects.get(institute_domain = domain)
                 logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
                 app_url = Institute_data.institute_admin_app
-                print(app_url)
                 context_data.update({
                     'logo':logo,
                     'app_url':app_url,
@@ -1226,14 +1225,16 @@ def insert_update_faculties(request):
                     fac_name = form.cleaned_data['fac_name']
                     fac_email = [form.cleaned_data['fac_email']]
 
-                    htmly = mail_templates.objects.get(mail_temp_type = 'Faculty_mail', mail_temp_selected=1).mail_temp_html
+                    htmly = mail_templates.objects.get(mail_temp_type = 'Admin_mail', mail_temp_selected=1).mail_temp_html
                     context_data={}
                     if domain != '127.0.0.1:8000':
                         Institute_data = NewInstitution.objects.get(institute_domain = domain)
                         
                         logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                        app_url = Institute_data.institute_teacher_app
                         context_data.update({
                             'logo':logo,
+                            'app_url': app_url,
                             'institute_name': Institute_data.institute_name,
                             'institute_email': Institute_data.institute_email,
                             'institute_number': Institute_data.institute_contact,
@@ -2279,7 +2280,6 @@ def insert_update_students(request):
         context.update({'get_batch ':get_batch,'batch_data':batch_data})
 
     if request.method == 'POST':
-
         # ================update Logic============================
         if request.GET.get('pk'):
             instance = get_object_or_404(Students, pk=request.GET['pk'])
@@ -2324,13 +2324,15 @@ def insert_update_students(request):
             student_password = instance.stud_pass
 
 
-            htmly = mail_templates.objects.get(mail_temp_type = 'Student_mail', mail_temp_selected=1).mail_temp_html
+            htmly = mail_templates.objects.get(mail_temp_type = 'Admin_mail', mail_temp_selected=1).mail_temp_html
             context_data={}
             if domain != '127.0.0.1:8000':
                 Institute_data = NewInstitution.objects.get(institute_domain = domain)
                 
                 logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                app_url = Institute_data.institute_admin_app
                 context_data.update({
+                    'app_url': app_url,
                     'logo':logo,
                     'institute_name': Institute_data.institute_name,
                     'institute_email': Institute_data.institute_email,
