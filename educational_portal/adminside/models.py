@@ -770,10 +770,46 @@ class AdminLead(models.Model):
         db_table = "AdminLead"
 
 
+class Practice_test(models.Model):
+    practice_test_id = models.BigAutoField(primary_key=True)
+    practice_test_name = models.CharField(max_length=100)
+    practice_test_chapter_name = models.CharField(max_length=300)
+    Practice_test_std = models.CharField(max_length=100)
+    Practice_test_subject = models.CharField(max_length=100) 
 
-# class Practice_test(models.Model):
-#     practice_test_id = models.BigAutoField(primary_key=True)
-#     practice_test_name = models.CharField(max_length=100)
-#     practice_test_chapter_name = models.CharField(max_length=300)
-#     Practice_test_std = models.CharField(max_length=100)
-#     Practice_test_subject = models.CharField(max_length=100)        
+    def __str__(self):
+        return f"{self.practice_test_name}"
+
+    class Meta:
+        db_table = "Practice_test" 
+
+
+class Practice_test_questions(models.Model):
+        class question_type(models.TextChoices):
+            MCQ = 'MCQ', 'MCQ'
+            Filling_Blanks = 'Filling_Blanks','Filling_Blanks'
+            True_False = 'True_False','True_False'
+        class attemped_options(models.TextChoices):
+            Attemped = 'Attemped', 'Attemped'
+            Not_attemped = 'Not_attemped', 'Not_attemped'
+            Answered = 'Answered', 'Answered'
+            Not_answered = 'Not_answered', 'Not_answered'
+        practice_test_id = models.BigAutoField(primary_key=True)
+        practice_test_name_id = models.ForeignKey(Practice_test,on_delete=models.CASCADE)
+        practice_test_type = models.CharField(choices=question_type.choices,max_length=50)
+        practice_test_attempted = models.CharField(choices=attemped_options.choices,max_length=50)
+        practice_test_question = models.TextField()
+        practice_test_answer = models.TextField()
+        practice_test_weightage = models.IntegerField()
+        practice_test_option_a = models.CharField(max_length=155,blank=True,null=True)
+        practice_test_option_b = models.CharField(max_length=155,blank=True,null=True)
+        practice_test_option_c = models.CharField(max_length=155,blank=True,null=True)
+        practice_test_option_d = models.CharField(max_length=155,blank=True,null=True)
+        domain_name = models.CharField(max_length=100,blank=True,null=True)
+
+        def __str__(self):
+            return f"{self.practice_test_name_id.practice_test_name} {self.practice_test_type}"
+
+        class Meta:
+            db_table = "Practice_test_questions" 
+
