@@ -406,15 +406,15 @@ def home(request):
     # logger.error("=============================================================================================")
     # =================================================================
     # sending push Notification
-    onesignal_player_id = request.session.get('deviceId', 'Error')
-    if onesignal_player_id != 'Error':      
-        admindata = AdminData.objects.get(admin_id= request.session.get('admin_id'))
-        admindata.admin_onesignal_player_id = onesignal_player_id
-        # logger.error("============================databaseplayerid:{}".format(admindata.admin_onesignal_player_id))
-        admindata.save()
-    mess = 'Welcome To miniStudy Admin Dashboard'
-    title = 'MiniStudy'
-    send_notification(onesignal_player_id,title,mess,request)
+    # onesignal_player_id = request.session.get('deviceId', 'Error')
+    # if onesignal_player_id != 'Error':      
+    #     admindata = AdminData.objects.get(admin_id= request.session['admin_id'])
+    #     admindata.admin_onesignal_player_id = onesignal_player_id
+    #     # logger.error("============================databaseplayerid:{}".format(admindata.admin_onesignal_player_id))
+    #     admindata.save()
+    # mess = 'Welcome To miniStudy Admin Dashboard'
+    # title = 'MiniStudy'
+    # send_notification(onesignal_player_id,title,mess,request)
 
     
     # ----------------------------------------------------------------
