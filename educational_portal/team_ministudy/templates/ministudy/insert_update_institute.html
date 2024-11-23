@@ -75,7 +75,7 @@
             class="form-control" 
             id="logo2"
             {% if update_data and update_data.institute_admin_app %}
-              values="{{ update_data.institute_admin_app }}"
+              value="{{ update_data.institute_admin_app }}"
             {% endif %} 
             {% if not update_data %} required {% endif %}>
         </div>
@@ -88,7 +88,7 @@
             class="form-control" 
             id="logo3" 
             {% if update_data and update_data.institute_student_app %}
-              values="{{ update_data.institute_student_app }}"
+              value="{{ update_data.institute_student_app }}"
             {% endif %}
             {% if not update_data %} required {% endif %}>
         </div>
@@ -96,11 +96,11 @@
         <div class="mb-3">
           <label for="logo4" class="form-label">Institute Teacher App:</label>
           <input 
-            type="file" 
+            type="text" 
             name="institute_teacher_app" 
             class="form-control"
             {% if update_data and update_data.institute_teacher_app %}
-              values="{{ update_data.institute_teacher_app }}"
+              value="{{ update_data.institute_teacher_app }}"
             {% endif %} 
             {% if not update_data %} required {% endif %}>
         </div>
@@ -108,12 +108,12 @@
         <div class="mb-3">
           <label for="logo5" class="form-label">Institute Parent App:</label>
           <input 
-            type="file" 
+            type="text" 
             name="institute_parent_app" 
             class="form-control" 
             id="logo5"
             {% if update_data and update_data.institute_parent_app %}
-              values="{{ update_data.institute_parent_app }}"
+              value="{{ update_data.institute_parent_app }}"
             {% endif %}  
             {% if not update_data %} required {% endif %}>
         </div>
