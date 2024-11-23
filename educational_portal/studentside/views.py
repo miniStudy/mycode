@@ -201,6 +201,7 @@ def student_login_handle(request):
                     request.session['stud_profile'] = '{}'.format(item.stud_profile)
                     request.session['stud_logged_in'] = 'yes'
                     request.session['institute_logo'] = Institute_data.institute_logo.url
+                    request.session['institute_name'] = Institute_data.institute_name
                     request.session['institute_logo_icon'] = Institute_data.institute_logo_icon.url
                 
                 if request.POST.get("remember"):
