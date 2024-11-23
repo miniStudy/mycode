@@ -181,14 +181,16 @@ def teacher_home(request):
     })
     return render(request, 'teacherpanel/index.html',context)
 
-def teacher_login_page(request):  
+def teacher_login_page(request):
+    domain = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)  
     login=1
     if request.COOKIES.get("fac_email"):
           cookie_email = request.COOKIES['fac_email'].lower()
           cookie_pass = request.COOKIES['fac_password']
           return render(request, 'teacherpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title': 'login'})
     else:
-          return render(request, 'teacherpanel/master_auth.html',{'login_set':login, 'title':'login'})
+          return render(request, 'teacherpanel/master_auth.html',{'login_set':login, 'title':'login', 'Institute_data': Institute_data})
 
 def teacher_login_handle(request):
     domain = request.get_host()

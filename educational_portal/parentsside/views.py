@@ -101,6 +101,8 @@ def parent_home(request):
     return render(request, 'parentpanel/index.html', context)
 
 def parent_login_page(request):
+    domain = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
     title = 'login' 
     login=1
     if request.COOKIES.get("stud_guardian_email"):
@@ -108,7 +110,7 @@ def parent_login_page(request):
           cookie_pass = request.COOKIES['stud_guardian_password']
           return render(request, 'parentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':title})
     else:
-          return render(request, 'parentpanel/master_auth.html',{'login_set':login, 'title':title})
+          return render(request, 'parentpanel/master_auth.html',{'login_set':login, 'title':title, 'Institute_data': Institute_data})
 
 def parent_login_handle(request):
     domain = request.get_host()

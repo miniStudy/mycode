@@ -167,13 +167,15 @@ def student_home(request):
     return render(request, 'studentpanel/index.html',context)
 
 def student_login_page(request): 
+    domain = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
     login=1
     if request.COOKIES.get("stud_email"):
             cookie_email = request.COOKIES['stud_email'].lower()
             cookie_pass = request.COOKIES['stud_password']
             return render(request, 'studentpanel/master_auth.html',{'login_set':login,'c_email':cookie_email,'c_pass':cookie_pass, 'title':'login'})
     else:
-            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':'login'})
+            return render(request, 'studentpanel/master_auth.html',{'login_set':login, 'title':'login', 'Institute_data': Institute_data})
 
 def student_login_handle(request):
     domain = request.get_host()
