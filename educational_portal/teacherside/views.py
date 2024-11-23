@@ -185,6 +185,17 @@ def teacher_login_page(request):
     domain = request.get_host()
     Institute_data = NewInstitution.objects.get(institute_domain = domain)  
     login=1
+    context = {}
+    if request.GET.get("deviceId"):
+        deviceId = request.GET.get('deviceId','1')
+        context.update({'deviceId':deviceId})
+        if deviceId != '123':
+            request.session['deviceId'] = deviceId
+        context.update({'deviceId':deviceId})
+    if request.GET.get("version"):
+        version = request.GET.get('version','1')  
+        context.update({'version':version})
+        
     if request.COOKIES.get("fac_email"):
           cookie_email = request.COOKIES['fac_email'].lower()
           cookie_pass = request.COOKIES['fac_password']
@@ -911,7 +922,6 @@ def insert_update_syllabus(request):
         f"in batch '{batch_obj.batch_name}' has been successfully completed."
 )
         player_ids = AdminData.objects.filter(domain_name = domain).values('admin_onesignal_player_id')
-        print(player_ids)
         notification = Notification(
         notify_title=title,
         notify_notification=message,
