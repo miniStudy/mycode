@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
 from teacherside.tasks import *
+from team_ministudy.models import *
 import random
 import statistics
 from django.db.models import Sum,Count
@@ -111,6 +112,7 @@ def parent_login_page(request):
 
 def parent_login_handle(request):
     domain = request.get_host()
+    Institute_data = NewInstitution.objects.get(institute_domain = domain)
     if request.method == "POST":
         email = request.POST['email'].lower()
         password = request.POST['password']
@@ -131,6 +133,8 @@ def parent_login_handle(request):
                     request.session['parent_id'] = item.stud_id
                     request.session['parent_name'] = item.stud_guardian_name
                     request.session['parent_logged_in'] = 'yes'
+                    request.session['institute_logo'] = Institute_data.institute_logo.url
+                    request.session['institute_logo_icon'] = Institute_data.institute_logo_icon.url
 
                 if request.POST.get("remember"):
                     response = redirect("parent_home")
