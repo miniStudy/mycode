@@ -28,7 +28,9 @@
     <a href="{% url 'Student_home' %}"><div class="panel-section">Student Panel</div></a>
     <a href="{% url 'teacher_home' %}"><div class="panel-section">Teacher Panel</div></a>
     <a href="{% url 'parent_home' %}"><div class="panel-section">Parents Panel</div></a>
-    <!-- <a href="{% url 'Admin Home' %}"><div class="panel-section">{{request.session.deviceId}}</div></a> -->
+    <a href="{% url 'Admin Home' %}"><div class="panel-section">{{request.session.deviceId}}</div></a>
+    <a href="{% url 'Admin Home' %}"><div class="panel-section">{{deviceId}}</div></a>
+    <a href="{% url 'Admin Home' %}"><div class="panel-section">{{version}}</div></a>
     </div> 
     </section>
     
