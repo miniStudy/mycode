@@ -408,8 +408,7 @@ def home(request):
         admindata.save()
     mess = 'Welcome To miniStudy Admin Dashboard'
     title = 'MiniStudy'
-
-    # send_notification(onesignal_player_id,title,mess,request)
+    send_notification(onesignal_player_id,title,mess,request)
 
     
     # ----------------------------------------------------------------
@@ -2241,7 +2240,7 @@ def send_meeting_mail(request):
             domain_name=domain)
             notification.save()
 
-            send_notification.delay(student_parent.guardian_onesignal_player_id, title, msg, request)
+            # send_notification(student_parent.guardian_onesignal_player_id, title, msg, request)
     return render(request, 'meeting_date.html')
 
 @admin_login_required
