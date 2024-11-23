@@ -199,14 +199,20 @@ def insert_update_admin_page(request):
                 Institute_data = NewInstitution.objects.get(institute_domain = domain)
                 
                 logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
+                app_url = '{}/media/{}'.format(domain,Institute_data.institute_admin_app)
+                print(app_url)
                 context_data.update({
                     'logo':logo,
+                    'app_url':app_url,
                     'institute_name': Institute_data.institute_name,
                     'institute_email': Institute_data.institute_email,
                     'institute_number': Institute_data.institute_contact,
                 })
             else:
                 logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
+                Institute_data = NewInstitution.objects.get(institute_domain = domain)
+                app_url = '{}/media/{}'.format(domain,Institute_data.institute_admin_app)
+                print(app_url)
                 context_data.update({
                     'logo':logo,
                     'institute':'miniStudy',
