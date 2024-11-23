@@ -15,5 +15,9 @@ def firstpage(request):
             request.session['deviceId'] = deviceId
         context.update({'deviceId':deviceId})
 
+    if request.GET.get("version"):
+        version = request.GET.get('version','1')  
+        context.update({'version':version})   
+
     return render(request, "pages/index.html",context)
 
