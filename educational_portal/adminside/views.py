@@ -3255,11 +3255,8 @@ def faculty_access_show(request):
 
     if request.GET.get('fac_id'):
         fac_id = int(request.GET.get('fac_id'))
-        faculty_access_subject = Faculty_Access.objects.filter(fa_faculty__fac_id = fac_id)
-        sub_access_list = [sub.fa_subject for sub in faculty_access_subject]
-        subjects_not_accessible = subject_data.exclude(sub_id__in=[sub.sub_id for sub in sub_access_list])
         teachers_names = teachers_names.filter(fac_id = fac_id)
-        context.update({'fac_id': fac_id, 'subject_data': subjects_not_accessible, 'teachers_names': teachers_names})
+        context.update({'fac_id': fac_id, 'teachers_names': teachers_names})
 
     selected_subjects = request.POST.getlist('fa_subject')
     
@@ -3270,7 +3267,12 @@ def faculty_access_show(request):
             batch = form.cleaned_data['fa_batch']
             for x in selected_subjects:
                 x_obj = Subject.objects.get(sub_id=x)
-                Faculty_Access.objects.create(fa_faculty=fac, fa_batch=batch, fa_subject=x_obj, domain_name = domain)
+                Faculty_Access.objects.update_or_create(
+                fa_faculty=fac, 
+                fa_batch=batch, 
+                fa_subject=x_obj, 
+                domain_name=domain,)
+                
             messages.success(request, "Access given successfully")
             return redirect('faculty_access')
     else:
