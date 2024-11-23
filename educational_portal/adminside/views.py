@@ -2391,13 +2391,16 @@ def delete_students(request):
 
 @admin_login_required
 def show_inquiries(request):
+    context = {'title': 'Leads'}
     domain = request.get_host()
-    title = "Leads"
+    adminlead_data = AdminLead.objects.filter(domain_name = domain)
+    context.update({'adminlead_data': adminlead_data})
     email_ids = list(Students.objects.values_list('stud_email', flat=True))
     inquiries_data = Inquiries.objects.filter(domain_name = domain).order_by('-inq_date')
-    total_inquiries = inquiries_data.count()
+    admin_lead = AdminLead.objects.filter(domain_name = domain)
+    total_inquiries = admin_lead.count()
     students_email = Students.objects.filter(domain_name = domain).values('stud_email')
-    matching_inquiries = Inquiries.objects.filter(domain_name = domain, inq_email__in=students_email)
+    matching_inquiries = AdminLead.objects.filter(domain_name = domain, adminlead_email__in=students_email)
 
     total_conversion = matching_inquiries.count()
     if total_inquiries != 0:
@@ -2418,8 +2421,8 @@ def show_inquiries(request):
     for item in monthly_data
 ]
 
-    context = {
-        "title":title,
+    context.update({
+        'adminlead_data': adminlead_data,
         "inquiries_data":inquiries_data,
         "total_inquiries":total_inquiries,
         "total_conversion":total_conversion,
@@ -2428,7 +2431,7 @@ def show_inquiries(request):
         'email_ids': email_ids,
         'formatted_monthly_leads': formatted_monthly_leads,
         'domain':domain
-    }
+    })
     return render(request, 'show_inquiries.html', context)
 
 @admin_login_required
@@ -3906,11 +3909,8 @@ def add_adminlead_function(request):
 
 @admin_login_required
 def show_adminlead_function(request):
-    context = {'title': 'Leads'}
-    domain = request.get_host()
-    adminlead_data = AdminLead.objects.filter(domain_name = domain)
-    context.update({'adminlead_data': adminlead_data})
-    return render (request, "show_inquiries.html", context)
+    pass
+    
 
 
 def delete_adminlead_function(request):
