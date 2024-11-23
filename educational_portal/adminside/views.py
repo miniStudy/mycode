@@ -197,9 +197,8 @@ def insert_update_admin_page(request):
             context_data={}
             if domain != '127.0.0.1:8000':
                 Institute_data = NewInstitution.objects.get(institute_domain = domain)
-                
                 logo = '{}/media/{}'.format(domain,Institute_data.institute_logo)
-                app_url = '{}/media/{}'.format(domain,Institute_data.institute_admin_app)
+                app_url = Institute_data.institute_admin_app
                 print(app_url)
                 context_data.update({
                     'logo':logo,
@@ -211,10 +210,11 @@ def insert_update_admin_page(request):
             else:
                 logo = 'api.ministudy.in/static/imgs/My_dream_logo/logo_text_sidebyside_dark.png'
                 Institute_data = NewInstitution.objects.get(institute_domain = domain)
-                app_url = '{}/media/{}'.format(domain,Institute_data.institute_admin_app)
+                app_url = Institute_data.institute_admin_app
                 print(app_url)
                 context_data.update({
                     'logo':logo,
+                    'app_url':app_url,
                     'institute':'miniStudy',
                     'email':'mail.trushalpatel@gmail.com',
                     'phone_num':'8511962611',
