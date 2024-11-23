@@ -136,6 +136,7 @@ def parent_login_handle(request):
                     request.session['parent_name'] = item.stud_guardian_name
                     request.session['parent_logged_in'] = 'yes'
                     request.session['institute_logo'] = Institute_data.institute_logo.url
+                    request.session['institute_name'] = Institute_data.institute_name
                     request.session['institute_logo_icon'] = Institute_data.institute_logo_icon.url
 
                 if request.POST.get("remember"):
