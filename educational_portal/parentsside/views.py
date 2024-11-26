@@ -105,6 +105,16 @@ def parent_login_page(request):
     Institute_data = NewInstitution.objects.get(institute_domain = domain)
     title = 'login' 
     login=1
+    context = {}
+    if request.GET.get("deviceId"):
+        deviceId = request.GET.get('deviceId','1')
+        context.update({'deviceId':deviceId})
+        if deviceId != '123':
+            request.session['deviceId'] = deviceId
+        context.update({'deviceId':deviceId})
+    if request.GET.get("version"):
+        version = request.GET.get('version','1')  
+        context.update({'version':version})
     if request.COOKIES.get("stud_guardian_email"):
           cookie_email = request.COOKIES['stud_guardian_email'].lower()
           cookie_pass = request.COOKIES['stud_guardian_password']
