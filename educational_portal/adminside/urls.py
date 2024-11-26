@@ -185,4 +185,8 @@ urlpatterns = [
     path('add_adminlead/', adminview.add_adminlead_function, name='add_adminlead'),
     path('delete_adminlead/', adminview.delete_adminlead_function, name='delete_adminlead'),
 
+
+    path('show_study_videos/', adminview.show_study_videos, name='show_study_videos'),
+    path('add_study_videos/', adminview.add_study_videos, name='add_study_videos'),
+
 ]
