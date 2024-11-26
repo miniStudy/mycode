@@ -281,6 +281,11 @@ def admin_login_handle(request):
                     request.session['institute_name'] = Institute_data.institute_name
                     request.session['institute_logo_icon'] = Institute_data.institute_logo_icon.url
 
+                if 'deviceId' in request.session:
+                    device_id = request.session['deviceId']
+                    admin_id.admin_onesignal_player_id = device_id
+                    admin_id.save()
+
                 if request.POST.get("remember"):
                     response = redirect("Admin Home")
                     response.set_cookie('admin_email', email) 
