@@ -2413,7 +2413,7 @@ def show_inquiries(request):
     domain = request.get_host()
     adminlead_data = AdminLead.objects.filter(domain_name = domain)
     context.update({'adminlead_data': adminlead_data})
-    email_ids = list(Students.objects.values_list('stud_email', flat=True))
+    email_ids = list(Students.objects.filter(domain_name=domain).values_list('stud_email', flat=True))
     inquiries_data = Inquiries.objects.filter(domain_name = domain).order_by('-inq_date')
     admin_lead = AdminLead.objects.filter(domain_name = domain)
     total_inquiries = admin_lead.count()

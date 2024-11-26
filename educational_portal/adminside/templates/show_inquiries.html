@@ -157,13 +157,13 @@
 
 
 <!-- DataTable with Buttons -->
-<div class="card">
+<div class="card mt-4">
   <div class="card-body">
-    <!-- <div class="d-flex justify-content-between align-items-center">
-      <div class="myheadfont">{{ title }} Data</div>
-</div> -->
+     <div class="d-flex justify-content-between align-items-center">
+      <div class="myheadfont">Student Admission Data</div>
+</div>
 
-<div class="btn-toolbar mb-3 mt-2" role="toolbar" aria-label="Toolbar with button groups">
+<!-- <div class="btn-toolbar mb-3 mt-2" role="toolbar" aria-label="Toolbar with button groups"></div> -->
   <!-- <div class="btn-group me-2" role="group" aria-label="First group">
     <a href="{% url 'export_data' %}?model_name=inquiries"><button  type="button" class="btn btn-outline-primary mt-2"><i class="fa-solid fa-file-export"></i></button></a>
   </div>
@@ -175,11 +175,11 @@
   
 <!-- <form action="{% url 'delete_inquiry' %}" method="POST"> -->
     <!-- {% csrf_token %}         -->
-    <!-- <div class="card-datatable table-responsive pt-0 mt-3">
-        <table id="data-table" class="display table table-bordered" style="width:100%">
+    <div class="card-datatable table-responsive pt-0 mt-3">
+        <table id="" class="display table table-bordered" style="width:100%">
             <thead>
                 <tr>
-                    <th><input type="checkbox" class="form-check-input" name="selectionall" /></th>
+                    <th><input type="checkbox" class="form-check-input" name="" /></th>
                     <th>Name</th>
                     <th>Phn</th>
                     <th>Subject</th>
@@ -205,7 +205,7 @@
             <tbody>
               {% for data in inquiries_data %}
               <tr>
-                  <td><input type="checkbox" class="form-check-input" value="{{ data.inq_id }}" name="selection" /></td>
+                  <td><input type="checkbox" class="form-check-input" value="{{ data.inq_id }}" name="" /></td>
                   <td>{{ data.inq_name }} {{ data.inq_lastname }}</td>
                   <td>{{ data.inq_contact }}</td>
                   <td>{{ data.inq_subjects }}</td>
@@ -233,7 +233,7 @@
               {% endfor %}              
             </tbody>
         </table>
-    </div> -->
+    </div>
     <!-- <h2>Monthly Leads</h2> -->
     <!-- <hr> -->
     
@@ -333,10 +333,10 @@
   <!-- <button type="button" class="btn btn-primary" style="position: fixed;bottom: 20px;right: 20px;" id="selected" name="delbtn" data-bs-toggle="modal" data-bs-target="#confirmdeletemodel"><i class="fa-solid fa-trash me-2"></i> Delete</button> -->
 
   <!-- </form> -->
-  
   </div>
-  </div>
+
 </div>
+
   <div class="card p-3 mt-4">
     <div class="row">
     <div class="col-md-3">
