@@ -51,7 +51,7 @@
        
         <div class="col-sm-12" {% if update_data %}style="display:none;"{% endif %}>
           <label for="defaultSelect" class="form-label">Batch Name</label>
-          <select id="defaultSelect" class="form-select" name="today_teaching_batches_id">
+          <select id="defaultSelect" class="form-select" name="today_teaching_batches_id" required>
             <option value="">--</option>
             {% for x in batch_access_data %}          
               <option value="{{x.batch_id}}" {% if filled_data.announce_batch.batch_id == x.batch_id %} selected {% endif %} {% if x.batch_id == update_data.today_teaching_batches_id.batch_id %} selected {% endif %} >{{x}}</option>        

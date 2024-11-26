@@ -277,7 +277,7 @@ class Event(models.Model):
 class Event_Image(models.Model):
     event_img_id = models.BigAutoField(primary_key=True)
     event = models.ForeignKey(Event,on_delete=models.CASCADE)
-    event_img = models.ImageField()
+    event_img = models.ImageField(upload_to='uploads/events/')
     domain_name = models.CharField(blank=True,null=True,max_length=100)
 
     def __str__(self):
@@ -733,6 +733,20 @@ class Materials(models.Model):
     
     class Meta:
         db_table = 'Materials'
+
+class Study_videos(models.Model):
+    sv_id = models.BigAutoField(primary_key=True)
+    sv_name = models.CharField(max_length=155, null=True,blank=True)
+    sv_video_file = models.FileField(upload_to='uploads/videos/')
+    material_group_id = models.ForeignKey(Groups, on_delete=models.CASCADE)
+    domain_name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.sv_name}"
+    
+    class Meta:
+        db_table = 'Study_videos'
+
 
 class Materials_access(models.Model):
     material_access_id = models.BigAutoField(primary_key=True)

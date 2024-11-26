@@ -35,9 +35,7 @@ import json
 from django.core.mail import send_mail
 from team_ministudy.models import *
 from django.contrib.auth.hashers import check_password
-
-
-
+import os
 import fitz  # PyMuPDF
 from PIL import Image
 import io
@@ -1642,6 +1640,10 @@ def insert_events(request):
         event.save()
         messages.success(request, 'Event Added Successfully')
 
+        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'uploads/events/'))
+        for image in event_images:
+            filename = fs.save(image.name, image)
+            Event_Image.objects.create(event=event, event_img=filename, domain_name = domain)
 
         from django.utils.dateformat import format
         from django.utils.dateparse import parse_date
@@ -1671,10 +1673,9 @@ def insert_events(request):
             if x.guardian_onesignal_player_id:    
                 send_notification(x.guardian_onesignal_player_id, title, msg, request)
         #-------------------------End-------------------------------------------------------------
-        fs = FileSystemStorage(location='media/uploads/events/')
-        for image in event_images:
-            filename = fs.save(image.name, image)
-            Event_Image.objects.create(event=event, event_img=filename, domain_name = domain)
+        
+       
+        
         return redirect('show_events')
     return render(request, 'insert_update/events_insert_admin.html', {'title':title})
 
