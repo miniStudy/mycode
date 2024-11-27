@@ -3919,7 +3919,10 @@ def add_adminlead_function(request):
             notify_user = 'admin',
             domain_name=domain)
             notification.save()
-            return redirect('show_adminlead')
+            return redirect('show_inquiries')
+        else:
+            print(form)
+            messages.error(request, "AdminLead Data Problem")
         
     return render(request, "insert_update/add_adminlead.html", context)
 
