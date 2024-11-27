@@ -95,6 +95,7 @@ DATABASES = {
         'PASSWORD': '71554913@TmP@',
         'HOST': '93.127.167.143',
         'PORT': '3306',
+        'CONN_MAX_AGE': 600,
     }
 }
 
