@@ -137,3 +137,8 @@ class adminlead_form(forms.ModelForm):
     class Meta:
         model = AdminLead
         fields = "__all__"
+
+class studyvideoes_form(forms.ModelForm):
+    class Meta:
+        model = Study_videos
+        fields = "__all__"

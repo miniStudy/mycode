@@ -3845,11 +3845,9 @@ def admin_add_material_function(request):
             group_id = request.POST.get('material_group_id')
             group_obj = Groups.objects.get(group_id = group_id)
             form = materials_form(request.POST, request.FILES)
-            if form.is_valid():
-                
+            if form.is_valid():              
                 check = Materials.objects.filter(material_name = form.data['material_name'], domain_name = domain).count()
                 pdf_file = form.cleaned_data['material_file']
-
                 if check >= 1:
                     messages.error(request, '{} is already Exists'.format(form.data['material_name']))
                 else:
@@ -3931,7 +3929,7 @@ def show_adminlead_function(request):
     pass
     
 
-
+@admin_login_required
 def delete_adminlead_function(request):
     if request.POST.get('pk'):
         pk = request.POST.get('pk')
@@ -3941,3 +3939,27 @@ def delete_adminlead_function(request):
         return redirect('show_adminlead')
     
     return render (request, "show_adminlead.html")
+
+
+@admin_login_required
+def show_study_videos(request):
+    context = {}
+    domain = request.get_host()
+    videos = Study_videos.objects.filter(domain_name = domain)
+    context.update({'videos': videos})
+    return render(request, "show_video.html")
+
+
+@admin_login_required
+def add_study_videos(request):
+    domain = request.get_host()
+    if request.method == 'POST':
+        form = studyvideoes_form(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.domain_name = domain
+            messages.success(request, "Video added successfully.")
+            form.save()
+            return redirect('show_study_videos')
+        else:
+            messages.error(request, "There was an error in the form. Please try again.")
+    return render(request, "insert_update/add_video.html")
