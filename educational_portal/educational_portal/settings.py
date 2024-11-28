@@ -139,9 +139,9 @@ USE_I18N = True
 
 # USE_TZ = True
 
-TIME_ZONE = 'Asia/Kolkata'
-USE_TZ = True  # Set this to True to enable timezone-aware datetime objects
 
+USE_TZ = False
+TIME_ZONE = 'Asia/Kolkata'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -177,8 +177,7 @@ EMAIL_HOST_PASSWORD = '71554913@TmP@'  # Replace with your Hostinger email passw
 
 # TIME_ZONE = 'Asia/Kolkata'
 
-# Enable timezone support
-USE_TZ = True
+
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -196,7 +195,7 @@ SUMMERNOTE_CONFIG = {
 
 # Celery Configuration Options
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_TIMEZONE = "UTC"
+CELERY_TIMEZONE = "Asia/Kolkata"
 # CELERY_TASK_TRACK_STARTED = True
 # CELERY_TASK_TIME_LIMIT = 30 * 60
 
