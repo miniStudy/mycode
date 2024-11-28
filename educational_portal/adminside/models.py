@@ -251,7 +251,7 @@ class Attendance(models.Model):
     atten_id = models.BigAutoField(primary_key=True)
     atten_student = models.ForeignKey(Students,on_delete=models.CASCADE)
     atten_timetable = models.ForeignKey(Timetable,on_delete=models.CASCADE)
-    atten_date = models.DateTimeField(auto_now_add=True)
+    atten_date = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     atten_present = models.BooleanField(default=0)
     domain_name = models.CharField(blank=True,null=True,max_length=100)
 
@@ -834,6 +834,7 @@ class practiceTestAttempted(models.Model):
         practice_test_attempted = models.CharField(choices=attemped_options.choices,max_length=50)
         practice_test_id = models.ForeignKey(Practice_test_questions, on_delete=models.CASCADE)
         pta_answer = models.TextField()
+        domain_name = models.CharField(max_length=100, blank=True,null=True)
 
         def __str__(self):
             return f"{self.pta_student_id.stud_name}"

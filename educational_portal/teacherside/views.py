@@ -29,7 +29,7 @@ from django.core.paginator import Paginator
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
-
+import pytz
 import fitz  # PyMuPDF
 from PIL import Image
 import io
@@ -44,6 +44,9 @@ from django.core.mail import EmailMultiAlternatives
 
 
 from teacherside.decorators import *
+
+ist = pytz.timezone('Asia/Kolkata')
+
 
 def paginatoorrr(queryset,request):
     paginator = Paginator(queryset, 30)
@@ -243,6 +246,10 @@ def teacher_login_handle(request):
                 else:
                     messages.error(request, "password Wrong")
                     return redirect('teacher_login')
+            else:
+                messages.error(request, "Invalid Username & Password.")
+                return redirect('teacher_login')
+
         else:
             messages.error(request, "Invalid Username & Password.")
             return redirect('teacher_login')
@@ -385,9 +392,8 @@ def teacher_attendance(request):
     std_data = Std.objects.filter(std_id__in = std_access_list, domain_name = domain)   
     batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
     stud_data = Students.objects.filter(domain_name = domain)
-    subj_data = Subject.objects.filter(domain_name = domain)
-
-    today = timezone.localdate()
+    subj_data = Subject.objects.filter(domain_name = domain)    
+    today = datetime.now(ist)
     today_records = Attendance.objects.filter(atten_date__contains=today, domain_name = domain)
      
      
@@ -629,7 +635,7 @@ def handle_attendance(request):
 
         for i in students_all:
             if i.stud_id in selected_ids:
-                Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1, domain_name = domain)
+                att = Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=1, domain_name = domain)        
                 present_list.append(i.stud_email)
                 parent_present_li.append(i.stud_guardian_email)
                 student_present_name_list.append(i.stud_name)
@@ -637,7 +643,7 @@ def handle_attendance(request):
                 telegram_student_present_list.append(i.stud_telegram_studentchat_id)
                 telegram_parent_present_list.append(i.stud_telegram_parentschat_id)
             else:
-                Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0, domain_name = domain)
+                att = Attendance.objects.create(atten_timetable=atten_tt, atten_student=i, atten_present=0, domain_name = domain)
                 absent_list.append(i.stud_email)
                 parent_absent_li.append(i.stud_guardian_email)
                 student_absent_name_list.append(i.stud_name)

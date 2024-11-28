@@ -1,5 +1,6 @@
 # app Link - https://drive.google.com/file/d/1PRoRiClAdlIs3T-SrTZru_cMVGd11tts/view?usp=sharing
-
+from sympy import sympify, latex
+import pytz
 from django.shortcuts import render,get_object_or_404,redirect,HttpResponse
 from adminside.form import *
 from adminside.models import *
@@ -62,7 +63,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 global_domain = None
-
+ist = pytz.timezone('Asia/Kolkata')
 
 
 # =================================================
@@ -539,9 +540,11 @@ def home(request):
 def show_boards(request):
     domain = request.get_host()
     data = Boards.objects.filter(domain_name = domain)
+
     context ={
         'data' : data,
         'title' : 'Boards',
+        'mathss':r'\frac{2x^2 + 4x}{2x} = \frac{2x(x + 2)}{2x} = x + 2',
 
     }
     return render(request, 'show_boards.html',context)
