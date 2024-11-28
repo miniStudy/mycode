@@ -386,7 +386,7 @@ def teacher_attendance(request):
     batch_data = Batches.objects.filter(batch_id__in = batch_access_list, domain_name = domain)
     stud_data = Students.objects.filter(domain_name = domain)
     subj_data = Subject.objects.filter(domain_name = domain)
-     
+
     today = timezone.localdate()
     today_records = Attendance.objects.filter(atten_date__contains=today, domain_name = domain)
      
