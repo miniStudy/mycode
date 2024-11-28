@@ -563,7 +563,8 @@ def parent_chatbox(request):
             Q(chatbox_receiver=parent_object.stud_guardian_email, chatbox_sender = selected_person.fac_email)
             )
             context.update({'selected_person':selected_person, 'chatbox_data': chatbox_data})
-            
+        else:
+            context.update({'selected_person':[], 'chatbox_data': []})
 
     Unique_persons = []
     for x in Persons:
@@ -585,7 +586,6 @@ def parent_chatbox(request):
     context.update({
         'Unique_persons':Unique_persons,
         'parent':parent_object,
-        'chatbox_data':chatbox_data,
     })
     return render(request, 'parentpanel/show_chat.html',context)
 
