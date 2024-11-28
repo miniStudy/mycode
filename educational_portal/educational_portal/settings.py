@@ -95,6 +95,7 @@ DATABASES = {
         'PASSWORD': '71554913@TmP@',
         'HOST': '93.127.167.143',
         'PORT': '3306',
+        'CONN_MAX_AGE': 600,
     }
 }
 
@@ -132,11 +133,14 @@ PASSWORD_HASHERS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+# USE_TZ = True
+
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True  # Set this to True to enable timezone-aware datetime objects
 
 
 # Static files (CSS, JavaScript, Images)

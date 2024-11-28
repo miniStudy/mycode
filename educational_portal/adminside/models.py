@@ -768,7 +768,7 @@ class AdminLead(models.Model):
     adminlead_id = models.BigAutoField(primary_key=True)
     adminlead_name = models.CharField(max_length=155)
     adminlead_email = models.EmailField(null=True, blank=True)
-    adminlead_contact = models.IntegerField(null=True, blank=True)
+    adminlead_contact = models.CharField(null=True, blank=True,max_length=150)
     adminlead_standard = models.CharField(max_length=50)
     adminlead_subject = models.CharField(max_length=155)
     adminlead_last_talkdate = models.DateField()
@@ -803,15 +803,10 @@ class Practice_test_questions(models.Model):
             MCQ = 'MCQ', 'MCQ'
             Filling_Blanks = 'Filling_Blanks','Filling_Blanks'
             True_False = 'True_False','True_False'
-        class attemped_options(models.TextChoices):
-            Attemped = 'Attemped', 'Attemped'
-            Not_attemped = 'Not_attemped', 'Not_attemped'
-            Answered = 'Answered', 'Answered'
-            Not_answered = 'Not_answered', 'Not_answered'
+        
         practice_test_id = models.BigAutoField(primary_key=True)
         practice_test_name_id = models.ForeignKey(Practice_test,on_delete=models.CASCADE)
         practice_test_type = models.CharField(choices=question_type.choices,max_length=50)
-        practice_test_attempted = models.CharField(choices=attemped_options.choices,max_length=50)
         practice_test_question = models.TextField()
         practice_test_answer = models.TextField()
         practice_test_weightage = models.IntegerField()
@@ -825,5 +820,27 @@ class Practice_test_questions(models.Model):
             return f"{self.practice_test_name_id.practice_test_name} {self.practice_test_type}"
 
         class Meta:
-            db_table = "Practice_test_questions" 
+            db_table = "Practice_test_questions"
+
+class practiceTestAttempted(models.Model):
+        class attemped_options(models.TextChoices):
+                Attemped = 'Attemped', 'Attemped'
+                Not_attemped = 'Not_attemped', 'Not_attemped'
+                Answered = 'Answered', 'Answered'
+                Not_answered = 'Not_answered', 'Not_answered'
+        
+        pta_id = models.BigAutoField(primary_key=True)
+        pta_student_id = models.ForeignKey(Students, on_delete=models.CASCADE)
+        practice_test_attempted = models.CharField(choices=attemped_options.choices,max_length=50)
+        practice_test_id = models.ForeignKey(Practice_test_questions, on_delete=models.CASCADE)
+        pta_answer = models.TextField()
+
+        def __str__(self):
+            return f"{self.pta_student_id.stud_name}"
+
+        class Meta:
+            db_table = "practiceTestAttempted"
+
+
+            
 
