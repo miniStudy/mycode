@@ -1,0 +1,27 @@
+{% extends 'studentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Teacher Review</h4>
+</div>
+
+
+{% include 'message_show.html' %}
+<!-- DataTable with Buttons -->
+<div class="row">
+    {% for x in temprory_data %}
+        <div class="col-md-3 mb-3">
+          <div class="card">
+            <img src="{{ x.fac_image }}" class="card-img-top" alt="{{ x.fac_name }}'s Profile">
+            <div class="card-body">
+              <h5 class="card-title">{{ x.fac_name }}</h5>
+              <p class="card-text"><strong>Subjects:</strong> {{ x.fac_subject }}</p>
+              {{x.rating}}
+              <a href="{% url 'teacher_review' %}?pk={{x.fac_id}}" class="btn btn-primary">Review Teacher</a>
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+  </div>
+
+{% endblock %}

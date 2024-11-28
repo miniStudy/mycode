@@ -71,4 +71,9 @@ urlpatterns = [
     path('student_insert_suggestions/', studentview.insert_suggestions_function, name='student_insert_suggestions'),
 
     path('show_notification_student/', studentview.show_notification_student_function, name='show_notification_student'),
+
+
+    path('show_teacher_review/', studentview.show_teacher_review_function, name='show_teacher_review'),
+
+    path('teacher_review/', studentview.teacher_review_function, name='teacher_review'),
 ]

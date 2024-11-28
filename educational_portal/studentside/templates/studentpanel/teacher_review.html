@@ -1,0 +1,53 @@
+{% extends 'studentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Teacher Review</h4>
+</div>
+
+
+{% include 'message_show.html' %}
+<!-- DataTable with Buttons -->
+
+<form action="{% url 'teacher_review' %}?pk={{teacher_id.fac_id}}" method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="{{ teacher_id.fac_profile.url }}" class="card-img-top" alt="{{ teacher_id.fac_name }}'s Profile">
+                <div class="card-body">
+                    <h5 class="card-title">{{ teacher_id.fac_name }}</h5>
+                    <p class="card-text"><strong>Subjects:</strong> {{ teacher_id.Subjects }}</p>
+                    <div class="form-group">
+                        <label for="review">Your Rating:</label>
+                        <div class="rating">
+                            <input type="radio" class="btn-check" name="teacher_review" id="star5" autocomplete="off" value="5">
+                            <label class="btn btn-warning" for="star5">&#9733;</label>
+                    
+                            <input type="radio" class="btn-check" name="teacher_review" id="star4" autocomplete="off" value="4">
+                            <label class="btn btn-warning" for="star4">&#9733;</label>
+                    
+                            <input type="radio" class="btn-check" name="teacher_review" id="star3" autocomplete="off" value="3">
+                            <label class="btn btn-warning" for="star3">&#9733;</label>
+                    
+                            <input type="radio" class="btn-check" name="teacher_review" id="star2" autocomplete="off" value="2">
+                            <label class="btn btn-warning" for="star2">&#9733;</label>
+
+                            <input type="radio" class="btn-check" name="teacher_review" id="star1" autocomplete="off" value="1">
+                            <label class="btn btn-warning" for="star1">&#9733;</label>
+                        </div>
+                    </div>
+                    <select name="teacher_review_subject" class="form-select">
+                        {% for subject in subjects %}
+                        <option value="{{subject.fa_subject.sub_id}}">{{subject.fa_subject.sub_name}}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+{% endblock %}
