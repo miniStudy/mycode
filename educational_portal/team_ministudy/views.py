@@ -420,3 +420,57 @@ def show_distributer_dashboard_function(request):
     context = {'total_numbers_of_students': total_numbers_of_students, 'total_numbers_amount': total_numbers_amount, 'total_paid_amount': total_paid_amount, 'remaining_amount': remaining_amount, 'count_disc': count_disc}
 
     return render(request, "ministudy/distributer_dashboard.html", context)
+
+
+
+
+
+def practice_test_creation(request):
+
+    context={}
+    std = Std.objects.all()
+    subject = Subject.objects.all()
+    chapters = Chepter.objects.all()
+    if request.GET.get('get_std'):
+        subject = subject.filter(sub_std__std_id = request.GET.get('get_std'))
+        chapters = chapters.filter(chep_std__std_id = request.GET.get('get_std'))
+        context.update({
+            'get_std': Std.objects.get(std_id = request.GET.get('get_std')),
+            'chapters':chapters,
+        })
+    
+    if request.GET.get('get_sub'):
+        get_sub =  Subject.objects.get(sub_id = request.GET.get('get_sub')) 
+        chapters = chapters.filter(chep_sub__sub_id = request.GET.get('get_sub'))
+        context.update({
+            'get_sub': get_sub,
+            'chapters':chapters
+        })
+
+    context.update({
+        'std':std.values('std_id','std_name'),
+        'subject':subject.values('sub_id','sub_name','sub_std__std_id','sub_std__std_name'),
+        'chapter':chapters.values('chep_id','chep_name','chep_std__std_id','chep_sub__sub_id','chep_sub__sub_name','chep_std__std_name')
+    })
+    return render(request, 'ministudy/create_practice_test.html',context)
+
+def practice_test_handle(request):
+    context={}
+    if request.method == 'POST':
+        tq_chapter_id = request.POST.get('tq_chapter')
+        tq_chapter = Chepter.objects.get(pk=tq_chapter_id)
+
+        q_types = request.POST.getlist('q_type[]')
+        weightages = request.POST.getlist('weightage[]')
+        no_of_questions = request.POST.getlist('noofquestions[]')
+
+        practice_test = Practice_test.objects.create(practice_test_name = request.POST.get('practice_test_name'),practice_test_chapter_name = tq_chapter.chep_name, Practice_test_std = tq_chapter.chep_std.std_name, Practice_test_subject=tq_chapter.chep_sub.sub_name)
+        for q_type, weightage, no_of_q in zip(q_types, weightages, no_of_questions):
+            noofq = int(no_of_q)
+            questions_data = question_bank.objects.filter(qb_q_type = q_type, qb_weightage = weightage, qb_chepter = tq_chapter.chep_name, qb_subject = tq_chapter.chep_sub.sub_name, qb_std = tq_chapter.chep_std.std_name).order_by('?')[:noofq]
+            for qdata in questions_data:
+                Practice_test_questions.objects.create(practice_test_name_id = practice_test, practice_test_type = q_type, practice_test_question = qdata.qb_question, practice_test_answer = qdata.qb_answer, practice_test_weightage = qdata.qb_weightage, practice_test_option_a = qdata.qb_optiona, practice_test_option_b = qdata.qb_optionb, practice_test_option_c = qdata.qb_optionc, practice_test_option_d = qdata.qb_optiond)
+            
+    return redirect('create_practice_test')
+
+

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulk Upload Questions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function toggleOptionFields(questionDiv) {
+                const qTypeField = questionDiv.querySelector('.q_type');
+                const optionsFields = questionDiv.querySelectorAll('.option-field');
+
+                if (qTypeField.value === 'MCQ') {
+                    optionsFields.forEach(field => field.style.display = 'block');
+                } else {
+                    optionsFields.forEach(field => field.style.display = 'none');
+                }
+            }
+
+            function addNewQuestion() {
+                const questionTemplate = document.querySelector('.question-template');
+                const questionClone = questionTemplate.cloneNode(true);
+                questionClone.classList.remove('question-template');
+                questionClone.classList.add('question-item');
+                questionClone.style.display = 'block'; // Make sure the cloned element is visible
+
+                // Attach change event for toggling option fields
+                questionClone.querySelector('.q_type').addEventListener('change', function () {
+                    toggleOptionFields(questionClone);
+                });
+
+                // Attach remove event to the remove button
+                questionClone.querySelector('.remove-question-btn').addEventListener('click', function () {
+                    questionClone.remove();
+                });
+
+                toggleOptionFields(questionClone);  // Initialize visibility
+
+                document.getElementById('questions-container').appendChild(questionClone);
+            }
+
+            document.getElementById('add-question-btn').addEventListener('click', addNewQuestion);
+            addNewQuestion();  // Add the first question on page load
+        });
+    </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+    <div class="container mt-2">
+    <h2>Bulk Upload Questions</h2>
+
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if get_std %}{{ get_std.std_name }} {{ get_std.std_board }}{% else %}Std{% endif %}
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'create_practice_test' %}">ALL</a></li>
+                {% for x in std %}
+                <li><a class="dropdown-item" href="{% url 'create_practice_test' %}?get_std={{ x.std_id }}">{{ x.std_name }} {{ x.std_board }}</a></li>
+                {% endfor %}
+              </ul>
+
+              <button class="btn btn-outline-primary btn-sm dropdown-toggle mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if get_sub %}{{ get_sub.sub_name }}{% else %}Subject{% endif %}
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'create_practice_test' %}">ALL</a></li>
+                {% for x in subject %}
+                <li><a class="dropdown-item" href="{% url 'create_practice_test' %}?get_sub={{ x.sub_id }}&get_std={{x.sub_std.std_id}}">{{ x.sub_name }}</a></li>
+                {% endfor %}
+              </ul>
+        </div>
+    </div>
+    <div class="p-2 border border-2 border-primary mt-3">
+    <form method="POST" action="{% url 'practice_test_handle' %}">
+        {% csrf_token %}
+        <label>Practice Test Name</label>
+        <input type="text" name="practice_test_name" class="form-control" /><br/>
+        <label for="tq_chapter">Chapter:</label>
+        <select name="tq_chapter" class="form-control" required>
+            {% for chap in chapter %}
+                <option value="{{ chap.chep_id }}">{{ chap.chep_name }} - {{chap.chep_sub__sub_name}} - {{chap.chep_std__std_name}}</option>
+            {% endfor %}
+        </select><br>
+
+        <div id="questions-container"></div>
+
+        <button type="button" class="btn btn-warning mt-3" id="add-question-btn">Add Another Question</button><br><br>
+        <button type="submit" class="btn btn-success mt-3 mb-4">Submit All Data</button>
+    </form>
+    </div>
+    <!-- Template for Question Entry -->
+    <div class="question-template" style="display: none; margin-top: 20px; border: 1px solid #ccc; padding: 10px;">
+        <hr>
+
+        <div class="row">
+            <div class="col">
+                <label>Question Type:</label>
+        <select name="q_type[]" class="q_type" class="form-control">
+            
+                <option value="MCQ">MCQ</option>
+                <option value="Filling_Blanks">Filling_Blanks</option>
+                <option value="True_False">True_False</option>
+           
+        </select></div>
+        <div class="col">
+        <label>Weightage:</label>
+        <input type="number" name="weightage[]" class="form-control" required>
+        </div>
+        <div class="col">
+        <label>No of Questions:</label>
+        <input type="number" name="noofquestions[]" class="form-control" required>
+        </div>
+        </div>
+        <hr/>
+        <div class="text-right"><button type="button" class="remove-question-btn btn btn-danger">Remove This Question</button></div>
+    </div>
+</div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -35,5 +35,8 @@ urlpatterns = [
 
     path('show_distributer_dashboard/', ministudyview.show_distributer_dashboard_function, name="show_distributer_dashboard"),
     path('distributer_login/', ministudyview.distributer_login_function, name="distributer_login"),
+    path('create_practice_test/', ministudyview.practice_test_creation, name="create_practice_test"),
+    path('practice_test_handle/',ministudyview.practice_test_handle, name="practice_test_handle"),
+
 ]
 

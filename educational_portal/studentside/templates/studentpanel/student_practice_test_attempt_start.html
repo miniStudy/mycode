@@ -1,0 +1,22 @@
+{% extends 'studentpanel/master.html' %}
+
+{% block contentsection %}
+<div class="mb-4">
+  <h4>Tests</h4>
+</div>
+
+{% include 'message_show.html' %}
+<div class="mt-2">
+    <h5>Practice Tests</h5>
+    <hr/>
+    <div class="d-flex justify-content-center align-items-center">
+    <div class="card">
+        <div class="card-body">
+        <div>{{ptest.practice_test_name}}</div> 
+        <div class="btn btn-sm btn-primary mt-3">Start Test</div>
+        </div>
+    </div>
+    </div>
+</div>
+
+{% endblock %}

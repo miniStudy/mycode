@@ -6,7 +6,24 @@
 </div>
 
 {% include 'message_show.html' %}
+<div class="mt-2">
+    <h5>Practice Tests</h5>
+    <hr/>
+    <div class="row">
 
+    {% for x in practice_tests %}
+    <div class="col-md-3 d-flex align-items-stretch mb-4">
+        <div class="card myborder w-100">
+            <div class="card-body">
+                <h5>{{x.practice_test_name}}</h5>
+                <div class="text-sm text-muted">Chap Name: {{x.practice_test_chapter_name}}<br/> Sub: {{x.Practice_test_subject}}<br/> Std: {{x.Practice_test_std}}</div>
+                <a href="{% url 'student_practice_test_attempt_start' %}?ptest={{x.practice_test_id}}"><div class="btn btn-sm btn-primary mt-2">Attempt Now</div></a>
+            </div>
+        </div>
+    </div>    
+    {% endfor %}
+    </div>
+</div>
 
     <div class="mt-2">
         <div class="row">

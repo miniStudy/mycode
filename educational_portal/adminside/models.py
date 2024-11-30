@@ -577,6 +577,7 @@ class question_bank(models.Model):
     qb_optionb = models.CharField(max_length=200,blank=True,null=True)
     qb_optionc = models.CharField(max_length=200,blank=True,null=True)
     qb_optiond = models.CharField(max_length=200,blank=True,null=True)
+    detailed_answer = models.TextField(blank=True,null=True)
 
     def __str__(self):
         return f"{self.qb_q_type} - {self.qb_chepter}"
@@ -804,7 +805,7 @@ class Practice_test_questions(models.Model):
             Filling_Blanks = 'Filling_Blanks','Filling_Blanks'
             True_False = 'True_False','True_False'
         
-        practice_test_id = models.BigAutoField(primary_key=True)
+        practice_test_question_id = models.BigAutoField(primary_key=True)
         practice_test_name_id = models.ForeignKey(Practice_test,on_delete=models.CASCADE)
         practice_test_type = models.CharField(choices=question_type.choices,max_length=50)
         practice_test_question = models.TextField()
@@ -814,6 +815,7 @@ class Practice_test_questions(models.Model):
         practice_test_option_b = models.CharField(max_length=155,blank=True,null=True)
         practice_test_option_c = models.CharField(max_length=155,blank=True,null=True)
         practice_test_option_d = models.CharField(max_length=155,blank=True,null=True)
+        detailed_answer = models.TextField(null=True,blank=True)
         domain_name = models.CharField(max_length=100,blank=True,null=True)
 
         def __str__(self):

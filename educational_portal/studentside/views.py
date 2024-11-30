@@ -479,7 +479,7 @@ from django.db.models import Avg
 def show_test(request):
     domain = request.get_host()
     student_id = request.session['stud_id']
-    
+    studentobj = Students.objects.get(stud_id = student_id)
     test_analysis_data = Test_attempted_users.objects.filter(tau_stud_id__stud_id=student_id, domain_name = domain)
 
     average_marks = Test_attempted_users.objects.filter(domain_name = domain).values('tau_test_id').annotate(average_marks=Avg('tau_obtained_marks'))
@@ -497,9 +497,11 @@ def show_test(request):
             'avg_marks': round(avg_marks_dict.get(data.tau_test_id.test_id, 0),2)
         })
 
+    practice_tests = Practice_test.objects.filter(Practice_test_std = studentobj.stud_std.std_name)
     context = {
         'title': 'Tests',
-        'test_analysis_data': test_details  # Pass the detailed test data to the context
+        'test_analysis_data': test_details,  # Pass the detailed test data to the context
+        'practice_tests':practice_tests
     }
     return render(request, 'studentpanel/test.html', context)
 
@@ -1097,3 +1099,61 @@ def student_show_pdf(request):
             'pdf':pdf,
         })
     return render(request,'studentpanel/show_pdf.html', context)
+
+
+
+@student_login_required
+def student_practice_test_attempt_start(request):
+    Context= {'title':'Test'}
+    ptest = Practice_test.objects.get(practice_test_id = request.GET.get('ptest'))
+    Context.update({'ptest':ptest})
+    return render(request, 'studentpanel/student_practice_test_attempt_start.html',Context)
+
+
+
+
+
+@api_view(['GET'])
+def show_practice_test_questions(request, id):
+    domain = request.get_host()
+    student_id = Students.objects.get(stud_id=45)
+    test = Practice_test.objects.get(practice_test_id=id)
+    if request.GET.get('question_id'):
+        test_question = Practice_test_questions.objects.get(practice_test_question_id = request.GET.get('question_id'))
+    else:
+        test_question = Practice_test_questions.objects.filter(practice_test_name_id = test).first()
+
+    test_questions_all = Practice_test_questions.objects.filter(practice_test_name_id__practice_test_id = id)
+
+    next_id = None
+    prev_id = None
+
+    # Find the next and previous IDs
+    if test_question:
+        current_index = list(test_questions_all).index(test_question)
+        if current_index > 0:
+            prev_id = test_questions_all[current_index - 1].practice_test_question_id
+        if current_index < len(test_questions_all) - 1:
+            next_id = test_questions_all[current_index + 1].practice_test_question_id
+
+
+    return Response({
+        'test_question_all': test_questions_all.values('practice_test_question_id'),
+        'test_question': {
+                    'practice_test_id': test_question.practice_test_question_id,
+                    'practice_test_question': test_question.practice_test_question,
+                    'practice_test_type': test_question.practice_test_type,
+                    'practice_test_weightage': test_question.practice_test_weightage,
+                    'practice_test_option_a': test_question.practice_test_option_a,
+                    'practice_test_option_b': test_question.practice_test_option_b,
+                    'practice_test_option_c': test_question.practice_test_option_c,
+                    'practice_test_option_d': test_question.practice_test_option_d
+                } if test_question else None,
+        'test_id':  id,
+        'next_id': next_id,
+        'prev_id':  prev_id,
+        'student_id':  student_id.stud_id,
+        'status':True,
+        'message':'Successfully Fetched API',
+    })
+    
