@@ -844,6 +844,18 @@ class practiceTestAttempted(models.Model):
         class Meta:
             db_table = "practiceTestAttempted"
 
+class Teacher_Review(models.Model):
+    teacher_review_id = models.BigAutoField(primary_key=True)
+    teacher_review = models.IntegerField()
+    review_date = models.DateField(auto_now_add=True)    
+    teacher_review_student_id = models.ForeignKey(Students, on_delete=models.CASCADE)
+    teacher_review_teacher_id = models.ForeignKey(Faculties, on_delete=models.CASCADE)
+    teacher_review_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    domain_name = models.CharField(max_length=100, blank=True,null=True)
 
-            
 
+    def __str__(self):
+            return f"{self.teacher_review}"
+
+    class Meta:
+        db_table = 'Teacher_Review'

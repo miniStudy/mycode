@@ -1157,3 +1157,58 @@ def show_practice_test_questions(request, id):
         'message':'Successfully Fetched API',
     })
     
+def show_teacher_review_function(request):
+    context = {}
+    domain = request.get_host()
+    student_std = request.session['stud_std']
+    student_batch = request.session['stud_batch']
+
+    faculties_data = Faculty_Access.objects.filter(fa_batch__batch_id = student_batch, fa_batch__batch_std__std_id = student_std, domain_name = domain)
+
+    temprory_data = []
+    for data in faculties_data:
+        new_data = {}
+        tr = Teacher_Review.objects.filter(teacher_review_teacher_id__fac_id = data.fa_faculty.fac_id, teacher_review_subject__sub_id = data.fa_subject.sub_id)
+        if tr:
+            new_data.update({
+                'fac_name':data.fa_faculty.fac_name,
+                'fac_id': data.fa_faculty.fac_id,
+                'fac_subject': data.fa_subject.sub_name,
+                'fac_image': data.fa_faculty.fac_profile.url,
+                'rating':tr[0].teacher_review})
+        else:
+            new_data.update({
+                'fac_name':data.fa_faculty.fac_name,
+                'fac_id': data.fa_faculty.fac_id,
+                'fac_subject': data.fa_subject.sub_name,
+                'fac_image': data.fa_faculty.fac_profile.url,
+                'rating':None})
+        temprory_data.append(new_data)
+        context.update({'temprory_data': temprory_data})
+    return render(request, 'studentpanel/show_teacher_review.html', context)
+
+def teacher_review_function(request):
+    domain = request.get_host()
+    stud_id = request.session['stud_id']
+    stud_std = request.session['stud_std']
+    stud_batch = request.session['stud_batch']
+    fac_id = request.GET.get('pk')
+    teacher_id = Faculties.objects.get(fac_id = fac_id)
+    student_id = Students.objects.get(stud_id = stud_id)
+    subjects = Faculty_Access.objects.filter(fa_batch__batch_id = stud_batch, fa_batch__batch_std__std_id = stud_std, domain_name = domain)
+    
+    context = {'teacher_id': teacher_id, 'subjects': subjects}
+    if request.method == 'POST':
+        teacher_review = request.POST.get('teacher_review')
+        teacher_review_subject = Subject.objects.get(sub_id = request.POST.get('teacher_review_subject'))
+        if teacher_review:
+            Teacher_Review.objects.create(
+                teacher_review=teacher_review,
+                teacher_review_student_id=student_id,
+                teacher_review_teacher_id=teacher_id,
+                teacher_review_subject=teacher_review_subject,
+                domain_name=domain,
+            )
+            messages.success(request, "Your review has been submitted successfully!")
+            return redirect('show_teacher_review')
+    return render(request, "studentpanel/teacher_review.html", context)

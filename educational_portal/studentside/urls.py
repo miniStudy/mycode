@@ -72,5 +72,10 @@ urlpatterns = [
 
     path('show_notification_student/', studentview.show_notification_student_function, name='show_notification_student'),
     path('student_practice_test_attempt_start/',studentview.student_practice_test_attempt_start,name='student_practice_test_attempt_start'),
-    path('show_practice_test_questions/<int:id>/',studentview.show_practice_test_questions, name='show_practice_test_questions')
+    path('show_practice_test_questions/<int:id>/',studentview.show_practice_test_questions, name='show_practice_test_questions'),
+
+
+    path('show_teacher_review/', studentview.show_teacher_review_function, name='show_teacher_review'),
+
+    path('teacher_review/', studentview.teacher_review_function, name='teacher_review'),
 ]
